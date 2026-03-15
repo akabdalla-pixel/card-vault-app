@@ -6,7 +6,6 @@ import Link from 'next/link'
 const NAV = [
   { label: 'Dashboard', href: '/dashboard' },
   { label: 'Collection', href: '/collection' },
-  { label: 'Wish List', href: '/wishlist' },
   { label: 'Sold History', href: '/sold' },
 ]
 
@@ -605,3 +604,4 @@ export default function CollectionPage() {
     </>
   )
 }
+
