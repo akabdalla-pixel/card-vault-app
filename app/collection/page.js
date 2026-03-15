@@ -702,7 +702,7 @@ export default function CollectionPage() {
         <BottomNav />
       </div>
       {breakEvenCard && <BreakEvenModal card={breakEvenCard} onClose={() => setBreakEvenCard(null)} />}
-      {modal && <CardModal card={modal==='add'?null:modal} onClose={() => setModal(null)} onSave={() => { setModal(null); load() }} /> />}
+      {modal && <CardModal card={modal==='add'?null:modal} onClose={() => setModal(null)} onSave={() => { setModal(null); load() }} />}
       {priceLookupCard && <PriceLookupModal card={priceLookupCard} onClose={() => setPriceLookupCard(null)} />}
       {soldCard && <SoldModal card={soldCard} onClose={() => setSoldCard(null)} onSave={() => { setSoldCard(null); load() }} />}
       {showImport && <ImportModal onClose={() => setShowImport(false)} onImport={(n) => { setShowImport(false); setImportSuccess(n); load() }} />}
