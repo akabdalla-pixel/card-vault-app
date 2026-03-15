@@ -144,11 +144,11 @@ function SparklineChart({ cards }) {
 }
 
 // ─── Quick Value Update ───────────────────────────────────────────────────────
-function QuickValueCard({ card, onUpdate }) {
+function QuickValueRow({ card, onUpdate }) {
   const [editing, setEditing] = useState(false)
   const [val, setVal] = useState(card.val || card.buy || '')
   const [saving, setSaving] = useState(false)
-  
+
   const buy = parseFloat(card.buy) || 0
   const current = parseFloat(card.val) || buy
   const gl = current - buy
@@ -164,23 +164,31 @@ function QuickValueCard({ card, onUpdate }) {
   }
 
   return (
-    <div style={{ background: '#0c0f1a', border: '1px solid rgba(255,255,255,0.07)', borderRadius: 10, padding: '12px 14px', transition: 'border-color 0.15s' }}
-      onMouseEnter={e => e.currentTarget.style.borderColor = 'rgba(6,214,214,0.3)'}
-      onMouseLeave={e => e.currentTarget.style.borderColor = 'rgba(255,255,255,0.07)'}
+    <div style={{ display: 'flex', alignItems: 'center', padding: '10px 16px', borderBottom: '1px solid rgba(255,255,255,0.04)', transition: 'background 0.15s' }}
+      onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,255,255,0.02)'}
+      onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
     >
-      <div style={{ fontFamily: "'Outfit',sans-serif", fontSize: 12, fontWeight: 700, color: '#c0c8e8', marginBottom: 2, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{card.player}</div>
-      <div style={{ fontSize: 10, color: '#3a4465', marginBottom: 8, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{[card.year, card.sport, card.grade ? 'PSA ' + card.grade : card.cond || 'Raw'].filter(Boolean).join(' · ')}</div>
+      {/* Player info */}
+      <div style={{ flex: 1, minWidth: 0 }}>
+        <div style={{ fontFamily: "'Outfit',sans-serif", fontSize: 13, fontWeight: 700, color: '#c0c8e8', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{card.player}</div>
+        <div style={{ fontSize: 11, color: '#3a4465', marginTop: 1 }}>{[card.year, card.sport, card.grade ? 'PSA ' + card.grade : card.cond].filter(Boolean).join(' · ')}</div>
+      </div>
+      {/* G/L % */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: 3, fontSize: 12, fontWeight: 600, color: glPos ? '#22d3a7' : '#ff6b7a', marginRight: 16, minWidth: 60, justifyContent: 'flex-end' }}>
+        {glPos ? <IconTrendUp /> : <IconTrendDown />}{glPos ? '+' : ''}{glPct.toFixed(1)}%
+      </div>
+      {/* Editable value */}
       {editing ? (
         <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
-          <input type="number" value={val} onChange={e => setVal(e.target.value)} autoFocus style={{ flex: 1, padding: '5px 8px', borderRadius: 7, background: 'var(--card2)', border: '1px solid var(--cyan)', color: 'var(--text)', fontSize: 13, outline: 'none', fontFamily: "'JetBrains Mono',monospace" }} onKeyDown={e => { if (e.key === 'Enter') handleSave(); if (e.key === 'Escape') setEditing(false) }} />
+          <input type="number" value={val} onChange={e => setVal(e.target.value)} autoFocus style={{ width: 90, padding: '5px 8px', borderRadius: 7, background: 'var(--card2)', border: '1px solid var(--cyan)', color: 'var(--text)', fontSize: 13, outline: 'none', fontFamily: "'JetBrains Mono',monospace", textAlign: 'right' }} onKeyDown={e => { if (e.key === 'Enter') handleSave(); if (e.key === 'Escape') setEditing(false) }} />
           <button onClick={handleSave} disabled={saving} style={{ padding: '5px 8px', borderRadius: 7, background: 'rgba(6,214,214,0.15)', border: 'none', color: 'var(--cyan)', cursor: 'pointer' }}><IconCheck /></button>
         </div>
       ) : (
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', cursor: 'pointer' }} onClick={() => setEditing(true)}>
-          <div style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: 15, fontWeight: 700, color: '#f0f2ff' }}>{fmt(current)}</div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 3, fontSize: 11, fontWeight: 600, color: glPos ? '#22d3a7' : '#ff6b7a' }}>
-            {glPos ? <IconTrendUp /> : <IconTrendDown />}{glPos ? '+' : ''}{glPct.toFixed(1)}%
-          </div>
+        <div onClick={() => setEditing(true)} title="Click to edit" style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: 14, fontWeight: 700, color: '#f0f2ff', cursor: 'pointer', padding: '4px 8px', borderRadius: 7, border: '1px solid transparent', transition: 'all 0.15s' }}
+          onMouseEnter={e => { e.currentTarget.style.borderColor = 'rgba(6,214,214,0.3)'; e.currentTarget.style.background = 'rgba(6,214,214,0.06)' }}
+          onMouseLeave={e => { e.currentTarget.style.borderColor = 'transparent'; e.currentTarget.style.background = 'transparent' }}
+        >
+          {fmt(current)}
         </div>
       )}
     </div>
@@ -372,12 +380,12 @@ export default function DashboardPage() {
                   <h2 style={{ fontFamily: "'Outfit',sans-serif", fontSize: 13, fontWeight: 700, color: '#c0c8e8', margin: 0 }}>Quick Value Update</h2>
                   <span style={{ fontSize: 11, color: '#3a4465', fontFamily: "'Outfit',sans-serif" }}>Click value to edit</span>
                 </div>
-                <div style={{ padding: 14 }}>
-                  <div className="qv-grid">
-                    {activeCards.slice(0, 6).map(card => <QuickValueCard key={card.id} card={card} onUpdate={loadData} />)}
-                  </div>
-                  {activeCards.length > 6 && (
-                    <Link href="/collection" style={{ display: 'block', textAlign: 'center', marginTop: 12, fontSize: 12, color: 'var(--cyan)', textDecoration: 'none', fontFamily: "'Outfit',sans-serif", fontWeight: 600 }}>View all {activeCards.length} cards →</Link>
+                <div>
+                  {activeCards.slice(0, 8).map(card => <QuickValueRow key={card.id} card={card} onUpdate={loadData} />)}
+                  {activeCards.length > 8 && (
+                    <div style={{ padding: '10px 16px', borderTop: '1px solid rgba(255,255,255,0.04)' }}>
+                      <Link href="/collection" style={{ fontSize: 12, color: 'var(--cyan)', textDecoration: 'none', fontFamily: "'Outfit',sans-serif", fontWeight: 600 }}>View all {activeCards.length} cards →</Link>
+                    </div>
                   )}
                 </div>
               </div>
