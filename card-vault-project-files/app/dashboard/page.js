@@ -318,7 +318,7 @@ export default function DashboardPage() {
         .sidebar-el{display:flex;flex-direction:column}.mobile-only{display:none!important}.mob-topbar{display:none}.main-wrap{margin-left:220px;min-height:100vh;width:calc(100% - 220px)}
         .stat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
         .stat-grid2{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:14px}
-        .body-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:0}
+        .body-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:22px}
         .qv-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
         @media(max-width:1100px){.stat-grid{grid-template-columns:repeat(2,1fr)}.stat-grid2{grid-template-columns:repeat(2,1fr)}.body-grid{grid-template-columns:1fr}.qv-grid{grid-template-columns:repeat(2,1fr)}}
         @media(max-width:768px){.sidebar-el{display:none!important}.mobile-only{display:flex!important}.mob-topbar{display:flex}.main-wrap{margin-left:0!important;width:100%!important;padding-bottom:80px!important}.stat-grid{grid-template-columns:1fr 1fr}.stat-grid2{grid-template-columns:1fr 1fr}}
@@ -326,7 +326,7 @@ export default function DashboardPage() {
       `}</style>
       <div style={{ display: 'flex', minHeight: '100vh', background: 'var(--bg)' }}>
         <div className="sidebar-el"><Sidebar user={user} onLogout={handleLogout} active="Dashboard" /></div>
-        <main className="main-wrap" style={{ padding: '28px 28px' }}>
+        <main className="main-wrap" style={{ padding: '28px 28px 40px' }}>
           {/* Mobile topbar */}
           <div className="mob-topbar" style={{ alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
             <img src={LOGO} alt="TopLoad" style={{ height: 36, width: 'auto', objectFit: 'contain' }} />
@@ -381,8 +381,8 @@ export default function DashboardPage() {
                   <span style={{ fontSize: 11, color: '#3a4465', fontFamily: "'Outfit',sans-serif" }}>Click value to edit</span>
                 </div>
                 <div>
-                  {activeCards.slice(0, 8).map(card => <QuickValueRow key={card.id} card={card} onUpdate={loadData} />)}
-                  {activeCards.length > 8 && (
+                  {activeCards.slice(0, 3).map(card => <QuickValueRow key={card.id} card={card} onUpdate={loadData} />)}
+                  {activeCards.length > 3 && (
                     <div style={{ padding: '10px 16px', borderTop: '1px solid rgba(255,255,255,0.04)' }}>
                       <Link href="/collection" style={{ fontSize: 12, color: 'var(--cyan)', textDecoration: 'none', fontFamily: "'Outfit',sans-serif", fontWeight: 600 }}>View all {activeCards.length} cards →</Link>
                     </div>
