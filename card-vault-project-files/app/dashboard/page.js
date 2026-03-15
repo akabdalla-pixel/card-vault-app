@@ -7,6 +7,7 @@ const LOGO = '/logo-transparent.png'
 const NAV = [
   { label: 'Dashboard', href: '/dashboard' },
   { label: 'Collection', href: '/collection' },
+  { label: 'Market', href: '/market' },
   { label: 'Insights', href: '/insights' },
   { label: 'Sold History', href: '/sold' },
 ]
@@ -22,7 +23,7 @@ function IconTrendUp() { return <svg width="12" height="12" viewBox="0 0 24 24" 
 function IconTrendDown() { return <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="23 18 13.5 8.5 8.5 13.5 1 6"/><polyline points="17 18 23 18 23 12"/></svg> }
 function IconCheck() { return <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg> }
 
-const navIcons = { 'Dashboard': IconDashboard, 'Collection': IconCollection, 'Insights': IconInsights, 'Sold History': IconSold }
+const navIcons = { 'Dashboard': IconDashboard, 'Collection': IconCollection, 'Market': IconMarket, 'Insights': IconInsights, 'Sold History': IconSold }
 const fmt = n => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 2 }).format(n || 0)
 
 function Sidebar({ user, onLogout, active }) {
@@ -268,16 +269,63 @@ export default function DashboardPage() {
         .stat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
         .stat-grid2{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:14px}
         .body-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:22px}
+        .mob-stat-scroll{display:none}
+        .desk-stats{display:block}
+        .mob-chart{display:none}
+        .desk-chart{display:block}
         @media(max-width:1100px){.stat-grid{grid-template-columns:repeat(2,1fr)}.stat-grid2{grid-template-columns:repeat(2,1fr)}.body-grid{grid-template-columns:1fr}}
-        @media(max-width:768px){.sidebar-el{display:none!important}.mobile-only{display:flex!important}.mob-topbar{display:flex}.main-wrap{margin-left:0!important;width:100%!important;padding-bottom:80px!important}.stat-grid{grid-template-columns:1fr 1fr}.stat-grid2{grid-template-columns:1fr 1fr}}
+        @media(max-width:768px){
+          .sidebar-el{display:none!important}.mobile-only{display:flex!important}.mob-topbar{display:flex}
+          .main-wrap{margin-left:0!important;width:100%!important;padding-bottom:80px!important;padding:16px 16px 80px!important}
+          .body-grid{grid-template-columns:1fr!important;gap:14px!important;margin-top:14px!important}
+          .mob-stat-scroll{display:flex!important}
+          .desk-stats{display:none!important}
+          .mob-chart{display:block!important}
+          .desk-chart{display:none!important}
+          .hide-mobile{display:none!important}
+        }
         @media(max-width:480px){.stat-grid{grid-template-columns:1fr}.stat-grid2{grid-template-columns:1fr}}
       `}</style>
       <div style={{ display:'flex',minHeight:'100vh',background:'#0a0a0a' }}>
         <div className="sidebar-el"><Sidebar user={user} onLogout={handleLogout} active="Dashboard" /></div>
         <main className="main-wrap" style={{ padding:'28px 28px 40px' }}>
-          <div className="mob-topbar" style={{ alignItems:'center',justifyContent:'space-between',marginBottom:20 }}>
-            <img src={LOGO} alt="TopLoad" style={{ height:36,width:'auto',objectFit:'contain',filter:'drop-shadow(0 0 8px rgba(229,57,53,0.4))' }} />
-            <button onClick={handleLogout} style={{ display:'flex',alignItems:'center',gap:6,padding:'8px 14px',borderRadius:10,background:'rgba(255,255,255,0.05)',border:'none',color:'#555',fontFamily:"'Outfit',sans-serif",fontSize:13,fontWeight:600,cursor:'pointer' }}><IconLogout />Sign Out</button>
+          <div className="mob-topbar" style={{ alignItems:'center',justifyContent:'space-between',marginBottom:16 }}>
+            <img src={LOGO} alt="TopLoad" style={{ height:32,width:'auto',objectFit:'contain',filter:'drop-shadow(0 0 8px rgba(229,57,53,0.4))' }} />
+            <Link href="/collection" style={{ display:'flex',alignItems:'center',gap:6,padding:'8px 14px',background:'rgba(229,57,53,0.1)',border:'1px solid rgba(229,57,53,0.25)',borderRadius:10,color:'#e53935',fontFamily:"'Outfit',sans-serif",fontSize:13,fontWeight:700,textDecoration:'none' }}>+ Add Card</Link>
+          </div>
+
+          {/* ── Mobile: Big Value Hero ── */}
+          <div className="mob-chart" style={{ background:'linear-gradient(135deg,#1a0505,#0d0d0d)',border:'1px solid rgba(229,57,53,0.15)',borderRadius:16,padding:'20px 18px',marginBottom:14 }}>
+            <div style={{ fontSize:12,color:'#555',fontFamily:"'Outfit',sans-serif",fontWeight:600,marginBottom:4 }}>Portfolio Value</div>
+            <div style={{ fontFamily:"'JetBrains Mono',monospace",fontSize:36,fontWeight:800,color:'#f0f0f0',letterSpacing:'-1px',lineHeight:1 }}>{fmt(currentValue)}</div>
+            <div style={{ display:'flex',alignItems:'center',gap:6,marginTop:8 }}>
+              <div style={{ display:'flex',alignItems:'center',gap:4,fontFamily:"'JetBrains Mono',monospace",fontSize:14,fontWeight:700,color:gainPos?'#e53935':'#616161' }}>
+                {gainPos?'▲':'▼'} {gainPos?'+':''}{fmt(gainLoss)}
+              </div>
+              <div style={{ fontSize:12,color:'#555',fontFamily:"'Outfit',sans-serif" }}>({gainPos?'+':''}{portfolioReturn.toFixed(1)}%)</div>
+            </div>
+            <div style={{ display:'flex',gap:16,marginTop:14,paddingTop:14,borderTop:'1px solid rgba(255,255,255,0.05)' }}>
+              <div><div style={{ fontSize:10,color:'#444',fontFamily:"'Outfit',sans-serif",fontWeight:700,textTransform:'uppercase',letterSpacing:'0.08em',marginBottom:3 }}>Invested</div><div style={{ fontFamily:"'JetBrains Mono',monospace",fontSize:14,color:'#888' }}>{fmt(totalInvested)}</div></div>
+              <div><div style={{ fontSize:10,color:'#444',fontFamily:"'Outfit',sans-serif",fontWeight:700,textTransform:'uppercase',letterSpacing:'0.08em',marginBottom:3 }}>Cards</div><div style={{ fontFamily:"'JetBrains Mono',monospace",fontSize:14,color:'#888' }}>{activeCards.length}</div></div>
+              <div><div style={{ fontSize:10,color:'#444',fontFamily:"'Outfit',sans-serif",fontWeight:700,textTransform:'uppercase',letterSpacing:'0.08em',marginBottom:3 }}>Realized P&L</div><div style={{ fontFamily:"'JetBrains Mono',monospace",fontSize:14,color:realizedPL>=0?'#e53935':'#616161' }}>{realizedPL>=0?'+':''}{fmt(realizedPL)}</div></div>
+            </div>
+          </div>
+
+          {/* ── Mobile: Horizontal Stat Scroll ── */}
+          <div className="mob-stat-scroll" style={{ gap:10,overflowX:'auto',marginBottom:14,paddingBottom:4,WebkitOverflowScrolling:'touch' }}>
+            {[
+              { label:'Active Cards', value: activeCards.length },
+              { label:'Total Invested', value: fmt(totalInvested) },
+              { label:'Current Value', value: fmt(currentValue) },
+              { label:'Unrealized G/L', value: `${gainPos?'+':''}${fmt(gainLoss)}`, color: gainPos?'#e53935':'#616161' },
+              { label:'Return', value: `${retPos?'+':''}${portfolioReturn.toFixed(1)}%`, color: retPos?'#e53935':'#616161' },
+              { label:'Realized P&L', value: `${realizedPL>=0?'+':''}${fmt(realizedPL)}`, color: realizedPL>=0?'#e53935':'#616161' },
+            ].map((s,i) => (
+              <div key={i} style={{ flexShrink:0,background:'#111',border:'1px solid #1e1e1e',borderRadius:12,padding:'12px 14px',minWidth:130 }}>
+                <div style={{ fontSize:9,color:'#444',fontWeight:700,textTransform:'uppercase',letterSpacing:'0.1em',marginBottom:6,fontFamily:"'Outfit',sans-serif" }}>{s.label}</div>
+                <div style={{ fontFamily:"'JetBrains Mono',monospace",fontSize:15,fontWeight:700,color:s.color||'#f0f0f0' }}>{s.value}</div>
+              </div>
+            ))}
           </div>
           <div style={{ display:'flex',alignItems:'flex-end',justifyContent:'space-between',flexWrap:'wrap',gap:12,marginBottom:24 }}>
             <div>
@@ -289,7 +337,8 @@ export default function DashboardPage() {
               <Link href="/collection" style={{ display:'flex',alignItems:'center',gap:7,padding:'9px 14px',background:'rgba(229,57,53,0.08)',border:'1px solid rgba(229,57,53,0.25)',borderRadius:10,color:'#e53935',fontFamily:"'Outfit',sans-serif",fontSize:13,fontWeight:600,textDecoration:'none' }}>+ Add Card</Link>
             </div>
           </div>
-          {cards.length>0&&<SparklineChart cards={cards} />}
+          {cards.length>0&&<div className="desk-chart"><SparklineChart cards={cards} /></div>}
+          <div className="desk-stats">
           <div className="stat-grid">
             <StatCard label="Active Cards" value={activeCards.length} />
             <StatCard label="Total Invested" value={fmt(totalInvested)} />
@@ -300,7 +349,8 @@ export default function DashboardPage() {
             <StatCard label="Portfolio Return" value={`${retPos?'+':''}${portfolioReturn.toFixed(1)}%`} sub={totalInvested>0?(retPos?'Above cost basis':'Below cost basis'):'No data'} positive={totalInvested>0?retPos:undefined} />
             <StatCard label="Realized P&L" value={`${realizedPL>=0?'+':''}${fmt(realizedPL)}`} sub={`${soldCards.length} card${soldCards.length!==1?'s':''} sold`} positive={soldCards.length>0?realizedPL>=0:undefined} />
           </div>
-          {activeCards.length>1&&<div style={{ marginTop:22 }}><TopMovers cards={activeCards} /></div>}
+          </div>{/* end desk-stats */}
+          {activeCards.length>1&&<div className="hide-mobile" style={{ marginTop:22 }}><TopMovers cards={activeCards} /></div>}
 
           {/* ── Card of the Day ── */}
           {cardOfTheDay && (() => {
@@ -313,7 +363,7 @@ export default function DashboardPage() {
             return (
               <div style={{ marginTop:22, background:'linear-gradient(135deg,#1a0a0a,#0d0d0d)', border:'1px solid rgba(229,57,53,0.2)', borderRadius:14, padding:'18px 22px', position:'relative', overflow:'hidden' }}>
                 <div style={{ position:'absolute', top:0, left:0, right:0, height:2, background:'linear-gradient(90deg,#e53935,#ff5252,#e53935)' }} />
-                <div style={{ display:'flex', alignItems:'flex-start', justifyContent:'space-between', flexWrap:'wrap', gap:12 }}>
+              <div style={{ display:'flex', alignItems:'flex-start', justifyContent:'space-between', flexWrap:'wrap', gap:12 }}>
                   <div style={{ flex:1, minWidth:0 }}>
                     <div style={{ display:'flex', alignItems:'center', gap:8, marginBottom:8 }}>
                       <span style={{ fontSize:18 }}>🃏</span>
@@ -327,18 +377,18 @@ export default function DashboardPage() {
                       {[cardOfTheDay.year, cardOfTheDay.sport, cardOfTheDay.brand, cardOfTheDay.grade ? `PSA ${cardOfTheDay.grade}` : cardOfTheDay.cond].filter(Boolean).join(' · ')}
                     </div>
                   </div>
-                  <div style={{ display:'flex', gap:20, flexShrink:0 }}>
+                  <div style={{ display:'flex', gap:14, flexShrink:0, flexWrap:'wrap' }}>
                     <div style={{ textAlign:'right' }}>
-                      <div style={{ fontSize:10, color:'#444', fontWeight:700, textTransform:'uppercase', letterSpacing:'0.08em', marginBottom:4, fontFamily:"'Outfit',sans-serif" }}>Buy Price</div>
-                      <div style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:15, color:'#666' }}>{fmt(buy)}</div>
+                      <div style={{ fontSize:10, color:'#444', fontWeight:700, textTransform:'uppercase', letterSpacing:'0.08em', marginBottom:4, fontFamily:"'Outfit',sans-serif" }}>Buy</div>
+                      <div style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:14, color:'#666' }}>{fmt(buy)}</div>
                     </div>
                     <div style={{ textAlign:'right' }}>
-                      <div style={{ fontSize:10, color:'#444', fontWeight:700, textTransform:'uppercase', letterSpacing:'0.08em', marginBottom:4, fontFamily:"'Outfit',sans-serif" }}>Current Value</div>
-                      <div style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:15, fontWeight:700, color:'#f0f0f0' }}>{fmt(val)}</div>
+                      <div style={{ fontSize:10, color:'#444', fontWeight:700, textTransform:'uppercase', letterSpacing:'0.08em', marginBottom:4, fontFamily:"'Outfit',sans-serif" }}>Value</div>
+                      <div style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:14, fontWeight:700, color:'#f0f0f0' }}>{fmt(val)}</div>
                     </div>
                     <div style={{ textAlign:'right' }}>
                       <div style={{ fontSize:10, color:'#444', fontWeight:700, textTransform:'uppercase', letterSpacing:'0.08em', marginBottom:4, fontFamily:"'Outfit',sans-serif" }}>G/L</div>
-                      <div style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:15, fontWeight:700, color: glPos?'#e53935':'#616161' }}>{glPos?'+':''}{glPct.toFixed(1)}%</div>
+                      <div style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:14, fontWeight:700, color: glPos?'#e53935':'#616161' }}>{glPos?'+':''}{glPct.toFixed(1)}%</div>
                     </div>
                   </div>
                 </div>
