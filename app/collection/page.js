@@ -156,7 +156,7 @@ function PullIndicator({pullY}) {
 }
 
 function getPriceLinks(card) {
-  const q = encodeURIComponent([card.year, card.player, card.name, card.brand, card.grade ? 'PSA ' + card.grade : ''].filter(Boolean).join(' ') + ' card')
+  const q = encodeURIComponent([card.year, card.player, card.name, card.brand, card.grade ? 'Grade ' + card.grade : ''].filter(Boolean).join(' ') + ' card')
   const qs = encodeURIComponent([card.player, card.year, card.name].filter(Boolean).join(' '))
   return [
     { label: 'eBay Sold Listings', color: '#e53238', url: 'https://www.ebay.com/sch/i.html?_nkw=' + q + '&LH_Sold=1&LH_Complete=1' },
@@ -168,7 +168,7 @@ function getPriceLinks(card) {
 }
 
 function exportCSV(cards) {
-  const headers = ['Player','Sport','Year','Card Name','Brand','Card #','Condition','PSA Grade','Qty','Purchase Date','Buy Price','Current Value','Sold','Sold Price','Sold Date','Notes']
+  const headers = ['Player','Sport','Year','Card Name','Brand','Card #','Condition','Grade','Qty','Purchase Date','Buy Price','Current Value','Sold','Sold Price','Sold Date','Notes']
   const rows = cards.map(c => [c.player,c.sport,c.year,c.name,c.brand,c.num,c.cond,c.grade,c.qty,c.date,c.buy,c.val,c.sold?'Yes':'No',c.soldPrice||'',c.soldDate||'',c.notes||''].map(v => '"' + String(v||'').replace(/"/g,'""') + '"').join(','))
   const csv = [headers.join(','), ...rows].join('\n')
   const blob = new Blob([csv], { type: 'text/csv' })
@@ -192,7 +192,7 @@ function parseCSV(text) {
     vals.push(cur)
     const row = {}
     headers.forEach((h, i) => { row[h] = (vals[i]||'').replace(/"/g,'').trim() })
-    return { player: row['player']||row['player name']||'', sport: row['sport']||'', year: row['year']||'', name: row['card name']||row['name']||'', brand: row['brand']||'', num: row['card #']||row['num']||'', cond: row['condition']||'', grade: row['psa grade']||row['grade']||'', qty: parseInt(row['qty']||'1')||1, date: row['purchase date']||row['date']||'', buy: parseFloat(row['buy price']||row['buy']||'0')||0, val: parseFloat(row['current value']||row['val']||'0')||0, notes: row['notes']||'' }
+    return { player: row['player']||row['player name']||'', sport: row['sport']||'', year: row['year']||'', name: row['card name']||row['name']||'', brand: row['brand']||'', num: row['card #']||row['num']||'', cond: row['condition']||'', grade: row['grade']||row['psa grade']||'', qty: parseInt(row['qty']||'1')||1, date: row['purchase date']||row['date']||'', buy: parseFloat(row['buy price']||row['buy']||'0')||0, val: parseFloat(row['current value']||row['val']||'0')||0, notes: row['notes']||'' }
   }).filter(r => r.player)
 }
 
@@ -279,7 +279,7 @@ function CardModal({ card, onClose, onSave }) {
           {field('Brand', 'brand')}
           {field('Card Number', 'num')}
           {field('Condition', 'cond', 'text', CONDS)}
-          {field('PSA Grade', 'grade')}
+          {field('Grade', 'grade')}
           {field('Quantity', 'qty', 'number')}
           {field('Purchase Date', 'date', 'date')}
           {field('Buy Price ($)', 'buy', 'number')}
@@ -317,7 +317,7 @@ function PriceLookupModal({ card, onClose }) {
           <h2 style={{ fontFamily: "'Outfit',sans-serif", fontSize: 17, fontWeight: 700, color: '#f0f2ff', margin: 0 }}>Check Prices</h2>
           <button onClick={onClose} style={{ background: 'none', border: 'none', color: '#555', cursor: 'pointer', padding: 4 }}><IconClose /></button>
         </div>
-        <p style={{ fontSize: 13, color: '#555', marginBottom: 18, fontFamily: "'Outfit',sans-serif" }}>{card.player}{card.year ? ' · ' + card.year : ''}{card.grade ? ' · PSA ' + card.grade : ''}</p>
+        <p style={{ fontSize: 13, color: '#555', marginBottom: 18, fontFamily: "'Outfit',sans-serif" }}>{card.player}{card.year ? ' · ' + card.year : ''}{card.grade ? ' · Grade ' + card.grade : ''}</p>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
           {links.map(({ label, color, url }) => (
             <a key={label} href={url} target="_blank" rel="noopener noreferrer" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 16px', borderRadius: 10, background: color + '18', border: '1px solid ' + color + '40', textDecoration: 'none' }}>
@@ -419,7 +419,7 @@ function ImportModal({ onClose, onImport }) {
           <h2 style={{ fontFamily: "'Outfit',sans-serif", fontSize: 17, fontWeight: 700, color: '#f0f2ff', margin: 0 }}>Import CSV</h2>
           <button onClick={onClose} style={{ background: 'none', border: 'none', color: '#555', cursor: 'pointer', padding: 4 }}><IconClose /></button>
         </div>
-        <p style={{ fontSize: 13, color: '#555', marginBottom: 16, lineHeight: 1.6, fontFamily: "'Outfit',sans-serif" }}>Upload a CSV with your cards. Required column: <strong style={{ color: '#ccc' }}>Player</strong>. Optional: Sport, Year, Card Name, Brand, PSA Grade, Qty, Buy Price, Current Value.</p>
+        <p style={{ fontSize: 13, color: '#555', marginBottom: 16, lineHeight: 1.6, fontFamily: "'Outfit',sans-serif" }}>Upload a CSV with your cards. Required column: <strong style={{ color: '#ccc' }}>Player</strong>. Optional: Sport, Year, Card Name, Brand, Grade, Qty, Buy Price, Current Value.</p>
         {error && <div style={{ marginBottom: 14, padding: '10px 14px', borderRadius: 10, background: 'rgba(255,107,122,0.1)', color: '#ff5252', fontSize: 13 }}>{error}</div>}
         <div style={{ border: '2px dashed rgba(255,255,255,0.1)', borderRadius: 12, padding: '28px 20px', textAlign: 'center', marginBottom: 16, cursor: 'pointer' }} onClick={() => fileRef.current?.click()}>
           <div style={{ fontSize: 28, marginBottom: 8 }}>📄</div>
@@ -473,7 +473,7 @@ function BreakEvenModal({ card, onClose }) {
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
           <div>
             <h3 style={{ fontFamily: "'Outfit',sans-serif", fontSize: 17, fontWeight: 700, color: '#f0f0f0', margin: 0 }}>Break Even Calculator</h3>
-            <p style={{ fontSize: 12, color: '#555', marginTop: 3, fontFamily: "'Outfit',sans-serif" }}>{card.player} {card.year && `· ${card.year}`} {card.grade && `· PSA ${card.grade}`}</p>
+            <p style={{ fontSize: 12, color: '#555', marginTop: 3, fontFamily: "'Outfit',sans-serif" }}>{card.player} {card.year && `· ${card.year}`} {card.grade && `· Grade ${card.grade}`}</p>
           </div>
           <button onClick={onClose} style={{ background: 'none', border: 'none', color: '#555', cursor: 'pointer', padding: 4 }}><IconClose /></button>
         </div>
@@ -806,7 +806,7 @@ export default function CollectionPage() {
               ))}
             </div>
             <div style={{ display: 'flex', borderRadius: 10, overflow: 'hidden', border: '1px solid #2a2a2a', flexShrink: 0 }}>
-              {[['','All'],['graded','PSA'],['raw','Raw']].map(([val, label]) => (
+              {[['','All'],['graded','Graded'],['raw','Raw']].map(([val, label]) => (
                 <button key={val} onClick={() => setFilterGraded(val)} style={{ padding: '8px 10px', background: filterGraded===val ? 'rgba(229,57,53,0.15)' : '#111', border: 'none', color: filterGraded===val ? '#e53935' : '#555', fontFamily: "'Outfit',sans-serif", fontSize: 12, fontWeight: filterGraded===val ? 700 : 500, cursor: 'pointer', whiteSpace: 'nowrap' }}>{label}</button>
               ))}
             </div>
@@ -900,7 +900,7 @@ export default function CollectionPage() {
                         {/* Status badge */}
                         <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
                           {card.grade
-                            ? <span style={{ padding: '2px 8px', borderRadius: 6, background: 'rgba(229,57,53,0.1)', color: '#e53935', fontSize: 11, fontWeight: 700 }}>PSA {card.grade}</span>
+                            ? <span style={{ padding: '2px 8px', borderRadius: 6, background: 'rgba(229,57,53,0.1)', color: '#e53935', fontSize: 11, fontWeight: 700 }}>{card.grade ? card.grade : ''}</span>
                             : <span style={{ padding: '2px 8px', borderRadius: 6, background: 'rgba(255,255,255,0.05)', color: '#555', fontSize: 11, fontWeight: 600 }}>{card.cond || 'Raw'}</span>
                           }
                           {card.sold && <span style={{ padding: '2px 8px', borderRadius: 6, background: 'rgba(255,190,46,0.1)', color: '#ffbe2e', fontSize: 11, fontWeight: 700 }}>SOLD</span>}
@@ -965,7 +965,7 @@ export default function CollectionPage() {
                             </td>
                             <td style={{ padding: '12px 14px', textAlign: 'right', fontFamily: "'Outfit',sans-serif", fontSize: 12, color: '#666' }}>{card.sport||'—'}</td>
                             <td style={{ padding: '12px 14px', textAlign: 'right', fontFamily: "'JetBrains Mono',monospace", fontSize: 12, color: '#666' }}>{card.year||'—'}</td>
-                            <td style={{ padding: '12px 14px', textAlign: 'right' }}>{card.grade ? <span style={{ padding: '2px 8px', borderRadius: 6, background: 'rgba(229,57,53,0.1)', color: '#e53935', fontSize: 11, fontWeight: 700 }}>PSA {card.grade}</span> : <span style={{ color: '#444', fontSize: 12 }}>{card.cond||'—'}</span>}</td>
+                            <td style={{ padding: '12px 14px', textAlign: 'right' }}>{card.grade ? <span style={{ padding: '2px 8px', borderRadius: 6, background: 'rgba(229,57,53,0.1)', color: '#e53935', fontSize: 11, fontWeight: 700 }}>{card.grade ? card.grade : ''}</span> : <span style={{ color: '#444', fontSize: 12 }}>{card.cond||'—'}</span>}</td>
                             <td style={{ padding: '12px 14px', textAlign: 'right', fontFamily: "'JetBrains Mono',monospace", fontSize: 12, color: '#666' }}>{qty}</td>
                             <td style={{ padding: '12px 14px', textAlign: 'right', fontFamily: "'JetBrains Mono',monospace", fontSize: 13, color: '#666' }}>{fmt(buy)}</td>
                             <td style={{ padding: '12px 14px', textAlign: 'right', fontFamily: "'JetBrains Mono',monospace", fontSize: 13, fontWeight: 700, color: '#f0f2ff' }}>{fmt(displayVal)}</td>
@@ -1008,7 +1008,7 @@ export default function CollectionPage() {
                           <div style={{ minWidth: 0 }}>
                             <div style={{ fontFamily: "'Outfit',sans-serif", fontSize: 15, fontWeight: 700, color: '#f0f0f0' }}>{card.player}</div>
                             <div style={{ fontSize: 12, color: '#555', marginTop: 2 }}>
-                              {[card.year, card.sport, card.brand, card.grade ? `PSA ${card.grade}` : card.cond].filter(Boolean).join(' · ')}
+                              {[card.year, card.sport, card.brand, card.grade ? `Grade ${card.grade}` : card.cond].filter(Boolean).join(' · ')}
                             </div>
                           </div>
                         </div>

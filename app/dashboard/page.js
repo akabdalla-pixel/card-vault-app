@@ -476,7 +476,7 @@ export default function DashboardPage() {
                     </div>
                     <div style={{ fontFamily:"'Outfit',sans-serif", fontSize:20, fontWeight:800, color:'#f0f0f0', letterSpacing:'-0.5px' }}>{cardOfTheDay.player}</div>
                     <div style={{ fontSize:12, color:'#555', marginTop:4, fontFamily:"'Outfit',sans-serif" }}>
-                      {[cardOfTheDay.year, cardOfTheDay.sport, cardOfTheDay.brand, cardOfTheDay.grade ? `PSA ${cardOfTheDay.grade}` : cardOfTheDay.cond].filter(Boolean).join(' · ')}
+                      {[cardOfTheDay.year, cardOfTheDay.sport, cardOfTheDay.brand, cardOfTheDay.grade ? `Grade ${cardOfTheDay.grade}` : cardOfTheDay.cond].filter(Boolean).join(' · ')}
                     </div>
                   </div>
                   <div style={{ display:'flex', gap:14, flexShrink:0, flexWrap:'wrap' }}>

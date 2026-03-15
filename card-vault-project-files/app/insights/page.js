@@ -278,7 +278,7 @@ function PersonalRecords({ cards, soldCards }) {
     { icon: '🪙', label: 'Cheapest Card', value: cheapest?.player || '—', sub: cheapest ? fmt(parseFloat(cheapest.buy) || 0) : '', subColor: '#888' },
     { icon: '🏛️', label: 'Oldest Card', value: oldest?.player || '—', sub: oldest?.year || '', subColor: '#888' },
     { icon: '🆕', label: 'Latest Addition', value: newest?.player || '—', sub: newest ? new Date(newest.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : '', subColor: '#888' },
-    { icon: '🏅', label: 'Highest Grade', value: topGrade?.player || '—', sub: topGrade ? `PSA ${topGrade.grade}` : 'No graded cards', subColor: '#e53935' },
+    { icon: '🏅', label: 'Highest Grade', value: topGrade?.player || '—', sub: topGrade ? `Grade ${topGrade.grade}` : 'No graded cards', subColor: '#e53935' },
     ...(bestFlip ? [{ icon: '🔥', label: 'Best Flip Ever', value: bestFlip.player, sub: `+${fmt((parseFloat(bestFlip.soldPrice) || 0) - (parseFloat(bestFlip.buy) || 0))}`, subColor: '#22c55e' }] : []),
   ]
 
@@ -359,7 +359,7 @@ export default function InsightsPage() {
 
   // Grader breakdown
   const graderData = [
-    { label: 'PSA', value: activeCards.filter(c => c.grade && !c.cond?.includes('BGS')).length },
+    { label: 'Graded', value: activeCards.filter(c => c.grade && !c.cond?.includes('BGS')).length },
     { label: 'BGS', value: activeCards.filter(c => c.cond?.includes('BGS')).length },
     { label: 'Raw', value: rawCards.length },
   ].filter(d => d.value > 0)
