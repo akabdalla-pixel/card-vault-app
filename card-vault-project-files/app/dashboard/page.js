@@ -7,13 +7,14 @@ const LOGO = '/logo-transparent.png'
 const NAV = [
   { label: 'Dashboard', href: '/dashboard' },
   { label: 'Collection', href: '/collection' },
-  { label: 'Wish List', href: '/wishlist' },
+  { label: 'Insights', href: '/insights' },
   { label: 'Sold History', href: '/sold' },
 ]
 
 function IconDashboard() { return <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg> }
 function IconCollection() { return <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/><line x1="12" y1="12" x2="12" y2="16"/><line x1="10" y1="14" x2="14" y2="14"/></svg> }
-function IconWishlist() { return <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg> }
+function IconMarket() { return <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg> }
+function IconInsights() { return <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg> }
 function IconSold() { return <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg> }
 function IconSettings() { return <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg> }
 function IconLogout() { return <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg> }
@@ -21,7 +22,7 @@ function IconTrendUp() { return <svg width="12" height="12" viewBox="0 0 24 24" 
 function IconTrendDown() { return <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="23 18 13.5 8.5 8.5 13.5 1 6"/><polyline points="17 18 23 18 23 12"/></svg> }
 function IconCheck() { return <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg> }
 
-const navIcons = { 'Dashboard': IconDashboard, 'Collection': IconCollection, 'Market': IconMarket, 'Insights': IconInsights, 'Sold History': IconSold }
+const navIcons = { 'Dashboard': IconDashboard, 'Collection': IconCollection, 'Insights': IconInsights, 'Sold History': IconSold }
 const fmt = n => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 2 }).format(n || 0)
 
 function Sidebar({ user, onLogout, active }) {
@@ -236,6 +237,15 @@ export default function DashboardPage() {
 
   const activeCards = cards.filter(c=>!c.sold)
   const soldCards = cards.filter(c=>c.sold)
+  // ── Card of the Day ──────────────────────────────────────────
+  const cardOfTheDay = (() => {
+    if (!activeCards.length) return null
+    // Use today's date as seed so it changes daily but is consistent within a day
+    const today = new Date()
+    const seed = today.getFullYear() * 10000 + (today.getMonth() + 1) * 100 + today.getDate()
+    return activeCards[seed % activeCards.length]
+  })()
+
   const totalInvested = activeCards.reduce((s,c)=>s+(parseFloat(c.buy)||0)*(parseInt(c.qty)||1),0)
   const currentValue = activeCards.reduce((s,c)=>s+(parseFloat(c.val)||parseFloat(c.buy)||0)*(parseInt(c.qty)||1),0)
   const gainLoss = currentValue-totalInvested
@@ -291,6 +301,51 @@ export default function DashboardPage() {
             <StatCard label="Realized P&L" value={`${realizedPL>=0?'+':''}${fmt(realizedPL)}`} sub={`${soldCards.length} card${soldCards.length!==1?'s':''} sold`} positive={soldCards.length>0?realizedPL>=0:undefined} />
           </div>
           {activeCards.length>1&&<div style={{ marginTop:22 }}><TopMovers cards={activeCards} /></div>}
+
+          {/* ── Card of the Day ── */}
+          {cardOfTheDay && (() => {
+            const buy = (parseFloat(cardOfTheDay.buy)||0)*(parseInt(cardOfTheDay.qty)||1)
+            const val = (parseFloat(cardOfTheDay.val)||parseFloat(cardOfTheDay.buy)||0)*(parseInt(cardOfTheDay.qty)||1)
+            const gl = val - buy
+            const glPos = gl >= 0
+            const glPct = buy > 0 ? (gl / buy) * 100 : 0
+            const today = new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })
+            return (
+              <div style={{ marginTop:22, background:'linear-gradient(135deg,#1a0a0a,#0d0d0d)', border:'1px solid rgba(229,57,53,0.2)', borderRadius:14, padding:'18px 22px', position:'relative', overflow:'hidden' }}>
+                <div style={{ position:'absolute', top:0, left:0, right:0, height:2, background:'linear-gradient(90deg,#e53935,#ff5252,#e53935)' }} />
+                <div style={{ display:'flex', alignItems:'flex-start', justifyContent:'space-between', flexWrap:'wrap', gap:12 }}>
+                  <div style={{ flex:1, minWidth:0 }}>
+                    <div style={{ display:'flex', alignItems:'center', gap:8, marginBottom:8 }}>
+                      <span style={{ fontSize:18 }}>🃏</span>
+                      <div>
+                        <div style={{ fontFamily:"'Outfit',sans-serif", fontSize:10, fontWeight:700, color:'#e53935', textTransform:'uppercase', letterSpacing:'0.1em' }}>Card of the Day</div>
+                        <div style={{ fontSize:10, color:'#444', fontFamily:"'Outfit',sans-serif", marginTop:1 }}>{today}</div>
+                      </div>
+                    </div>
+                    <div style={{ fontFamily:"'Outfit',sans-serif", fontSize:20, fontWeight:800, color:'#f0f0f0', letterSpacing:'-0.5px' }}>{cardOfTheDay.player}</div>
+                    <div style={{ fontSize:12, color:'#555', marginTop:4, fontFamily:"'Outfit',sans-serif" }}>
+                      {[cardOfTheDay.year, cardOfTheDay.sport, cardOfTheDay.brand, cardOfTheDay.grade ? `PSA ${cardOfTheDay.grade}` : cardOfTheDay.cond].filter(Boolean).join(' · ')}
+                    </div>
+                  </div>
+                  <div style={{ display:'flex', gap:20, flexShrink:0 }}>
+                    <div style={{ textAlign:'right' }}>
+                      <div style={{ fontSize:10, color:'#444', fontWeight:700, textTransform:'uppercase', letterSpacing:'0.08em', marginBottom:4, fontFamily:"'Outfit',sans-serif" }}>Buy Price</div>
+                      <div style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:15, color:'#666' }}>{fmt(buy)}</div>
+                    </div>
+                    <div style={{ textAlign:'right' }}>
+                      <div style={{ fontSize:10, color:'#444', fontWeight:700, textTransform:'uppercase', letterSpacing:'0.08em', marginBottom:4, fontFamily:"'Outfit',sans-serif" }}>Current Value</div>
+                      <div style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:15, fontWeight:700, color:'#f0f0f0' }}>{fmt(val)}</div>
+                    </div>
+                    <div style={{ textAlign:'right' }}>
+                      <div style={{ fontSize:10, color:'#444', fontWeight:700, textTransform:'uppercase', letterSpacing:'0.08em', marginBottom:4, fontFamily:"'Outfit',sans-serif" }}>G/L</div>
+                      <div style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:15, fontWeight:700, color: glPos?'#e53935':'#616161' }}>{glPos?'+':''}{glPct.toFixed(1)}%</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )
+          })()}
+
           <div className="body-grid">
             {activeCards.length>0&&(
               <div style={{ background:'#111',border:'1px solid #1e1e1e',borderRadius:14,overflow:'hidden' }}>
@@ -354,4 +409,3 @@ export default function DashboardPage() {
     </>
   )
 }
-
