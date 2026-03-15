@@ -385,8 +385,8 @@ export default function DashboardPage() {
   const loadData = useCallback(async () => {
     try {
       const [meRes, cardsRes] = await Promise.all([
-        fetch('/api/auth/me'),
-        fetch('/api/cards'),
+        fetch('/api/auth/me', { cache: 'no-store' }),
+        fetch('/api/cards', { cache: 'no-store' }),
       ]);
       if (!meRes.ok) { router.push('/login'); return; }
       setUser((await meRes.json()).user);
