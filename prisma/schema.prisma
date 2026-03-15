@@ -1,0 +1,57 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  username  String   @unique
+  password  String
+  createdAt DateTime @default(now())
+  cards     Card[]
+  wishes    Wish[]
+}
+
+model Card {
+  id        String   @id @default(cuid())
+  sport     String?
+  year      String?
+  player    String
+  name      String?
+  brand     String?
+  num       String?
+  cond      String?
+  grade     String?
+  qty       Int      @default(1)
+  date      String?
+  buy       Float    @default(0)
+  val       Float    @default(0)
+  notes     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Wish {
+  id        String   @id @default(cuid())
+  pri       String   @default("medium")
+  sport     String?
+  player    String
+  name      String?
+  year      String?
+  brand     String?
+  target    Float    @default(0)
+  market    Float    @default(0)
+  status    String   @default("watching")
+  notes     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
