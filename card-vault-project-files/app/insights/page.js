@@ -25,11 +25,70 @@ function IconStar() { return <svg width="14" height="14" viewBox="0 0 24 24" fil
 function IconTrophy() { return <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2z"/></svg> }
 
 const navIcons = { 'Dashboard': IconDashboard, 'Collection': IconCollection, 'Market': IconMarket, 'Insights': IconInsights, 'Sold History': IconSold }
+
+// ── Toast ─────────────────────────────────────────────────────────────────────
+let _toastFn = null
+function showToast(msg, type='success', onUndo=null) { if(_toastFn) _toastFn(msg,type,onUndo) }
+function ToastContainer() {
+  const [toasts,setToasts] = useState([])
+  useEffect(() => {
+    _toastFn = (msg,type,onUndo) => {
+      const id = Date.now()
+      setToasts(prev => [...prev.slice(-2),{id,msg,type,onUndo}])
+      setTimeout(() => setToasts(prev => prev.filter(t=>t.id!==id)),3000)
+    }
+    return () => { _toastFn=null }
+  },[])
+  const colors={success:'#22c55e',error:'#e53935',info:'#888'}
+  const icons={success:'✓',error:'✕',info:'ℹ'}
+  if(!toasts.length) return null
+  return (
+    <div style={{position:'fixed',bottom:88,left:'50%',transform:'translateX(-50%)',zIndex:9999,display:'flex',flexDirection:'column',gap:8,alignItems:'center',pointerEvents:'none'}}>
+      {toasts.map(t=>(
+        <div key={t.id} style={{display:'flex',alignItems:'center',gap:10,padding:'10px 18px',borderRadius:12,background:'#1e1e1e',border:`1px solid ${colors[t.type]}50`,boxShadow:'0 8px 28px rgba(0,0,0,0.6)',fontFamily:"'Outfit',sans-serif",fontSize:13,fontWeight:600,color:'#f0f0f0',pointerEvents:'auto',animation:'toastIn 0.2s ease',whiteSpace:'nowrap'}}>
+          <span style={{color:colors[t.type]}}>{icons[t.type]}</span>
+          {t.msg}
+          {t.onUndo&&<button onClick={t.onUndo} style={{marginLeft:6,padding:'2px 10px',borderRadius:6,background:'rgba(255,255,255,0.08)',border:'none',color:'#e53935',fontFamily:"'Outfit',sans-serif",fontSize:12,fontWeight:700,cursor:'pointer',pointerEvents:'auto'}}>Undo</button>}
+        </div>
+      ))}
+    </div>
+  )
+}
+
+
+// ── Skeleton ─────────────────────────────────────────────────────────────────
+function Sk({w='100%',h=20,r=8,style={}}) {
+  return <div style={{width:w,height:h,borderRadius:r,background:'linear-gradient(90deg,#1a1a1a 25%,#242424 50%,#1a1a1a 75%)',backgroundSize:'200% 100%',animation:'shimmer 1.4s infinite',flexShrink:0,...style}} />
+}
+
+
+// ── Pull to Refresh ───────────────────────────────────────────────────────────
+function usePullToRefresh(onRefresh) {
+  const [pullY,setPullY] = useState(0)
+  const startY = useRef(0)
+  const active = useRef(false)
+  useEffect(() => {
+    const onStart = e => { if(window.scrollY===0){startY.current=e.touches[0].clientY;active.current=true} }
+    const onMove = e => { if(!active.current)return; const dy=Math.max(0,Math.min(72,e.touches[0].clientY-startY.current)); setPullY(dy) }
+    const onEnd = () => { if(!active.current)return; active.current=false; if(pullY>=60){onRefresh();showToast('Refreshed','info')} setPullY(0) }
+    window.addEventListener('touchstart',onStart,{passive:true})
+    window.addEventListener('touchmove',onMove,{passive:true})
+    window.addEventListener('touchend',onEnd)
+    return () => { window.removeEventListener('touchstart',onStart); window.removeEventListener('touchmove',onMove); window.removeEventListener('touchend',onEnd) }
+  },[onRefresh,pullY])
+  return pullY
+}
+function PullIndicator({pullY}) {
+  if(!pullY) return null
+  const ready = pullY>=60
+  return <div style={{position:'fixed',top:0,left:'50%',transform:'translateX(-50%)',zIndex:999,padding:'8px 16px',borderRadius:'0 0 12px 12px',background:'#1a1a1a',border:'1px solid #2a2a2a',borderTop:'none',fontFamily:"'Outfit',sans-serif",fontSize:12,color:ready?'#22c55e':'#555',fontWeight:600,display:'flex',alignItems:'center',gap:6}}><span style={{display:'inline-block',animation:ready?'spin 0.5s linear infinite':'none'}}>↓</span>{ready?'Release to refresh':'Pull to refresh'}</div>
+}
+
 const fmt = n => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 2 }).format(n || 0)
 const RED = '#e53935'
 const CHART_COLORS = ['#e53935','#ff7043','#ffb300','#66bb6a','#42a5f5','#ab47bc','#26c6da','#ff5252','#ffa726','#9ccc65']
 
-function Sidebar({ user, onLogout, active }) {
+function Sidebar({ user, onLogout, active, cardCount = 0 }) {
   return (
     <aside style={{ width: 220, minHeight: '100vh', background: '#0d0d0d', borderRight: '1px solid #1e1e1e', display: 'flex', flexDirection: 'column', position: 'fixed', top: 0, left: 0, zIndex: 60 }}>
       <div style={{ padding: '16px 16px 12px', borderBottom: '1px solid #1e1e1e', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -40,7 +99,7 @@ function Sidebar({ user, onLogout, active }) {
         {NAV.map(({ label, href }) => {
           const isActive = active === label
           const Icon = navIcons[label]
-          return <Link key={label} href={href} style={{ display: 'flex', alignItems: 'center', gap: 11, padding: '9px 12px', borderRadius: 10, marginBottom: 2, textDecoration: 'none', color: isActive ? '#e53935' : '#666', background: isActive ? 'rgba(229,57,53,0.08)' : 'transparent', fontFamily: "'Outfit',sans-serif", fontSize: 14, fontWeight: isActive ? 600 : 500, borderLeft: isActive ? '2px solid #e53935' : '2px solid transparent', transition: 'all 0.15s' }}><Icon />{label}</Link>
+          return <Link key={label} href={href} style={{ display: 'flex', alignItems: 'center', gap: 11, padding: '9px 12px', borderRadius: 10, marginBottom: 2, textDecoration: 'none', color: isActive ? '#e53935' : '#666', background: isActive ? 'rgba(229,57,53,0.08)' : 'transparent', fontFamily: "'Outfit',sans-serif", fontSize: 14, fontWeight: isActive ? 600 : 500, borderLeft: isActive ? '2px solid #e53935' : '2px solid transparent', transition: 'all 0.15s' }}><Icon /><span style={{flex:1}}>{label}</span>{label === 'Collection' && cardCount > 0 && <span style={{fontSize:10,fontWeight:700,background:'rgba(229,57,53,0.15)',color:'#e53935',borderRadius:6,padding:'1px 6px',fontFamily:"'JetBrains Mono',monospace"}}>{cardCount}</span>}</Link>
         })}
       </nav>
       <div style={{ padding: '14px 10px', borderTop: '1px solid #1e1e1e' }}>
@@ -267,6 +326,7 @@ function PersonalRecords({ cards, soldCards }) {
 export default function InsightsPage() {
   const [cards, setCards] = useState([])
   const [user, setUser] = useState(null)
+  const pullY = usePullToRefresh(() => { setLoading(true); Promise.all([fetch(\'/api/auth/me\',{cache:\'no-store\'}),fetch(\'/api/cards\',{cache:\'no-store\'})]).then(async([meRes,cardsRes])=>{if(meRes.ok)setUser((await meRes.json()).user);if(cardsRes.ok)setCards(await cardsRes.json());setLoading(false)}) })
   const [loading, setLoading] = useState(true)
   const router = useRouter()
 
@@ -284,7 +344,12 @@ export default function InsightsPage() {
 
   async function handleLogout() { await fetch('/api/auth/logout', { method: 'POST' }); router.push('/login') }
 
-  if (loading) return <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#0a0a0a' }}><img src={LOGO} alt="TopLoad" style={{ width: 120, opacity: 0.4, filter: 'drop-shadow(0 0 8px rgba(229,57,53,0.4))' }} /></div>
+  if (loading) return (
+    <div style={{display:'flex',minHeight:'100vh',background:'#0a0a0a'}}>
+      <div className="sidebar-el" style={{width:220,minHeight:'100vh',background:'#0d0d0d',borderRight:'1px solid #1e1e1e',flexShrink:0}} />
+      <div style={{flex:1,padding:28}}><Sk h={28} r={8} style={{marginBottom:24,maxWidth:180}} /><Sk h={240} r={16} style={{marginBottom:14}} /><div style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:14,marginBottom:14}}><Sk h={85} r={14}/><Sk h={85} r={14}/><Sk h={85} r={14}/><Sk h={85} r={14}/></div><div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:20}}><Sk h={200} r={14}/><Sk h={200} r={14}/></div></div>
+    </div>
+  )
 
   const activeCards = cards.filter(c => !c.sold)
   const soldCards = cards.filter(c => c.sold)
@@ -338,6 +403,16 @@ export default function InsightsPage() {
   return (
     <>
       <style>{`
+        @keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+  @keyframes toastIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+  @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+  @keyframes scaleIn{from{opacity:0;transform:scale(0.96)}to{opacity:1;transform:scale(1)}}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  button:not(:disabled):active{transform:scale(0.94)!important;opacity:0.85!important}
+  a.press:active{transform:scale(0.94)!important;opacity:0.85!important}
+  .press{transition:transform 0.1s ease,opacity 0.1s ease!important}
+  .press:active{transform:scale(0.93)!important;opacity:0.8!important}
         .sidebar-el{display:flex;flex-direction:column}.mobile-only{display:none!important}.mob-topbar{display:none}.main-wrap{margin-left:220px;min-height:100vh;width:calc(100% - 220px)}
         .insights-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
         .insights-grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
@@ -356,8 +431,9 @@ export default function InsightsPage() {
         }
       `}</style>
       <div style={{ display: 'flex', minHeight: '100vh', background: '#0a0a0a' }}>
-        <div className="sidebar-el"><Sidebar user={user} onLogout={handleLogout} active="Insights" /></div>
-        <main className="main-wrap" style={{ padding: '28px 28px 40px' }}>
+        <div className="sidebar-el"><Sidebar user={user} onLogout={handleLogout} active="Insights" cardCount={activeCards.length} /></div>
+        <PullIndicator pullY={pullY} />
+          <main className="main-wrap" style={{ padding: '28px 28px 40px' }}>
 
           {/* Mobile topbar */}
           <div className="mob-topbar" style={{ alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
@@ -452,6 +528,7 @@ export default function InsightsPage() {
             </>
           )}
         </main>
+        <ToastContainer />
         <BottomNav active="Insights" />
       </div>
     </>

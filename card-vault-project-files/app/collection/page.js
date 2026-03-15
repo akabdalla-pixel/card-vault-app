@@ -38,6 +38,114 @@ const SPORTS = ['Baseball', 'Basketball', 'Football', 'Soccer', 'Hockey', 'Tenni
 const CONDS = ['Mint', 'Near Mint', 'Excellent', 'Very Good', 'Good', 'Poor']
 const EMPTY = { sport: '', year: '', player: '', name: '', brand: '', num: '', cond: '', grade: '', qty: '1', date: '', buy: '', val: '', notes: '', sold: false, soldPrice: '', soldDate: '' }
 
+// ── Toast ──────────────────────────────────────────────────────────────────────
+let _toastFn = null
+function showToast(msg, type = 'success', onUndo = null) { if (_toastFn) _toastFn(msg, type, onUndo) }
+function ToastContainer() {
+  const [toasts, setToasts] = useState([])
+  useEffect(() => {
+    _toastFn = (msg, type, onUndo) => {
+      const id = Date.now()
+      setToasts(prev => [...prev.slice(-2), { id, msg, type, onUndo }])
+      setTimeout(() => setToasts(prev => prev.filter(t => t.id !== id)), 3000)
+    }
+    return () => { _toastFn = null }
+  }, [])
+  const colors = { success: '#22c55e', error: '#e53935', info: '#888' }
+  const icons = { success: '✓', error: '✕', info: 'ℹ' }
+  if (!toasts.length) return null
+  return (
+    <div style={{ position:'fixed', bottom:88, left:'50%', transform:'translateX(-50%)', zIndex:9999, display:'flex', flexDirection:'column', gap:8, alignItems:'center', pointerEvents:'none' }}>
+      {toasts.map(t => (
+        <div key={t.id} style={{ display:'flex', alignItems:'center', gap:10, padding:'10px 18px', borderRadius:12, background:'#1e1e1e', border:`1px solid ${colors[t.type]}50`, boxShadow:'0 8px 28px rgba(0,0,0,0.6)', fontFamily:"'Outfit',sans-serif", fontSize:13, fontWeight:600, color:'#f0f0f0', pointerEvents:'auto', animation:'toastIn 0.2s ease', whiteSpace:'nowrap' }}>
+          <span style={{ color:colors[t.type] }}>{icons[t.type]}</span>
+          {t.msg}
+          {t.onUndo && <button onClick={t.onUndo} style={{ marginLeft:6, padding:'2px 10px', borderRadius:6, background:'rgba(255,255,255,0.08)', border:'none', color:'#e53935', fontFamily:"'Outfit',sans-serif", fontSize:12, fontWeight:700, cursor:'pointer', pointerEvents:'auto' }}>Undo</button>}
+        </div>
+      ))}
+    </div>
+  )
+}
+
+// ── Skeleton ──────────────────────────────────────────────────────────────────
+function Sk({ w='100%', h=20, r=8, style={} }) {
+  return <div style={{ width:w, height:h, borderRadius:r, background:'linear-gradient(90deg,#1a1a1a 25%,#242424 50%,#1a1a1a 75%)', backgroundSize:'200% 100%', animation:'shimmer 1.4s infinite', ...style }} />
+}
+function CollectionSkeleton() {
+  return (
+    <div style={{ padding:'16px 16px 80px' }}>
+      <div style={{ display:'flex', justifyContent:'space-between', marginBottom:16 }}><Sk w={150} h={26} r={8} /><Sk w={90} h={36} r={10} /></div>
+      <Sk h={42} r={10} style={{ marginBottom:10 }} />
+      <Sk h={36} r={10} style={{ marginBottom:16 }} />
+      {[1,2,3,4].map(i => (
+        <div key={i} style={{ background:'#111', border:'1px solid #1e1e1e', borderRadius:14, padding:'14px 16px', marginBottom:10, animation:`fadeUp 0.3s ease ${i*0.07}s both` }}>
+          <div style={{ display:'flex', justifyContent:'space-between', marginBottom:10 }}><Sk w={160} h={16} r={6} /><Sk w={50} h={22} r={6} /></div>
+          <div style={{ display:'flex', gap:10, marginBottom:10 }}><Sk w={70} h={34} r={8} /><Sk w={70} h={34} r={8} /><Sk w={70} h={34} r={8} /></div>
+          <div style={{ display:'flex', gap:6 }}><Sk h={32} r={8} style={{ flex:1 }} /><Sk h={32} r={8} style={{ flex:1 }} /><Sk h={32} r={8} style={{ flex:1 }} /></div>
+        </div>
+      ))}
+    </div>
+  )
+}
+
+// ── Pull to Refresh ───────────────────────────────────────────────────────────
+function usePullToRefresh(onRefresh) {
+  const [pullY, setPullY] = useState(0)
+  const startY = useRef(0)
+  const active = useRef(false)
+  useEffect(() => {
+    const onStart = e => { if (window.scrollY === 0) { startY.current = e.touches[0].clientY; active.current = true } }
+    const onMove = e => {
+      if (!active.current) return
+      const dy = Math.max(0, Math.min(70, e.touches[0].clientY - startY.current))
+      setPullY(dy)
+    }
+    const onEnd = () => {
+      if (!active.current) return
+      active.current = false
+      if (pullY >= 60) onRefresh()
+      setPullY(0)
+    }
+    window.addEventListener('touchstart', onStart, { passive:true })
+    window.addEventListener('touchmove', onMove, { passive:true })
+    window.addEventListener('touchend', onEnd)
+    return () => { window.removeEventListener('touchstart', onStart); window.removeEventListener('touchmove', onMove); window.removeEventListener('touchend', onEnd) }
+  }, [onRefresh, pullY])
+  return pullY
+}
+
+// ── Swipeable Card Row (mobile) ───────────────────────────────────────────────
+function SwipeableCard({ children, onDelete }) {
+  const [swipeX, setSwipeX] = useState(0)
+  const startX = useRef(0)
+  const dragging = useRef(false)
+  const onStart = e => { startX.current = e.touches[0].clientX; dragging.current = true }
+  const onMove = e => {
+    if (!dragging.current) return
+    const dx = Math.min(0, Math.max(-80, e.touches[0].clientX - startX.current))
+    setSwipeX(dx)
+  }
+  const onEnd = () => {
+    dragging.current = false
+    if (swipeX < -60) setSwipeX(-72)
+    else setSwipeX(0)
+  }
+  return (
+    <div style={{ position:'relative', overflow:'hidden', borderRadius:14 }}>
+      {/* Delete button revealed on swipe */}
+      <div style={{ position:'absolute', right:0, top:0, bottom:0, width:72, background:'rgba(229,57,53,0.15)', display:'flex', alignItems:'center', justifyContent:'center', borderRadius:'0 14px 14px 0', border:'1px solid rgba(229,57,53,0.3)' }}
+        onClick={() => { setSwipeX(0); onDelete() }}>
+        <IconTrash />
+      </div>
+      {/* Card content */}
+      <div style={{ transform:`translateX(${swipeX}px)`, transition: dragging.current ? 'none' : 'transform 0.2s ease', willChange:'transform' }}
+        onTouchStart={onStart} onTouchMove={onMove} onTouchEnd={onEnd}>
+        {children}
+      </div>
+    </div>
+  )
+}
+
 function getPriceLinks(card) {
   const q = encodeURIComponent([card.year, card.player, card.name, card.brand, card.grade ? 'PSA ' + card.grade : ''].filter(Boolean).join(' ') + ' card')
   const qs = encodeURIComponent([card.player, card.year, card.name].filter(Boolean).join(' '))
@@ -79,7 +187,7 @@ function parseCSV(text) {
   }).filter(r => r.player)
 }
 
-function Sidebar({ user, onLogout }) {
+function Sidebar({ user, onLogout, cardCount = 0 }) {
   return (
     <aside style={{ width: 220, minHeight: '100vh', background: '#0d0d0d', borderRight: '1px solid #1e1e1e', display: 'flex', flexDirection: 'column', position: 'fixed', top: 0, left: 0, zIndex: 60 }}>
       <div style={{ padding: '16px 16px 12px', display: 'flex', alignItems: 'center', justifyContent: 'center', borderBottom: '1px solid #1e1e1e' }}>
@@ -91,7 +199,7 @@ function Sidebar({ user, onLogout }) {
         {NAV.map(({ label, href }) => {
           const active = typeof window !== 'undefined' && window.location.pathname === href
           const Icon = navIcons[label]
-          return <Link key={label} href={href} style={{ display: 'flex', alignItems: 'center', gap: 11, padding: '9px 12px', borderRadius: 10, marginBottom: 2, textDecoration: 'none', color: active ? '#e53935' : '#6a75a0', background: active ? 'rgba(229,57,53,0.08)' : 'transparent', fontFamily: "'Outfit',sans-serif", fontSize: 14, fontWeight: active ? 600 : 500, borderLeft: active ? '2px solid #e53935' : '2px solid transparent', transition: 'all 0.15s' }}><Icon />{label}</Link>
+          return <Link key={label} href={href} style={{ display: 'flex', alignItems: 'center', gap: 11, padding: '9px 12px', borderRadius: 10, marginBottom: 2, textDecoration: 'none', color: active ? '#e53935' : '#6a75a0', background: active ? 'rgba(229,57,53,0.08)' : 'transparent', fontFamily: "'Outfit',sans-serif", fontSize: 14, fontWeight: active ? 600 : 500, borderLeft: active ? '2px solid #e53935' : '2px solid transparent', transition: 'all 0.15s' }}><Icon /><span style={{ flex:1 }}>{label}</span>{label === 'Collection' && cardCount > 0 && <span style={{ fontSize:10, fontWeight:700, background:'rgba(229,57,53,0.15)', color:'#e53935', borderRadius:6, padding:'1px 6px', fontFamily:"'JetBrains Mono',monospace" }}>{cardCount}</span>}</Link>
         })}
       </nav>
       <div style={{ padding: '14px 10px', borderTop: '1px solid #1e1e1e' }}>
@@ -469,18 +577,26 @@ export default function CollectionPage() {
   useEffect(() => { load() }, [load])
 
   async function handleLogout() { await fetch('/api/auth/logout', { method: 'POST' }); router.push('/login') }
-  async function handleDelete(id) { await fetch('/api/cards', { method: 'DELETE', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id }) }); setDeleteId(null); load() }
+  async function handleDelete(id) {
+    const card = cards.find(c => c.id === id)
+    await fetch('/api/cards', { method: 'DELETE', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id }) })
+    setDeleteId(null)
+    load()
+    showToast(`${card?.player || 'Card'} deleted`, 'error')
+  }
 
   function toggleSelect(id) {
     setSelected(prev => { const next = new Set(prev); next.has(id) ? next.delete(id) : next.add(id); return next })
   }
 
   async function handleBulkDelete() {
+    const count = selected.size
     setBulkDeleting(true)
     for (const id of selected) {
       await fetch('/api/cards', { method: 'DELETE', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id }) })
     }
     setSelected(new Set()); setBulkDeleting(false); load()
+    showToast(`${count} card${count !== 1 ? 's' : ''} deleted`, 'error')
   }
 
   const filtered = cards.filter(c => {
@@ -511,7 +627,14 @@ export default function CollectionPage() {
   const totalSoldCost = soldCards.reduce((s, c) => s + (parseFloat(c.buy)||0), 0)
   const realizedPL = totalSoldRevenue - totalSoldCost
 
-  if (loading) return <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#0a0a0a' }}><div style={{ color: '#444', fontFamily: "'Outfit',sans-serif", fontSize: 14 }}>Loading...</div></div>
+  const pullY = usePullToRefresh(load)
+
+  if (loading) return (
+    <div style={{ display:'flex', minHeight:'100vh', background:'#0a0a0a' }}>
+      <div className="sidebar-el" style={{ width:220, minHeight:'100vh', background:'#0d0d0d', borderRight:'1px solid #1e1e1e', flexShrink:0 }} />
+      <div style={{ flex:1 }}><CollectionSkeleton /></div>
+    </div>
+  )
 
   return (
     <>
@@ -525,6 +648,13 @@ export default function CollectionPage() {
         .mob-filters{display:none!important}
         .desk-filters{display:flex!important}
         .hide-mob{display:block!important}
+        .press-btn{transition:transform 0.1s ease,opacity 0.1s ease;cursor:pointer}
+        .press-btn:active{transform:scale(0.93)!important;opacity:0.85}
+        @keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+        @keyframes toastIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+        @keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+        @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+        @keyframes scaleIn{from{opacity:0;transform:scale(0.96)}to{opacity:1;transform:scale(1)}}
         @media(max-width:768px){
           .sidebar-el{display:none!important}.mobile-only{display:flex!important}.mob-topbar{display:flex}
           .main-wrap{margin-left:0!important;width:100%!important;padding-bottom:80px!important;padding:12px 12px 80px!important}
@@ -536,11 +666,12 @@ export default function CollectionPage() {
         }
       `}</style>
       <div style={{ display: 'flex', minHeight: '100vh', background: '#0a0a0a' }}>
-        <div className="sidebar-el"><Sidebar user={user} onLogout={handleLogout} /></div>
+        <div className="sidebar-el"><Sidebar user={user} onLogout={handleLogout} cardCount={activeCards.length} /></div>
+        <PullIndicator pullY={pullY} />
         <main className="main-wrap" style={{ padding: '30px 28px' }}>
           <div className="mob-topbar" style={{ alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
             <img src="/logo-transparent.png" alt="TopLoad" style={{ height: 30, width: 'auto', objectFit: 'contain', filter: 'drop-shadow(0 0 8px rgba(229,57,53,0.4))' }} />
-            <button onClick={() => setModal('add')} style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '8px 14px', background: 'rgba(229,57,53,0.1)', border: '1px solid rgba(229,57,53,0.25)', borderRadius: 10, color: '#e53935', fontFamily: "'Outfit',sans-serif", fontSize: 13, fontWeight: 700, cursor: 'pointer' }}>+ Add Card</button>
+            <button onClick={() => setModal('add')} className="press" style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '8px 14px', background: 'rgba(229,57,53,0.1)', border: '1px solid rgba(229,57,53,0.25)', borderRadius: 10, color: '#e53935', fontFamily: "'Outfit',sans-serif", fontSize: 13, fontWeight: 700, cursor: 'pointer' }} className='press'>+ Add Card</button>
           </div>
           {/* ── Desktop header ── */}
           <div className="hide-mob" style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12, marginBottom: 22 }}>
@@ -551,7 +682,7 @@ export default function CollectionPage() {
             <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
               <button onClick={() => setShowImport(true)} style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '9px 14px', background: 'rgba(255,255,255,0.05)', border: '1px solid #2a2a2a', borderRadius: 10, color: '#666', fontFamily: "'Outfit',sans-serif", fontSize: 13, fontWeight: 600, cursor: 'pointer' }}><IconUpload />Import CSV</button>
               <button onClick={() => exportCSV(cards)} disabled={!cards.length} style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '9px 14px', background: 'rgba(255,255,255,0.05)', border: '1px solid #2a2a2a', borderRadius: 10, color: '#666', fontFamily: "'Outfit',sans-serif", fontSize: 13, fontWeight: 600, cursor: 'pointer', opacity: cards.length ? 1 : 0.4 }}><IconDownload />Export CSV</button>
-              <button onClick={() => setModal('add')} style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '9px 14px', background: 'rgba(229,57,53,0.08)', border: '1px solid rgba(229,57,53,0.25)', borderRadius: 10, color: '#e53935', fontFamily: "'Outfit',sans-serif", fontSize: 13, fontWeight: 600, cursor: 'pointer' }}>+ Add Card</button>
+              <button onClick={() => setModal('add')} className="press" style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '9px 14px', background: 'rgba(229,57,53,0.08)', border: '1px solid rgba(229,57,53,0.25)', borderRadius: 10, color: '#e53935', fontFamily: "'Outfit',sans-serif", fontSize: 13, fontWeight: 600, cursor: 'pointer' }} className='press'>+ Add Card</button>
             </div>
           </div>
 
@@ -675,17 +806,45 @@ export default function CollectionPage() {
           )}
 
           {filtered.length === 0 ? (
-            <div style={{ textAlign: 'center', padding: '60px 24px' }}>
-              <div style={{ fontSize: 40, marginBottom: 12, opacity: 0.2 }}>🃏</div>
-              <p style={{ color: '#444', fontFamily: "'Outfit',sans-serif", fontSize: 14, marginBottom: 16 }}>{search || filterSport || filterGraded ? 'No cards match your filters' : "You haven't added any cards yet"}</p>
-              {!search && !filterSport && !filterGraded && <button onClick={() => setModal('add')} style={{ padding: '10px 20px', borderRadius: 10, background: 'rgba(229,57,53,0.08)', border: '1px solid rgba(229,57,53,0.25)', color: '#e53935', fontFamily: "'Outfit',sans-serif", fontSize: 14, fontWeight: 600, cursor: 'pointer' }}>Add Your First Card</button>}
-            </div>
+            cards.length === 0 ? (
+              // ── First-time empty state ──────────────────────────────────────
+              <div style={{ textAlign:'center', padding:'48px 24px', animation:'scaleIn 0.3s ease' }}>
+                <div style={{ fontSize:56, marginBottom:16, opacity:0.7 }}>🃏</div>
+                <h2 style={{ fontFamily:"'Outfit',sans-serif", fontSize:20, fontWeight:800, color:'#f0f0f0', margin:'0 0 8px' }}>Start Your Collection</h2>
+                <p style={{ color:'#555', fontFamily:"'Outfit',sans-serif", fontSize:13, marginBottom:28, maxWidth:300, margin:'0 auto 28px' }}>Track every card you own — values, grades, profits, and more.</p>
+                <div style={{ display:'flex', flexDirection:'column', gap:10, maxWidth:300, margin:'0 auto 28px' }}>
+                  {[
+                    { icon:'➕', label:'Add your first card', sub:'Enter player, year, brand, and what you paid' },
+                    { icon:'💰', label:'Track its value', sub:'Update current value anytime to see your P&L' },
+                    { icon:'📊', label:'Watch your portfolio grow', sub:'Stats and insights update automatically' },
+                  ].map((s,i) => (
+                    <div key={i} style={{ display:'flex', alignItems:'center', gap:12, padding:'11px 14px', background:'#111', border:'1px solid #1e1e1e', borderRadius:12, textAlign:'left', animation:`fadeUp 0.3s ease ${i*0.08}s both` }}>
+                      <div style={{ fontSize:20, flexShrink:0 }}>{s.icon}</div>
+                      <div>
+                        <div style={{ fontFamily:"'Outfit',sans-serif", fontSize:13, fontWeight:700, color:'#ccc' }}>{s.label}</div>
+                        <div style={{ fontFamily:"'Outfit',sans-serif", fontSize:11, color:'#555', marginTop:2 }}>{s.sub}</div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                <button className="press" onClick={() => setModal('add')} className="press" style={{ padding:'12px 28px', borderRadius:12, background:'rgba(229,57,53,0.1)', border:'1px solid rgba(229,57,53,0.3)', color:'#e53935', fontFamily:"'Outfit',sans-serif", fontSize:15, fontWeight:700, cursor:'pointer' }}>
+                  + Add Your First Card
+                </button>
+              </div>
+            ) : (
+              // ── No filter results ──────────────────────────────────────────
+              <div style={{ textAlign:'center', padding:'60px 24px', animation:'fadeIn 0.2s ease' }}>
+                <div style={{ fontSize:36, marginBottom:12, opacity:0.2 }}>🔍</div>
+                <p style={{ color:'#444', fontFamily:"'Outfit',sans-serif", fontSize:14, marginBottom:16 }}>No cards match your filters</p>
+                <button className="press" onClick={() => { setSearch(''); setFilterSport(''); setFilterGraded(''); setSortBy('date_desc') }} style={{ padding:'8px 18px', borderRadius:10, background:'rgba(229,57,53,0.08)', border:'1px solid rgba(229,57,53,0.2)', color:'#e53935', fontFamily:"'Outfit',sans-serif", fontSize:13, fontWeight:600, cursor:'pointer' }}>Clear Filters</button>
+              </div>
+            )
           ) : (
             <>
               {/* ── Grid View ── */}
               {viewMode === 'grid' && (
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: 14 }}>
-                  {filtered.map(card => {
+                  {filtered.map((card, idx) => {
                     const qty = parseInt(card.qty)||1
                     const buy = (parseFloat(card.buy)||0)*qty
                     const val = card.sold ? (parseFloat(card.soldPrice)||0) : (parseFloat(card.val)||parseFloat(card.buy)||0)*qty
@@ -694,7 +853,7 @@ export default function CollectionPage() {
                     const glPct = buy > 0 ? (gl/buy)*100 : 0
                     const isSelected = selected.has(card.id)
                     return (
-                      <div key={card.id} style={{ background: isSelected ? 'rgba(229,57,53,0.06)' : 'linear-gradient(135deg,#111,#0d0d0d)', border: isSelected ? '1px solid rgba(229,57,53,0.3)' : '1px solid #1e1e1e', borderRadius: 14, padding: '16px', display: 'flex', flexDirection: 'column', gap: 10, position: 'relative', transition: 'all 0.15s', opacity: card.sold ? 0.75 : 1 }}
+                      <div key={card.id} style={{ background: isSelected ? 'rgba(229,57,53,0.06)' : 'linear-gradient(135deg,#111,#0d0d0d)', border: isSelected ? '1px solid rgba(229,57,53,0.3)' : '1px solid #1e1e1e', borderRadius: 14, padding: '16px', display: 'flex', flexDirection: 'column', gap: 10, position: 'relative', transition: 'border-color 0.15s, background 0.15s', opacity: card.sold ? 0.75 : 1, animation:`fadeUp 0.25s ease ${idx*0.05}s both` }}
                         onMouseEnter={e => { if (!isSelected) e.currentTarget.style.borderColor = '#2a2a2a' }}
                         onMouseLeave={e => { if (!isSelected) e.currentTarget.style.borderColor = '#1e1e1e' }}>
                         {/* Checkbox */}
@@ -794,15 +953,15 @@ export default function CollectionPage() {
 
               {/* ── Mobile Cards — only show when in list mode ── */}
               {viewMode === 'table' && <div className="mobile-cards" style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-                {filtered.map(card => {
+                {filtered.map((card, idx) => {
                   const qty = parseInt(card.qty)||1
                   const buy = (parseFloat(card.buy)||0)*qty
                   const displayVal = card.sold ? (parseFloat(card.soldPrice)||0) : (parseFloat(card.val)||parseFloat(card.buy)||0)*qty
                   const gl = displayVal - buy
                   const glPos = gl >= 0
                   const glPct = buy > 0 ? (gl / buy) * 100 : 0
-                  return (
-                    <div key={card.id} style={{ background: selected.has(card.id) ? 'rgba(229,57,53,0.06)' : 'linear-gradient(135deg,#111,#0d0d0d)', border: selected.has(card.id) ? '1px solid rgba(229,57,53,0.3)' : '1px solid #1e1e1e', borderRadius: 14, padding: '14px 16px', opacity: card.sold ? 0.8 : 1 }}>
+                  const cardContent = (
+                    <div key={card.id} style={{ background: selected.has(card.id) ? 'rgba(229,57,53,0.06)' : 'linear-gradient(135deg,#111,#0d0d0d)', border: selected.has(card.id) ? '1px solid rgba(229,57,53,0.3)' : '1px solid #1e1e1e', borderRadius: 14, padding: '14px 16px', opacity: card.sold ? 0.8 : 1, animation:`fadeUp 0.25s ease ${idx*0.04}s both` }}>
                       {/* Top row: checkbox + name + status badge */}
                       <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 10 }}>
                         <div style={{ display: 'flex', alignItems: 'flex-start', gap: 10, flex: 1, minWidth: 0 }}>
@@ -862,6 +1021,7 @@ export default function CollectionPage() {
                       </div>
                     </div>
                   )
+                  return <SwipeRow key={card.id} onDelete={() => setDeleteId(card.id)}>{cardContent}</SwipeRow>
                 })}
               </div>}
             </>
@@ -870,10 +1030,11 @@ export default function CollectionPage() {
         <BottomNav />
       </div>
       {breakEvenCard && <BreakEvenModal card={breakEvenCard} onClose={() => setBreakEvenCard(null)} />}
-      {modal && <CardModal card={modal==='add'?null:modal} onClose={() => setModal(null)} onSave={() => { setModal(null); load() }} />}
+      {modal && <CardModal card={modal==='add'?null:modal} onClose={() => setModal(null)} onSave={() => { const isNew = modal==='add'; setModal(null); load(); showToast(isNew ? '🃏 Card added!' : '✓ Card updated', 'success') }} />}
       {priceLookupCard && <PriceLookupModal card={priceLookupCard} onClose={() => setPriceLookupCard(null)} />}
-      {soldCard && <SoldModal card={soldCard} onClose={() => setSoldCard(null)} onSave={() => { setSoldCard(null); load() }} />}
-      {showImport && <ImportModal onClose={() => setShowImport(false)} onImport={(n) => { setShowImport(false); setImportSuccess(n); load() }} />}
+      {soldCard && <SoldModal card={soldCard} onClose={() => setSoldCard(null)} onSave={() => { setSoldCard(null); load(); showToast('💰 Marked as sold!', 'success') }} />}
+      {showImport && <ImportModal onClose={() => setShowImport(false)} onImport={(n) => { setShowImport(false); setImportSuccess(n); load(); showToast(`✓ ${n} cards imported!`, 'success') }} />}
+      <ToastContainer />
       {deleteId && (
         <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.7)', zIndex: 200, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16 }}>
           <div style={{ background: '#111', border: '1px solid #2a2a2a', borderRadius: 16, padding: 28, maxWidth: 360, width: '100%', textAlign: 'center' }}>

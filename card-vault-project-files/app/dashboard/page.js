@@ -1,10 +1,132 @@
 'use client'
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 
 const LOGO = '/logo-transparent.png'
 const NAV = [
+
+// ── Toast System ──────────────────────────────────────────────────────────────
+let _toastFn = null
+function showToast(msg, type = 'success', onUndo = null) {
+  if (_toastFn) _toastFn(msg, type, onUndo)
+}
+function ToastContainer() {
+  const [toasts, setToasts] = useState([])
+  useEffect(() => {
+    _toastFn = (msg, type, onUndo) => {
+      const id = Date.now()
+      setToasts(prev => [...prev.slice(-2), { id, msg, type, onUndo }])
+      setTimeout(() => setToasts(prev => prev.filter(t => t.id !== id)), 3000)
+    }
+    return () => { _toastFn = null }
+  }, [])
+  const colors = { success: '#22c55e', error: '#e53935', info: '#888' }
+  const icons = { success: '✓', error: '✕', info: 'ℹ' }
+  if (!toasts.length) return null
+  return (
+    <div style={{ position: 'fixed', bottom: 90, left: '50%', transform: 'translateX(-50%)', zIndex: 9999, display: 'flex', flexDirection: 'column', gap: 8, alignItems: 'center', pointerEvents: 'none' }}>
+      {toasts.map(t => (
+        <div key={t.id} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 18px', borderRadius: 12, background: '#1a1a1a', border: `1px solid ${colors[t.type]}40`, boxShadow: `0 8px 24px rgba(0,0,0,0.5)`, fontFamily: "'Outfit',sans-serif", fontSize: 13, fontWeight: 600, color: '#f0f0f0', pointerEvents: 'auto', animation: 'toastIn 0.2s ease', whiteSpace: 'nowrap' }}>
+          <span style={{ color: colors[t.type] }}>{icons[t.type]}</span>
+          {t.msg}
+          {t.onUndo && <button onClick={t.onUndo} style={{ marginLeft: 4, padding: '2px 8px', borderRadius: 6, background: 'rgba(255,255,255,0.08)', border: 'none', color: '#e53935', fontFamily: "'Outfit',sans-serif", fontSize: 12, fontWeight: 700, cursor: 'pointer', pointerEvents: 'auto' }}>Undo</button>}
+        </div>
+      ))}
+    </div>
+  )
+}
+
+// ── Skeleton ──────────────────────────────────────────────────────────────────
+function Sk({ w = '100%', h = 20, r = 8, mb = 0 }) {
+  return <div style={{ width: w, height: h, borderRadius: r, marginBottom: mb, background: 'linear-gradient(90deg,#1a1a1a 25%,#252525 50%,#1a1a1a 75%)', backgroundSize: '200% 100%', animation: 'shimmer 1.4s infinite' }} />
+}
+
+function DashSkeleton() {
+  return (
+    <div style={{ padding: '28px 28px 40px' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
+        <div><Sk w={200} h={28} r={8} mb={8} /><Sk w={140} h={14} r={6} /></div>
+        <div style={{ display: 'flex', gap: 8 }}><Sk w={110} h={38} r={10} /><Sk w={90} h={38} r={10} /></div>
+      </div>
+      <Sk h={150} r={14} mb={22} />
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 14, marginBottom: 14 }}>
+        <Sk h={85} r={14} /><Sk h={85} r={14} /><Sk h={85} r={14} />
+      </div>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 14, marginBottom: 22 }}>
+        <Sk h={85} r={14} /><Sk h={85} r={14} /><Sk h={85} r={14} />
+      </div>
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20 }}>
+        <Sk h={220} r={14} /><Sk h={220} r={14} />
+      </div>
+    </div>
+  )
+}
+
+// ── Animated Number ───────────────────────────────────────────────────────────
+function AnimatedNumber({ value, prefix = '', suffix = '', duration = 800 }) {
+  const [display, setDisplay] = useState(0)
+  const startRef = useRef(null)
+  const targetRef = useRef(value)
+
+  useEffect(() => {
+    targetRef.current = value
+    const start = performance.now()
+    startRef.current = start
+    const from = display
+    const to = value
+    function tick(now) {
+      if (startRef.current !== start) return
+      const elapsed = now - start
+      const progress = Math.min(elapsed / duration, 1)
+      const ease = 1 - Math.pow(1 - progress, 3)
+      setDisplay(from + (to - from) * ease)
+      if (progress < 1) requestAnimationFrame(tick)
+    }
+    requestAnimationFrame(tick)
+  }, [value])
+
+  const formatted = typeof value === 'number' && value % 1 !== 0
+    ? display.toFixed(2)
+    : Math.round(display)
+  return <>{prefix}{typeof value === 'number' ? formatted : value}{suffix}</>
+}
+
+// ── Pull to Refresh ───────────────────────────────────────────────────────────
+function usePullToRefresh(onRefresh) {
+  const [pulling, setPulling] = useState(false)
+  const startY = useRef(0)
+  const pulling_ = useRef(false)
+
+  useEffect(() => {
+    const onTouchStart = e => { startY.current = e.touches[0].clientY }
+    const onTouchMove = e => {
+      const dy = e.touches[0].clientY - startY.current
+      if (dy > 60 && window.scrollY === 0 && !pulling_.current) {
+        pulling_.current = true
+        setPulling(true)
+      }
+    }
+    const onTouchEnd = () => {
+      if (pulling_.current) {
+        pulling_.current = false
+        setPulling(false)
+        onRefresh()
+      }
+    }
+    window.addEventListener('touchstart', onTouchStart, { passive: true })
+    window.addEventListener('touchmove', onTouchMove, { passive: true })
+    window.addEventListener('touchend', onTouchEnd)
+    return () => {
+      window.removeEventListener('touchstart', onTouchStart)
+      window.removeEventListener('touchmove', onTouchMove)
+      window.removeEventListener('touchend', onTouchEnd)
+    }
+  }, [onRefresh])
+  return pulling
+}
+
+const _NAV = [
   { label: 'Dashboard', href: '/dashboard' },
   { label: 'Collection', href: '/collection' },
   { label: 'Market', href: '/market' },
@@ -26,7 +148,7 @@ function IconCheck() { return <svg width="13" height="13" viewBox="0 0 24 24" fi
 const navIcons = { 'Dashboard': IconDashboard, 'Collection': IconCollection, 'Market': IconMarket, 'Insights': IconInsights, 'Sold History': IconSold }
 const fmt = n => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 2 }).format(n || 0)
 
-function Sidebar({ user, onLogout, active }) {
+function Sidebar({ user, onLogout, active, cardCount = 0 }) {
   return (
     <aside style={{ width: 220, minHeight: '100vh', background: '#0d0d0d', borderRight: '1px solid #1e1e1e', display: 'flex', flexDirection: 'column', position: 'fixed', top: 0, left: 0, zIndex: 60 }}>
       <div style={{ padding: '16px 16px 12px', borderBottom: '1px solid #1e1e1e', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -34,10 +156,10 @@ function Sidebar({ user, onLogout, active }) {
       </div>
       <nav style={{ flex: 1, padding: '14px 10px' }}>
         <div style={{ fontSize: 10, color: '#333', fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', padding: '0 12px', marginBottom: 8 }}>Menu</div>
-        {NAV.map(({ label, href }) => {
+        {_NAV.map(({ label, href }) => {
           const isActive = active === label
           const Icon = navIcons[label]
-          return <Link key={label} href={href} style={{ display: 'flex', alignItems: 'center', gap: 11, padding: '9px 12px', borderRadius: 10, marginBottom: 2, textDecoration: 'none', color: isActive ? '#e53935' : '#666', background: isActive ? 'rgba(229,57,53,0.08)' : 'transparent', fontFamily: "'Outfit',sans-serif", fontSize: 14, fontWeight: isActive ? 600 : 500, borderLeft: isActive ? '2px solid #e53935' : '2px solid transparent', transition: 'all 0.15s' }}><Icon />{label}</Link>
+          return <Link key={label} href={href} style={{ display: 'flex', alignItems: 'center', gap: 11, padding: '9px 12px', borderRadius: 10, marginBottom: 2, textDecoration: 'none', color: isActive ? '#e53935' : '#666', background: isActive ? 'rgba(229,57,53,0.08)' : 'transparent', fontFamily: "'Outfit',sans-serif", fontSize: 14, fontWeight: isActive ? 600 : 500, borderLeft: isActive ? '2px solid #e53935' : '2px solid transparent', transition: 'all 0.15s' }}><Icon /><span style={{flex:1}}>{label}</span>{label === 'Collection' && cardCount > 0 && <span style={{fontSize:10,fontWeight:700,background:'rgba(229,57,53,0.15)',color:'#e53935',borderRadius:6,padding:'1px 6px',fontFamily:"'JetBrains Mono',monospace"}}>{cardCount}</span>}</Link>
         })}
       </nav>
       <div style={{ padding: '14px 10px', borderTop: '1px solid #1e1e1e' }}>
@@ -52,7 +174,7 @@ function Sidebar({ user, onLogout, active }) {
 function BottomNav({ active }) {
   return (
     <nav className="mobile-only" style={{ position: 'fixed', bottom: 0, left: 0, right: 0, height: 64, background: '#0d0d0d', borderTop: '1px solid #1e1e1e', display: 'flex', alignItems: 'center', zIndex: 100 }}>
-      {NAV.map(({ label, href }) => {
+      {_NAV.map(({ label, href }) => {
         const isActive = active === label
         const Icon = navIcons[label]
         return <Link key={label} href={href} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 4, textDecoration: 'none', color: isActive ? '#e53935' : '#555', fontFamily: "'Outfit',sans-serif", fontSize: 9, fontWeight: isActive ? 700 : 500, letterSpacing: '0.04em', textTransform: 'uppercase', paddingBottom: 4 }}><Icon />{label === 'Sold History' ? 'Sold' : label}</Link>
@@ -234,7 +356,14 @@ export default function DashboardPage() {
   }
   async function handleLogout() { await fetch('/api/auth/logout',{method:'POST'}); router.push('/login') }
 
-  if (loading) return <div style={{ minHeight:'100vh',display:'flex',alignItems:'center',justifyContent:'center',background:'#0a0a0a' }}><img src={LOGO} alt="TopLoad" style={{ width:120,opacity:0.4 }} /></div>
+  const pulling = usePullToRefresh(loadData)
+
+  if (loading) return (
+    <div style={{ display:'flex',minHeight:'100vh',background:'#0a0a0a' }}>
+      <div className="sidebar-el" style={{ width:220,background:'#0d0d0d',borderRight:'1px solid #1e1e1e' }} />
+      <div style={{ flex:1 }}><DashSkeleton /></div>
+    </div>
+  )
 
   const activeCards = cards.filter(c=>!c.sold)
   const soldCards = cards.filter(c=>c.sold)
@@ -265,6 +394,16 @@ export default function DashboardPage() {
   return (
     <>
       <style>{`
+        @keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+  @keyframes toastIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+  @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+  @keyframes scaleIn{from{opacity:0;transform:scale(0.96)}to{opacity:1;transform:scale(1)}}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  button:not(:disabled):active{transform:scale(0.94)!important;opacity:0.85!important}
+  a.press:active{transform:scale(0.94)!important;opacity:0.85!important}
+  .press{transition:transform 0.1s ease,opacity 0.1s ease!important}
+  .press:active{transform:scale(0.93)!important;opacity:0.8!important}
         .sidebar-el{display:flex;flex-direction:column}.mobile-only{display:none!important}.mob-topbar{display:none}.main-wrap{margin-left:220px;min-height:100vh;width:calc(100% - 220px)}
         .stat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
         .stat-grid2{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:14px}
@@ -287,7 +426,8 @@ export default function DashboardPage() {
         @media(max-width:480px){.stat-grid{grid-template-columns:1fr}.stat-grid2{grid-template-columns:1fr}}
       `}</style>
       <div style={{ display:'flex',minHeight:'100vh',background:'#0a0a0a' }}>
-        <div className="sidebar-el"><Sidebar user={user} onLogout={handleLogout} active="Dashboard" /></div>
+        <div className="sidebar-el"><Sidebar user={user} onLogout={handleLogout} active="Dashboard" cardCount={activeCards.length} /></div>
+        <PullIndicator pullY={pullY} />
         <main className="main-wrap" style={{ padding:'28px 28px 40px' }}>
           <div className="mob-topbar" style={{ alignItems:'center',justifyContent:'space-between',marginBottom:16 }}>
             <img src={LOGO} alt="TopLoad" style={{ height:32,width:'auto',objectFit:'contain',filter:'drop-shadow(0 0 8px rgba(229,57,53,0.4))' }} />
@@ -340,14 +480,14 @@ export default function DashboardPage() {
           {cards.length>0&&<div className="desk-chart"><SparklineChart cards={cards} /></div>}
           <div className="desk-stats">
           <div className="stat-grid">
-            <StatCard label="Active Cards" value={activeCards.length} />
-            <StatCard label="Total Invested" value={fmt(totalInvested)} />
-            <StatCard label="Current Value" value={fmt(currentValue)} />
+            <StatCard style={{animation:"fadeUp 0.3s ease 0s both"}} label="Active Cards" value={activeCards.length} />
+            <StatCard style={{animation:"fadeUp 0.3s ease 0.06s both"}} label="Total Invested" value={fmt(totalInvested)} />
+            <StatCard style={{animation:"fadeUp 0.3s ease 0.12s both"}} label="Current Value" value={fmt(currentValue)} />
           </div>
           <div className="stat-grid2">
-            <StatCard label="Unrealized G/L" value={`${gainPos?'+':''}${fmt(gainLoss)}`} sub={`${retPos?'+':''}${portfolioReturn.toFixed(1)}% return`} positive={totalInvested>0?gainPos:undefined} />
-            <StatCard label="Portfolio Return" value={`${retPos?'+':''}${portfolioReturn.toFixed(1)}%`} sub={totalInvested>0?(retPos?'Above cost basis':'Below cost basis'):'No data'} positive={totalInvested>0?retPos:undefined} />
-            <StatCard label="Realized P&L" value={`${realizedPL>=0?'+':''}${fmt(realizedPL)}`} sub={`${soldCards.length} card${soldCards.length!==1?'s':''} sold`} positive={soldCards.length>0?realizedPL>=0:undefined} />
+            <StatCard style={{animation:"fadeUp 0.3s ease 0.04s both"}} label="Unrealized G/L" value={`${gainPos?'+':''}${fmt(gainLoss)}`} sub={`${retPos?'+':''}${portfolioReturn.toFixed(1)}% return`} positive={totalInvested>0?gainPos:undefined} />
+            <StatCard style={{animation:"fadeUp 0.3s ease 0.10s both"}} label="Portfolio Return" value={`${retPos?'+':''}${portfolioReturn.toFixed(1)}%`} sub={totalInvested>0?(retPos?'Above cost basis':'Below cost basis'):'No data'} positive={totalInvested>0?retPos:undefined} />
+            <StatCard style={{animation:"fadeUp 0.3s ease 0.16s both"}} label="Realized P&L" value={`${realizedPL>=0?'+':''}${fmt(realizedPL)}`} sub={`${soldCards.length} card${soldCards.length!==1?'s':''} sold`} positive={soldCards.length>0?realizedPL>=0:undefined} />
           </div>
           </div>{/* end desk-stats */}
           {activeCards.length>1&&<div className="hide-mobile" style={{ marginTop:22 }}><TopMovers cards={activeCards} /></div>}
@@ -361,7 +501,7 @@ export default function DashboardPage() {
             const glPct = buy > 0 ? (gl / buy) * 100 : 0
             const today = new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })
             return (
-              <div style={{ marginTop:22, background:'linear-gradient(135deg,#1a0a0a,#0d0d0d)', border:'1px solid rgba(229,57,53,0.2)', borderRadius:14, padding:'18px 22px', position:'relative', overflow:'hidden' }}>
+              <div style={{ marginTop:22, animation:'scaleIn 0.3s ease', background:'linear-gradient(135deg,#1a0a0a,#0d0d0d)', border:'1px solid rgba(229,57,53,0.2)', borderRadius:14, padding:'18px 22px', position:'relative', overflow:'hidden' }}>
                 <div style={{ position:'absolute', top:0, left:0, right:0, height:2, background:'linear-gradient(90deg,#e53935,#ff5252,#e53935)' }} />
               <div style={{ display:'flex', alignItems:'flex-start', justifyContent:'space-between', flexWrap:'wrap', gap:12 }}>
                   <div style={{ flex:1, minWidth:0 }}>
@@ -434,6 +574,7 @@ export default function DashboardPage() {
             </div>
           </div>
         </main>
+        <ToastContainer />
         <BottomNav active="Dashboard" />
       </div>
       {showInstallModal&&(
