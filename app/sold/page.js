@@ -23,7 +23,7 @@ function IconDown() { return <svg width="11" height="11" viewBox="0 0 24 24" fil
 const navIcons = { 'Dashboard': IconDashboard, 'Collection': IconCollection, 'Insights': IconInsights, 'Sold History': IconSold }
 
 // ── Toast ─────────────────────────────────────────────────────────────────────
-let _toastFn = null
+var _toastFn = null
 function showToast(msg, type='success', onUndo=null) { if(_toastFn) _toastFn(msg,type,onUndo) }
 function ToastContainer() {
   const [toasts,setToasts] = useState([])

@@ -27,7 +27,7 @@ function IconTrophy() { return <svg width="16" height="16" viewBox="0 0 24 24" f
 const navIcons = { 'Dashboard': IconDashboard, 'Collection': IconCollection, 'Market': IconMarket, 'Insights': IconInsights, 'Sold History': IconSold }
 
 // ── Toast ─────────────────────────────────────────────────────────────────────
-let _toastFn = null
+var _toastFn = null
 function showToast(msg, type='success', onUndo=null) { if(_toastFn) _toastFn(msg,type,onUndo) }
 function ToastContainer() {
   const [toasts,setToasts] = useState([])
@@ -326,7 +326,6 @@ function PersonalRecords({ cards, soldCards }) {
 export default function InsightsPage() {
   const [cards, setCards] = useState([])
   const [user, setUser] = useState(null)
-  const pullY = usePullToRefresh(() => { setLoading(true); Promise.all([fetch(\'/api/auth/me\',{cache:\'no-store\'}),fetch(\'/api/cards\',{cache:\'no-store\'})]).then(async([meRes,cardsRes])=>{if(meRes.ok)setUser((await meRes.json()).user);if(cardsRes.ok)setCards(await cardsRes.json());setLoading(false)}) })
   const [loading, setLoading] = useState(true)
   const router = useRouter()
 
@@ -343,6 +342,16 @@ export default function InsightsPage() {
   }, [router])
 
   async function handleLogout() { await fetch('/api/auth/logout', { method: 'POST' }); router.push('/login') }
+
+  async function reload() {
+    const [meRes, cardsRes] = await Promise.all([
+      fetch('/api/auth/me', { cache: 'no-store' }),
+      fetch('/api/cards', { cache: 'no-store' })
+    ])
+    if (meRes.ok) setUser((await meRes.json()).user)
+    if (cardsRes.ok) setCards(await cardsRes.json())
+  }
+  const pullY = usePullToRefresh(reload)
 
   if (loading) return (
     <div style={{display:'flex',minHeight:'100vh',background:'#0a0a0a'}}>

@@ -39,7 +39,7 @@ const CONDS = ['Mint', 'Near Mint', 'Excellent', 'Very Good', 'Good', 'Poor']
 const EMPTY = { sport: '', year: '', player: '', name: '', brand: '', num: '', cond: '', grade: '', qty: '1', date: '', buy: '', val: '', notes: '', sold: false, soldPrice: '', soldDate: '' }
 
 // ── Toast ──────────────────────────────────────────────────────────────────────
-let _toastFn = null
+var _toastFn = null
 function showToast(msg, type = 'success', onUndo = null) { if (_toastFn) _toastFn(msg, type, onUndo) }
 function ToastContainer() {
   const [toasts, setToasts] = useState([])

@@ -4,10 +4,9 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 
 const LOGO = '/logo-transparent.png'
-const NAV = [
 
 // ── Toast System ──────────────────────────────────────────────────────────────
-let _toastFn = null
+var _toastFn = null
 function showToast(msg, type = 'success', onUndo = null) {
   if (_toastFn) _toastFn(msg, type, onUndo)
 }
