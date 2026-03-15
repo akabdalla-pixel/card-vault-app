@@ -1,3 +1,21 @@
+// This is your Prisma schema file
+// Add these fields to your Card model in prisma/schema.prisma
+
+// Find your Card model and add these 3 fields:
+//
+// model Card {
+//   id        String   @id @default(cuid())
+//   ...existing fields...
+//   sold      Boolean  @default(false)
+//   soldPrice Float?
+//   soldDate  String?
+//   ...
+// }
+//
+// Then run: npx prisma migrate dev --name add_sold_fields
+// Or for production: npx prisma migrate deploy
+
+// FULL SCHEMA FOR REFERENCE:
 generator client {
   provider = "prisma-client-js"
 }
@@ -12,9 +30,10 @@ model User {
   email     String   @unique
   username  String   @unique
   password  String
-  createdAt DateTime @default(now())
   cards     Card[]
   wishes    Wish[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Card {
@@ -32,10 +51,13 @@ model Card {
   buy       Float    @default(0)
   val       Float    @default(0)
   notes     String?
+  sold      Boolean  @default(false)
+  soldPrice Float?
+  soldDate  String?
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  userId    String
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Wish {
@@ -50,8 +72,8 @@ model Wish {
   market    Float    @default(0)
   status    String   @default("watching")
   notes     String?
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  userId    String
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }

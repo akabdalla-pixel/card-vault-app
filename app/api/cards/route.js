@@ -33,6 +33,9 @@ export async function POST(req) {
       buy: parseFloat(data.buy) || 0,
       val: parseFloat(data.val) || 0,
       notes: data.notes || null,
+      sold: data.sold ? true : false,
+      soldPrice: data.soldPrice ? parseFloat(data.soldPrice) : null,
+      soldDate: data.soldDate || null,
       userId
     }
   })
@@ -63,6 +66,9 @@ export async function PUT(req) {
       buy: parseFloat(data.buy) || 0,
       val: parseFloat(data.val) || 0,
       notes: data.notes || null,
+      sold: data.sold ? true : false,
+      soldPrice: data.soldPrice ? parseFloat(data.soldPrice) : null,
+      soldDate: data.soldDate || null,
     }
   })
   return NextResponse.json(card)
