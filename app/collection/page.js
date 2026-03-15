@@ -6,6 +6,7 @@ import Link from 'next/link'
 const NAV = [
   { label: 'Dashboard', href: '/dashboard' },
   { label: 'Collection', href: '/collection' },
+  { label: 'Wish List', href: '/wishlist' },
   { label: 'Sold History', href: '/sold' },
 ]
 
@@ -23,7 +24,7 @@ function IconDownload() { return <svg width="15" height="15" viewBox="0 0 24 24"
 function IconUpload() { return <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg> }
 function IconSearch() { return <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg> }
 function IconTag() { return <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg> }
-function IconExternalLink() { return <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg> }
+function IconCalc() { return <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="4" y="2" width="16" height="20" rx="2"/><line x1="8" y1="6" x2="16" y2="6"/><line x1="8" y1="10" x2="10" y2="10"/><line x1="14" y1="10" x2="16" y2="10"/><line x1="8" y1="14" x2="10" y2="14"/><line x1="14" y1="14" x2="16" y2="14"/><line x1="8" y1="18" x2="10" y2="18"/><line x1="14" y1="18" x2="16" y2="18"/></svg> }
 
 function IconSold() { return <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg> }
 const navIcons = { 'Dashboard': IconDashboard, 'Collection': IconCollection, 'Wish List': IconWishlist, 'Sold History': IconSold }
@@ -318,6 +319,117 @@ function ImportModal({ onClose, onImport }) {
   )
 }
 
+function BreakEvenModal({ card, onClose }) {
+  const buy = (parseFloat(card.buy) || 0) * (parseInt(card.qty) || 1)
+  const [ebayFee, setEbayFee] = useState('13.25')
+  const [shipping, setShipping] = useState('5.00')
+  const [targetSell, setTargetSell] = useState('')
+
+  const ebayFeeAmt = buy > 0 ? (parseFloat(ebayFee) / 100) * (parseFloat(targetSell) || 0) : 0
+  const shippingAmt = parseFloat(shipping) || 0
+
+  // Break even = what you need to sell for to get back what you paid
+  const breakEven = buy + (buy * (parseFloat(ebayFee) / 100)) + shippingAmt
+  // More precise: solve for sell price where sell - (sell * fee%) - shipping = buy
+  const breakEvenExact = (buy + shippingAmt) / (1 - (parseFloat(ebayFee) / 100))
+
+  // Target profit calc
+  const targetSellAmt = parseFloat(targetSell) || 0
+  const targetEbayFee = targetSellAmt * (parseFloat(ebayFee) / 100)
+  const netProfit = targetSellAmt - buy - targetEbayFee - shippingAmt
+  const netProfitPct = buy > 0 ? (netProfit / buy) * 100 : 0
+  const isProfit = netProfit >= 0
+
+  const fmt = n => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 2 }).format(n || 0)
+
+  const inputStyle = { width: '100%', padding: '9px 12px', borderRadius: 8, background: '#1a1a1a', border: '1px solid #2a2a2a', color: '#f0f0f0', fontSize: 14, outline: 'none', fontFamily: "'JetBrains Mono',monospace", boxSizing: 'border-box', transition: 'border-color 0.15s' }
+
+  return (
+    <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.85)', zIndex: 200, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16 }}>
+      <div style={{ background: '#111', border: '1px solid #2a2a2a', borderRadius: 16, padding: 28, maxWidth: 420, width: '100%' }}>
+        {/* Header */}
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
+          <div>
+            <h3 style={{ fontFamily: "'Outfit',sans-serif", fontSize: 17, fontWeight: 700, color: '#f0f0f0', margin: 0 }}>Break Even Calculator</h3>
+            <p style={{ fontSize: 12, color: '#555', marginTop: 3, fontFamily: "'Outfit',sans-serif" }}>{card.player} {card.year && `· ${card.year}`} {card.grade && `· PSA ${card.grade}`}</p>
+          </div>
+          <button onClick={onClose} style={{ background: 'none', border: 'none', color: '#555', cursor: 'pointer', padding: 4 }}><IconClose /></button>
+        </div>
+
+        {/* Buy price display */}
+        <div style={{ padding: '12px 14px', borderRadius: 10, background: '#1a1a1a', border: '1px solid #2a2a2a', marginBottom: 18 }}>
+          <div style={{ fontSize: 10, color: '#444', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 4, fontFamily: "'Outfit',sans-serif" }}>Your Cost Basis</div>
+          <div style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: 22, fontWeight: 700, color: '#f0f0f0' }}>{fmt(buy)}</div>
+          {parseInt(card.qty) > 1 && <div style={{ fontSize: 11, color: '#444', marginTop: 2, fontFamily: "'Outfit',sans-serif" }}>{card.qty} × {fmt(parseFloat(card.buy))}</div>}
+        </div>
+
+        {/* Inputs */}
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 18 }}>
+          <div>
+            <label style={{ display: 'block', fontSize: 11, fontWeight: 600, color: '#555', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 6, fontFamily: "'Outfit',sans-serif" }}>eBay Fee %</label>
+            <input type="number" value={ebayFee} onChange={e => setEbayFee(e.target.value)} style={inputStyle} step="0.01"
+              onFocus={e => e.target.style.borderColor = '#e53935'}
+              onBlur={e => e.target.style.borderColor = '#2a2a2a'} />
+          </div>
+          <div>
+            <label style={{ display: 'block', fontSize: 11, fontWeight: 600, color: '#555', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 6, fontFamily: "'Outfit',sans-serif" }}>Shipping ($)</label>
+            <input type="number" value={shipping} onChange={e => setShipping(e.target.value)} style={inputStyle} step="0.01"
+              onFocus={e => e.target.style.borderColor = '#e53935'}
+              onBlur={e => e.target.style.borderColor = '#2a2a2a'} />
+          </div>
+        </div>
+
+        {/* Break even result */}
+        <div style={{ padding: '14px 16px', borderRadius: 10, background: 'rgba(229,57,53,0.06)', border: '1px solid rgba(229,57,53,0.2)', marginBottom: 18 }}>
+          <div style={{ fontSize: 10, color: '#e53935', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 6, fontFamily: "'Outfit',sans-serif" }}>Break Even Price</div>
+          <div style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: 26, fontWeight: 700, color: '#e53935' }}>{fmt(breakEvenExact)}</div>
+          <div style={{ fontSize: 11, color: '#666', marginTop: 6, fontFamily: "'Outfit',sans-serif", display: 'flex', flexDirection: 'column', gap: 2 }}>
+            <span>Cost: {fmt(buy)} + eBay fee: {fmt(breakEvenExact * (parseFloat(ebayFee) / 100))} + Shipping: {fmt(shippingAmt)}</span>
+          </div>
+        </div>
+
+        {/* Target sell price */}
+        <div style={{ marginBottom: 18 }}>
+          <label style={{ display: 'block', fontSize: 11, fontWeight: 600, color: '#555', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 6, fontFamily: "'Outfit',sans-serif" }}>My Target Sell Price ($)</label>
+          <input type="number" value={targetSell} onChange={e => setTargetSell(e.target.value)} placeholder="Enter your target price..." style={{ ...inputStyle, fontSize: 16 }} step="0.01"
+            onFocus={e => e.target.style.borderColor = '#e53935'}
+            onBlur={e => e.target.style.borderColor = '#2a2a2a'} />
+        </div>
+
+        {/* Target result */}
+        {targetSellAmt > 0 && (
+          <div style={{ padding: '14px 16px', borderRadius: 10, background: isProfit ? 'rgba(229,57,53,0.06)' : 'rgba(97,97,97,0.08)', border: `1px solid ${isProfit ? 'rgba(229,57,53,0.2)' : 'rgba(97,97,97,0.2)'}` }}>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 12 }}>
+              <div>
+                <div style={{ fontSize: 10, color: '#444', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 4, fontFamily: "'Outfit',sans-serif" }}>eBay Fee</div>
+                <div style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: 14, color: '#666' }}>-{fmt(targetEbayFee)}</div>
+              </div>
+              <div>
+                <div style={{ fontSize: 10, color: '#444', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 4, fontFamily: "'Outfit',sans-serif" }}>Shipping</div>
+                <div style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: 14, color: '#666' }}>-{fmt(shippingAmt)}</div>
+              </div>
+              <div>
+                <div style={{ fontSize: 10, color: '#444', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 4, fontFamily: "'Outfit',sans-serif" }}>Net Profit</div>
+                <div style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: 14, fontWeight: 700, color: isProfit ? '#e53935' : '#616161' }}>
+                  {isProfit ? '+' : ''}{fmt(netProfit)}
+                </div>
+              </div>
+            </div>
+            <div style={{ marginTop: 12, paddingTop: 10, borderTop: '1px solid #1e1e1e', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <span style={{ fontFamily: "'Outfit',sans-serif", fontSize: 13, color: '#666' }}>
+                {isProfit ? '✅ You make money at this price' : '❌ You lose money at this price'}
+              </span>
+              <span style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: 14, fontWeight: 700, color: isProfit ? '#e53935' : '#616161' }}>
+                {isProfit ? '+' : ''}{netProfitPct.toFixed(1)}%
+              </span>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  )
+}
+
 export default function CollectionPage() {
   const [cards, setCards] = useState([])
   const [user, setUser] = useState(null)
@@ -333,6 +445,7 @@ export default function CollectionPage() {
   const [importSuccess, setImportSuccess] = useState(null)
   const [selected, setSelected] = useState(new Set())
   const [bulkDeleting, setBulkDeleting] = useState(false)
+  const [breakEvenCard, setBreakEvenCard] = useState(null)
   const router = useRouter()
 
   const load = useCallback(async () => {
@@ -498,6 +611,7 @@ export default function CollectionPage() {
                               <div style={{ display: 'flex', gap: 5, justifyContent: 'flex-end' }}>
                                 <button onClick={() => setPriceLookupCard(card)} title="Check prices" style={{ padding: '5px 8px', borderRadius: 7, background: 'rgba(124,92,252,0.08)', border: 'none', color: '#a78bfa', cursor: 'pointer' }}><IconSearch /></button>
                                 {!card.sold && <button onClick={() => setSoldCard(card)} title="Mark as sold" style={{ padding: '5px 8px', borderRadius: 7, background: 'rgba(255,190,46,0.08)', border: 'none', color: '#ffbe2e', cursor: 'pointer' }}><IconTag /></button>}
+                                <button onClick={() => setBreakEvenCard(card)} title="Break even calculator" style={{ padding: '5px 8px', borderRadius: 7, background: 'rgba(229,57,53,0.08)', border: 'none', color: '#e53935', cursor: 'pointer' }}><IconCalc /></button>
                                 <button onClick={() => setModal(card)} style={{ padding: '5px 8px', borderRadius: 7, background: 'rgba(255,255,255,0.05)', border: 'none', color: '#666', cursor: 'pointer' }}><IconEdit /></button>
                                 <button onClick={() => setDeleteId(card.id)} style={{ padding: '5px 8px', borderRadius: 7, background: 'rgba(255,107,122,0.08)', border: 'none', color: '#616161', cursor: 'pointer' }}><IconTrash /></button>
                               </div>
@@ -568,6 +682,9 @@ export default function CollectionPage() {
                             <IconTag />Sell
                           </button>
                         )}
+                        <button onClick={() => setBreakEvenCard(card)} style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, padding: '9px 0', borderRadius: 9, background: 'rgba(229,57,53,0.08)', border: '1px solid rgba(229,57,53,0.2)', color: '#e53935', fontFamily: "'Outfit',sans-serif", fontSize: 12, fontWeight: 600, cursor: 'pointer' }}>
+                          <IconCalc />Calc
+                        </button>
                         <button onClick={() => setModal(card)} style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, padding: '9px 0', borderRadius: 9, background: 'rgba(255,255,255,0.05)', border: '1px solid #2a2a2a', color: '#666', fontFamily: "'Outfit',sans-serif", fontSize: 12, fontWeight: 600, cursor: 'pointer' }}>
                           <IconEdit />Edit
                         </button>
@@ -584,7 +701,8 @@ export default function CollectionPage() {
         </main>
         <BottomNav />
       </div>
-      {modal && <CardModal card={modal==='add'?null:modal} onClose={() => setModal(null)} onSave={() => { setModal(null); load() }} />}
+      {breakEvenCard && <BreakEvenModal card={breakEvenCard} onClose={() => setBreakEvenCard(null)} />}
+      {modal && <CardModal card={modal==='add'?null:modal} onClose={() => setModal(null)} onSave={() => { setModal(null); load() }} /> />}
       {priceLookupCard && <PriceLookupModal card={priceLookupCard} onClose={() => setPriceLookupCard(null)} />}
       {soldCard && <SoldModal card={soldCard} onClose={() => setSoldCard(null)} onSave={() => { setSoldCard(null); load() }} />}
       {showImport && <ImportModal onClose={() => setShowImport(false)} onImport={(n) => { setShowImport(false); setImportSuccess(n); load() }} />}
@@ -604,4 +722,3 @@ export default function CollectionPage() {
     </>
   )
 }
-
