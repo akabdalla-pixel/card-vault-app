@@ -1,5 +1,5 @@
 'use client'
-import { useState, useEffect, useRef, useCallback } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 
@@ -62,27 +62,6 @@ function Sk({w='100%',h=20,r=8,style={}}) {
 }
 
 
-// ── Pull to Refresh ───────────────────────────────────────────────────────────
-function usePullToRefresh(onRefresh) {
-  const [pullY,setPullY] = useState(0)
-  const startY = useRef(0)
-  const active = useRef(false)
-  useEffect(() => {
-    const onStart = e => { if(window.scrollY===0){startY.current=e.touches[0].clientY;active.current=true} }
-    const onMove = e => { if(!active.current)return; const dy=Math.max(0,Math.min(72,e.touches[0].clientY-startY.current)); setPullY(dy) }
-    const onEnd = () => { if(!active.current)return; active.current=false; if(pullY>=60){onRefresh();showToast('Refreshed','info')} setPullY(0) }
-    window.addEventListener('touchstart',onStart,{passive:true})
-    window.addEventListener('touchmove',onMove,{passive:true})
-    window.addEventListener('touchend',onEnd)
-    return () => { window.removeEventListener('touchstart',onStart); window.removeEventListener('touchmove',onMove); window.removeEventListener('touchend',onEnd) }
-  },[onRefresh,pullY])
-  return pullY
-}
-function PullIndicator({pullY}) {
-  if(!pullY) return null
-  const ready = pullY>=60
-  return <div style={{position:'fixed',top:0,left:'50%',transform:'translateX(-50%)',zIndex:999,padding:'8px 16px',borderRadius:'0 0 12px 12px',background:'#1a1a1a',border:'1px solid #2a2a2a',borderTop:'none',fontFamily:"'Outfit',sans-serif",fontSize:12,color:ready?'#22c55e':'#555',fontWeight:600,display:'flex',alignItems:'center',gap:6}}><span style={{display:'inline-block',animation:ready?'spin 0.5s linear infinite':'none'}}>↓</span>{ready?'Release to refresh':'Pull to refresh'}</div>
-}
 
 const fmt = n => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 2 }).format(n || 0)
 const RED = '#e53935'
@@ -351,7 +330,6 @@ export default function InsightsPage() {
     if (meRes.ok) setUser((await meRes.json()).user)
     if (cardsRes.ok) setCards(await cardsRes.json())
   }
-  const pullY = usePullToRefresh(reload)
 
   if (loading) return (
     <div style={{display:'flex',minHeight:'100vh',background:'#0a0a0a'}}>
@@ -440,9 +418,7 @@ export default function InsightsPage() {
         }
       `}</style>
       <div style={{ display: 'flex', minHeight: '100vh', background: '#0a0a0a' }}>
-        <div className="sidebar-el"><Sidebar user={user} onLogout={handleLogout} active="Insights" cardCount={activeCards.length} /></div>
-        <PullIndicator pullY={pullY} />
-          <main className="main-wrap" style={{ padding: '28px 28px 40px' }}>
+        <div className="sidebar-el"><Sidebar user={user} onLogout={handleLogout} active="Insights" cardCount={activeCards.length} /></div>          <main className="main-wrap" style={{ padding: '28px 28px 40px' }}>
 
           {/* Mobile topbar */}
           <div className="mob-topbar" style={{ alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>

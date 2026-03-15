@@ -1,5 +1,5 @@
 'use client'
-import { useState, useEffect, useCallback, useRef } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 
@@ -58,27 +58,6 @@ function Sk({w='100%',h=20,r=8,style={}}) {
 }
 
 
-// ── Pull to Refresh ───────────────────────────────────────────────────────────
-function usePullToRefresh(onRefresh) {
-  const [pullY,setPullY] = useState(0)
-  const startY = useRef(0)
-  const active = useRef(false)
-  useEffect(() => {
-    const onStart = e => { if(window.scrollY===0){startY.current=e.touches[0].clientY;active.current=true} }
-    const onMove = e => { if(!active.current)return; const dy=Math.max(0,Math.min(72,e.touches[0].clientY-startY.current)); setPullY(dy) }
-    const onEnd = () => { if(!active.current)return; active.current=false; if(pullY>=60){onRefresh();showToast('Refreshed','info')} setPullY(0) }
-    window.addEventListener('touchstart',onStart,{passive:true})
-    window.addEventListener('touchmove',onMove,{passive:true})
-    window.addEventListener('touchend',onEnd)
-    return () => { window.removeEventListener('touchstart',onStart); window.removeEventListener('touchmove',onMove); window.removeEventListener('touchend',onEnd) }
-  },[onRefresh,pullY])
-  return pullY
-}
-function PullIndicator({pullY}) {
-  if(!pullY) return null
-  const ready = pullY>=60
-  return <div style={{position:'fixed',top:0,left:'50%',transform:'translateX(-50%)',zIndex:999,padding:'8px 16px',borderRadius:'0 0 12px 12px',background:'#1a1a1a',border:'1px solid #2a2a2a',borderTop:'none',fontFamily:"'Outfit',sans-serif",fontSize:12,color:ready?'#22c55e':'#555',fontWeight:600,display:'flex',alignItems:'center',gap:6}}><span style={{display:'inline-block',animation:ready?'spin 0.5s linear infinite':'none'}}>↓</span>{ready?'Release to refresh':'Pull to refresh'}</div>
-}
 
 const fmt = n => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 2 }).format(n || 0)
 
@@ -142,8 +121,6 @@ export default function SoldHistoryPage() {
   const avgReturn = totalCost > 0 ? (totalPL / totalCost) * 100 : 0
   const winners = cards.filter(c => (parseFloat(c.soldPrice) || 0) > (parseFloat(c.buy) || 0)).length
   const winRate = cards.length > 0 ? (winners / cards.length) * 100 : 0
-
-  const pullY = usePullToRefresh(load)
   if (loading) return (
     <div style={{ display:'flex', minHeight:'100vh', background:'#0a0a0a' }}>
       <div className="sidebar-el" style={{ width:220, minHeight:'100vh', background:'#0d0d0d', borderRight:'1px solid #1e1e1e', flexShrink:0 }} />
@@ -174,9 +151,7 @@ export default function SoldHistoryPage() {
         .sidebar-el{display:flex;flex-direction:column}.mobile-only{display:none!important}.mob-topbar{display:none}.main-wrap{margin-left:220px;min-height:100vh;width:calc(100% - 220px)}.sold-row:hover{background:rgba(255,255,255,0.02)!important}
         @media(max-width:768px){.sidebar-el{display:none!important}.mobile-only{display:flex!important}.mob-topbar{display:flex}.main-wrap{margin-left:0!important;width:100%!important;padding-bottom:80px!important}}
       `}</style>
-      <div style={{ display: 'flex', minHeight: '100vh', background: 'var(--bg)' }}>
-        <PullIndicator pullY={pullY} />
-        <div className="sidebar-el"><Sidebar user={user} onLogout={handleLogout} cardCount={cards.filter(c=>!c.sold).length} /></div>
+      <div style={{ display: 'flex', minHeight: '100vh', background: 'var(--bg)' }}>        <div className="sidebar-el"><Sidebar user={user} onLogout={handleLogout} cardCount={cards.filter(c=>!c.sold).length} /></div>
         <main className="main-wrap" style={{ padding: '28px 28px' }}>
           <div className="mob-topbar" style={{ alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
             <img src={LOGO} alt="TopLoad" style={{ height: 36, width: 'auto', objectFit: 'contain' }} />

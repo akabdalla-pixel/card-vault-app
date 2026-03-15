@@ -91,39 +91,6 @@ function AnimatedNumber({ value, prefix = '', suffix = '', duration = 800 }) {
   return <>{prefix}{typeof value === 'number' ? formatted : value}{suffix}</>
 }
 
-// ── Pull to Refresh ───────────────────────────────────────────────────────────
-function usePullToRefresh(onRefresh) {
-  const [pulling, setPulling] = useState(false)
-  const startY = useRef(0)
-  const pulling_ = useRef(false)
-
-  useEffect(() => {
-    const onTouchStart = e => { startY.current = e.touches[0].clientY }
-    const onTouchMove = e => {
-      const dy = e.touches[0].clientY - startY.current
-      if (dy > 60 && window.scrollY === 0 && !pulling_.current) {
-        pulling_.current = true
-        setPulling(true)
-      }
-    }
-    const onTouchEnd = () => {
-      if (pulling_.current) {
-        pulling_.current = false
-        setPulling(false)
-        onRefresh()
-      }
-    }
-    window.addEventListener('touchstart', onTouchStart, { passive: true })
-    window.addEventListener('touchmove', onTouchMove, { passive: true })
-    window.addEventListener('touchend', onTouchEnd)
-    return () => {
-      window.removeEventListener('touchstart', onTouchStart)
-      window.removeEventListener('touchmove', onTouchMove)
-      window.removeEventListener('touchend', onTouchEnd)
-    }
-  }, [onRefresh])
-  return pulling
-}
 
 const _NAV = [
   { label: 'Dashboard', href: '/dashboard' },
@@ -355,8 +322,6 @@ export default function DashboardPage() {
   }
   async function handleLogout() { await fetch('/api/auth/logout',{method:'POST'}); router.push('/login') }
 
-  const pulling = usePullToRefresh(loadData)
-
   if (loading) return (
     <div style={{ display:'flex',minHeight:'100vh',background:'#0a0a0a' }}>
       <div className="sidebar-el" style={{ width:220,background:'#0d0d0d',borderRight:'1px solid #1e1e1e' }} />
@@ -425,9 +390,7 @@ export default function DashboardPage() {
         @media(max-width:480px){.stat-grid{grid-template-columns:1fr}.stat-grid2{grid-template-columns:1fr}}
       `}</style>
       <div style={{ display:'flex',minHeight:'100vh',background:'#0a0a0a' }}>
-        <div className="sidebar-el"><Sidebar user={user} onLogout={handleLogout} active="Dashboard" cardCount={activeCards.length} /></div>
-        <PullIndicator pullY={pullY} />
-        <main className="main-wrap" style={{ padding:'28px 28px 40px' }}>
+        <div className="sidebar-el"><Sidebar user={user} onLogout={handleLogout} active="Dashboard" cardCount={activeCards.length} /></div>        <main className="main-wrap" style={{ padding:'28px 28px 40px' }}>
           <div className="mob-topbar" style={{ alignItems:'center',justifyContent:'space-between',marginBottom:16 }}>
             <img src={LOGO} alt="TopLoad" style={{ height:32,width:'auto',objectFit:'contain',filter:'drop-shadow(0 0 8px rgba(229,57,53,0.4))' }} />
             <Link href="/collection" style={{ display:'flex',alignItems:'center',gap:6,padding:'8px 14px',background:'rgba(229,57,53,0.1)',border:'1px solid rgba(229,57,53,0.25)',borderRadius:10,color:'#e53935',fontFamily:"'Outfit',sans-serif",fontSize:13,fontWeight:700,textDecoration:'none' }}>+ Add Card</Link>

@@ -118,31 +118,6 @@ function SwipeRow({ children, onDelete }) {
   )
 }
 
-// ── Pull to Refresh ───────────────────────────────────────────────────────────
-function usePullToRefresh(onRefresh) {
-  const [pullY, setPullY] = useState(0)
-  const startY = useRef(0)
-  const active = useRef(false)
-  useEffect(() => {
-    const onStart = e => { if (window.scrollY === 0) { startY.current = e.touches[0].clientY; active.current = true } }
-    const onMove = e => {
-      if (!active.current) return
-      const dy = Math.max(0, Math.min(70, e.touches[0].clientY - startY.current))
-      setPullY(dy)
-    }
-    const onEnd = () => {
-      if (!active.current) return
-      active.current = false
-      if (pullY >= 60) onRefresh()
-      setPullY(0)
-    }
-    window.addEventListener('touchstart', onStart, { passive:true })
-    window.addEventListener('touchmove', onMove, { passive:true })
-    window.addEventListener('touchend', onEnd)
-    return () => { window.removeEventListener('touchstart', onStart); window.removeEventListener('touchmove', onMove); window.removeEventListener('touchend', onEnd) }
-  }, [onRefresh, pullY])
-  return pullY
-}
 
 // ── Swipeable Card Row (mobile) ───────────────────────────────────────────────
 function SwipeableCard({ children, onDelete }) {
@@ -657,8 +632,6 @@ export default function CollectionPage() {
   const totalSoldCost = soldCards.reduce((s, c) => s + (parseFloat(c.buy)||0), 0)
   const realizedPL = totalSoldRevenue - totalSoldCost
 
-  const pullY = usePullToRefresh(load)
-
   if (loading) return (
     <div style={{ display:'flex', minHeight:'100vh', background:'#0a0a0a' }}>
       <div className="sidebar-el" style={{ width:220, minHeight:'100vh', background:'#0d0d0d', borderRight:'1px solid #1e1e1e', flexShrink:0 }} />
@@ -696,9 +669,7 @@ export default function CollectionPage() {
         }
       `}</style>
       <div style={{ display: 'flex', minHeight: '100vh', background: '#0a0a0a' }}>
-        <div className="sidebar-el"><Sidebar user={user} onLogout={handleLogout} cardCount={activeCards.length} /></div>
-        <PullIndicator pullY={pullY} />
-        <main className="main-wrap" style={{ padding: '30px 28px' }}>
+        <div className="sidebar-el"><Sidebar user={user} onLogout={handleLogout} cardCount={activeCards.length} /></div>        <main className="main-wrap" style={{ padding: '30px 28px' }}>
           <div className="mob-topbar" style={{ alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
             <img src="/logo-transparent.png" alt="TopLoad" style={{ height: 30, width: 'auto', objectFit: 'contain', filter: 'drop-shadow(0 0 8px rgba(229,57,53,0.4))' }} />
             <button onClick={() => setModal('add')} className="press" style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '8px 14px', background: 'rgba(229,57,53,0.1)', border: '1px solid rgba(229,57,53,0.25)', borderRadius: 10, color: '#e53935', fontFamily: "'Outfit',sans-serif", fontSize: 13, fontWeight: 700, cursor: 'pointer' }} className='press'>+ Add Card</button>
@@ -991,7 +962,7 @@ export default function CollectionPage() {
                   const glPos = gl >= 0
                   const glPct = buy > 0 ? (gl / buy) * 100 : 0
                   const cardContent = (
-                    <div key={card.id} style={{ background: selected.has(card.id) ? 'rgba(229,57,53,0.06)' : 'linear-gradient(135deg,#111,#0d0d0d)', border: selected.has(card.id) ? '1px solid rgba(229,57,53,0.3)' : '1px solid #1e1e1e', borderRadius: 14, padding: '14px 16px', opacity: card.sold ? 0.8 : 1, animation:`fadeUp 0.25s ease ${idx*0.04}s both` }}>
+                    <div style={{ background: selected.has(card.id) ? 'rgba(229,57,53,0.06)' : 'linear-gradient(135deg,#111,#0d0d0d)', border: selected.has(card.id) ? '1px solid rgba(229,57,53,0.3)' : '1px solid #1e1e1e', borderRadius: 14, padding: '14px 16px', opacity: card.sold ? 0.8 : 1, animation:`fadeUp 0.25s ease ${idx*0.04}s both` }}>
                       {/* Top row: checkbox + name + status badge */}
                       <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 10 }}>
                         <div style={{ display: 'flex', alignItems: 'flex-start', gap: 10, flex: 1, minWidth: 0 }}>
