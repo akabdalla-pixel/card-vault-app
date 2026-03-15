@@ -442,14 +442,14 @@ export default function DashboardPage() {
           {cards.length>0&&<div className="desk-chart"><SparklineChart cards={cards} /></div>}
           <div className="desk-stats">
           <div className="stat-grid">
-            <StatCard style={{animation:"fadeUp 0.3s ease 0s both"}} label="Active Cards" value={activeCards.length} />
-            <StatCard style={{animation:"fadeUp 0.3s ease 0.06s both"}} label="Total Invested" value={fmt(totalInvested)} />
-            <StatCard style={{animation:"fadeUp 0.3s ease 0.12s both"}} label="Current Value" value={fmt(currentValue)} />
+            <StatCard style={{animation:"fadeUp 0.45s ease 0s both"}} label="Active Cards" value={activeCards.length} />
+            <StatCard style={{animation:"fadeUp 0.45s ease 0.06s both"}} label="Total Invested" value={fmt(totalInvested)} />
+            <StatCard style={{animation:"fadeUp 0.45s ease 0.12s both"}} label="Current Value" value={fmt(currentValue)} />
           </div>
           <div className="stat-grid2">
-            <StatCard style={{animation:"fadeUp 0.3s ease 0.04s both"}} label="Unrealized G/L" value={`${gainPos?'+':''}${fmt(gainLoss)}`} sub={`${retPos?'+':''}${portfolioReturn.toFixed(1)}% return`} positive={totalInvested>0?gainPos:undefined} />
-            <StatCard style={{animation:"fadeUp 0.3s ease 0.10s both"}} label="Portfolio Return" value={`${retPos?'+':''}${portfolioReturn.toFixed(1)}%`} sub={totalInvested>0?(retPos?'Above cost basis':'Below cost basis'):'No data'} positive={totalInvested>0?retPos:undefined} />
-            <StatCard style={{animation:"fadeUp 0.3s ease 0.16s both"}} label="Realized P&L" value={`${realizedPL>=0?'+':''}${fmt(realizedPL)}`} sub={`${soldCards.length} card${soldCards.length!==1?'s':''} sold`} positive={soldCards.length>0?realizedPL>=0:undefined} />
+            <StatCard style={{animation:"fadeUp 0.45s ease 0.04s both"}} label="Unrealized G/L" value={`${gainPos?'+':''}${fmt(gainLoss)}`} sub={`${retPos?'+':''}${portfolioReturn.toFixed(1)}% return`} positive={totalInvested>0?gainPos:undefined} />
+            <StatCard style={{animation:"fadeUp 0.45s ease 0.10s both"}} label="Portfolio Return" value={`${retPos?'+':''}${portfolioReturn.toFixed(1)}%`} sub={totalInvested>0?(retPos?'Above cost basis':'Below cost basis'):'No data'} positive={totalInvested>0?retPos:undefined} />
+            <StatCard style={{animation:"fadeUp 0.45s ease 0.16s both"}} label="Realized P&L" value={`${realizedPL>=0?'+':''}${fmt(realizedPL)}`} sub={`${soldCards.length} card${soldCards.length!==1?'s':''} sold`} positive={soldCards.length>0?realizedPL>=0:undefined} />
           </div>
           </div>{/* end desk-stats */}
           {activeCards.length>1&&<div className="hide-mobile" style={{ marginTop:22 }}><TopMovers cards={activeCards} /></div>}

@@ -184,9 +184,9 @@ function BarChart({ data, title, valuePrefix = '', valueSuffix = '', color = RED
 }
 
 // ── Stat Card ────────────────────────────────────────────────
-function StatCard({ label, value, sub, icon, positive, accent }) {
+function StatCard({ label, value, sub, icon, positive, accent, style = {} }) {
   return (
-    <div style={{ background: '#111', border: `1px solid ${accent ? 'rgba(229,57,53,0.25)' : '#1e1e1e'}`, borderRadius: 14, padding: '16px 18px', position: 'relative', overflow: 'hidden' }}>
+    <div style={{ background: '#111', border: `1px solid ${accent ? 'rgba(229,57,53,0.25)' : '#1e1e1e'}`, borderRadius: 14, padding: '16px 18px', position: 'relative', overflow: 'hidden', ...style }}>
       {accent && <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 2, background: 'linear-gradient(90deg,#e53935,#ff5252)' }} />}
       <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 10 }}>
         <div style={{ fontSize: 10, fontWeight: 700, color: '#333', letterSpacing: '0.12em', textTransform: 'uppercase', fontFamily: "'Outfit',sans-serif" }}>{label}</div>
@@ -209,7 +209,7 @@ function TopCardsRank({ cards }) {
     <div style={{ background: '#111', border: '1px solid #1e1e1e', borderRadius: 16, padding: '20px 22px' }}>
       <div style={{ fontFamily: "'Outfit',sans-serif", fontSize: 13, fontWeight: 700, color: '#ccc', marginBottom: 18, display: 'flex', alignItems: 'center', gap: 8 }}><IconTrophy /><span>Top 5 Most Valuable</span></div>
       <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-        {top.map((card, i) => {
+        {top.map((card, i) => { // stagger
           const val = parseFloat(card.val) || parseFloat(card.buy) || 0
           const buy = parseFloat(card.buy) || 0
           const gl = val - buy
@@ -287,7 +287,7 @@ function PersonalRecords({ cards, soldCards }) {
       <div style={{ fontFamily: "'Outfit',sans-serif", fontSize: 13, fontWeight: 700, color: '#ccc', marginBottom: 16, display: 'flex', alignItems: 'center', gap: 8 }}><IconStar /><span>Personal Records</span></div>
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2,1fr)', gap: 10 }}>
         {records.map((r, i) => (
-          <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 12px', background: '#1a1a1a', borderRadius: 10 }}>
+          <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 12px', background: '#1a1a1a', borderRadius: 10, animation:`fadeUp 0.45s ease ${i*0.08}s both` }}>
             <div style={{ fontSize: 20, flexShrink: 0 }}>{r.icon}</div>
             <div style={{ minWidth: 0 }}>
               <div style={{ fontFamily: "'Outfit',sans-serif", fontSize: 10, color: '#444', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 2 }}>{r.label}</div>
@@ -468,15 +468,15 @@ export default function InsightsPage() {
               {/* ── Desktop: Top Stats Row ── */}
               <div className="hide-mobile">
                 <div className="insights-grid-4" style={{ marginBottom: 14 }}>
-                  <StatCard label="Total Cards" value={activeCards.length} sub={`${soldCards.length} sold`} icon="🃏" accent />
-                  <StatCard label="Total Invested" value={fmt(totalInvested)} icon="💵" />
-                  <StatCard label="Current Value" value={fmt(currentValue)} sub={`${totalROI >= 0 ? '+' : ''}${totalROI.toFixed(1)}% ROI`} positive={totalROI >= 0} icon="📈" />
-                  <StatCard label="Realized P&L" value={`${realizedPL >= 0 ? '+' : ''}${fmt(realizedPL)}`} sub={`${soldCards.length} cards flipped`} positive={soldCards.length > 0 ? realizedPL >= 0 : undefined} icon="💰" />
+                  <StatCard style={{animation:"fadeUp 0.45s ease 0s both"}} label="Total Cards" value={activeCards.length} sub={`${soldCards.length} sold`} icon="🃏" accent />
+                  <StatCard style={{animation:"fadeUp 0.45s ease 0.1s both"}} label="Total Invested" value={fmt(totalInvested)} icon="💵" />
+                  <StatCard style={{animation:"fadeUp 0.45s ease 0.2s both"}} label="Current Value" value={fmt(currentValue)} sub={`${totalROI >= 0 ? '+' : ''}${totalROI.toFixed(1)}% ROI`} positive={totalROI >= 0} icon="📈" />
+                  <StatCard style={{animation:"fadeUp 0.45s ease 0.3s both"}} label="Realized P&L" value={`${realizedPL >= 0 ? '+' : ''}${fmt(realizedPL)}`} sub={`${soldCards.length} cards flipped`} positive={soldCards.length > 0 ? realizedPL >= 0 : undefined} icon="💰" />
                 </div>
                 <div className="insights-grid-3" style={{ marginBottom: 14 }}>
-                  <StatCard label="Unrealized G/L" value={`${unrealizedPL >= 0 ? '+' : ''}${fmt(unrealizedPL)}`} positive={unrealizedPL >= 0} icon="📊" />
-                  <StatCard label="Graded Cards" value={gradedCards.length} sub={`${Math.round((gradedCards.length / activeCards.length) * 100)}% of collection`} icon="🏅" />
-                  <StatCard label="Raw Cards" value={rawCards.length} sub={`${Math.round((rawCards.length / activeCards.length) * 100)}% of collection`} icon="📦" />
+                  <StatCard style={{animation:"fadeUp 0.45s ease 0.1s both"}} label="Unrealized G/L" value={`${unrealizedPL >= 0 ? '+' : ''}${fmt(unrealizedPL)}`} positive={unrealizedPL >= 0} icon="📊" />
+                  <StatCard style={{animation:"fadeUp 0.45s ease 0.2s both"}} label="Graded Cards" value={gradedCards.length} sub={`${Math.round((gradedCards.length / activeCards.length) * 100)}% of collection`} icon="🏅" />
+                  <StatCard style={{animation:"fadeUp 0.45s ease 0.3s both"}} label="Raw Cards" value={rawCards.length} sub={`${Math.round((rawCards.length / activeCards.length) * 100)}% of collection`} icon="📦" />
                 </div>
               </div>
 

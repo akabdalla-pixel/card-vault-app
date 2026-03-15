@@ -197,14 +197,14 @@ export default function SoldHistoryPage() {
                     <tr>{['Card','Sport','Grade','Buy Price','Sold Price','Profit/Loss','Return','Sold Date'].map((h,i) => <th key={h} style={{ padding: '11px 16px', textAlign: i===0?'left':'right', fontFamily: "'Outfit',sans-serif", fontSize: 10, fontWeight: 700, color: '#333', letterSpacing: '0.1em', textTransform: 'uppercase', whiteSpace: 'nowrap' }}>{h}</th>)}</tr>
                   </thead>
                   <tbody>
-                    {[...cards].sort((a,b) => new Date(b.soldDate||b.updatedAt) - new Date(a.soldDate||a.updatedAt)).map(card => {
+                    {[...cards].sort((a,b) => new Date(b.soldDate||b.updatedAt) - new Date(a.soldDate||a.updatedAt)).map((card, idx) => {
                       const buy = parseFloat(card.buy) || 0
                       const sold = parseFloat(card.soldPrice) || 0
                       const pl = sold - buy
                       const plPos = pl >= 0
                       const pct = buy > 0 ? (pl / buy) * 100 : 0
                       return (
-                        <tr key={card.id} className="sold-row" style={{ borderTop: '1px solid #1e1e1e', transition: 'background 0.15s' }}>
+                        <tr key={card.id} className="sold-row" style={{ borderTop: '1px solid #1e1e1e', transition: 'background 0.15s', animation:`fadeUp 0.45s ease ${idx*0.1}s both` }}>
                           <td style={{ padding: '12px 16px' }}>
                             <div style={{ fontFamily: "'Outfit',sans-serif", fontSize: 13, fontWeight: 700, color: '#ccc' }}>{card.player}</div>
                             {card.name && <div style={{ fontSize: 11, color: '#444', marginTop: 1 }}>{card.name}</div>}

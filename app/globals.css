@@ -20,34 +20,20 @@
   --primary2: #22f5e0;
 }
 
-* {
-  -webkit-tap-highlight-color: transparent;
-}
+* { -webkit-tap-highlight-color: transparent; }
+body { font-family: 'Outfit', -apple-system, sans-serif; }
+.font-mono { font-family: 'JetBrains Mono', monospace; }
+input, select { font-family: 'Outfit', -apple-system, sans-serif; }
+::-webkit-scrollbar { display: none; }
 
-body {
-  font-family: 'Outfit', -apple-system, sans-serif;
-}
-
-.font-mono {
-  font-family: 'JetBrains Mono', monospace;
-}
-
-input, select {
-  font-family: 'Outfit', -apple-system, sans-serif;
-}
-
-::-webkit-scrollbar {
-  display: none;
-}
-
-/* ── TopLoad Animations ─────────────────────────────────────── */
+/* ── Animations ─────────────────────────────────────────────── */
 @keyframes shimmer {
-  0% { background-position: 200% 0 }
+  0%   { background-position: 200% 0 }
   100% { background-position: -200% 0 }
 }
 
 @keyframes fadeUp {
-  from { opacity: 0; transform: translateY(10px) }
+  from { opacity: 0; transform: translateY(16px) }
   to   { opacity: 1; transform: translateY(0) }
 }
 
@@ -57,12 +43,12 @@ input, select {
 }
 
 @keyframes scaleIn {
-  from { opacity: 0; transform: scale(0.96) }
+  from { opacity: 0; transform: scale(0.95) }
   to   { opacity: 1; transform: scale(1) }
 }
 
 @keyframes toastIn {
-  from { opacity: 0; transform: translateY(8px) }
+  from { opacity: 0; transform: translateY(10px) }
   to   { opacity: 1; transform: translateY(0) }
 }
 
@@ -70,14 +56,9 @@ input, select {
   to { transform: rotate(360deg) }
 }
 
-/* ── Button press feedback ───────────────────────────────────── */
+/* ── Button press ────────────────────────────────────────────── */
 button:not(:disabled):active {
-  transform: scale(0.94) !important;
-  opacity: 0.85 !important;
+  transform: scale(0.93) !important;
+  opacity: 0.8 !important;
   transition: transform 0.1s ease, opacity 0.1s ease !important;
-}
-
-a.press:active {
-  transform: scale(0.94) !important;
-  opacity: 0.85 !important;
 }

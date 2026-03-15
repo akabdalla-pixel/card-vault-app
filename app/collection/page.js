@@ -78,7 +78,7 @@ function CollectionSkeleton() {
       <Sk h={42} r={10} style={{ marginBottom:10 }} />
       <Sk h={36} r={10} style={{ marginBottom:16 }} />
       {[1,2,3,4].map(i => (
-        <div key={i} style={{ background:'#111', border:'1px solid #1e1e1e', borderRadius:14, padding:'14px 16px', marginBottom:10, animation:`fadeUp 0.3s ease ${i*0.07}s both` }}>
+        <div key={i} style={{ background:'#111', border:'1px solid #1e1e1e', borderRadius:14, padding:'14px 16px', marginBottom:10, animation:`fadeUp 0.45s ease ${i*0.12}s both` }}>
           <div style={{ display:'flex', justifyContent:'space-between', marginBottom:10 }}><Sk w={160} h={16} r={6} /><Sk w={50} h={22} r={6} /></div>
           <div style={{ display:'flex', gap:10, marginBottom:10 }}><Sk w={70} h={34} r={8} /><Sk w={70} h={34} r={8} /><Sk w={70} h={34} r={8} /></div>
           <div style={{ display:'flex', gap:6 }}><Sk h={32} r={8} style={{ flex:1 }} /><Sk h={32} r={8} style={{ flex:1 }} /><Sk h={32} r={8} style={{ flex:1 }} /></div>
@@ -119,36 +119,40 @@ function SwipeRow({ children, onDelete }) {
 }
 
 
-// ── Swipeable Card Row (mobile) ───────────────────────────────────────────────
-function SwipeableCard({ children, onDelete }) {
-  const [swipeX, setSwipeX] = useState(0)
-  const startX = useRef(0)
-  const dragging = useRef(false)
-  const onStart = e => { startX.current = e.touches[0].clientX; dragging.current = true }
-  const onMove = e => {
-    if (!dragging.current) return
-    const dx = Math.min(0, Math.max(-80, e.touches[0].clientX - startX.current))
-    setSwipeX(dx)
-  }
-  const onEnd = () => {
-    dragging.current = false
-    if (swipeX < -60) setSwipeX(-72)
-    else setSwipeX(0)
-  }
-  return (
-    <div style={{ position:'relative', overflow:'hidden', borderRadius:14 }}>
-      {/* Delete button revealed on swipe */}
-      <div style={{ position:'absolute', right:0, top:0, bottom:0, width:72, background:'rgba(229,57,53,0.15)', display:'flex', alignItems:'center', justifyContent:'center', borderRadius:'0 14px 14px 0', border:'1px solid rgba(229,57,53,0.3)' }}
-        onClick={() => { setSwipeX(0); onDelete() }}>
-        <IconTrash />
-      </div>
-      {/* Card content */}
-      <div style={{ transform:`translateX(${swipeX}px)`, transition: dragging.current ? 'none' : 'transform 0.2s ease', willChange:'transform' }}
-        onTouchStart={onStart} onTouchMove={onMove} onTouchEnd={onEnd}>
-        {children}
-      </div>
-    </div>
-  )
+
+// ── Pull to Refresh ───────────────────────────────────────────────────────────
+function usePullToRefresh(onRefresh) {
+  const [pullY, setPullY] = useState(0)
+  const startY = useRef(0)
+  const active = useRef(false)
+  useEffect(() => {
+    const onStart = e => { if (window.scrollY === 0) { startY.current = e.touches[0].clientY; active.current = true } }
+    const onMove = e => {
+      if (!active.current) return
+      const dy = Math.max(0, Math.min(72, e.touches[0].clientY - startY.current))
+      setPullY(dy)
+    }
+    const onEnd = () => {
+      if (!active.current) return
+      active.current = false
+      if (pullY >= 60) { onRefresh(); showToast('Refreshed', 'info') }
+      setPullY(0)
+    }
+    window.addEventListener('touchstart', onStart, {passive:true})
+    window.addEventListener('touchmove', onMove, {passive:true})
+    window.addEventListener('touchend', onEnd)
+    return () => {
+      window.removeEventListener('touchstart', onStart)
+      window.removeEventListener('touchmove', onMove)
+      window.removeEventListener('touchend', onEnd)
+    }
+  }, [onRefresh, pullY])
+  return pullY
+}
+function PullIndicator({pullY}) {
+  if (!pullY) return null
+  const ready = pullY >= 60
+  return <div style={{position:'fixed',top:0,left:'50%',transform:'translateX(-50%)',zIndex:999,padding:'8px 16px',borderRadius:'0 0 12px 12px',background:'#1a1a1a',border:'1px solid #2a2a2a',borderTop:'none',fontFamily:"'Outfit',sans-serif",fontSize:12,color:ready?'#22c55e':'#555',fontWeight:600,display:'flex',alignItems:'center',gap:6}}><span style={{display:'inline-block',animation:ready?'spin 0.5s linear infinite':'none'}}>↓</span>{ready?'Release to refresh':'Pull to refresh'}</div>
 }
 
 function getPriceLinks(card) {
@@ -581,6 +585,8 @@ export default function CollectionPage() {
 
   useEffect(() => { load() }, [load])
 
+  const pullY = usePullToRefresh(load)
+
   async function handleLogout() { await fetch('/api/auth/logout', { method: 'POST' }); router.push('/login') }
   async function handleDelete(id) {
     const card = cards.find(c => c.id === id)
@@ -669,6 +675,7 @@ export default function CollectionPage() {
         }
       `}</style>
       <div style={{ display: 'flex', minHeight: '100vh', background: '#0a0a0a' }}>
+        <PullIndicator pullY={pullY} />
         <div className="sidebar-el"><Sidebar user={user} onLogout={handleLogout} cardCount={activeCards.length} /></div>        <main className="main-wrap" style={{ padding: '30px 28px' }}>
           <div className="mob-topbar" style={{ alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
             <img src="/logo-transparent.png" alt="TopLoad" style={{ height: 30, width: 'auto', objectFit: 'contain', filter: 'drop-shadow(0 0 8px rgba(229,57,53,0.4))' }} />
@@ -819,7 +826,7 @@ export default function CollectionPage() {
                     { icon:'💰', label:'Track its value', sub:'Update current value anytime to see your P&L' },
                     { icon:'📊', label:'Watch your portfolio grow', sub:'Stats and insights update automatically' },
                   ].map((s,i) => (
-                    <div key={i} style={{ display:'flex', alignItems:'center', gap:12, padding:'11px 14px', background:'#111', border:'1px solid #1e1e1e', borderRadius:12, textAlign:'left', animation:`fadeUp 0.3s ease ${i*0.08}s both` }}>
+                    <div key={i} style={{ display:'flex', alignItems:'center', gap:12, padding:'11px 14px', background:'#111', border:'1px solid #1e1e1e', borderRadius:12, textAlign:'left', animation:`fadeUp 0.45s ease ${i*0.12}s both` }}>
                       <div style={{ fontSize:20, flexShrink:0 }}>{s.icon}</div>
                       <div>
                         <div style={{ fontFamily:"'Outfit',sans-serif", fontSize:13, fontWeight:700, color:'#ccc' }}>{s.label}</div>
@@ -854,7 +861,7 @@ export default function CollectionPage() {
                     const glPct = buy > 0 ? (gl/buy)*100 : 0
                     const isSelected = selected.has(card.id)
                     return (
-                      <div key={card.id} style={{ background: isSelected ? 'rgba(229,57,53,0.06)' : 'linear-gradient(135deg,#111,#0d0d0d)', border: isSelected ? '1px solid rgba(229,57,53,0.3)' : '1px solid #1e1e1e', borderRadius: 14, padding: '16px', display: 'flex', flexDirection: 'column', gap: 10, position: 'relative', transition: 'border-color 0.15s, background 0.15s', opacity: card.sold ? 0.75 : 1, animation:`fadeUp 0.25s ease ${idx*0.05}s both` }}
+                      <div key={card.id} style={{ background: isSelected ? 'rgba(229,57,53,0.06)' : 'linear-gradient(135deg,#111,#0d0d0d)', border: isSelected ? '1px solid rgba(229,57,53,0.3)' : '1px solid #1e1e1e', borderRadius: 14, padding: '16px', display: 'flex', flexDirection: 'column', gap: 10, position: 'relative', transition: 'border-color 0.15s, background 0.15s', opacity: card.sold ? 0.75 : 1, animation:`fadeUp 0.45s ease ${idx*0.1}s both` }}
                         onMouseEnter={e => { if (!isSelected) e.currentTarget.style.borderColor = '#2a2a2a' }}
                         onMouseLeave={e => { if (!isSelected) e.currentTarget.style.borderColor = '#1e1e1e' }}>
                         {/* Checkbox */}
@@ -962,7 +969,7 @@ export default function CollectionPage() {
                   const glPos = gl >= 0
                   const glPct = buy > 0 ? (gl / buy) * 100 : 0
                   const cardContent = (
-                    <div style={{ background: selected.has(card.id) ? 'rgba(229,57,53,0.06)' : 'linear-gradient(135deg,#111,#0d0d0d)', border: selected.has(card.id) ? '1px solid rgba(229,57,53,0.3)' : '1px solid #1e1e1e', borderRadius: 14, padding: '14px 16px', opacity: card.sold ? 0.8 : 1, animation:`fadeUp 0.25s ease ${idx*0.04}s both` }}>
+                    <div style={{ background: selected.has(card.id) ? 'rgba(229,57,53,0.06)' : 'linear-gradient(135deg,#111,#0d0d0d)', border: selected.has(card.id) ? '1px solid rgba(229,57,53,0.3)' : '1px solid #1e1e1e', borderRadius: 14, padding: '14px 16px', opacity: card.sold ? 0.8 : 1, animation:`fadeUp 0.45s ease ${idx*0.1}s both` }}>
                       {/* Top row: checkbox + name + status badge */}
                       <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 10 }}>
                         <div style={{ display: 'flex', alignItems: 'flex-start', gap: 10, flex: 1, minWidth: 0 }}>
