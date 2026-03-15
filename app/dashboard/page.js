@@ -498,7 +498,7 @@ export default function DashboardPage() {
               </p>
             </div>
             <Link
-              href="/collection/add"
+              href="/collection"
               className="add-card-btn"
               style={{
                 display: "flex",
