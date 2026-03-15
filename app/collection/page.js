@@ -655,6 +655,10 @@ export default function CollectionPage() {
               <option value="name_asc">A→Z</option>
               <option value="name_desc">Z→A</option>
             </select>
+            <div style={{ display: 'flex', borderRadius: 10, overflow: 'hidden', border: '1px solid #2a2a2a', flexShrink: 0 }}>
+              <button onClick={() => setViewMode('table')} style={{ padding: '8px 10px', background: viewMode==='table' ? 'rgba(229,57,53,0.15)' : '#111', border: 'none', color: viewMode==='table' ? '#e53935' : '#555', cursor: 'pointer', display: 'flex', alignItems: 'center' }}><IconList /></button>
+              <button onClick={() => setViewMode('grid')} style={{ padding: '8px 10px', background: viewMode==='grid' ? 'rgba(229,57,53,0.15)' : '#111', border: 'none', color: viewMode==='grid' ? '#e53935' : '#555', cursor: 'pointer', display: 'flex', alignItems: 'center' }}><IconGrid /></button>
+            </div>
           </div>
 
           {/* Bulk delete bar */}
@@ -788,8 +792,8 @@ export default function CollectionPage() {
                 </div>
               </div>}
 
-              {/* ── Mobile Cards ── */}
-              <div className="mobile-cards" style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+              {/* ── Mobile Cards — only show when in list mode ── */}
+              {viewMode === 'table' && <div className="mobile-cards" style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
                 {filtered.map(card => {
                   const qty = parseInt(card.qty)||1
                   const buy = (parseFloat(card.buy)||0)*qty
@@ -859,7 +863,7 @@ export default function CollectionPage() {
                     </div>
                   )
                 })}
-              </div>
+              </div>}
             </>
           )}
         </main>
