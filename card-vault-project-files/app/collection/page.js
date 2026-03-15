@@ -516,16 +516,29 @@ export default function CollectionPage() {
         .sidebar-el{display:flex;flex-direction:column}.mobile-only{display:none!important}.mob-topbar{display:none}.main-wrap{margin-left:220px;min-height:100vh;width:calc(100% - 220px)}.card-row:hover{background:rgba(255,255,255,0.02)!important}
         .mobile-cards{display:none!important}
         .desktop-table{display:block!important}
-        @media(max-width:768px){.sidebar-el{display:none!important}.mobile-only{display:flex!important}.mob-topbar{display:flex}.main-wrap{margin-left:0!important;width:100%!important;padding-bottom:80px!important}.mobile-cards{display:flex!important}.desktop-table{display:none!important}}
+        .mob-stats{display:none!important}
+        .desk-stats{display:grid!important}
+        .mob-filters{display:none!important}
+        .desk-filters{display:flex!important}
+        .hide-mob{display:block!important}
+        @media(max-width:768px){
+          .sidebar-el{display:none!important}.mobile-only{display:flex!important}.mob-topbar{display:flex}
+          .main-wrap{margin-left:0!important;width:100%!important;padding-bottom:80px!important;padding:12px 12px 80px!important}
+          .mobile-cards{display:flex!important}.desktop-table{display:none!important}
+          .mob-stats{display:flex!important}.desk-stats{display:none!important}
+          .mob-filters{display:flex!important}.desk-filters{display:none!important}
+          .hide-mob{display:none!important}
+        }
       `}</style>
       <div style={{ display: 'flex', minHeight: '100vh', background: '#0a0a0a' }}>
         <div className="sidebar-el"><Sidebar user={user} onLogout={handleLogout} /></div>
         <main className="main-wrap" style={{ padding: '30px 28px' }}>
-          <div className="mob-topbar" style={{ alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
-            <span style={{ fontFamily: "'Outfit',sans-serif", fontSize: 20, fontWeight: 800 }}><img src="/logo-transparent.png" alt="TopLoad" style={{ width: 120, height: 'auto', objectFit: 'contain', filter: 'drop-shadow(0 0 8px rgba(229,57,53,0.4))' }} /></span>
-            <button onClick={handleLogout} style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '8px 14px', borderRadius: 10, background: 'rgba(255,255,255,0.06)', border: 'none', color: '#666', fontFamily: "'Outfit',sans-serif", fontSize: 13, fontWeight: 600, cursor: 'pointer' }}><IconLogout />Sign Out</button>
+          <div className="mob-topbar" style={{ alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
+            <img src="/logo-transparent.png" alt="TopLoad" style={{ height: 30, width: 'auto', objectFit: 'contain', filter: 'drop-shadow(0 0 8px rgba(229,57,53,0.4))' }} />
+            <button onClick={() => setModal('add')} style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '8px 14px', background: 'rgba(229,57,53,0.1)', border: '1px solid rgba(229,57,53,0.25)', borderRadius: 10, color: '#e53935', fontFamily: "'Outfit',sans-serif", fontSize: 13, fontWeight: 700, cursor: 'pointer' }}>+ Add Card</button>
           </div>
-          <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12, marginBottom: 22 }}>
+          {/* ── Desktop header ── */}
+          <div className="hide-mob" style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12, marginBottom: 22 }}>
             <div>
               <h1 style={{ fontFamily: "'Outfit',sans-serif", fontSize: 24, fontWeight: 800, color: '#f0f2ff', letterSpacing: '-0.5px', margin: 0 }}>Collection</h1>
               <p style={{ fontSize: 13, color: '#555', marginTop: 4, fontWeight: 500 }}>{cards.length} cards · {activeCards.length} active · {soldCards.length} sold</p>
@@ -536,15 +549,36 @@ export default function CollectionPage() {
               <button onClick={() => setModal('add')} style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '9px 14px', background: 'rgba(229,57,53,0.08)', border: '1px solid rgba(229,57,53,0.25)', borderRadius: 10, color: '#e53935', fontFamily: "'Outfit',sans-serif", fontSize: 13, fontWeight: 600, cursor: 'pointer' }}>+ Add Card</button>
             </div>
           </div>
+
           {importSuccess !== null && (
             <div style={{ marginBottom: 16, padding: '12px 16px', borderRadius: 10, background: 'rgba(229,57,53,0.1)', border: '1px solid rgba(229,57,53,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
               <span style={{ fontFamily: "'Outfit',sans-serif", fontSize: 13, color: '#e53935', fontWeight: 600 }}>✓ Successfully imported {importSuccess} cards</span>
               <button onClick={() => setImportSuccess(null)} style={{ background: 'none', border: 'none', color: '#e53935', cursor: 'pointer', fontSize: 18 }}>×</button>
             </div>
           )}
+
+          {/* ── Mobile: compact stats strip ── */}
           {cards.length > 0 && (
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(130px,1fr))', gap: 10, marginBottom: 18 }}>
-              {[['Active Cards', activeCards.length, '#f0f2ff'], ['Invested', fmt(totalInvested), '#f0f2ff'], ['Portfolio Value', fmt(totalValue), '#f0f2ff'], ['Unrealized G/L', (totalValue-totalInvested>=0?'+':'')+fmt(totalValue-totalInvested), totalValue>=totalInvested?'#e53935':'#616161'], ['Realized P&L', (realizedPL>=0?'+':'')+fmt(realizedPL), realizedPL>=0?'#e53935':'#616161']].map(([label, value, color]) => (
+            <div className="mob-stats" style={{ gap: 8, overflowX: 'auto', marginBottom: 12, paddingBottom: 2, WebkitOverflowScrolling: 'touch' }}>
+              {[
+                { label: 'Cards', value: activeCards.length },
+                { label: 'Invested', value: fmt(totalInvested) },
+                { label: 'Value', value: fmt(totalValue) },
+                { label: 'G/L', value: (totalValue-totalInvested>=0?'+':'')+fmt(totalValue-totalInvested), color: totalValue>=totalInvested?'#22c55e':'#e53935' },
+                { label: 'P&L', value: (realizedPL>=0?'+':'')+fmt(realizedPL), color: realizedPL>=0?'#22c55e':'#e53935' },
+              ].map((s,i) => (
+                <div key={i} style={{ flexShrink:0, background:'#111', border:'1px solid #1e1e1e', borderRadius:10, padding:'10px 12px', minWidth:90, textAlign:'center' }}>
+                  <div style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:13, fontWeight:700, color:s.color||'#f0f0f0' }}>{s.value}</div>
+                  <div style={{ fontSize:9, color:'#444', fontWeight:700, textTransform:'uppercase', letterSpacing:'0.08em', marginTop:3, fontFamily:"'Outfit',sans-serif" }}>{s.label}</div>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {/* ── Desktop: stat grid ── */}
+          {cards.length > 0 && (
+            <div className="desk-stats" style={{ gridTemplateColumns: 'repeat(auto-fit,minmax(130px,1fr))', gap: 10, marginBottom: 18 }}>
+              {[['Active Cards', activeCards.length, '#f0f0f0'], ['Invested', fmt(totalInvested), '#f0f0f0'], ['Portfolio Value', fmt(totalValue), '#f0f0f0'], ['Unrealized G/L', (totalValue-totalInvested>=0?'+':'')+fmt(totalValue-totalInvested), totalValue>=totalInvested?'#22c55e':'#e53935'], ['Realized P&L', (realizedPL>=0?'+':'')+fmt(realizedPL), realizedPL>=0?'#22c55e':'#e53935']].map(([label, value, color]) => (
                 <div key={label} style={{ padding: '10px 14px', borderRadius: 10, background: '#111', border: '1px solid #2a2a2a' }}>
                   <div style={{ fontSize: 10, color: '#444', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 4 }}>{label}</div>
                   <div style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: 13, fontWeight: 700, color }}>{value}</div>
@@ -552,7 +586,9 @@ export default function CollectionPage() {
               ))}
             </div>
           )}
-          <div style={{ display: 'flex', gap: 10, marginBottom: 10, flexWrap: 'wrap' }}>
+
+          {/* ── Desktop filters ── */}
+          <div className="desk-filters" style={{ gap: 10, marginBottom: 10, flexWrap: 'wrap' }}>
             <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search player, set, brand..." style={{ flex: 1, minWidth: 200, padding: '9px 14px', borderRadius: 10, background: '#111', border: '1px solid #2a2a2a', color: '#f0f0f0', fontSize: 14, outline: 'none', fontFamily: "'Outfit',sans-serif" }} />
             <select value={filterSport} onChange={e => setFilterSport(e.target.value)} style={{ padding: '9px 14px', borderRadius: 10, background: '#111', border: '1px solid #2a2a2a', color: filterSport ? '#f0f0f0' : '#555', fontSize: 14, outline: 'none' }}>
               <option value="">All Sports</option>
@@ -588,6 +624,29 @@ export default function CollectionPage() {
                 ✕ Clear Filters
               </button>
             )}
+          </div>
+
+          {/* ── Mobile filters — compact single row ── */}
+          <div className="mob-filters" style={{ gap: 8, marginBottom: 10, flexWrap: 'nowrap', overflowX: 'auto', WebkitOverflowScrolling: 'touch', paddingBottom: 2 }}>
+            <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search..." style={{ flex: 1, minWidth: 120, maxWidth: 160, padding: '8px 12px', borderRadius: 10, background: '#111', border: '1px solid #2a2a2a', color: '#f0f0f0', fontSize: 13, outline: 'none', fontFamily: "'Outfit',sans-serif" }} />
+            <div style={{ display: 'flex', borderRadius: 10, overflow: 'hidden', border: '1px solid #2a2a2a', flexShrink: 0 }}>
+              {[['active','Active'],['sold','Sold'],['all','All']].map(([val, label]) => (
+                <button key={val} onClick={() => setFilterStatus(val)} style={{ padding: '8px 10px', background: filterStatus===val ? 'rgba(229,57,53,0.15)' : '#111', border: 'none', color: filterStatus===val ? '#e53935' : '#555', fontFamily: "'Outfit',sans-serif", fontSize: 12, fontWeight: filterStatus===val ? 700 : 500, cursor: 'pointer', whiteSpace: 'nowrap' }}>{label}</button>
+              ))}
+            </div>
+            <div style={{ display: 'flex', borderRadius: 10, overflow: 'hidden', border: '1px solid #2a2a2a', flexShrink: 0 }}>
+              {[['','All'],['graded','PSA'],['raw','Raw']].map(([val, label]) => (
+                <button key={val} onClick={() => setFilterGraded(val)} style={{ padding: '8px 10px', background: filterGraded===val ? 'rgba(229,57,53,0.15)' : '#111', border: 'none', color: filterGraded===val ? '#e53935' : '#555', fontFamily: "'Outfit',sans-serif", fontSize: 12, fontWeight: filterGraded===val ? 700 : 500, cursor: 'pointer', whiteSpace: 'nowrap' }}>{label}</button>
+              ))}
+            </div>
+            <select value={sortBy} onChange={e => setSortBy(e.target.value)} style={{ flexShrink: 0, padding: '8px 10px', borderRadius: 10, background: '#111', border: '1px solid #2a2a2a', color: '#f0f0f0', fontSize: 12, outline: 'none', fontFamily: "'Outfit',sans-serif" }}>
+              <option value="date_desc">Newest</option>
+              <option value="date_asc">Oldest</option>
+              <option value="price_desc">Value ↓</option>
+              <option value="price_asc">Value ↑</option>
+              <option value="name_asc">A→Z</option>
+              <option value="name_desc">Z→A</option>
+            </select>
           </div>
 
           {/* Bulk delete bar */}
