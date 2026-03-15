@@ -444,6 +444,8 @@ export default function CollectionPage() {
   const [search, setSearch] = useState('')
   const [filterSport, setFilterSport] = useState('')
   const [filterStatus, setFilterStatus] = useState('active')
+  const [filterGraded, setFilterGraded] = useState('')
+  const [sortBy, setSortBy] = useState('date_desc')
   const [deleteId, setDeleteId] = useState(null)
   const [importSuccess, setImportSuccess] = useState(null)
   const [selected, setSelected] = useState(new Set())
@@ -483,7 +485,19 @@ export default function CollectionPage() {
     const matchSearch = !q || (c.player||'').toLowerCase().includes(q) || (c.name||'').toLowerCase().includes(q) || (c.brand||'').toLowerCase().includes(q)
     const matchSport = !filterSport || c.sport === filterSport
     const matchStatus = filterStatus === 'all' || (filterStatus === 'sold' ? c.sold : !c.sold)
-    return matchSearch && matchSport && matchStatus
+    const matchGraded = !filterGraded || (filterGraded === 'graded' ? !!c.grade : !c.grade)
+    return matchSearch && matchSport && matchStatus && matchGraded
+  }).sort((a, b) => {
+    switch (sortBy) {
+      case 'price_asc': return ((parseFloat(a.val)||parseFloat(a.buy)||0)*(parseInt(a.qty)||1)) - ((parseFloat(b.val)||parseFloat(b.buy)||0)*(parseInt(b.qty)||1))
+      case 'price_desc': return ((parseFloat(b.val)||parseFloat(b.buy)||0)*(parseInt(b.qty)||1)) - ((parseFloat(a.val)||parseFloat(a.buy)||0)*(parseInt(a.qty)||1))
+      case 'buy_asc': return ((parseFloat(a.buy)||0)*(parseInt(a.qty)||1)) - ((parseFloat(b.buy)||0)*(parseInt(b.qty)||1))
+      case 'buy_desc': return ((parseFloat(b.buy)||0)*(parseInt(b.qty)||1)) - ((parseFloat(a.buy)||0)*(parseInt(a.qty)||1))
+      case 'name_asc': return (a.player||'').localeCompare(b.player||'')
+      case 'name_desc': return (b.player||'').localeCompare(a.player||'')
+      case 'date_asc': return new Date(a.createdAt) - new Date(b.createdAt)
+      case 'date_desc': default: return new Date(b.createdAt) - new Date(a.createdAt)
+    }
   })
 
   const activeCards = cards.filter(c => !c.sold)
@@ -538,7 +552,7 @@ export default function CollectionPage() {
               ))}
             </div>
           )}
-          <div style={{ display: 'flex', gap: 10, marginBottom: 16, flexWrap: 'wrap' }}>
+          <div style={{ display: 'flex', gap: 10, marginBottom: 10, flexWrap: 'wrap' }}>
             <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search player, set, brand..." style={{ flex: 1, minWidth: 200, padding: '9px 14px', borderRadius: 10, background: '#111', border: '1px solid #2a2a2a', color: '#f0f0f0', fontSize: 14, outline: 'none', fontFamily: "'Outfit',sans-serif" }} />
             <select value={filterSport} onChange={e => setFilterSport(e.target.value)} style={{ padding: '9px 14px', borderRadius: 10, background: '#111', border: '1px solid #2a2a2a', color: filterSport ? '#f0f0f0' : '#555', fontSize: 14, outline: 'none' }}>
               <option value="">All Sports</option>
@@ -549,6 +563,31 @@ export default function CollectionPage() {
                 <button key={val} onClick={() => setFilterStatus(val)} style={{ padding: '9px 14px', background: filterStatus===val ? 'rgba(229,57,53,0.15)' : '#111', border: 'none', color: filterStatus===val ? '#e53935' : '#555', fontFamily: "'Outfit',sans-serif", fontSize: 13, fontWeight: filterStatus===val ? 700 : 500, cursor: 'pointer' }}>{label}</button>
               ))}
             </div>
+          </div>
+          <div style={{ display: 'flex', gap: 10, marginBottom: 16, flexWrap: 'wrap' }}>
+            {/* Graded filter */}
+            <div style={{ display: 'flex', borderRadius: 10, overflow: 'hidden', border: '1px solid #2a2a2a' }}>
+              {[['','All Cards'],['graded','Graded'],['raw','Raw']].map(([val, label]) => (
+                <button key={val} onClick={() => setFilterGraded(val)} style={{ padding: '8px 12px', background: filterGraded===val ? 'rgba(229,57,53,0.15)' : '#111', border: 'none', color: filterGraded===val ? '#e53935' : '#555', fontFamily: "'Outfit',sans-serif", fontSize: 12, fontWeight: filterGraded===val ? 700 : 500, cursor: 'pointer', whiteSpace: 'nowrap' }}>{label}</button>
+              ))}
+            </div>
+            {/* Sort */}
+            <select value={sortBy} onChange={e => setSortBy(e.target.value)} style={{ padding: '8px 14px', borderRadius: 10, background: '#111', border: '1px solid #2a2a2a', color: '#f0f0f0', fontSize: 13, outline: 'none', fontFamily: "'Outfit',sans-serif", cursor: 'pointer' }}>
+              <option value="date_desc">Date Added (Newest)</option>
+              <option value="date_asc">Date Added (Oldest)</option>
+              <option value="price_desc">Value (High to Low)</option>
+              <option value="price_asc">Value (Low to High)</option>
+              <option value="buy_desc">Buy Price (High to Low)</option>
+              <option value="buy_asc">Buy Price (Low to High)</option>
+              <option value="name_asc">Player (A → Z)</option>
+              <option value="name_desc">Player (Z → A)</option>
+            </select>
+            {/* Active filter count */}
+            {(filterGraded || filterSport || sortBy !== 'date_desc') && (
+              <button onClick={() => { setFilterGraded(''); setFilterSport(''); setSortBy('date_desc') }} style={{ padding: '8px 12px', borderRadius: 10, background: 'rgba(229,57,53,0.08)', border: '1px solid rgba(229,57,53,0.2)', color: '#e53935', fontFamily: "'Outfit',sans-serif", fontSize: 12, fontWeight: 600, cursor: 'pointer' }}>
+                ✕ Clear Filters
+              </button>
+            )}
           </div>
 
           {/* Bulk delete bar */}
@@ -567,8 +606,8 @@ export default function CollectionPage() {
           {filtered.length === 0 ? (
             <div style={{ textAlign: 'center', padding: '60px 24px' }}>
               <div style={{ fontSize: 40, marginBottom: 12, opacity: 0.2 }}>🃏</div>
-              <p style={{ color: '#444', fontFamily: "'Outfit',sans-serif", fontSize: 14, marginBottom: 16 }}>{search || filterSport ? 'No cards match your search' : "You haven't added any cards yet"}</p>
-              {!search && !filterSport && <button onClick={() => setModal('add')} style={{ padding: '10px 20px', borderRadius: 10, background: 'rgba(229,57,53,0.08)', border: '1px solid rgba(229,57,53,0.25)', color: '#e53935', fontFamily: "'Outfit',sans-serif", fontSize: 14, fontWeight: 600, cursor: 'pointer' }}>Add Your First Card</button>}
+              <p style={{ color: '#444', fontFamily: "'Outfit',sans-serif", fontSize: 14, marginBottom: 16 }}>{search || filterSport || filterGraded ? 'No cards match your filters' : "You haven't added any cards yet"}</p>
+              {!search && !filterSport && !filterGraded && <button onClick={() => setModal('add')} style={{ padding: '10px 20px', borderRadius: 10, background: 'rgba(229,57,53,0.08)', border: '1px solid rgba(229,57,53,0.25)', color: '#e53935', fontFamily: "'Outfit',sans-serif", fontSize: 14, fontWeight: 600, cursor: 'pointer' }}>Add Your First Card</button>}
             </div>
           ) : (
             <>
