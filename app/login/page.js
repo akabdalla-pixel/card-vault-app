@@ -30,14 +30,12 @@ export default function LoginPage() {
       <div style={{ width: '100%', maxWidth: 380, position: 'relative' }}>
         {/* Logo */}
         <div style={{ textAlign: 'center', marginBottom: 32 }}>
-          <div style={{ display: 'inline-block', borderRadius: 20, overflow: 'hidden', boxShadow: '0 0 40px rgba(6,214,214,0.15)' }}>
-            <img
-              src="/logo-full.png"
-              alt="TopLoad"
-              style={{ width: 220, height: 220, objectFit: 'cover', objectPosition: 'center', display: 'block' }}
-            />
-          </div>
-          <p style={{ marginTop: 12, fontSize: 13, color: 'var(--dim)', fontFamily: "'Outfit',sans-serif", fontWeight: 500, letterSpacing: '0.02em' }}>
+          <img
+            src="/logo-transparent.png"
+            alt="TopLoad"
+            style={{ width: 260, height: 'auto', objectFit: 'contain', filter: 'drop-shadow(0 0 16px rgba(6,214,214,0.25))' }}
+          />
+          <p style={{ marginTop: 8, fontSize: 13, color: 'var(--dim)', fontFamily: "'Outfit',sans-serif", fontWeight: 500, letterSpacing: '0.02em' }}>
             Sports Card Investment Tracker
           </p>
         </div>
