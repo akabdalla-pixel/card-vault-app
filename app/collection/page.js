@@ -565,6 +565,8 @@ export default function CollectionPage() {
   const [filterStatus, setFilterStatus] = useState('active')
   const [filterGraded, setFilterGraded] = useState('')
   const [sortBy, setSortBy] = useState('date_desc')
+  const [priceMin, setPriceMin] = useState('')
+  const [priceMax, setPriceMax] = useState('')
   const [viewMode, setViewMode] = useState('table') // 'table' or 'grid'
   const [deleteId, setDeleteId] = useState(null)
   const [importSuccess, setImportSuccess] = useState(null)
@@ -616,7 +618,10 @@ export default function CollectionPage() {
     const matchSport = !filterSport || c.sport === filterSport
     const matchStatus = filterStatus === 'all' || (filterStatus === 'sold' ? c.sold : !c.sold)
     const matchGraded = !filterGraded || (filterGraded === 'graded' ? !!c.grade : !c.grade)
-    return matchSearch && matchSport && matchStatus && matchGraded
+    const cardVal = parseFloat(c.val) || parseFloat(c.buy) || 0
+    const matchMin = !priceMin || cardVal >= parseFloat(priceMin)
+    const matchMax = !priceMax || cardVal <= parseFloat(priceMax)
+    return matchSearch && matchSport && matchStatus && matchGraded && matchMin && matchMax
   }).sort((a, b) => {
     switch (sortBy) {
       case 'price_asc': return ((parseFloat(a.val)||parseFloat(a.buy)||0)*(parseInt(a.qty)||1)) - ((parseFloat(b.val)||parseFloat(b.buy)||0)*(parseInt(b.qty)||1))
@@ -762,9 +767,28 @@ export default function CollectionPage() {
               <option value="name_asc">Player (A → Z)</option>
               <option value="name_desc">Player (Z → A)</option>
             </select>
+            {/* Price Range */}
+            <div style={{ display:'flex', alignItems:'center', gap:6, background:'#111', border:'1px solid #2a2a2a', borderRadius:10, padding:'0 10px' }}>
+              <span style={{ fontSize:11, color:'#444', fontWeight:700, fontFamily:"'Outfit',sans-serif", whiteSpace:'nowrap' }}>$</span>
+              <input
+                type="number"
+                placeholder="Min"
+                value={priceMin}
+                onChange={e => setPriceMin(e.target.value)}
+                style={{ width:60, padding:'8px 0', background:'transparent', border:'none', color:'#f0f0f0', fontSize:13, outline:'none', fontFamily:"'JetBrains Mono',monospace" }}
+              />
+              <span style={{ fontSize:11, color:'#333' }}>—</span>
+              <input
+                type="number"
+                placeholder="Max"
+                value={priceMax}
+                onChange={e => setPriceMax(e.target.value)}
+                style={{ width:60, padding:'8px 0', background:'transparent', border:'none', color:'#f0f0f0', fontSize:13, outline:'none', fontFamily:"'JetBrains Mono',monospace" }}
+              />
+            </div>
             {/* Active filter count */}
-            {(filterGraded || filterSport || sortBy !== 'date_desc') && (
-              <button onClick={() => { setFilterGraded(''); setFilterSport(''); setSortBy('date_desc') }} style={{ padding: '8px 12px', borderRadius: 10, background: 'rgba(229,57,53,0.08)', border: '1px solid rgba(229,57,53,0.2)', color: '#e53935', fontFamily: "'Outfit',sans-serif", fontSize: 12, fontWeight: 600, cursor: 'pointer' }}>
+            {(filterGraded || filterSport || sortBy !== 'date_desc' || priceMin || priceMax) && (
+              <button onClick={() => { setFilterGraded(''); setFilterSport(''); setSortBy('date_desc'); setPriceMin(''); setPriceMax('') }} style={{ padding: '8px 12px', borderRadius: 10, background: 'rgba(229,57,53,0.08)', border: '1px solid rgba(229,57,53,0.2)', color: '#e53935', fontFamily: "'Outfit',sans-serif", fontSize: 12, fontWeight: 600, cursor: 'pointer' }}>
                 ✕ Clear Filters
               </button>
             )}
@@ -797,6 +821,13 @@ export default function CollectionPage() {
             <div style={{ display: 'flex', borderRadius: 10, overflow: 'hidden', border: '1px solid #2a2a2a', flexShrink: 0 }}>
               <button onClick={() => setViewMode('table')} style={{ padding: '8px 10px', background: viewMode==='table' ? 'rgba(229,57,53,0.15)' : '#111', border: 'none', color: viewMode==='table' ? '#e53935' : '#555', cursor: 'pointer', display: 'flex', alignItems: 'center' }}><IconList /></button>
               <button onClick={() => setViewMode('grid')} style={{ padding: '8px 10px', background: viewMode==='grid' ? 'rgba(229,57,53,0.15)' : '#111', border: 'none', color: viewMode==='grid' ? '#e53935' : '#555', cursor: 'pointer', display: 'flex', alignItems: 'center' }}><IconGrid /></button>
+            </div>
+            {/* Price range on mobile */}
+            <div style={{ display:'flex', alignItems:'center', gap:4, background:'#111', border:'1px solid #2a2a2a', borderRadius:10, padding:'0 8px', flexShrink:0 }}>
+              <span style={{ fontSize:10, color:'#444', fontWeight:700 }}>$</span>
+              <input type="number" placeholder="Min" value={priceMin} onChange={e => setPriceMin(e.target.value)} style={{ width:48, padding:'8px 0', background:'transparent', border:'none', color:'#f0f0f0', fontSize:12, outline:'none', fontFamily:"'JetBrains Mono',monospace" }} />
+              <span style={{ fontSize:10, color:'#333' }}>—</span>
+              <input type="number" placeholder="Max" value={priceMax} onChange={e => setPriceMax(e.target.value)} style={{ width:48, padding:'8px 0', background:'transparent', border:'none', color:'#f0f0f0', fontSize:12, outline:'none', fontFamily:"'JetBrains Mono',monospace" }} />
             </div>
           </div>
 
@@ -844,7 +875,7 @@ export default function CollectionPage() {
               <div style={{ textAlign:'center', padding:'60px 24px', animation:'fadeIn 0.2s ease' }}>
                 <div style={{ fontSize:36, marginBottom:12, opacity:0.2 }}>🔍</div>
                 <p style={{ color:'#444', fontFamily:"'Outfit',sans-serif", fontSize:14, marginBottom:16 }}>No cards match your filters</p>
-                <button className="press" onClick={() => { setSearch(''); setFilterSport(''); setFilterGraded(''); setSortBy('date_desc') }} style={{ padding:'8px 18px', borderRadius:10, background:'rgba(229,57,53,0.08)', border:'1px solid rgba(229,57,53,0.2)', color:'#e53935', fontFamily:"'Outfit',sans-serif", fontSize:13, fontWeight:600, cursor:'pointer' }}>Clear Filters</button>
+                <button className="press" onClick={() => { setSearch(''); setFilterSport(''); setFilterGraded(''); setSortBy('date_desc'); setPriceMin(''); setPriceMax('') }} style={{ padding:'8px 18px', borderRadius:10, background:'rgba(229,57,53,0.08)', border:'1px solid rgba(229,57,53,0.2)', color:'#e53935', fontFamily:"'Outfit',sans-serif", fontSize:13, fontWeight:600, cursor:'pointer' }}>Clear Filters</button>
               </div>
             )
           ) : (

@@ -151,7 +151,7 @@ export default function SoldHistoryPage() {
         .sidebar-el{display:flex;flex-direction:column}.mobile-only{display:none!important}.mob-topbar{display:none}.main-wrap{margin-left:220px;min-height:100vh;width:calc(100% - 220px)}.sold-row:hover{background:rgba(255,255,255,0.02)!important}
         @media(max-width:768px){.sidebar-el{display:none!important}.mobile-only{display:flex!important}.mob-topbar{display:flex}.main-wrap{margin-left:0!important;width:100%!important;padding-bottom:80px!important}}
       `}</style>
-      <div style={{ display: 'flex', minHeight: '100vh', background: 'var(--bg)' }}>        <div className="sidebar-el"><Sidebar user={user} onLogout={handleLogout} cardCount={cards.filter(c=>!c.sold).length} /></div>
+      <div style={{ display: 'flex', minHeight: '100vh', background: '#0a0a0a' }}>        <div className="sidebar-el"><Sidebar user={user} onLogout={handleLogout} cardCount={cards.filter(c=>!c.sold).length} /></div>
         <main className="main-wrap" style={{ padding: '28px 28px' }}>
           <div className="mob-topbar" style={{ alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
             <img src={LOGO} alt="TopLoad" style={{ height: 36, width: 'auto', objectFit: 'contain' }} />
@@ -159,7 +159,7 @@ export default function SoldHistoryPage() {
           </div>
 
           <div style={{ marginBottom: 24 }}>
-            <h1 style={{ fontFamily: "'Outfit',sans-serif", fontSize: 24, fontWeight: 800, color: '#f0f2ff', letterSpacing: '-0.5px', margin: 0 }}>Sold History</h1>
+            <h1 style={{ fontFamily: "'Outfit',sans-serif", fontSize: 24, fontWeight: 800, color: '#f0f0f0', letterSpacing: '-0.5px', margin: 0 }}>Sold History</h1>
             <p style={{ fontSize: 13, color: '#555', marginTop: 4, fontWeight: 500 }}>{cards.length} card{cards.length !== 1 ? 's' : ''} sold · complete transaction history</p>
           </div>
 
@@ -167,9 +167,9 @@ export default function SoldHistoryPage() {
           {cards.length > 0 && (
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(140px,1fr))', gap: 12, marginBottom: 22 }}>
               {[
-                ['Cards Sold', cards.length, '#f0f2ff'],
-                ['Total Revenue', fmt(totalRevenue), '#f0f2ff'],
-                ['Total Cost', fmt(totalCost), '#f0f2ff'],
+                ['Cards Sold', cards.length, '#f0f0f0'],
+                ['Total Revenue', fmt(totalRevenue), '#f0f0f0'],
+                ['Total Cost', fmt(totalCost), '#f0f0f0'],
                 ['Realized P&L', (totalPL>=0?'+':'')+fmt(totalPL), totalPL>=0?'#22c55e':'#e53935'],
                 ['Avg Return', (avgReturn>=0?'+':'')+avgReturn.toFixed(1)+'%', avgReturn>=0?'#22c55e':'#e53935'],
                 ['Win Rate', winRate.toFixed(0)+'%', winRate>=50?'#e53935':'#616161'],
@@ -213,7 +213,7 @@ export default function SoldHistoryPage() {
                           <td style={{ padding: '12px 16px', textAlign: 'right', fontFamily: "'Outfit',sans-serif", fontSize: 12, color: '#666' }}>{card.sport||'—'}</td>
                           <td style={{ padding: '12px 16px', textAlign: 'right' }}>{card.grade ? <span style={{ padding: '2px 8px', borderRadius: 6, background: 'rgba(229,57,53,0.1)', color: glPos ? '#22c55e' : '#e53935', fontSize: 11, fontWeight: 700 }}>PSA {card.grade}</span> : <span style={{ color: '#444', fontSize: 12 }}>{card.cond||'Raw'}</span>}</td>
                           <td style={{ padding: '12px 16px', textAlign: 'right', fontFamily: "'JetBrains Mono',monospace", fontSize: 13, color: '#666' }}>{fmt(buy)}</td>
-                          <td style={{ padding: '12px 16px', textAlign: 'right', fontFamily: "'JetBrains Mono',monospace", fontSize: 13, fontWeight: 700, color: '#f0f2ff' }}>{fmt(sold)}</td>
+                          <td style={{ padding: '12px 16px', textAlign: 'right', fontFamily: "'JetBrains Mono',monospace", fontSize: 13, fontWeight: 700, color: '#f0f0f0' }}>{fmt(sold)}</td>
                           <td style={{ padding: '12px 16px', textAlign: 'right' }}>
                             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 3, fontFamily: "'JetBrains Mono',monospace", fontSize: 13, fontWeight: 700, color: plPos?'#22c55e':'#e53935' }}>{plPos?<IconUp />:<IconDown />}{plPos?'+':''}{fmt(pl)}</div>
                           </td>
