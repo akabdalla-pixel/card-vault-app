@@ -381,8 +381,8 @@ export default function DashboardPage() {
                   <span style={{ fontSize: 11, color: '#3a4465', fontFamily: "'Outfit',sans-serif" }}>Click value to edit</span>
                 </div>
                 <div>
-                  {activeCards.slice(0, 8).map(card => <QuickValueRow key={card.id} card={card} onUpdate={loadData} />)}
-                  {activeCards.length > 8 && (
+                  {activeCards.slice(0, 3).map(card => <QuickValueRow key={card.id} card={card} onUpdate={loadData} />)}
+                  {activeCards.length > 3 && (
                     <div style={{ padding: '10px 16px', borderTop: '1px solid rgba(255,255,255,0.04)' }}>
                       <Link href="/collection" style={{ fontSize: 12, color: 'var(--cyan)', textDecoration: 'none', fontFamily: "'Outfit',sans-serif", fontWeight: 600 }}>View all {activeCards.length} cards →</Link>
                     </div>
