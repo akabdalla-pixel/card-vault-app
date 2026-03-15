@@ -155,7 +155,7 @@ function StatCard({ label, value, sub, icon, positive, accent }) {
         {icon && <div style={{ fontSize: 16 }}>{icon}</div>}
       </div>
       <div style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: 20, fontWeight: 700, color: '#f0f0f0', letterSpacing: '-0.5px', lineHeight: 1 }}>{value}</div>
-      {sub && <div style={{ marginTop: 8, fontSize: 11, color: positive === true ? '#e53935' : positive === false ? '#616161' : '#555', fontFamily: "'Outfit',sans-serif", fontWeight: 600, display: 'flex', alignItems: 'center', gap: 4 }}>
+      {sub && <div style={{ marginTop: 8, fontSize: 11, color: positive === true ? '#22c55e' : positive === false ? '#e53935' : '#555', fontFamily: "'Outfit',sans-serif", fontWeight: 600, display: 'flex', alignItems: 'center', gap: 4 }}>
         {positive === true && <IconTrendUp />}{positive === false && <IconTrendDown />}{sub}
       </div>}
     </div>
@@ -235,13 +235,13 @@ function PersonalRecords({ cards, soldCards }) {
   })[0] : null
 
   const records = [
-    { icon: '👑', label: 'Most Valuable', value: byVal[0]?.player || '—', sub: byVal[0] ? fmt(parseFloat(byVal[0].val) || 0) : '' },
-    { icon: '💸', label: 'Most Expensive Buy', value: byBuy[0]?.player || '—', sub: byBuy[0] ? fmt(parseFloat(byBuy[0].buy) || 0) : '' },
-    { icon: '🪙', label: 'Cheapest Card', value: cheapest?.player || '—', sub: cheapest ? fmt(parseFloat(cheapest.buy) || 0) : '' },
-    { icon: '🏛️', label: 'Oldest Card', value: oldest?.player || '—', sub: oldest?.year || '' },
-    { icon: '🆕', label: 'Latest Addition', value: newest?.player || '—', sub: newest ? new Date(newest.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : '' },
-    { icon: '🏅', label: 'Highest Grade', value: topGrade?.player || '—', sub: topGrade ? `PSA ${topGrade.grade}` : 'No graded cards' },
-    ...(bestFlip ? [{ icon: '🔥', label: 'Best Flip Ever', value: bestFlip.player, sub: `+${fmt((parseFloat(bestFlip.soldPrice) || 0) - (parseFloat(bestFlip.buy) || 0))}` }] : []),
+    { icon: '👑', label: 'Most Valuable', value: byVal[0]?.player || '—', sub: byVal[0] ? fmt(parseFloat(byVal[0].val) || 0) : '', subColor: '#22c55e' },
+    { icon: '💸', label: 'Most Expensive Buy', value: byBuy[0]?.player || '—', sub: byBuy[0] ? fmt(parseFloat(byBuy[0].buy) || 0) : '', subColor: '#888' },
+    { icon: '🪙', label: 'Cheapest Card', value: cheapest?.player || '—', sub: cheapest ? fmt(parseFloat(cheapest.buy) || 0) : '', subColor: '#888' },
+    { icon: '🏛️', label: 'Oldest Card', value: oldest?.player || '—', sub: oldest?.year || '', subColor: '#888' },
+    { icon: '🆕', label: 'Latest Addition', value: newest?.player || '—', sub: newest ? new Date(newest.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : '', subColor: '#888' },
+    { icon: '🏅', label: 'Highest Grade', value: topGrade?.player || '—', sub: topGrade ? `PSA ${topGrade.grade}` : 'No graded cards', subColor: '#e53935' },
+    ...(bestFlip ? [{ icon: '🔥', label: 'Best Flip Ever', value: bestFlip.player, sub: `+${fmt((parseFloat(bestFlip.soldPrice) || 0) - (parseFloat(bestFlip.buy) || 0))}`, subColor: '#22c55e' }] : []),
   ]
 
   return (
@@ -254,7 +254,7 @@ function PersonalRecords({ cards, soldCards }) {
             <div style={{ minWidth: 0 }}>
               <div style={{ fontFamily: "'Outfit',sans-serif", fontSize: 10, color: '#444', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 2 }}>{r.label}</div>
               <div style={{ fontFamily: "'Outfit',sans-serif", fontSize: 12, fontWeight: 700, color: '#ccc', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{r.value}</div>
-              {r.sub && <div style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: 11, color: '#e53935', marginTop: 1 }}>{r.sub}</div>}
+              {r.sub && <div style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: 11, color: r.subColor || '#888', marginTop: 1 }}>{r.sub}</div>}
             </div>
           </div>
         ))}
