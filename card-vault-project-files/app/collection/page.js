@@ -34,9 +34,23 @@ function IconMarket() { return <svg width="18" height="18" viewBox="0 0 24 24" f
 function IconInsights() { return <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg> }
 const navIcons = { 'Dashboard': IconDashboard, 'Collection': IconCollection, 'Insights': IconInsights, 'Sold History': IconSold }
 const fmt = n => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 2 }).format(n || 0)
-const SPORTS = ['Baseball', 'Basketball', 'Football', 'Soccer', 'Hockey', 'Tennis', 'Golf', 'Other']
+const SPORTS = [
+  // Sports Cards
+  'Baseball', 'Basketball', 'Football', 'Soccer', 'Hockey', 'Tennis', 'Golf',
+  // TCG
+  'Pokémon', 'Magic: The Gathering', 'Yu-Gi-Oh!', 'Lorcana', 'One Piece', 'Dragon Ball Super', 'Digimon',
+  // Other
+  'Other'
+]
+
+const TCG_LIST = ['Pokémon', 'Magic: The Gathering', 'Yu-Gi-Oh!', 'Lorcana', 'One Piece', 'Dragon Ball Super', 'Digimon']
+
+// TCG-specific rarities
+const TCG_RARITIES = ['Common', 'Uncommon', 'Rare', 'Holo Rare', 'Reverse Holo', 'Ultra Rare', 'Secret Rare', 'Full Art', 'Rainbow Rare', 'Alt Art', 'Gold Rare', 'Promo']
+const EDITIONS = ['1st Edition', 'Unlimited', 'Shadowless', 'Limited', 'First Print']
+const LANGUAGES = ['English', 'Japanese', 'Korean', 'Chinese', 'German', 'French', 'Italian', 'Spanish', 'Portuguese']
 const CONDS = ['Mint', 'Near Mint', 'Excellent', 'Very Good', 'Good', 'Poor']
-const EMPTY = { sport: '', year: '', player: '', name: '', brand: '', num: '', cond: '', grade: '', qty: '1', date: '', buy: '', val: '', notes: '', sold: false, soldPrice: '', soldDate: '' }
+const EMPTY = { sport: '', year: '', player: '', name: '', brand: '', num: '', cond: '', grade: '', qty: '1', date: '', buy: '', val: '', notes: '', sold: false, soldPrice: '', soldDate: '', rarity: '', edition: '', language: '' }
 
 // ── Toast ──────────────────────────────────────────────────────────────────────
 var _toastFn = null
@@ -272,14 +286,16 @@ function CardModal({ card, onClose, onSave }) {
         </div>
         {error && <div style={{ marginBottom: 16, padding: '10px 14px', borderRadius: 10, background: 'rgba(255,107,122,0.1)', color: '#ff5252', fontSize: 13, border: '1px solid rgba(255,107,122,0.2)' }}>{error}</div>}
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
-          <div style={{ gridColumn: '1/-1' }}>{field('Player Name *', 'player')}</div>
-          {field('Sport', 'sport', 'text', SPORTS)}
+          <div style={{ gridColumn: '1/-1' }}>{field(TCG_LIST.includes(form.sport) ? 'Card Name *' : 'Player / Card Name *', 'player')}</div>
+          {field('Sport / Game', 'sport', 'text', SPORTS)}
           {field('Year', 'year')}
-          {field('Card Name / Set', 'name')}
-          {field('Brand', 'brand')}
+          {field(TCG_LIST.includes(form.sport) ? 'Set / Expansion' : 'Card Name / Set', 'name')}
+          {field(TCG_LIST.includes(form.sport) ? 'Series / Publisher' : 'Brand', 'brand')}
           {field('Card Number', 'num')}
-          {field('Condition', 'cond', 'text', CONDS)}
-          {field('Grade', 'grade')}
+          {TCG_LIST.includes(form.sport) ? field('Rarity', 'rarity', 'text', TCG_RARITIES) : field('Condition', 'cond', 'text', CONDS)}
+          {TCG_LIST.includes(form.sport) ? field('Edition', 'edition', 'text', EDITIONS) : field('Grade', 'grade')}
+          {TCG_LIST.includes(form.sport) && field('Language', 'language', 'text', LANGUAGES)}
+          {!TCG_LIST.includes(form.sport) && field('Grade', 'grade')}
           {field('Quantity', 'qty', 'number')}
           {field('Purchase Date', 'date', 'date')}
           {field('Buy Price ($)', 'buy', 'number')}
@@ -562,6 +578,7 @@ export default function CollectionPage() {
   const [showImport, setShowImport] = useState(false)
   const [search, setSearch] = useState('')
   const [filterSport, setFilterSport] = useState('')
+  const [sportTab, setSportTab] = useState('all') // 'all' | 'sports' | 'tcg' | specific sport
   const [filterStatus, setFilterStatus] = useState('active')
   const [filterGraded, setFilterGraded] = useState('')
   const [sortBy, setSortBy] = useState('date_desc')
@@ -615,13 +632,15 @@ export default function CollectionPage() {
   const filtered = cards.filter(c => {
     const q = search.toLowerCase()
     const matchSearch = !q || (c.player||'').toLowerCase().includes(q) || (c.name||'').toLowerCase().includes(q) || (c.brand||'').toLowerCase().includes(q)
+    const isTCG = TCG_LIST.includes(c.sport)
+    const matchSportTab = sportTab === 'all' || (sportTab === 'tcg' ? isTCG : sportTab === 'sports' ? !isTCG && c.sport !== '' : c.sport === sportTab)
     const matchSport = !filterSport || c.sport === filterSport
     const matchStatus = filterStatus === 'all' || (filterStatus === 'sold' ? c.sold : !c.sold)
     const matchGraded = !filterGraded || (filterGraded === 'graded' ? !!c.grade : !c.grade)
     const cardVal = parseFloat(c.val) || parseFloat(c.buy) || 0
     const matchMin = !priceMin || cardVal >= parseFloat(priceMin)
     const matchMax = !priceMax || cardVal <= parseFloat(priceMax)
-    return matchSearch && matchSport && matchStatus && matchGraded && matchMin && matchMax
+    return matchSearch && matchSport && matchSportTab && matchStatus && matchGraded && matchMin && matchMax
   }).sort((a, b) => {
     switch (sortBy) {
       case 'price_asc': return ((parseFloat(a.val)||parseFloat(a.buy)||0)*(parseInt(a.qty)||1)) - ((parseFloat(b.val)||parseFloat(b.buy)||0)*(parseInt(b.qty)||1))
@@ -637,10 +656,25 @@ export default function CollectionPage() {
 
   const activeCards = cards.filter(c => !c.sold)
   const soldCards = cards.filter(c => c.sold)
-  const totalInvested = activeCards.reduce((s, c) => s + (parseFloat(c.buy)||0) * (parseInt(c.qty)||1), 0)
-  const totalValue = activeCards.reduce((s, c) => s + (parseFloat(c.val)||parseFloat(c.buy)||0) * (parseInt(c.qty)||1), 0)
-  const totalSoldRevenue = soldCards.reduce((s, c) => s + (parseFloat(c.soldPrice)||0), 0)
-  const totalSoldCost = soldCards.reduce((s, c) => s + (parseFloat(c.buy)||0), 0)
+
+  // Filter by sport tab for stats
+  const statActive = sportTab === 'all' ? activeCards : activeCards.filter(c => {
+    const isTCG = TCG_LIST.includes(c.sport)
+    if (sportTab === 'tcg') return isTCG
+    if (sportTab === 'sports') return !isTCG && !!c.sport
+    return c.sport === sportTab
+  })
+  const statSold = sportTab === 'all' ? soldCards : soldCards.filter(c => {
+    const isTCG = TCG_LIST.includes(c.sport)
+    if (sportTab === 'tcg') return isTCG
+    if (sportTab === 'sports') return !isTCG && !!c.sport
+    return c.sport === sportTab
+  })
+
+  const totalInvested = statActive.reduce((s, c) => s + (parseFloat(c.buy)||0) * (parseInt(c.qty)||1), 0)
+  const totalValue = statActive.reduce((s, c) => s + (parseFloat(c.val)||parseFloat(c.buy)||0) * (parseInt(c.qty)||1), 0)
+  const totalSoldRevenue = statSold.reduce((s, c) => s + (parseFloat(c.soldPrice)||0), 0)
+  const totalSoldCost = statSold.reduce((s, c) => s + (parseFloat(c.buy)||0), 0)
   const realizedPL = totalSoldRevenue - totalSoldCost
 
   if (loading) return (
@@ -710,7 +744,7 @@ export default function CollectionPage() {
           {cards.length > 0 && (
             <div className="mob-stats" style={{ gap: 8, overflowX: 'auto', marginBottom: 12, paddingBottom: 2, WebkitOverflowScrolling: 'touch' }}>
               {[
-                { label: 'Cards', value: activeCards.length },
+                { label: 'Cards', value: statActive.length },
                 { label: 'Invested', value: fmt(totalInvested) },
                 { label: 'Value', value: fmt(totalValue) },
                 { label: 'G/L', value: (totalValue-totalInvested>=0?'+':'')+fmt(totalValue-totalInvested), color: totalValue>=totalInvested?'#22c55e':'#e53935' },
@@ -727,7 +761,7 @@ export default function CollectionPage() {
           {/* ── Desktop: stat grid ── */}
           {cards.length > 0 && (
             <div className="desk-stats" style={{ gridTemplateColumns: 'repeat(auto-fit,minmax(130px,1fr))', gap: 10, marginBottom: 18 }}>
-              {[['Active Cards', activeCards.length, '#f0f0f0'], ['Invested', fmt(totalInvested), '#f0f0f0'], ['Portfolio Value', fmt(totalValue), '#f0f0f0'], ['Unrealized G/L', (totalValue-totalInvested>=0?'+':'')+fmt(totalValue-totalInvested), totalValue>=totalInvested?'#22c55e':'#e53935'], ['Realized P&L', (realizedPL>=0?'+':'')+fmt(realizedPL), realizedPL>=0?'#22c55e':'#e53935']].map(([label, value, color]) => (
+              {[['Active Cards', statActive.length, '#f0f0f0'], ['Invested', fmt(totalInvested), '#f0f0f0'], ['Portfolio Value', fmt(totalValue), '#f0f0f0'], ['Unrealized G/L', (totalValue-totalInvested>=0?'+':'')+fmt(totalValue-totalInvested), totalValue>=totalInvested?'#22c55e':'#e53935'], ['Realized P&L', (realizedPL>=0?'+':'')+fmt(realizedPL), realizedPL>=0?'#22c55e':'#e53935']].map(([label, value, color]) => (
                 <div key={label} style={{ padding: '10px 14px', borderRadius: 10, background: '#111', border: '1px solid #2a2a2a' }}>
                   <div style={{ fontSize: 10, color: '#444', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 4 }}>{label}</div>
                   <div style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: 13, fontWeight: 700, color }}>{value}</div>
@@ -737,6 +771,35 @@ export default function CollectionPage() {
           )}
 
           {/* ── Desktop filters ── */}
+          {/* ── Sport / TCG Tab Bar ── */}
+          {cards.length > 0 && (() => {
+            const hasTCG = cards.some(c => TCG_LIST.includes(c.sport))
+            const hasSports = cards.some(c => c.sport && !TCG_LIST.includes(c.sport))
+            if (!hasTCG && !hasSports) return null
+            // Build unique sport options
+            const uniqueSports = [...new Set(cards.map(c => c.sport).filter(Boolean))]
+            const tabs = [
+              { val: 'all', label: 'All', emoji: '🃏' },
+              ...(hasSports ? [{ val: 'sports', label: 'Sports Cards', emoji: '🏆' }] : []),
+              ...(hasTCG ? [{ val: 'tcg', label: 'TCG', emoji: '✨' }] : []),
+              ...uniqueSports.map(s => ({ val: s, label: s, emoji: TCG_LIST.includes(s) ? '🎴' : '🏅' }))
+            ]
+            return (
+              <div style={{ display:'flex', gap:6, marginBottom:14, overflowX:'auto', paddingBottom:2, WebkitOverflowScrolling:'touch' }}>
+                {tabs.map(t => (
+                  <button key={t.val} onClick={() => setSportTab(t.val)} style={{ display:'flex', alignItems:'center', gap:6, padding:'7px 14px', borderRadius:20, border: sportTab === t.val ? '1px solid rgba(229,57,53,0.4)' : '1px solid #2a2a2a', background: sportTab === t.val ? 'rgba(229,57,53,0.1)' : '#111', color: sportTab === t.val ? '#e53935' : '#555', fontFamily:"'Outfit',sans-serif", fontSize:13, fontWeight: sportTab === t.val ? 700 : 500, cursor:'pointer', whiteSpace:'nowrap', flexShrink:0, transition:'all 0.15s' }}>
+                    <span>{t.emoji}</span>{t.label}
+                    {sportTab === t.val && t.val !== 'all' && (
+                      <span style={{ fontSize:10, background:'rgba(229,57,53,0.2)', borderRadius:10, padding:'1px 6px', fontFamily:"'JetBrains Mono',monospace" }}>
+                        {statActive.length}
+                      </span>
+                    )}
+                  </button>
+                ))}
+              </div>
+            )
+          })()}
+
           <div className="desk-filters" style={{ gap: 10, marginBottom: 10, flexWrap: 'wrap', alignItems: 'center' }}>
             <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search player, set, brand..." style={{ flex: 1, minWidth: 200, padding: '9px 14px', borderRadius: 10, background: '#111', border: '1px solid #2a2a2a', color: '#f0f0f0', fontSize: 14, outline: 'none', fontFamily: "'Outfit',sans-serif" }} />
             <select value={filterSport} onChange={e => setFilterSport(e.target.value)} style={{ padding: '9px 14px', borderRadius: 10, background: '#111', border: '1px solid #2a2a2a', color: filterSport ? '#f0f0f0' : '#555', fontSize: 14, outline: 'none' }}>
@@ -788,7 +851,7 @@ export default function CollectionPage() {
             </div>
             {/* Active filter count */}
             {(filterGraded || filterSport || sortBy !== 'date_desc' || priceMin || priceMax) && (
-              <button onClick={() => { setFilterGraded(''); setFilterSport(''); setSortBy('date_desc'); setPriceMin(''); setPriceMax('') }} style={{ padding: '8px 12px', borderRadius: 10, background: 'rgba(229,57,53,0.08)', border: '1px solid rgba(229,57,53,0.2)', color: '#e53935', fontFamily: "'Outfit',sans-serif", fontSize: 12, fontWeight: 600, cursor: 'pointer' }}>
+              <button onClick={() => { setFilterGraded(''); setFilterSport(''); setSortBy('date_desc'); setPriceMin(''); setPriceMax(''); setSportTab('all') }} style={{ padding: '8px 12px', borderRadius: 10, background: 'rgba(229,57,53,0.08)', border: '1px solid rgba(229,57,53,0.2)', color: '#e53935', fontFamily: "'Outfit',sans-serif", fontSize: 12, fontWeight: 600, cursor: 'pointer' }}>
                 ✕ Clear Filters
               </button>
             )}
@@ -875,7 +938,7 @@ export default function CollectionPage() {
               <div style={{ textAlign:'center', padding:'60px 24px', animation:'fadeIn 0.2s ease' }}>
                 <div style={{ fontSize:36, marginBottom:12, opacity:0.2 }}>🔍</div>
                 <p style={{ color:'#444', fontFamily:"'Outfit',sans-serif", fontSize:14, marginBottom:16 }}>No cards match your filters</p>
-                <button className="press" onClick={() => { setSearch(''); setFilterSport(''); setFilterGraded(''); setSortBy('date_desc'); setPriceMin(''); setPriceMax('') }} style={{ padding:'8px 18px', borderRadius:10, background:'rgba(229,57,53,0.08)', border:'1px solid rgba(229,57,53,0.2)', color:'#e53935', fontFamily:"'Outfit',sans-serif", fontSize:13, fontWeight:600, cursor:'pointer' }}>Clear Filters</button>
+                <button className="press" onClick={() => { setSearch(''); setFilterSport(''); setFilterGraded(''); setSortBy('date_desc'); setPriceMin(''); setPriceMax(''); setSportTab('all') }} style={{ padding:'8px 18px', borderRadius:10, background:'rgba(229,57,53,0.08)', border:'1px solid rgba(229,57,53,0.2)', color:'#e53935', fontFamily:"'Outfit',sans-serif", fontSize:13, fontWeight:600, cursor:'pointer' }}>Clear Filters</button>
               </div>
             )
           ) : (
