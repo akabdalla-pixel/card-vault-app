@@ -18,22 +18,22 @@ const navIcons = { 'Dashboard': IconDashboard, 'Collection': IconCollection, 'Wi
 
 function Sidebar({ user, onLogout }) {
   return (
-    <aside style={{ width: 220, minHeight: '100vh', background: '#0b0e1c', borderRight: '1px solid rgba(255,255,255,0.06)', display: 'flex', flexDirection: 'column', position: 'fixed', top: 0, left: 0, zIndex: 60 }}>
-      <div style={{ padding: '26px 22px 20px', borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
-        <div style={{ fontFamily: "'Outfit',sans-serif", fontSize: 22, fontWeight: 800 }}><span style={{ color: '#f0f2ff' }}>Top</span><span style={{ color: 'var(--cyan)' }}>Load</span></div>
-        <div style={{ fontSize: 10, color: '#3a4465', fontWeight: 600, letterSpacing: '0.12em', textTransform: 'uppercase', marginTop: 3 }}>Card Investment Tracker</div>
+    <aside style={{ width: 220, minHeight: '100vh', background: '#0d0d0d', borderRight: '1px solid #1e1e1e', display: 'flex', flexDirection: 'column', position: 'fixed', top: 0, left: 0, zIndex: 60 }}>
+      <div style={{ padding: '26px 22px 20px', borderBottom: '1px solid #1e1e1e' }}>
+        <div style={{ fontFamily: "'Outfit',sans-serif", fontSize: 22, fontWeight: 800 }}><span style={{ color: '#f0f2ff' }}>Top</span><span style={{ color: '#e53935' }}>Load</span></div>
+        <div style={{ fontSize: 10, color: '#444', fontWeight: 600, letterSpacing: '0.12em', textTransform: 'uppercase', marginTop: 3 }}>Card Investment Tracker</div>
       </div>
       <nav style={{ flex: 1, padding: '14px 10px' }}>
-        <div style={{ fontSize: 10, color: '#2e3759', fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', padding: '0 12px', marginBottom: 8 }}>Menu</div>
+        <div style={{ fontSize: 10, color: '#333', fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', padding: '0 12px', marginBottom: 8 }}>Menu</div>
         {NAV.map(({ label, href }) => {
           const Icon = navIcons[label]
-          return <Link key={label} href={href} style={{ display: 'flex', alignItems: 'center', gap: 11, padding: '9px 12px', borderRadius: 10, marginBottom: 2, textDecoration: 'none', color: '#6a75a0', background: 'transparent', fontFamily: "'Outfit',sans-serif", fontSize: 14, fontWeight: 500, borderLeft: '2px solid transparent', transition: 'all 0.15s' }}><Icon />{label}</Link>
+          return <Link key={label} href={href} style={{ display: 'flex', alignItems: 'center', gap: 11, padding: '9px 12px', borderRadius: 10, marginBottom: 2, textDecoration: 'none', color: '#666', background: 'transparent', fontFamily: "'Outfit',sans-serif", fontSize: 14, fontWeight: 500, borderLeft: '2px solid transparent', transition: 'all 0.15s' }}><Icon />{label}</Link>
         })}
       </nav>
-      <div style={{ padding: '14px 10px', borderTop: '1px solid rgba(255,255,255,0.06)' }}>
-        {user && <div style={{ padding: '10px 12px', marginBottom: 4, borderRadius: 10, background: 'rgba(255,255,255,0.03)', fontFamily: "'Outfit',sans-serif" }}><div style={{ fontSize: 12, fontWeight: 700, color: '#c0c8e8' }}>@{user.username}</div><div style={{ fontSize: 11, color: '#3a4465', marginTop: 1 }}>{user.email}</div></div>}
-        <Link href="/settings" style={{ display: 'flex', alignItems: 'center', gap: 11, padding: '9px 12px', borderRadius: 10, marginBottom: 2, textDecoration: 'none', color: 'var(--cyan)', background: 'rgba(6,214,214,0.08)', borderLeft: '2px solid var(--cyan)', fontFamily: "'Outfit',sans-serif", fontSize: 14, fontWeight: 600 }}><IconSettings />Settings</Link>
-        <button onClick={onLogout} style={{ display: 'flex', alignItems: 'center', gap: 11, padding: '9px 12px', borderRadius: 10, width: '100%', background: 'transparent', border: 'none', cursor: 'pointer', color: '#4a5578', fontFamily: "'Outfit',sans-serif", fontSize: 14, fontWeight: 500 }}><IconLogout />Sign Out</button>
+      <div style={{ padding: '14px 10px', borderTop: '1px solid #1e1e1e' }}>
+        {user && <div style={{ padding: '10px 12px', marginBottom: 4, borderRadius: 10, background: 'rgba(255,255,255,0.03)', fontFamily: "'Outfit',sans-serif" }}><div style={{ fontSize: 12, fontWeight: 700, color: '#ccc' }}>@{user.username}</div><div style={{ fontSize: 11, color: '#444', marginTop: 1 }}>{user.email}</div></div>}
+        <Link href="/settings" style={{ display: 'flex', alignItems: 'center', gap: 11, padding: '9px 12px', borderRadius: 10, marginBottom: 2, textDecoration: 'none', color: '#e53935', background: 'rgba(229,57,53,0.08)', borderLeft: '2px solid #e53935', fontFamily: "'Outfit',sans-serif", fontSize: 14, fontWeight: 600 }}><IconSettings />Settings</Link>
+        <button onClick={onLogout} style={{ display: 'flex', alignItems: 'center', gap: 11, padding: '9px 12px', borderRadius: 10, width: '100%', background: 'transparent', border: 'none', cursor: 'pointer', color: '#555', fontFamily: "'Outfit',sans-serif", fontSize: 14, fontWeight: 500 }}><IconLogout />Sign Out</button>
       </div>
     </aside>
   )
@@ -64,7 +64,7 @@ export default function SettingsPage() {
     router.push('/login')
   }
 
-  if (loading) return <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--bg)' }}><div style={{ color: '#3a4465', fontFamily: "'Outfit',sans-serif", fontSize: 14 }}>Loading...</div></div>
+  if (loading) return <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--bg)' }}><div style={{ color: '#444', fontFamily: "'Outfit',sans-serif", fontSize: 14 }}>Loading...</div></div>
 
   return (
     <>
@@ -84,35 +84,35 @@ export default function SettingsPage() {
 
         <main className="main-wrap" style={{ padding: '30px 28px' }}>
           <div className="mob-topbar" style={{ alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
-            <span style={{ fontFamily: "'Outfit',sans-serif", fontSize: 20, fontWeight: 800 }}><span style={{ color: '#f0f2ff' }}>Top</span><span style={{ color: 'var(--cyan)' }}>Load</span></span>
+            <span style={{ fontFamily: "'Outfit',sans-serif", fontSize: 20, fontWeight: 800 }}><span style={{ color: '#f0f2ff' }}>Top</span><span style={{ color: '#e53935' }}>Load</span></span>
           </div>
 
           <div style={{ marginBottom: 28 }}>
             <h1 style={{ fontFamily: "'Outfit',sans-serif", fontSize: 24, fontWeight: 800, color: '#f0f2ff', letterSpacing: '-0.5px', margin: 0 }}>Settings</h1>
-            <p style={{ fontSize: 13, color: '#4a5578', marginTop: 4, fontWeight: 500 }}>Manage your account</p>
+            <p style={{ fontSize: 13, color: '#555', marginTop: 4, fontWeight: 500 }}>Manage your account</p>
           </div>
 
           <div style={{ maxWidth: 520, display: 'flex', flexDirection: 'column', gap: 20 }}>
             {/* Account Info */}
-            <div style={{ background: 'linear-gradient(135deg,#131929,#0f1521)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: 14, padding: 22 }}>
-              <h2 style={{ fontFamily: "'Outfit',sans-serif", fontSize: 14, fontWeight: 700, color: '#c0c8e8', marginBottom: 16 }}>Account Info</h2>
+            <div style={{ background: 'linear-gradient(135deg,#111,#0d0d0d)', border: '1px solid #1e1e1e', borderRadius: 14, padding: 22 }}>
+              <h2 style={{ fontFamily: "'Outfit',sans-serif", fontSize: 14, fontWeight: 700, color: '#ccc', marginBottom: 16 }}>Account Info</h2>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
                 <div>
-                  <div style={{ fontSize: 11, fontWeight: 600, color: '#3a4465', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 4 }}>Username</div>
-                  <div style={{ padding: '10px 14px', borderRadius: 10, background: 'var(--card2)', border: '1px solid var(--border)', fontFamily: "'Outfit',sans-serif", fontSize: 14, color: '#c0c8e8' }}>@{user?.username}</div>
+                  <div style={{ fontSize: 11, fontWeight: 600, color: '#444', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 4 }}>Username</div>
+                  <div style={{ padding: '10px 14px', borderRadius: 10, background: 'var(--card2)', border: '1px solid var(--border)', fontFamily: "'Outfit',sans-serif", fontSize: 14, color: '#ccc' }}>@{user?.username}</div>
                 </div>
                 <div>
-                  <div style={{ fontSize: 11, fontWeight: 600, color: '#3a4465', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 4 }}>Email</div>
-                  <div style={{ padding: '10px 14px', borderRadius: 10, background: 'var(--card2)', border: '1px solid var(--border)', fontFamily: "'Outfit',sans-serif", fontSize: 14, color: '#c0c8e8' }}>{user?.email}</div>
+                  <div style={{ fontSize: 11, fontWeight: 600, color: '#444', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 4 }}>Email</div>
+                  <div style={{ padding: '10px 14px', borderRadius: 10, background: 'var(--card2)', border: '1px solid var(--border)', fontFamily: "'Outfit',sans-serif", fontSize: 14, color: '#ccc' }}>{user?.email}</div>
                 </div>
               </div>
             </div>
 
             {/* Sign Out */}
-            <div style={{ background: 'linear-gradient(135deg,#131929,#0f1521)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: 14, padding: 22 }}>
-              <h2 style={{ fontFamily: "'Outfit',sans-serif", fontSize: 14, fontWeight: 700, color: '#c0c8e8', marginBottom: 6 }}>Sign Out</h2>
-              <p style={{ fontSize: 13, color: '#4a5578', marginBottom: 16 }}>Sign out of your TopLoad account on this device.</p>
-              <button onClick={handleLogout} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '10px 18px', borderRadius: 10, background: 'rgba(255,107,122,0.08)', border: '1px solid rgba(255,107,122,0.2)', color: '#ff6b7a', fontFamily: "'Outfit',sans-serif", fontSize: 14, fontWeight: 600, cursor: 'pointer' }}>
+            <div style={{ background: 'linear-gradient(135deg,#111,#0d0d0d)', border: '1px solid #1e1e1e', borderRadius: 14, padding: 22 }}>
+              <h2 style={{ fontFamily: "'Outfit',sans-serif", fontSize: 14, fontWeight: 700, color: '#ccc', marginBottom: 6 }}>Sign Out</h2>
+              <p style={{ fontSize: 13, color: '#555', marginBottom: 16 }}>Sign out of your TopLoad account on this device.</p>
+              <button onClick={handleLogout} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '10px 18px', borderRadius: 10, background: 'rgba(255,107,122,0.08)', border: '1px solid rgba(255,107,122,0.2)', color: '#616161', fontFamily: "'Outfit',sans-serif", fontSize: 14, fontWeight: 600, cursor: 'pointer' }}>
                 <IconLogout /> Sign Out
               </button>
             </div>
