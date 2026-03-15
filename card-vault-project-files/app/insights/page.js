@@ -396,17 +396,18 @@ export default function InsightsPage() {
         .insights-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
         .insights-grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
         .insights-grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
-        .hide-mobile{display:block}
+        .hide-mobile{display:block}.show-mobile{display:none!important}.mob-stat-scroll-wrap{display:none!important}
         @media(max-width:1100px){.insights-grid-4{grid-template-columns:repeat(2,1fr)}.insights-grid-3{grid-template-columns:repeat(2,1fr)}}
         @media(max-width:768px){
           .sidebar-el{display:none!important}.mobile-only{display:flex!important}.mob-topbar{display:flex}
-          .main-wrap{margin-left:0!important;width:100%!important;padding-bottom:80px!important;padding:16px 16px 80px!important}
+          .main-wrap{margin-left:0!important;width:100%!important;padding:12px 12px 80px!important}
           .insights-grid{grid-template-columns:1fr!important;gap:12px!important}
           .insights-grid-3{grid-template-columns:1fr 1fr!important;gap:10px!important}
           .insights-grid-4{grid-template-columns:1fr 1fr!important;gap:10px!important}
           .hide-mobile{display:none!important}
+          .show-mobile{display:block!important}
+          .mob-stat-scroll-wrap{display:block!important}
         }
-        @media(max-width:480px){.insights-grid-3{grid-template-columns:1fr 1fr!important}.insights-grid-4{grid-template-columns:1fr 1fr!important}}
       `}</style>
       <div style={{ display: 'flex', minHeight: '100vh', background: '#0a0a0a' }}>
         <div className="sidebar-el"><Sidebar user={user} onLogout={handleLogout} active="Insights" /></div>
@@ -432,46 +433,76 @@ export default function InsightsPage() {
             </div>
           ) : (
             <>
-              {/* ── Top Stats Row ── */}
-              <div className="insights-grid-4" style={{ marginBottom: 20 }}>
-                <StatCard label="Total Cards" value={activeCards.length} sub={`${soldCards.length} sold`} icon="🃏" accent />
-                <StatCard label="Total Invested" value={fmt(totalInvested)} icon="💵" />
-                <StatCard label="Current Value" value={fmt(currentValue)} sub={`${totalROI >= 0 ? '+' : ''}${totalROI.toFixed(1)}% ROI`} positive={totalROI >= 0} icon="📈" />
-                <StatCard label="Realized P&L" value={`${realizedPL >= 0 ? '+' : ''}${fmt(realizedPL)}`} sub={`${soldCards.length} cards flipped`} positive={soldCards.length > 0 ? realizedPL >= 0 : undefined} icon="💰" />
+              {/* ── Mobile Hero ── */}
+              <div className="mob-stat-scroll-wrap">
+                <div style={{ background: 'linear-gradient(135deg,#1a0505,#0d0d0d)', border: '1px solid rgba(229,57,53,0.15)', borderRadius: 16, padding: '18px 16px', marginBottom: 14 }}>
+                  <div style={{ fontSize: 11, color: '#555', fontFamily: "'Outfit',sans-serif", fontWeight: 600, marginBottom: 4 }}>Portfolio Value</div>
+                  <div style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: 32, fontWeight: 800, color: '#f0f0f0', letterSpacing: '-1px', lineHeight: 1 }}>{fmt(currentValue)}</div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 6 }}>
+                    <div style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: 14, fontWeight: 700, color: unrealizedPL >= 0 ? '#22c55e' : '#e53935' }}>
+                      {unrealizedPL >= 0 ? '▲' : '▼'} {unrealizedPL >= 0 ? '+' : ''}{fmt(unrealizedPL)}
+                    </div>
+                    <div style={{ fontSize: 12, color: '#555' }}>({totalROI >= 0 ? '+' : ''}{totalROI.toFixed(1)}%)</div>
+                  </div>
+                  <div style={{ display: 'flex', gap: 20, marginTop: 14, paddingTop: 12, borderTop: '1px solid rgba(255,255,255,0.05)' }}>
+                    <div><div style={{ fontSize: 9, color: '#444', fontFamily: "'Outfit',sans-serif", fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 3 }}>Invested</div><div style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: 13, color: '#888' }}>{fmt(totalInvested)}</div></div>
+                    <div><div style={{ fontSize: 9, color: '#444', fontFamily: "'Outfit',sans-serif", fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 3 }}>Cards</div><div style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: 13, color: '#888' }}>{activeCards.length}</div></div>
+                    <div><div style={{ fontSize: 9, color: '#444', fontFamily: "'Outfit',sans-serif", fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 3 }}>Graded</div><div style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: 13, color: '#888' }}>{gradedCards.length}</div></div>
+                    <div><div style={{ fontSize: 9, color: '#444', fontFamily: "'Outfit',sans-serif", fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 3 }}>P&L</div><div style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: 13, color: realizedPL >= 0 ? '#22c55e' : '#e53935' }}>{realizedPL >= 0 ? '+' : ''}{fmt(realizedPL)}</div></div>
+                  </div>
+                </div>
               </div>
 
-              {/* ── Financial Stats Row ── */}
-              <div className="insights-grid-3" style={{ marginBottom: 20 }}>
-                <StatCard label="Unrealized G/L" value={`${unrealizedPL >= 0 ? '+' : ''}${fmt(unrealizedPL)}`} positive={unrealizedPL >= 0} icon="📊" />
-                <StatCard label="Graded Cards" value={gradedCards.length} sub={`${Math.round((gradedCards.length / activeCards.length) * 100)}% of collection`} icon="🏅" />
-                <StatCard label="Raw Cards" value={rawCards.length} sub={`${Math.round((rawCards.length / activeCards.length) * 100)}% of collection`} icon="📦" />
-              </div>
-
-              {/* ── Collector DNA ── */}
-              <div style={{ marginBottom: 20 }}>
+              {/* ── Collector DNA — TOP on both mobile and desktop ── */}
+              <div style={{ marginBottom: 14 }}>
                 <CollectorDNA cards={cards} soldCards={soldCards} />
               </div>
 
-              {/* ── Charts Grid ── */}
-              <div className="insights-grid" style={{ marginBottom: 20 }}>
-                {sportData.length > 1 && <DonutChart data={sportData} title="🏀 Sport Breakdown" />}
-                {graderData.length > 1 && <DonutChart data={graderData} title="🏅 Raw vs Graded" />}
+              {/* ── Desktop: Top Stats Row ── */}
+              <div className="hide-mobile">
+                <div className="insights-grid-4" style={{ marginBottom: 14 }}>
+                  <StatCard label="Total Cards" value={activeCards.length} sub={`${soldCards.length} sold`} icon="🃏" accent />
+                  <StatCard label="Total Invested" value={fmt(totalInvested)} icon="💵" />
+                  <StatCard label="Current Value" value={fmt(currentValue)} sub={`${totalROI >= 0 ? '+' : ''}${totalROI.toFixed(1)}% ROI`} positive={totalROI >= 0} icon="📈" />
+                  <StatCard label="Realized P&L" value={`${realizedPL >= 0 ? '+' : ''}${fmt(realizedPL)}`} sub={`${soldCards.length} cards flipped`} positive={soldCards.length > 0 ? realizedPL >= 0 : undefined} icon="💰" />
+                </div>
+                <div className="insights-grid-3" style={{ marginBottom: 14 }}>
+                  <StatCard label="Unrealized G/L" value={`${unrealizedPL >= 0 ? '+' : ''}${fmt(unrealizedPL)}`} positive={unrealizedPL >= 0} icon="📊" />
+                  <StatCard label="Graded Cards" value={gradedCards.length} sub={`${Math.round((gradedCards.length / activeCards.length) * 100)}% of collection`} icon="🏅" />
+                  <StatCard label="Raw Cards" value={rawCards.length} sub={`${Math.round((rawCards.length / activeCards.length) * 100)}% of collection`} icon="📦" />
+                </div>
               </div>
 
-              <div className="insights-grid" style={{ marginBottom: 20 }}>
-                {buckets.length > 0 && <BarChart data={buckets} title="💰 Value Distribution" valueSuffix=" cards" />}
-                {brandData.length > 0 && <BarChart data={brandData} title="🏷️ Top Brands" valueSuffix=" cards" color="#ff7043" />}
-              </div>
-
-              <div className="insights-grid" style={{ marginBottom: 20 }}>
-                {yearData.length > 0 && <BarChart data={yearData} title="📅 Cards by Year" valueSuffix=" cards" color="#ab47bc" />}
-                <MonthlyActivity cards={cards} />
-              </div>
-
-              {/* ── Top Cards + Records ── */}
-              <div className="insights-grid" style={{ marginBottom: 20 }}>
+              {/* ── Top Cards + Records — show on both ── */}
+              <div className="insights-grid" style={{ marginBottom: 14 }}>
                 <TopCardsRank cards={cards} />
                 <PersonalRecords cards={cards} soldCards={soldCards} />
+              </div>
+
+              {/* ── Charts — hide on mobile to reduce scrolling ── */}
+              <div className="hide-mobile">
+                <div className="insights-grid" style={{ marginBottom: 14 }}>
+                  {sportData.length > 1 && <DonutChart data={sportData} title="🏀 Sport Breakdown" />}
+                  {graderData.length > 1 && <DonutChart data={graderData} title="🏅 Raw vs Graded" />}
+                </div>
+                <div className="insights-grid" style={{ marginBottom: 14 }}>
+                  {buckets.length > 0 && <BarChart data={buckets} title="💰 Value Distribution" valueSuffix=" cards" />}
+                  {brandData.length > 0 && <BarChart data={brandData} title="🏷️ Top Brands" valueSuffix=" cards" color="#ff7043" />}
+                </div>
+                <div className="insights-grid" style={{ marginBottom: 14 }}>
+                  {yearData.length > 0 && <BarChart data={yearData} title="📅 Cards by Year" valueSuffix=" cards" color="#ab47bc" />}
+                  <MonthlyActivity cards={cards} />
+                </div>
+              </div>
+
+              {/* ── Mobile: show sport + graded charts only ── */}
+              <div className="show-mobile">
+                <div style={{ marginBottom: 14 }}>
+                  {sportData.length > 1 && <DonutChart data={sportData} title="🏀 Sport Breakdown" />}
+                </div>
+                <div style={{ marginBottom: 14 }}>
+                  {graderData.length > 1 && <DonutChart data={graderData} title="🏅 Raw vs Graded" />}
+                </div>
               </div>
             </>
           )}
