@@ -23,7 +23,6 @@ function IconTrendUp() { return <svg width="13" height="13" viewBox="0 0 24 24" 
 function IconTrendDown() { return <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="23 18 13.5 8.5 8.5 13.5 1 6"/><polyline points="17 18 23 18 23 12"/></svg> }
 function IconStar() { return <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" strokeWidth="1"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg> }
 function IconTrophy() { return <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2z"/></svg> }
-function IconDNA() { return <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M2 15c6.667-6 13.333 0 20-6"/><path d="M9 22c1.798-1.998 2.518-3.995 2.807-5.993"/><path d="M15 2c-1.798 1.998-2.518 3.995-2.807 5.993"/><path d="m17 6-2.5-2.5"/><path d="m14 8-1-1"/><path d="m7 18 2.5 2.5"/><path d="m3.5 14.5.5.5"/><path d="m20 9 .5.5"/><path d="m6.5 12.5 1 1"/><path d="m16.5 10.5 1 1"/><path d="m10 16 1.5 1.5"/></svg> }
 
 const navIcons = { 'Dashboard': IconDashboard, 'Collection': IconCollection, 'Market': IconMarket, 'Insights': IconInsights, 'Sold History': IconSold }
 const fmt = n => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 2 }).format(n || 0)
@@ -217,59 +216,6 @@ function MonthlyActivity({ cards }) {
   return <BarChart data={data} title="📅 Cards Added by Month" valueSuffix=" cards" />
 }
 
-// ── Collector DNA ──────────────────────────────────────────────
-function CollectorDNA({ cards, soldCards }) {
-  const active = cards.filter(c => !c.sold)
-  if (!active.length) return null
-
-  const sportCount = {}
-  const brandCount = {}
-  const yearCount = {}
-  const playerCount = {}
-  const gradeCount = { 'PSA': 0, 'BGS': 0, 'Raw': 0, 'Other': 0 }
-
-  active.forEach(c => {
-    if (c.sport) sportCount[c.sport] = (sportCount[c.sport] || 0) + 1
-    if (c.brand) brandCount[c.brand] = (brandCount[c.brand] || 0) + 1
-    if (c.year) yearCount[c.year] = (yearCount[c.year] || 0) + 1
-    if (c.player) playerCount[c.player] = (playerCount[c.player] || 0) + 1
-    if (c.grade) gradeCount['PSA'] += 1
-    else gradeCount['Raw'] += 1
-  })
-
-  const topSport = Object.entries(sportCount).sort((a, b) => b[1] - a[1])[0]
-  const topBrand = Object.entries(brandCount).sort((a, b) => b[1] - a[1])[0]
-  const topPlayer = Object.entries(playerCount).sort((a, b) => b[1] - a[1])[0]
-  const topYear = Object.entries(yearCount).sort((a, b) => b[1] - a[1])[0]
-  const avgBuy = active.reduce((s, c) => s + (parseFloat(c.buy) || 0), 0) / active.length
-  const gradedPct = Math.round((gradeCount['PSA'] / active.length) * 100)
-
-  const dna = [
-    { label: 'Fav Sport', value: topSport?.[0] || '—', icon: '🏆' },
-    { label: 'Fav Brand', value: topBrand?.[0] || '—', icon: '🏷️' },
-    { label: 'Fav Player', value: topPlayer?.[0] || '—', icon: '⭐' },
-    { label: 'Fav Era', value: topYear?.[0] ? `${topYear[0]}s` : '—', icon: '📅' },
-    { label: 'Avg Buy Price', value: fmt(avgBuy), icon: '💰' },
-    { label: 'Graded %', value: `${gradedPct}%`, icon: '🏅' },
-  ]
-
-  return (
-    <div style={{ background: '#111', border: '1px solid rgba(229,57,53,0.2)', borderRadius: 16, padding: '20px 22px', position: 'relative', overflow: 'hidden' }}>
-      <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 2, background: 'linear-gradient(90deg,#e53935,#ff5252,#e53935)' }} />
-      <div style={{ fontFamily: "'Outfit',sans-serif", fontSize: 13, fontWeight: 700, color: '#ccc', marginBottom: 16, display: 'flex', alignItems: 'center', gap: 8 }}><IconDNA /><span>Collector DNA</span></div>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 12 }}>
-        {dna.map(d => (
-          <div key={d.label} style={{ background: '#1a1a1a', borderRadius: 10, padding: '12px 14px' }}>
-            <div style={{ fontSize: 16, marginBottom: 6 }}>{d.icon}</div>
-            <div style={{ fontFamily: "'Outfit',sans-serif", fontSize: 10, color: '#444', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 4 }}>{d.label}</div>
-            <div style={{ fontFamily: "'Outfit',sans-serif", fontSize: 13, fontWeight: 700, color: '#e53935', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{d.value}</div>
-          </div>
-        ))}
-      </div>
-    </div>
-  )
-}
-
 // ── Personal Records ──────────────────────────────────────────
 function PersonalRecords({ cards, soldCards }) {
   const active = cards.filter(c => !c.sold)
@@ -453,9 +399,9 @@ export default function InsightsPage() {
                 </div>
               </div>
 
-              {/* ── Collector DNA — TOP on both mobile and desktop ── */}
+              {/* ── Personal Records — TOP ── */}
               <div style={{ marginBottom: 14 }}>
-                <CollectorDNA cards={cards} soldCards={soldCards} />
+                <PersonalRecords cards={cards} soldCards={soldCards} />
               </div>
 
               {/* ── Desktop: Top Stats Row ── */}
@@ -473,10 +419,9 @@ export default function InsightsPage() {
                 </div>
               </div>
 
-              {/* ── Top Cards + Records — show on both ── */}
-              <div className="insights-grid" style={{ marginBottom: 14 }}>
+              {/* ── Top Cards ── */}
+              <div style={{ marginBottom: 14 }}>
                 <TopCardsRank cards={cards} />
-                <PersonalRecords cards={cards} soldCards={soldCards} />
               </div>
 
               {/* ── Charts — hide on mobile to reduce scrolling ── */}
