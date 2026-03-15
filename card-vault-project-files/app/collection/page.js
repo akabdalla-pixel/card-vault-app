@@ -749,7 +749,7 @@ export default function CollectionPage() {
               ))}
             </div>
           </div>
-          <div style={{ display: 'flex', gap: 10, marginBottom: 16, flexWrap: 'wrap' }}>
+          <div className="desk-filters" style={{ gap: 10, marginBottom: 16, flexWrap: 'wrap' }}>
             {/* Graded filter */}
             <div style={{ display: 'flex', borderRadius: 10, overflow: 'hidden', border: '1px solid #2a2a2a' }}>
               {[['','All Cards'],['graded','Graded'],['raw','Raw']].map(([val, label]) => (
