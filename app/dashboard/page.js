@@ -327,7 +327,7 @@ export default function DashboardPage() {
               </div>
             ))}
           </div>
-          <div style={{ display:'flex',alignItems:'flex-end',justifyContent:'space-between',flexWrap:'wrap',gap:12,marginBottom:24 }}>
+          <div className="hide-mobile" style={{ display:'flex',alignItems:'flex-end',justifyContent:'space-between',flexWrap:'wrap',gap:12,marginBottom:24 }}>
             <div>
               <h1 style={{ fontFamily:"'Outfit',sans-serif",fontSize:24,fontWeight:800,color:'#f0f0f0',letterSpacing:'-0.5px',margin:0 }}>Portfolio Overview</h1>
               <p style={{ fontSize:13,color:'#555',marginTop:4,fontWeight:500 }}>{activeCards.length===0?"Add your first card to get started":`Tracking ${activeCards.length} active card${activeCards.length!==1?'s':''}`}</p>

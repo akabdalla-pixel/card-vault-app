@@ -396,28 +396,31 @@ export default function InsightsPage() {
         .insights-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
         .insights-grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
         .insights-grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+        .hide-mobile{display:block}
         @media(max-width:1100px){.insights-grid-4{grid-template-columns:repeat(2,1fr)}.insights-grid-3{grid-template-columns:repeat(2,1fr)}}
         @media(max-width:768px){
           .sidebar-el{display:none!important}.mobile-only{display:flex!important}.mob-topbar{display:flex}
-          .main-wrap{margin-left:0!important;width:100%!important;padding-bottom:80px!important}
-          .insights-grid{grid-template-columns:1fr!important}
-          .insights-grid-3{grid-template-columns:1fr 1fr!important}
-          .insights-grid-4{grid-template-columns:1fr 1fr!important}
+          .main-wrap{margin-left:0!important;width:100%!important;padding-bottom:80px!important;padding:16px 16px 80px!important}
+          .insights-grid{grid-template-columns:1fr!important;gap:12px!important}
+          .insights-grid-3{grid-template-columns:1fr 1fr!important;gap:10px!important}
+          .insights-grid-4{grid-template-columns:1fr 1fr!important;gap:10px!important}
+          .hide-mobile{display:none!important}
         }
-        @media(max-width:480px){.insights-grid-3{grid-template-columns:1fr!important}.insights-grid-4{grid-template-columns:1fr!important}}
+        @media(max-width:480px){.insights-grid-3{grid-template-columns:1fr 1fr!important}.insights-grid-4{grid-template-columns:1fr 1fr!important}}
       `}</style>
       <div style={{ display: 'flex', minHeight: '100vh', background: '#0a0a0a' }}>
         <div className="sidebar-el"><Sidebar user={user} onLogout={handleLogout} active="Insights" /></div>
         <main className="main-wrap" style={{ padding: '28px 28px 40px' }}>
 
           {/* Mobile topbar */}
-          <div className="mob-topbar" style={{ alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
-            <img src={LOGO} alt="TopLoad" style={{ height: 36, filter: 'drop-shadow(0 0 8px rgba(229,57,53,0.4))' }} />
-            <button onClick={handleLogout} style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '8px 14px', borderRadius: 10, background: 'rgba(255,255,255,0.05)', border: 'none', color: '#555', fontFamily: "'Outfit',sans-serif", fontSize: 13, fontWeight: 600, cursor: 'pointer' }}><IconLogout />Sign Out</button>
+          <div className="mob-topbar" style={{ alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
+            <img src={LOGO} alt="TopLoad" style={{ height: 32, filter: 'drop-shadow(0 0 8px rgba(229,57,53,0.4))' }} />
+            <div style={{ fontFamily:"'Outfit',sans-serif", fontSize: 16, fontWeight: 800, color: '#f0f0f0' }}>Insights</div>
+            <div style={{ width: 32 }} />
           </div>
 
-          {/* Header */}
-          <div style={{ marginBottom: 28 }}>
+          {/* Desktop header */}
+          <div className="hide-mobile" style={{ marginBottom: 28 }}>
             <h1 style={{ fontFamily: "'Outfit',sans-serif", fontSize: 24, fontWeight: 800, color: '#f0f0f0', letterSpacing: '-0.5px', margin: 0 }}>Insights</h1>
             <p style={{ fontSize: 13, color: '#555', marginTop: 4, fontWeight: 500 }}>A deep look at your collection — updates automatically with every new card</p>
           </div>
