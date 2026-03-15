@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
@@ -119,20 +119,20 @@ function getCards() {
 
 function computeStats(cards) {
   const totalCards = cards.length;
-  const totalInvested = cards.reduce((s, c) => s + (parseFloat(c.purchasePrice) || 0), 0);
-  const currentValue = cards.reduce((s, c) => s + (parseFloat(c.currentValue) || parseFloat(c.purchasePrice) || 0), 0);
+  const totalInvested = cards.reduce((s, c) => s + (parseFloat(c.buy) || 0), 0);
+  const currentValue = cards.reduce((s, c) => s + (parseFloat(c.val) || parseFloat(c.buy) || 0), 0);
   const gainLoss = currentValue - totalInvested;
   const portfolioReturn = totalInvested > 0 ? (gainLoss / totalInvested) * 100 : 0;
   let bestReturn = null;
   let bestReturnLabel = "-";
   cards.forEach((c) => {
-    const bought = parseFloat(c.purchasePrice) || 0;
-    const current = parseFloat(c.currentValue) || bought;
+    const bought = parseFloat(c.buy) || 0;
+    const current = parseFloat(c.val) || bought;
     if (bought > 0) {
       const r = ((current - bought) / bought) * 100;
       if (bestReturn === null || r > bestReturn) {
         bestReturn = r;
-        bestReturnLabel = `${r >= 0 ? "+" : ""}${r.toFixed(1)}% — ${c.playerName || c.name || "Card"}`;
+        bestReturnLabel = `${r >= 0 ? "+" : ""}${r.toFixed(1)}% — ${c.player || c.name || "Card"}`;
       }
     }
   });
@@ -141,13 +141,13 @@ function computeStats(cards) {
     const sport = c.sport || "Other";
     if (!bySport[sport]) bySport[sport] = { cards: 0, invested: 0, value: 0 };
     bySport[sport].cards++;
-    bySport[sport].invested += parseFloat(c.purchasePrice) || 0;
-    bySport[sport].value += parseFloat(c.currentValue) || parseFloat(c.purchasePrice) || 0;
+    bySport[sport].invested += parseFloat(c.buy) || 0;
+    bySport[sport].value += parseFloat(c.val) || parseFloat(c.buy) || 0;
   });
   const topCards = [...cards]
     .sort((a, b) => {
-      const va = parseFloat(a.currentValue) || parseFloat(a.purchasePrice) || 0;
-      const vb = parseFloat(b.currentValue) || parseFloat(b.purchasePrice) || 0;
+      const va = parseFloat(a.val) || parseFloat(a.buy) || 0;
+      const vb = parseFloat(b.val) || parseFloat(b.buy) || 0;
       return vb - va;
     })
     .slice(0, 6);
@@ -376,15 +376,29 @@ function StatCard({ label, value, sub, icon: Icon, accent, positive }) {
 // ─── Main Dashboard ───────────────────────────────────────────────────────────
 export default function DashboardPage() {
   const [cards, setCards] = useState([]);
+  const [user, setUser] = useState(null);
   const [installPrompt, setInstallPrompt] = useState(null);
   const [installed, setInstalled] = useState(false);
   const [showInstallModal, setShowInstallModal] = useState(false);
   const router = useRouter();
 
+  const loadData = useCallback(async () => {
+    try {
+      const [meRes, cardsRes] = await Promise.all([
+        fetch('/api/auth/me'),
+        fetch('/api/cards'),
+      ]);
+      if (!meRes.ok) { router.push('/login'); return; }
+      setUser((await meRes.json()).user);
+      if (cardsRes.ok) {
+        const data = await cardsRes.json();
+        setCards(Array.isArray(data) ? data : []);
+      }
+    } catch (e) { console.error(e); }
+  }, [router]);
+
   useEffect(() => {
-    setCards(getCards());
-    const handler = () => setCards(getCards());
-    window.addEventListener("storage", handler);
+    loadData();
 
     const onBeforeInstall = (e) => { e.preventDefault(); setInstallPrompt(e); };
     window.addEventListener("beforeinstallprompt", onBeforeInstall);
@@ -392,11 +406,15 @@ export default function DashboardPage() {
     if (window.matchMedia("(display-mode: standalone)").matches) setInstalled(true);
     window.addEventListener("appinstalled", () => { setInstalled(true); setInstallPrompt(null); });
 
+    // Reload when tab becomes visible again (e.g. coming back from collection)
+    const onVisible = () => { if (document.visibilityState === 'visible') loadData(); };
+    document.addEventListener('visibilitychange', onVisible);
+
     return () => {
-      window.removeEventListener("storage", handler);
       window.removeEventListener("beforeinstallprompt", onBeforeInstall);
+      document.removeEventListener('visibilitychange', onVisible);
     };
-  }, []);
+  }, [loadData]);
 
   async function handleInstall() {
     if (!installPrompt) return;
@@ -683,8 +701,8 @@ export default function DashboardPage() {
                 <div style={{ padding: "16px" }}>
                   <div className="card-grid">
                     {stats.topCards.map((card, i) => {
-                      const bought = parseFloat(card.purchasePrice) || 0;
-                      const current = parseFloat(card.currentValue) || bought;
+                      const bought = parseFloat(card.buy) || 0;
+                      const current = parseFloat(card.val) || bought;
                       const gl = current - bought;
                       const glPos = gl >= 0;
                       return (
@@ -702,7 +720,7 @@ export default function DashboardPage() {
                           onClick={() => router.push("/collection")}
                         >
                           <div style={{ fontFamily: "'Outfit', sans-serif", fontSize: "13px", fontWeight: 700, color: "#c0c8e8", marginBottom: "4px", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
-                            {card.playerName || card.name || "Card"}
+                            {card.player || card.name || "Card"}
                           </div>
                           <div style={{ fontFamily: "'Outfit', sans-serif", fontSize: "11px", color: "#4a5578", marginBottom: "10px", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
                             {card.year} {card.sport} — {card.grade || "Raw"}
