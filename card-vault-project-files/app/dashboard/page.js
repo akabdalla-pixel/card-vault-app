@@ -299,7 +299,7 @@ export default function DashboardPage() {
             <div style={{ fontSize:12,color:'#555',fontFamily:"'Outfit',sans-serif",fontWeight:600,marginBottom:4 }}>Portfolio Value</div>
             <div style={{ fontFamily:"'JetBrains Mono',monospace",fontSize:36,fontWeight:800,color:'#f0f0f0',letterSpacing:'-1px',lineHeight:1 }}>{fmt(currentValue)}</div>
             <div style={{ display:'flex',alignItems:'center',gap:6,marginTop:8 }}>
-              <div style={{ display:'flex',alignItems:'center',gap:4,fontFamily:"'JetBrains Mono',monospace",fontSize:14,fontWeight:700,color:gainPos?'#e53935':'#616161' }}>
+              <div style={{ display:'flex',alignItems:'center',gap:4,fontFamily:"'JetBrains Mono',monospace",fontSize:14,fontWeight:700,color:gainPos?'#22c55e':'#e53935' }}>
                 {gainPos?'▲':'▼'} {gainPos?'+':''}{fmt(gainLoss)}
               </div>
               <div style={{ fontSize:12,color:'#555',fontFamily:"'Outfit',sans-serif" }}>({gainPos?'+':''}{portfolioReturn.toFixed(1)}%)</div>
@@ -307,7 +307,7 @@ export default function DashboardPage() {
             <div style={{ display:'flex',gap:16,marginTop:14,paddingTop:14,borderTop:'1px solid rgba(255,255,255,0.05)' }}>
               <div><div style={{ fontSize:10,color:'#444',fontFamily:"'Outfit',sans-serif",fontWeight:700,textTransform:'uppercase',letterSpacing:'0.08em',marginBottom:3 }}>Invested</div><div style={{ fontFamily:"'JetBrains Mono',monospace",fontSize:14,color:'#888' }}>{fmt(totalInvested)}</div></div>
               <div><div style={{ fontSize:10,color:'#444',fontFamily:"'Outfit',sans-serif",fontWeight:700,textTransform:'uppercase',letterSpacing:'0.08em',marginBottom:3 }}>Cards</div><div style={{ fontFamily:"'JetBrains Mono',monospace",fontSize:14,color:'#888' }}>{activeCards.length}</div></div>
-              <div><div style={{ fontSize:10,color:'#444',fontFamily:"'Outfit',sans-serif",fontWeight:700,textTransform:'uppercase',letterSpacing:'0.08em',marginBottom:3 }}>Realized P&L</div><div style={{ fontFamily:"'JetBrains Mono',monospace",fontSize:14,color:realizedPL>=0?'#e53935':'#616161' }}>{realizedPL>=0?'+':''}{fmt(realizedPL)}</div></div>
+              <div><div style={{ fontSize:10,color:'#444',fontFamily:"'Outfit',sans-serif",fontWeight:700,textTransform:'uppercase',letterSpacing:'0.08em',marginBottom:3 }}>Realized P&L</div><div style={{ fontFamily:"'JetBrains Mono',monospace",fontSize:14,color:realizedPL>=0?'#22c55e':'#e53935' }}>{realizedPL>=0?'+':''}{fmt(realizedPL)}</div></div>
             </div>
           </div>
 
@@ -317,7 +317,7 @@ export default function DashboardPage() {
               { label:'Active Cards', value: activeCards.length },
               { label:'Total Invested', value: fmt(totalInvested) },
               { label:'Current Value', value: fmt(currentValue) },
-              { label:'Unrealized G/L', value: `${gainPos?'+':''}${fmt(gainLoss)}`, color: gainPos?'#e53935':'#616161' },
+              { label:'Unrealized G/L', value: `${gainPos?'+':''}${fmt(gainLoss)}`, color: gainPos?'#22c55e':'#e53935' },
               { label:'Return', value: `${retPos?'+':''}${portfolioReturn.toFixed(1)}%`, color: retPos?'#22c55e':'#e53935' },
               { label:'Realized P&L', value: `${realizedPL>=0?'+':''}${fmt(realizedPL)}`, color: realizedPL>=0?'#22c55e':'#e53935' },
             ].map((s,i) => (
@@ -425,7 +425,7 @@ export default function DashboardPage() {
                         <td style={{ padding:'11px 16px',textAlign:'right',fontFamily:"'JetBrains Mono',monospace",fontSize:12,color:'#666' }}>{d.cards}</td>
                         <td style={{ padding:'11px 16px',textAlign:'right',fontFamily:"'JetBrains Mono',monospace",fontSize:12,color:'#666' }}>{fmt(d.invested)}</td>
                         <td style={{ padding:'11px 16px',textAlign:'right',fontFamily:"'JetBrains Mono',monospace",fontSize:13,fontWeight:700,color:'#f0f0f0' }}>{fmt(d.value)}</td>
-                        <td style={{ padding:'11px 16px',textAlign:'right',fontFamily:"'JetBrains Mono',monospace",fontSize:12,fontWeight:600,color:gl>=0?'#e53935':'#616161' }}>{gl>=0?'+':''}{fmt(gl)}</td>
+                        <td style={{ padding:'11px 16px',textAlign:'right',fontFamily:"'JetBrains Mono',monospace",fontSize:12,fontWeight:600,color:gl>=0?'#22c55e':'#e53935' }}>{gl>=0?'+':''}{fmt(gl)}</td>
                       </tr>
                     })}
                   </tbody>
