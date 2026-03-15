@@ -1,285 +1,772 @@
-'use client'
-import { useState, useEffect, useCallback } from 'react'
-import { useRouter } from 'next/navigation'
+"use client";
 
-const SPORTS = ['Basketball','Baseball','Football','Soccer','Hockey','Tennis','Golf','Boxing','MMA','Racing','Other']
+import { useState, useEffect, useCallback } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 
-function fmt(v) { v = Number(v) || 0; return '$' + v.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) }
-function fgl(v) { v = Number(v) || 0; return (v >= 0 ? '+$' : '-$') + Math.abs(v).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) }
-function fpct(v) { v = Number(v) || 0; return (v >= 0 ? '+' : '') + v.toFixed(1) + '%' }
-function cc(v) { return v > 0 ? 'text-emerald-400' : v < 0 ? 'text-red-400' : '' }
-function ebayUrl(player, name, year, grade) {
-  const parts = [player, name, year, grade].filter(p => p && p.trim())
-  return 'https://www.ebay.com/sch/i.html?_nkw=' + encodeURIComponent(parts.join(' ')) + '&LH_Sold=1&LH_Complete=1&_sop=13'
+// ─── Icons ────────────────────────────────────────────────────────────────────
+function IconDashboard({ active }) {
+  return (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <rect x="3" y="3" width="7" height="7" rx="1" />
+      <rect x="14" y="3" width="7" height="7" rx="1" />
+      <rect x="3" y="14" width="7" height="7" rx="1" />
+      <rect x="14" y="14" width="7" height="7" rx="1" />
+    </svg>
+  );
+}
+function IconCollection({ active }) {
+  return (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <rect x="2" y="7" width="20" height="14" rx="2" />
+      <path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2" />
+      <line x1="12" y1="12" x2="12" y2="16" />
+      <line x1="10" y1="14" x2="14" y2="14" />
+    </svg>
+  );
+}
+function IconWishlist({ active }) {
+  return (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+    </svg>
+  );
+}
+function IconSettings() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="12" cy="12" r="3" />
+      <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" />
+    </svg>
+  );
+}
+function IconTrending() {
+  return (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+      <polyline points="23 6 13.5 15.5 8.5 10.5 1 18" />
+      <polyline points="17 6 23 6 23 12" />
+    </svg>
+  );
+}
+function IconTrendingDown() {
+  return (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+      <polyline points="23 18 13.5 8.5 8.5 13.5 1 6" />
+      <polyline points="17 18 23 18 23 12" />
+    </svg>
+  );
+}
+function IconCards() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <rect x="2" y="5" width="20" height="14" rx="2" />
+      <line x1="2" y1="10" x2="22" y2="10" />
+    </svg>
+  );
+}
+function IconDollar() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <line x1="12" y1="1" x2="12" y2="23" />
+      <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
+    </svg>
+  );
+}
+function IconValue() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M12 2L2 7l10 5 10-5-10-5z" />
+      <path d="M2 17l10 5 10-5" />
+      <path d="M2 12l10 5 10-5" />
+    </svg>
+  );
+}
+function IconReturn() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <line x1="12" y1="20" x2="12" y2="10" />
+      <line x1="18" y1="20" x2="18" y2="4" />
+      <line x1="6" y1="20" x2="6" y2="16" />
+    </svg>
+  );
+}
+function IconStar() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+    </svg>
+  );
+}
+function IconGainLoss() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="12" cy="12" r="10" />
+      <polyline points="16 12 12 8 8 12" />
+      <line x1="12" y1="16" x2="12" y2="8" />
+    </svg>
+  );
 }
 
-export default function DashboardPage() {
-  const router = useRouter()
-  const [user, setUser] = useState(null)
-  const [tab, setTab] = useState('dash')
-  const [cards, setCards] = useState([])
-  const [wishes, setWishes] = useState([])
-  const [search, setSearch] = useState('')
-  const [wishSearch, setWishSearch] = useState('')
-  const [modal, setModal] = useState(null)
-  const [editing, setEditing] = useState(null)
-  const [form, setForm] = useState({})
-  const [loading, setLoading] = useState(true)
+// ─── Card Storage Helpers ─────────────────────────────────────────────────────
+function getCards() {
+  if (typeof window === "undefined") return [];
+  try {
+    return JSON.parse(localStorage.getItem("topload_cards") || "[]");
+  } catch {
+    return [];
+  }
+}
 
-  useEffect(() => {
-    fetch('/api/auth/me').then(r => r.json()).then(d => {
-      if (!d.user) router.push('/login')
-      else { setUser(d.user); setLoading(false) }
+function computeStats(cards) {
+  const totalCards = cards.length;
+  const totalInvested = cards.reduce((s, c) => s + (parseFloat(c.buy) || 0), 0);
+  const currentValue = cards.reduce((s, c) => s + (parseFloat(c.val) || parseFloat(c.buy) || 0), 0);
+  const gainLoss = currentValue - totalInvested;
+  const portfolioReturn = totalInvested > 0 ? (gainLoss / totalInvested) * 100 : 0;
+  let bestReturn = null;
+  let bestReturnLabel = "-";
+  cards.forEach((c) => {
+    const bought = parseFloat(c.buy) || 0;
+    const current = parseFloat(c.val) || bought;
+    if (bought > 0) {
+      const r = ((current - bought) / bought) * 100;
+      if (bestReturn === null || r > bestReturn) {
+        bestReturn = r;
+        bestReturnLabel = `${r >= 0 ? "+" : ""}${r.toFixed(1)}% — ${c.player || c.name || "Card"}`;
+      }
+    }
+  });
+  const bySport = {};
+  cards.forEach((c) => {
+    const sport = c.sport || "Other";
+    if (!bySport[sport]) bySport[sport] = { cards: 0, invested: 0, value: 0 };
+    bySport[sport].cards++;
+    bySport[sport].invested += parseFloat(c.buy) || 0;
+    bySport[sport].value += parseFloat(c.val) || parseFloat(c.buy) || 0;
+  });
+  const topCards = [...cards]
+    .sort((a, b) => {
+      const va = parseFloat(a.val) || parseFloat(a.buy) || 0;
+      const vb = parseFloat(b.val) || parseFloat(b.buy) || 0;
+      return vb - va;
     })
-  }, [router])
+    .slice(0, 6);
+  return { totalCards, totalInvested, currentValue, gainLoss, portfolioReturn, bestReturnLabel, bySport, topCards };
+}
 
-  const loadData = useCallback(() => {
-    fetch('/api/cards').then(r => r.json()).then(setCards)
-    fetch('/api/wishes').then(r => r.json()).then(setWishes)
-  }, [])
+// ─── Sidebar Nav ──────────────────────────────────────────────────────────────
+const navItems = [
+  { label: "Dashboard", href: "/dashboard", icon: IconDashboard },
+  { label: "Collection", href: "/collection", icon: IconCollection },
+  { label: "Wish List", href: "/wishlist", icon: IconWishlist },
+];
 
-  useEffect(() => { if (user) loadData() }, [user, loadData])
-
-  async function saveCard() {
-    if (!form.player?.trim()) return alert('Player name required')
-    const method = editing ? 'PUT' : 'POST'
-    const body = editing ? { ...form, id: editing } : form
-    await fetch('/api/cards', { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) })
-    setModal(null); setEditing(null); setForm({}); loadData()
-  }
-  async function deleteCard() {
-    if (!confirm('Delete this card?')) return
-    await fetch('/api/cards', { method: 'DELETE', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: editing }) })
-    setModal(null); setEditing(null); setForm({}); loadData()
-  }
-  async function saveWish() {
-    if (!form.player?.trim()) return alert('Player name required')
-    const method = editing ? 'PUT' : 'POST'
-    const body = editing ? { ...form, id: editing } : form
-    await fetch('/api/wishes', { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) })
-    setModal(null); setEditing(null); setForm({}); loadData()
-  }
-  async function deleteWish() {
-    if (!confirm('Delete this item?')) return
-    await fetch('/api/wishes', { method: 'DELETE', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: editing }) })
-    setModal(null); setEditing(null); setForm({}); loadData()
-  }
-  async function logout() {
-    await fetch('/api/auth/logout', { method: 'POST' })
-    router.push('/login')
-  }
-
-  if (loading) return <div className="min-h-screen flex items-center justify-center" style={{ background: 'var(--bg)' }}><div className="text-lg font-semibold" style={{ color: 'var(--dim)' }}>Loading...</div></div>
-
-  const tc = cards.reduce((s, c) => s + (c.qty || 1), 0)
-  const ti = cards.reduce((s, c) => s + (c.buy || 0) * (c.qty || 1), 0)
-  const tv = cards.reduce((s, c) => s + (c.val || 0) * (c.qty || 1), 0)
-  const tgl = tv - ti
-  const tret = ti > 0 ? (tgl / ti * 100) : 0
-  let best = null
-  cards.forEach(c => { if (c.buy > 0) { const r = ((c.val - c.buy) / c.buy) * 100; if (!best || r > best.r) best = { n: c.player + ' - ' + (c.name || c.brand || ''), r } } })
-  const byS = {}
-  SPORTS.forEach(s => { byS[s] = { c: 0, i: 0, v: 0 } })
-  cards.forEach(c => { const sp = c.sport || 'Other', q = c.qty || 1; if (!byS[sp]) byS[sp] = { c: 0, i: 0, v: 0 }; byS[sp].c += q; byS[sp].i += (c.buy || 0) * q; byS[sp].v += (c.val || 0) * q })
-  const sportRows = SPORTS.filter(s => byS[s].c > 0)
-  const totS = { c: 0, i: 0, v: 0 }; sportRows.forEach(s => { totS.c += byS[s].c; totS.i += byS[s].i; totS.v += byS[s].v })
-  const ranked = cards.filter(c => c.buy > 0).map(c => ({ ...c, ret: ((c.val - c.buy) / c.buy) * 100 })).sort((a, b) => b.ret - a.ret).slice(0, 10)
-  let filteredCards = cards
-  if (search) { const q = search.toLowerCase(); filteredCards = filteredCards.filter(c => (c.player || '').toLowerCase().includes(q) || (c.name || '').toLowerCase().includes(q) || (c.brand || '').toLowerCase().includes(q) || (c.sport || '').toLowerCase().includes(q)) }
-  let filteredWishes = wishes
-  if (wishSearch) { const q = wishSearch.toLowerCase(); filteredWishes = filteredWishes.filter(w => (w.player || '').toLowerCase().includes(q) || (w.name || '').toLowerCase().includes(q) || (w.sport || '').toLowerCase().includes(q)) }
-  filteredWishes.sort((a, b) => { const o = { high: 0, medium: 1, low: 2 }; return (o[a.pri] ?? 1) - (o[b.pri] ?? 1) })
-  const openAdd = () => { setEditing(null); setForm(tab === 'wish' ? { pri: 'medium', status: 'watching' } : { qty: 1 }); setModal(tab === 'wish' ? 'wish' : 'card') }
-  const openEditCard = (c) => { setEditing(c.id); setForm({ ...c }); setModal('card') }
-  const openEditWish = (w) => { setEditing(w.id); setForm({ ...w }); setModal('wish') }
-  const inp = "w-full p-3 rounded-xl text-[15px] outline-none"
-  const inpStyle = { background: 'var(--card2)', border: '1px solid var(--border)', color: 'var(--text)' }
-
+function Sidebar({ active }) {
   return (
-    <div className="flex flex-col max-w-[500px] mx-auto" style={{ height: '100dvh', background: 'var(--bg)' }}>
-      <header className="flex items-center justify-between px-5 py-3.5 shrink-0" style={{ borderBottom: '1px solid var(--border)' }}>
-        <div className="text-[22px] font-extrabold tracking-tight">Card<span style={{ color: 'var(--violet2)' }}>Vault</span></div>
-        <button onClick={() => setModal('settings')} className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: 'var(--card)', border: '1px solid var(--border)', color: 'var(--dim)' }}>
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M12.22 2h-.44a2 2 0 00-2 2v.18a2 2 0 01-1 1.73l-.43.25a2 2 0 01-2 0l-.15-.08a2 2 0 00-2.73.73l-.22.38a2 2 0 00.73 2.73l.15.1a2 2 0 011 1.72v.51a2 2 0 01-1 1.74l-.15.09a2 2 0 00-.73 2.73l.22.38a2 2 0 002.73.73l.15-.08a2 2 0 012 0l.43.25a2 2 0 011 1.73V20a2 2 0 002 2h.44a2 2 0 002-2v-.18a2 2 0 011-1.73l.43-.25a2 2 0 012 0l.15.08a2 2 0 002.73-.73l.22-.39a2 2 0 00-.73-2.73l-.15-.08a2 2 0 01-1-1.74v-.5a2 2 0 011-1.74l.15-.09a2 2 0 00.73-2.73l-.22-.38a2 2 0 00-2.73-.73l-.15.08a2 2 0 01-2 0l-.43-.25a2 2 0 01-1-1.73V4a2 2 0 00-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
-        </button>
-      </header>
-
-      <div className="flex-1 overflow-y-auto overflow-x-hidden p-4 pb-28">
-        {tab === 'dash' && <>
-          <div className="grid grid-cols-2 gap-2.5 mb-5">
-            {[['Total Cards', tc, ''], ['Total Invested', fmt(ti), ''], ['Current Value', fmt(tv), ''], ['Gain / Loss', fgl(tgl), tgl], ['Portfolio Return', fpct(tret), tret], ['Best Return', best ? best.n : '-', 1]].map(([label, val, v], i) => (
-              <div key={i} className="rounded-2xl p-3.5" style={{ background: 'var(--card)', border: '1px solid var(--border)' }}>
-                <div className="text-[11px] font-semibold uppercase tracking-wide mb-1.5" style={{ color: 'var(--faint)' }}>{label}</div>
-                <div className={'font-mono text-xl font-bold ' + (i === 5 ? 'text-emerald-400 !text-[13px]' : cc(v))}>{val}</div>
-                {i === 5 && best && <div className="text-xs mt-1" style={{ color: 'var(--dim)' }}>{fpct(best.r)}</div>}
-              </div>
-            ))}
-          </div>
-          <div className="flex items-center gap-2.5 my-5"><span className="text-xs font-bold uppercase tracking-wider" style={{ color: 'var(--faint)' }}>By Sport</span><div className="flex-1 h-px" style={{ background: 'var(--border)' }}></div></div>
-          <div className="rounded-2xl overflow-hidden mb-2" style={{ background: 'var(--card)', border: '1px solid var(--border)' }}>
-            <table className="w-full border-collapse">
-              <thead><tr>{['Sport','Cards','Invested','Value','G/L'].map(h => <th key={h} className="text-[10px] font-bold uppercase tracking-wide text-left p-2.5" style={{ color: 'var(--faint)', borderBottom: '1px solid var(--border)' }}>{h}</th>)}</tr></thead>
-              <tbody>
-                {sportRows.length ? sportRows.map(s => { const d = byS[s], gl = d.v - d.i; return (
-                  <tr key={s}><td className="p-2.5 text-[13px]">{s}</td><td className="p-2.5 font-mono text-[11px]">{d.c}</td><td className="p-2.5 font-mono text-[11px]">{fmt(d.i)}</td><td className="p-2.5 font-mono text-[11px]">{fmt(d.v)}</td><td className={'p-2.5 font-mono text-[11px] ' + (gl >= 0 ? 'text-emerald-400' : 'text-red-400')}>{fgl(gl)}</td></tr>
-                )}) : <tr><td colSpan="5" className="p-5 text-center text-sm" style={{ color: 'var(--faint)' }}>No cards yet</td></tr>}
-                {sportRows.length > 0 && <tr><td className="p-2.5 font-bold" style={{ color: 'var(--violet2)' }}>TOTAL</td><td className="p-2.5 font-mono text-[11px] font-bold" style={{ color: 'var(--violet2)' }}>{totS.c}</td><td className="p-2.5 font-mono text-[11px] font-bold" style={{ color: 'var(--violet2)' }}>{fmt(totS.i)}</td><td className="p-2.5 font-mono text-[11px] font-bold" style={{ color: 'var(--violet2)' }}>{fmt(totS.v)}</td><td className={'p-2.5 font-mono text-[11px] font-bold ' + (totS.v - totS.i >= 0 ? 'text-emerald-400' : 'text-red-400')}>{fgl(totS.v - totS.i)}</td></tr>}
-              </tbody>
-            </table>
-          </div>
-          <div className="flex items-center gap-2.5 my-5"><span className="text-xs font-bold uppercase tracking-wider" style={{ color: 'var(--faint)' }}>Top Cards</span><div className="flex-1 h-px" style={{ background: 'var(--border)' }}></div></div>
-          {ranked.length ? ranked.map((c, i) => (
-            <div key={c.id} className="flex items-center gap-3 rounded-2xl p-3 mb-2" style={{ background: 'var(--card)', border: '1px solid var(--border)' }}>
-              <div className={'font-mono font-bold text-sm w-5 text-center ' + (i === 0 ? 'text-amber-400' : i === 1 ? 'text-gray-400' : i === 2 ? 'text-orange-400' : '')} style={i > 2 ? { color: 'var(--faint)' } : {}}>{i + 1}</div>
-              <div className="flex-1 min-w-0"><div className="text-sm font-semibold truncate">{c.name || c.brand || '-'}</div><div className="text-xs" style={{ color: 'var(--dim)' }}>{c.player} - {c.sport}</div></div>
-              <div className={'font-mono text-sm font-bold ' + cc(c.ret)}>{fpct(c.ret)}</div>
-            </div>
-          )) : <div className="text-center py-12" style={{ color: 'var(--faint)' }}><p className="text-sm">Add cards to see top performers</p></div>}
-        </>}
-
-        {tab === 'cards' && <>
-          <div className="sticky top-0 z-10 pb-3" style={{ background: 'var(--bg)' }}>
-            <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search cards..." className={inp} style={inpStyle} />
-          </div>
-          {filteredCards.length ? filteredCards.map(c => {
-            const pp = c.buy || 0, mv = c.val || 0, q = c.qty || 1, gl = (mv - pp) * q, ret = pp > 0 ? ((mv - pp) / pp * 100) : 0
-            const gs = c.cond && c.grade ? c.cond + ' ' + c.grade : (c.cond || 'Raw')
-            return (
-              <div key={c.id} className="rounded-2xl p-3.5 mb-2.5 cursor-pointer active:opacity-80" style={{ background: 'var(--card)', border: '1px solid var(--border)' }} onClick={() => openEditCard(c)}>
-                <div className="flex justify-between items-start gap-2 mb-1"><div className="text-[15px] font-semibold truncate flex-1">{c.player || '-'}</div><div className="text-[9px] font-bold uppercase tracking-wide px-2 py-0.5 rounded-md shrink-0" style={{ background: 'rgba(139,92,246,0.15)', color: 'var(--violet2)' }}>{c.sport || '-'}</div></div>
-                <div className="flex justify-between text-[13px]" style={{ color: 'var(--dim)' }}><span>{c.name || c.brand || '-'}</span><span>{gs}{q > 1 ? ' x' + q : ''}</span></div>
-                <div className="flex justify-between mt-2 pt-2" style={{ borderTop: '1px solid var(--border)' }}>
-                  <div><div className="text-[9px] uppercase tracking-wide mb-0.5" style={{ color: 'var(--faint)' }}>Paid</div><div className="font-mono text-[13px] font-semibold">{fmt(pp * q)}</div></div>
-                  <div><div className="text-[9px] uppercase tracking-wide mb-0.5" style={{ color: 'var(--faint)' }}>Value</div><div className="font-mono text-[13px] font-semibold">{fmt(mv * q)}</div></div>
-                  <div className="text-right"><div className="text-[9px] uppercase tracking-wide mb-0.5" style={{ color: 'var(--faint)' }}>Return</div><div className={'font-mono text-[13px] font-bold ' + cc(gl)}>{fpct(ret)}</div></div>
-                </div>
-                <a href={ebayUrl(c.player, c.name || c.brand, c.year, c.cond && c.grade ? c.cond + ' ' + c.grade : '')} target="_blank" rel="noopener" onClick={e => e.stopPropagation()} className="inline-flex items-center gap-1 text-[11px] font-semibold px-2.5 py-1 rounded-lg mt-2" style={{ background: 'rgba(96,165,250,0.1)', color: 'var(--sky)' }}>eBay Comps</a>
-              </div>
-            )
-          }) : <div className="text-center py-12" style={{ color: 'var(--faint)' }}><p className="text-sm">No cards yet. Tap + to add your first!</p></div>}
-        </>}
-
-        {tab === 'wish' && <>
-          <div className="sticky top-0 z-10 pb-3" style={{ background: 'var(--bg)' }}>
-            <input value={wishSearch} onChange={e => setWishSearch(e.target.value)} placeholder="Search wish list..." className={inp} style={inpStyle} />
-          </div>
-          {filteredWishes.length ? filteredWishes.map(w => {
-            const bc = w.pri === 'high' ? 'bg-red-400' : w.pri === 'low' ? 'bg-emerald-400' : 'bg-amber-400'
-            const stClass = w.status === 'watching' ? 'bg-sky-400/15 text-sky-400' : w.status === 'buying' ? 'bg-emerald-400/15 text-emerald-400' : w.status === 'bought' ? 'bg-violet-400/15 text-violet-400' : 'bg-gray-400/15 text-gray-400'
-            return (
-              <div key={w.id} className="rounded-2xl p-3.5 mb-2.5 cursor-pointer active:opacity-80 relative pl-5" style={{ background: 'var(--card)', border: '1px solid var(--border)' }} onClick={() => openEditWish(w)}>
-                <div className={'absolute left-0 top-0 bottom-0 w-1 rounded-l-2xl ' + bc}></div>
-                <div className="flex justify-between items-start mb-1">
-                  <div className="flex-1 min-w-0"><div className="text-[15px] font-semibold truncate">{w.player || '-'}</div><div className="text-[13px] mt-0.5" style={{ color: 'var(--dim)' }}>{w.name || ''}{w.sport ? ' - ' + w.sport : ''}{w.year ? ' - ' + w.year : ''}</div></div>
-                  <div className={'text-[9px] font-bold uppercase tracking-wide px-2 py-0.5 rounded-md ' + stClass}>{w.status || 'watching'}</div>
-                </div>
-                <div className="flex gap-4 mt-1.5 text-[13px]">
-                  {w.target > 0 && <div><span style={{ color: 'var(--faint)' }}>Target:</span> <span className="font-mono font-semibold">{fmt(w.target)}</span></div>}
-                  {w.market > 0 && <div><span style={{ color: 'var(--faint)' }}>Market:</span> <span className="font-mono font-semibold">{fmt(w.market)}</span></div>}
-                </div>
-                {w.notes && <div className="text-xs mt-1.5" style={{ color: 'var(--faint)' }}>{w.notes}</div>}
-              </div>
-            )
-          }) : <div className="text-center py-12" style={{ color: 'var(--faint)' }}><p className="text-sm">Wish list empty. Tap + to track cards!</p></div>}
-        </>}
+    <aside
+      style={{
+        width: "220px",
+        minHeight: "100vh",
+        background: "#0d1120",
+        borderRight: "1px solid rgba(255,255,255,0.06)",
+        display: "flex",
+        flexDirection: "column",
+        padding: "0",
+        position: "fixed",
+        top: 0,
+        left: 0,
+        zIndex: 50,
+      }}
+    >
+      {/* Logo */}
+      <div style={{ padding: "28px 24px 20px", borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
+        <span style={{ fontFamily: "'Outfit', sans-serif", fontSize: "22px", fontWeight: 800, letterSpacing: "-0.5px" }}>
+          <span style={{ color: "#f0f2ff" }}>Top</span>
+          <span style={{ color: "#00e5cc" }}>Load</span>
+        </span>
+        <div style={{ fontSize: "10px", color: "#4a5578", fontWeight: 600, letterSpacing: "0.12em", textTransform: "uppercase", marginTop: "2px" }}>
+          Card Investment Tracker
+        </div>
       </div>
 
-      {tab !== 'dash' && (
-        <button onClick={openAdd} className="fixed bottom-20 right-5 w-14 h-14 rounded-full text-white text-3xl font-light flex items-center justify-center z-40 active:scale-90 transition-transform" style={{ background: 'var(--violet)', boxShadow: '0 6px 24px rgba(139,92,246,0.4)' }}>+</button>
-      )}
-
-      <nav className="flex shrink-0" style={{ borderTop: '1px solid var(--border)', background: 'var(--card)', paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}>
-        {[['dash', 'Dashboard', 'M3 3h7v7H3zm11 0h7v7h-7zM3 14h7v7H3zm11 0h7v7h-7z'],
-          ['cards', 'Collection', 'M2 4h20v16H2zM2 10h20M10 10v10'],
-          ['wish', 'Wish List', 'M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01z']
-        ].map(([id, label, d]) => (
-          <button key={id} onClick={() => setTab(id)} className="flex-1 flex flex-col items-center gap-0.5 py-2.5 text-[10px] font-semibold uppercase tracking-wide" style={{ color: tab === id ? 'var(--violet2)' : 'var(--faint)', background: tab === id ? 'rgba(139,92,246,0.08)' : 'transparent' }}>
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className="w-6 h-6"><path d={d}/></svg>
-            {label}
-          </button>
-        ))}
+      {/* Nav Items */}
+      <nav style={{ flex: 1, padding: "16px 12px" }}>
+        <div style={{ fontSize: "10px", color: "#3a4465", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", padding: "0 12px", marginBottom: "8px" }}>
+          Menu
+        </div>
+        {navItems.map(({ label, href, icon: Icon }) => {
+          const isActive = active === label.toLowerCase().replace(" ", "");
+          return (
+            <Link
+              key={label}
+              href={href}
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "12px",
+                padding: "10px 12px",
+                borderRadius: "10px",
+                marginBottom: "2px",
+                textDecoration: "none",
+                color: isActive ? "#00e5cc" : "#7a85a8",
+                background: isActive ? "rgba(0,229,204,0.08)" : "transparent",
+                fontFamily: "'Outfit', sans-serif",
+                fontSize: "14px",
+                fontWeight: isActive ? 600 : 500,
+                transition: "all 0.15s ease",
+                borderLeft: isActive ? "2px solid #00e5cc" : "2px solid transparent",
+              }}
+            >
+              <Icon active={isActive} />
+              {label}
+            </Link>
+          );
+        })}
       </nav>
 
-      {modal === 'card' && (
-        <div className="fixed inset-0 z-50 flex items-end justify-center" style={{ background: 'rgba(0,0,0,0.65)', backdropFilter: 'blur(3px)' }} onClick={e => { if (e.target === e.currentTarget) { setModal(null); setEditing(null) } }}>
-          <div className="w-full max-w-[500px] rounded-t-3xl max-h-[88vh] overflow-y-auto p-5 pb-8" style={{ background: 'var(--card)' }}>
-            <div className="w-9 h-1 rounded-full mx-auto mb-4" style={{ background: 'var(--border)' }}></div>
-            <div className="text-lg font-bold text-center mb-5">{editing ? 'Edit Card' : 'Add Card'}</div>
-            <div className="grid grid-cols-2 gap-2.5">
-              <div className="mb-2"><label className="block text-[11px] font-semibold uppercase tracking-wide mb-1" style={{ color: 'var(--dim)' }}>Sport</label><select value={form.sport || ''} onChange={e => setForm({ ...form, sport: e.target.value })} className={inp} style={inpStyle}><option value="">Select</option>{SPORTS.map(s => <option key={s}>{s}</option>)}</select></div>
-              <div className="mb-2"><label className="block text-[11px] font-semibold uppercase tracking-wide mb-1" style={{ color: 'var(--dim)' }}>Year</label><input type="number" value={form.year || ''} onChange={e => setForm({ ...form, year: e.target.value })} className={inp} style={inpStyle} placeholder="2024" /></div>
-            </div>
-            <div className="mb-2"><label className="block text-[11px] font-semibold uppercase tracking-wide mb-1" style={{ color: 'var(--dim)' }}>Player</label><input value={form.player || ''} onChange={e => setForm({ ...form, player: e.target.value })} className={inp} style={inpStyle} placeholder="Player name" /></div>
-            <div className="mb-2"><label className="block text-[11px] font-semibold uppercase tracking-wide mb-1" style={{ color: 'var(--dim)' }}>Card Name</label><input value={form.name || ''} onChange={e => setForm({ ...form, name: e.target.value })} className={inp} style={inpStyle} placeholder="e.g. Prizm Silver" /></div>
-            <div className="grid grid-cols-2 gap-2.5">
-              <div className="mb-2"><label className="block text-[11px] font-semibold uppercase tracking-wide mb-1" style={{ color: 'var(--dim)' }}>Set / Brand</label><input value={form.brand || ''} onChange={e => setForm({ ...form, brand: e.target.value })} className={inp} style={inpStyle} placeholder="Panini Prizm" /></div>
-              <div className="mb-2"><label className="block text-[11px] font-semibold uppercase tracking-wide mb-1" style={{ color: 'var(--dim)' }}>Card #</label><input value={form.num || ''} onChange={e => setForm({ ...form, num: e.target.value })} className={inp} style={inpStyle} placeholder="280" /></div>
-            </div>
-            <div className="grid grid-cols-2 gap-2.5">
-              <div className="mb-2"><label className="block text-[11px] font-semibold uppercase tracking-wide mb-1" style={{ color: 'var(--dim)' }}>Condition</label><select value={form.cond || ''} onChange={e => setForm({ ...form, cond: e.target.value })} className={inp} style={inpStyle}><option value="">Select</option>{['Raw','PSA','BGS','SGC','CGC'].map(c => <option key={c}>{c}</option>)}</select></div>
-              <div className="mb-2"><label className="block text-[11px] font-semibold uppercase tracking-wide mb-1" style={{ color: 'var(--dim)' }}>Grade</label><input value={form.grade || ''} onChange={e => setForm({ ...form, grade: e.target.value })} className={inp} style={inpStyle} placeholder="10" /></div>
-            </div>
-            <div className="grid grid-cols-2 gap-2.5">
-              <div className="mb-2"><label className="block text-[11px] font-semibold uppercase tracking-wide mb-1" style={{ color: 'var(--dim)' }}>Quantity</label><input type="number" value={form.qty || 1} onChange={e => setForm({ ...form, qty: e.target.value })} className={inp} style={inpStyle} min="1" /></div>
-              <div className="mb-2"><label className="block text-[11px] font-semibold uppercase tracking-wide mb-1" style={{ color: 'var(--dim)' }}>Date Purchased</label><input type="date" value={form.date || ''} onChange={e => setForm({ ...form, date: e.target.value })} className={inp} style={inpStyle} /></div>
-            </div>
-            <div className="grid grid-cols-2 gap-2.5">
-              <div className="mb-2"><label className="block text-[11px] font-semibold uppercase tracking-wide mb-1" style={{ color: 'var(--dim)' }}>Purchase Price ($)</label><input type="number" step="0.01" value={form.buy || ''} onChange={e => setForm({ ...form, buy: e.target.value })} className={inp} style={inpStyle} placeholder="0.00" /></div>
-              <div className="mb-2"><label className="block text-[11px] font-semibold uppercase tracking-wide mb-1" style={{ color: 'var(--dim)' }}>Market Value ($)</label><input type="number" step="0.01" value={form.val || ''} onChange={e => setForm({ ...form, val: e.target.value })} className={inp} style={inpStyle} placeholder="0.00" /></div>
-            </div>
-            <div className="mb-3"><label className="block text-[11px] font-semibold uppercase tracking-wide mb-1" style={{ color: 'var(--dim)' }}>Notes</label><input value={form.notes || ''} onChange={e => setForm({ ...form, notes: e.target.value })} className={inp} style={inpStyle} placeholder="Optional" /></div>
-            <button onClick={saveCard} className="w-full p-3.5 rounded-2xl text-[15px] font-bold text-white" style={{ background: 'var(--violet)' }}>Save Card</button>
-            <a href={ebayUrl(form.player, form.name || form.brand, form.year, form.cond && form.grade ? form.cond + ' ' + form.grade : '')} target="_blank" rel="noopener" className="flex items-center justify-center gap-2 w-full p-3.5 rounded-2xl text-[15px] font-bold mt-2" style={{ color: 'var(--sky)', border: '1px solid rgba(96,165,250,0.3)' }}>Check eBay Comps</a>
-            {editing && <button onClick={deleteCard} className="w-full p-3.5 rounded-2xl text-[15px] font-bold mt-2" style={{ color: 'var(--coral)', border: '1px solid rgba(248,113,113,0.3)' }}>Delete Card</button>}
-            <button onClick={() => { setModal(null); setEditing(null) }} className="w-full p-3.5 rounded-2xl text-[15px] font-bold mt-2" style={{ background: 'var(--card2)', border: '1px solid var(--border)' }}>Cancel</button>
-          </div>
-        </div>
-      )}
+      {/* Bottom */}
+      <div style={{ padding: "16px 12px", borderTop: "1px solid rgba(255,255,255,0.06)" }}>
+        <Link
+          href="/settings"
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: "12px",
+            padding: "10px 12px",
+            borderRadius: "10px",
+            textDecoration: "none",
+            color: "#4a5578",
+            fontFamily: "'Outfit', sans-serif",
+            fontSize: "14px",
+            fontWeight: 500,
+          }}
+        >
+          <IconSettings />
+          Settings
+        </Link>
+      </div>
+    </aside>
+  );
+}
 
-      {modal === 'wish' && (
-        <div className="fixed inset-0 z-50 flex items-end justify-center" style={{ background: 'rgba(0,0,0,0.65)', backdropFilter: 'blur(3px)' }} onClick={e => { if (e.target === e.currentTarget) { setModal(null); setEditing(null) } }}>
-          <div className="w-full max-w-[500px] rounded-t-3xl max-h-[88vh] overflow-y-auto p-5 pb-8" style={{ background: 'var(--card)' }}>
-            <div className="w-9 h-1 rounded-full mx-auto mb-4" style={{ background: 'var(--border)' }}></div>
-            <div className="text-lg font-bold text-center mb-5">{editing ? 'Edit Wish' : 'Add to Wish List'}</div>
-            <div className="grid grid-cols-2 gap-2.5">
-              <div className="mb-2"><label className="block text-[11px] font-semibold uppercase tracking-wide mb-1" style={{ color: 'var(--dim)' }}>Priority</label><select value={form.pri || 'medium'} onChange={e => setForm({ ...form, pri: e.target.value })} className={inp} style={inpStyle}><option value="high">High</option><option value="medium">Medium</option><option value="low">Low</option></select></div>
-              <div className="mb-2"><label className="block text-[11px] font-semibold uppercase tracking-wide mb-1" style={{ color: 'var(--dim)' }}>Sport</label><select value={form.sport || ''} onChange={e => setForm({ ...form, sport: e.target.value })} className={inp} style={inpStyle}><option value="">Select</option>{SPORTS.map(s => <option key={s}>{s}</option>)}</select></div>
-            </div>
-            <div className="mb-2"><label className="block text-[11px] font-semibold uppercase tracking-wide mb-1" style={{ color: 'var(--dim)' }}>Player</label><input value={form.player || ''} onChange={e => setForm({ ...form, player: e.target.value })} className={inp} style={inpStyle} placeholder="Player name" /></div>
-            <div className="mb-2"><label className="block text-[11px] font-semibold uppercase tracking-wide mb-1" style={{ color: 'var(--dim)' }}>Card Name</label><input value={form.name || ''} onChange={e => setForm({ ...form, name: e.target.value })} className={inp} style={inpStyle} placeholder="Card description" /></div>
-            <div className="grid grid-cols-2 gap-2.5">
-              <div className="mb-2"><label className="block text-[11px] font-semibold uppercase tracking-wide mb-1" style={{ color: 'var(--dim)' }}>Year</label><input type="number" value={form.year || ''} onChange={e => setForm({ ...form, year: e.target.value })} className={inp} style={inpStyle} placeholder="2024" /></div>
-              <div className="mb-2"><label className="block text-[11px] font-semibold uppercase tracking-wide mb-1" style={{ color: 'var(--dim)' }}>Set / Brand</label><input value={form.brand || ''} onChange={e => setForm({ ...form, brand: e.target.value })} className={inp} style={inpStyle} placeholder="Topps Chrome" /></div>
-            </div>
-            <div className="grid grid-cols-2 gap-2.5">
-              <div className="mb-2"><label className="block text-[11px] font-semibold uppercase tracking-wide mb-1" style={{ color: 'var(--dim)' }}>Target Buy ($)</label><input type="number" step="0.01" value={form.target || ''} onChange={e => setForm({ ...form, target: e.target.value })} className={inp} style={inpStyle} placeholder="0.00" /></div>
-              <div className="mb-2"><label className="block text-[11px] font-semibold uppercase tracking-wide mb-1" style={{ color: 'var(--dim)' }}>Market Price ($)</label><input type="number" step="0.01" value={form.market || ''} onChange={e => setForm({ ...form, market: e.target.value })} className={inp} style={inpStyle} placeholder="0.00" /></div>
-            </div>
-            <div className="mb-3"><label className="block text-[11px] font-semibold uppercase tracking-wide mb-1" style={{ color: 'var(--dim)' }}>Status</label><select value={form.status || 'watching'} onChange={e => setForm({ ...form, status: e.target.value })} className={inp} style={inpStyle}><option value="watching">Watching</option><option value="buying">Buying Soon</option><option value="bought">Bought</option><option value="passed">Passed</option></select></div>
-            <div className="mb-3"><label className="block text-[11px] font-semibold uppercase tracking-wide mb-1" style={{ color: 'var(--dim)' }}>Notes</label><input value={form.notes || ''} onChange={e => setForm({ ...form, notes: e.target.value })} className={inp} style={inpStyle} placeholder="Optional" /></div>
-            <button onClick={saveWish} className="w-full p-3.5 rounded-2xl text-[15px] font-bold text-white" style={{ background: 'var(--violet)' }}>Save</button>
-            {editing && <button onClick={deleteWish} className="w-full p-3.5 rounded-2xl text-[15px] font-bold mt-2" style={{ color: 'var(--coral)', border: '1px solid rgba(248,113,113,0.3)' }}>Delete</button>}
-            <button onClick={() => { setModal(null); setEditing(null) }} className="w-full p-3.5 rounded-2xl text-[15px] font-bold mt-2" style={{ background: 'var(--card2)', border: '1px solid var(--border)' }}>Cancel</button>
-          </div>
-        </div>
-      )}
+// ─── Bottom Tab Bar (mobile) ──────────────────────────────────────────────────
+function BottomNav({ active }) {
+  return (
+    <nav
+      style={{
+        position: "fixed",
+        bottom: 0,
+        left: 0,
+        right: 0,
+        height: "64px",
+        background: "#0d1120",
+        borderTop: "1px solid rgba(255,255,255,0.08)",
+        display: "flex",
+        alignItems: "center",
+        zIndex: 100,
+      }}
+      className="mobile-bottom-nav"
+    >
+      {navItems.map(({ label, href, icon: Icon }) => {
+        const key = label.toLowerCase().replace(" ", "");
+        const isActive = active === key;
+        return (
+          <Link
+            key={label}
+            href={href}
+            style={{
+              flex: 1,
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              justifyContent: "center",
+              gap: "4px",
+              textDecoration: "none",
+              color: isActive ? "#00e5cc" : "#4a5578",
+              fontFamily: "'Outfit', sans-serif",
+              fontSize: "10px",
+              fontWeight: isActive ? 700 : 500,
+              letterSpacing: "0.05em",
+              textTransform: "uppercase",
+              paddingBottom: "4px",
+            }}
+          >
+            <Icon active={isActive} />
+            {label}
+          </Link>
+        );
+      })}
+    </nav>
+  );
+}
 
-      {modal === 'settings' && (
-        <div className="fixed inset-0 z-50 flex items-end justify-center" style={{ background: 'rgba(0,0,0,0.65)', backdropFilter: 'blur(3px)' }} onClick={e => { if (e.target === e.currentTarget) setModal(null) }}>
-          <div className="w-full max-w-[500px] rounded-t-3xl p-5 pb-8" style={{ background: 'var(--card)' }}>
-            <div className="w-9 h-1 rounded-full mx-auto mb-4" style={{ background: 'var(--border)' }}></div>
-            <div className="text-lg font-bold text-center mb-5">Settings</div>
-            <div className="flex items-center justify-between py-3.5" style={{ borderBottom: '1px solid var(--border)' }}>
-              <div><div className="font-semibold">Logged in as</div><div className="text-xs mt-0.5" style={{ color: 'var(--faint)' }}>{user?.username} - {user?.email}</div></div>
-            </div>
-            <div className="flex items-center justify-between py-3.5" style={{ borderBottom: '1px solid var(--border)' }}>
-              <div><div className="font-semibold" style={{ color: 'var(--coral)' }}>Log Out</div></div>
-              <button onClick={logout} className="px-4 py-2 rounded-xl text-sm font-semibold" style={{ background: 'var(--card2)', border: '1px solid rgba(248,113,113,0.3)', color: 'var(--coral)' }}>Log Out</button>
-            </div>
-            <button onClick={() => setModal(null)} className="w-full p-3.5 rounded-2xl text-[15px] font-bold mt-4" style={{ background: 'var(--card2)', border: '1px solid var(--border)' }}>Close</button>
-          </div>
+// ─── Stat Card ────────────────────────────────────────────────────────────────
+function StatCard({ label, value, sub, icon: Icon, accent, positive }) {
+  return (
+    <div
+      style={{
+        background: "linear-gradient(135deg, #131929 0%, #0f1522 100%)",
+        border: "1px solid rgba(255,255,255,0.07)",
+        borderRadius: "14px",
+        padding: "20px 22px",
+        display: "flex",
+        flexDirection: "column",
+        gap: "10px",
+        position: "relative",
+        overflow: "hidden",
+      }}
+    >
+      {/* Glow accent */}
+      <div
+        style={{
+          position: "absolute",
+          top: 0,
+          right: 0,
+          width: "80px",
+          height: "80px",
+          background: accent || "rgba(0,229,204,0.06)",
+          borderRadius: "50%",
+          filter: "blur(30px)",
+          pointerEvents: "none",
+        }}
+      />
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+        <span style={{ fontFamily: "'Outfit', sans-serif", fontSize: "11px", fontWeight: 600, color: "#4a5578", letterSpacing: "0.1em", textTransform: "uppercase" }}>
+          {label}
+        </span>
+        <div
+          style={{
+            width: "34px",
+            height: "34px",
+            borderRadius: "9px",
+            background: "rgba(255,255,255,0.05)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            color: "#00e5cc",
+          }}
+        >
+          <Icon />
+        </div>
+      </div>
+      <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: "26px", fontWeight: 700, color: "#f0f2ff", letterSpacing: "-1px", lineHeight: 1 }}>
+        {value}
+      </div>
+      {sub && (
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: "4px",
+            fontSize: "12px",
+            fontFamily: "'Outfit', sans-serif",
+            fontWeight: 600,
+            color: positive === true ? "#00e5a0" : positive === false ? "#ff4d6a" : "#4a5578",
+          }}
+        >
+          {positive === true && <IconTrending />}
+          {positive === false && <IconTrendingDown />}
+          {sub}
         </div>
       )}
     </div>
-  )
+  );
+}
+
+// ─── Main Dashboard ───────────────────────────────────────────────────────────
+export default function DashboardPage() {
+  const [cards, setCards] = useState([]);
+  const [user, setUser] = useState(null);
+  const [installPrompt, setInstallPrompt] = useState(null);
+  const [installed, setInstalled] = useState(false);
+  const [showInstallModal, setShowInstallModal] = useState(false);
+  const router = useRouter();
+
+  const loadData = useCallback(async () => {
+    try {
+      const [meRes, cardsRes] = await Promise.all([
+        fetch('/api/auth/me', { cache: 'no-store' }),
+        fetch('/api/cards', { cache: 'no-store' }),
+      ]);
+      if (!meRes.ok) { router.push('/login'); return; }
+      setUser((await meRes.json()).user);
+      if (cardsRes.ok) {
+        const data = await cardsRes.json();
+        setCards(Array.isArray(data) ? data : []);
+      }
+    } catch (e) { console.error(e); }
+  }, [router]);
+
+  useEffect(() => {
+    loadData();
+
+    const onBeforeInstall = (e) => { e.preventDefault(); setInstallPrompt(e); };
+    window.addEventListener("beforeinstallprompt", onBeforeInstall);
+
+    if (window.matchMedia("(display-mode: standalone)").matches) setInstalled(true);
+    window.addEventListener("appinstalled", () => { setInstalled(true); setInstallPrompt(null); });
+
+    // Reload when tab becomes visible again (e.g. coming back from collection)
+    const onVisible = () => { if (document.visibilityState === 'visible') loadData(); };
+    document.addEventListener('visibilitychange', onVisible);
+
+    return () => {
+      window.removeEventListener("beforeinstallprompt", onBeforeInstall);
+      document.removeEventListener('visibilitychange', onVisible);
+    };
+  }, [loadData]);
+
+  async function handleInstall() {
+    if (!installPrompt) return;
+    installPrompt.prompt();
+    const { outcome } = await installPrompt.userChoice;
+    if (outcome === "accepted") { setInstalled(true); setInstallPrompt(null); }
+  }
+
+  const stats = computeStats(cards);
+  const gainPositive = stats.gainLoss >= 0;
+  const returnPositive = stats.portfolioReturn >= 0;
+
+  const fmt = (n) =>
+    new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", minimumFractionDigits: 2 }).format(n);
+
+  return (
+    <>
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap');
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        html, body { background: #0c0f1a; color: #f0f2ff; font-family: 'Outfit', sans-serif; }
+
+        .desktop-sidebar { display: flex; }
+        .mobile-bottom-nav { display: none !important; }
+        .mobile-topbar { display: none; }
+        .main-content { margin-left: 220px; min-height: 100vh; }
+
+        .stat-grid {
+          display: grid;
+          grid-template-columns: repeat(3, 1fr);
+          gap: 16px;
+        }
+        .stat-grid-bottom {
+          display: grid;
+          grid-template-columns: repeat(3, 1fr);
+          gap: 16px;
+          margin-top: 16px;
+        }
+        .body-grid {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 24px;
+          margin-top: 24px;
+        }
+        .card-grid {
+          display: grid;
+          grid-template-columns: repeat(3, 1fr);
+          gap: 12px;
+        }
+
+        @media (max-width: 1100px) {
+          .stat-grid { grid-template-columns: repeat(2, 1fr); }
+          .stat-grid-bottom { grid-template-columns: repeat(2, 1fr); }
+          .body-grid { grid-template-columns: 1fr; }
+          .card-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+
+        @media (max-width: 768px) {
+          .desktop-sidebar { display: none !important; }
+          .mobile-bottom-nav { display: flex !important; }
+          .mobile-topbar { display: flex !important; }
+          .main-content { margin-left: 0 !important; padding-bottom: 80px !important; }
+          .stat-grid { grid-template-columns: 1fr 1fr; }
+          .stat-grid-bottom { grid-template-columns: 1fr 1fr; }
+          .body-grid { grid-template-columns: 1fr; }
+          .card-grid { grid-template-columns: 1fr 1fr; }
+        }
+
+        @media (max-width: 480px) {
+          .stat-grid { grid-template-columns: 1fr; }
+          .stat-grid-bottom { grid-template-columns: 1fr; }
+          .card-grid { grid-template-columns: 1fr; }
+        }
+
+        .nav-link-hover:hover { background: rgba(255,255,255,0.04) !important; color: #c0c8e8 !important; }
+        .card-item:hover { border-color: rgba(0,229,204,0.3) !important; transform: translateY(-2px); transition: all 0.2s ease; }
+        .table-row:hover { background: rgba(255,255,255,0.03) !important; }
+        .add-card-btn:hover { background: rgba(0,229,204,0.15) !important; }
+      `}</style>
+
+      <div style={{ display: "flex", minHeight: "100vh", background: "#0c0f1a" }}>
+        {/* Sidebar — desktop only */}
+        <div className="desktop-sidebar">
+          <Sidebar active="dashboard" />
+        </div>
+
+        {/* Main content */}
+        <main
+          className="main-content"
+          style={{ flex: 1, padding: "32px 32px 32px", maxWidth: "100%" }}
+        >
+          {/* Mobile top bar */}
+          <div
+            className="mobile-topbar"
+            style={{
+              alignItems: "center",
+              justifyContent: "space-between",
+              marginBottom: "20px",
+            }}
+          >
+            <span style={{ fontFamily: "'Outfit', sans-serif", fontSize: "20px", fontWeight: 800 }}>
+              <span style={{ color: "#f0f2ff" }}>Top</span>
+              <span style={{ color: "#00e5cc" }}>Load</span>
+            </span>
+            <Link href="/settings" style={{ display: "flex", alignItems: "center", justifyContent: "center", width: "38px", height: "38px", borderRadius: "10px", background: "rgba(255,255,255,0.07)", color: "#7a85a8", textDecoration: "none" }}>
+              <IconSettings />
+            </Link>
+          </div>
+
+          {/* Page Header */}
+          <div style={{ marginBottom: "28px", display: "flex", alignItems: "flex-end", justifyContent: "space-between", flexWrap: "wrap", gap: "12px" }}>
+            <div>
+              <h1 style={{ fontFamily: "'Outfit', sans-serif", fontSize: "26px", fontWeight: 800, color: "#f0f2ff", letterSpacing: "-0.5px" }}>
+                Portfolio Overview
+              </h1>
+              <p style={{ fontSize: "14px", color: "#4a5578", marginTop: "4px", fontWeight: 500 }}>
+                {cards.length === 0 ? "No cards tracked yet — add your first card to get started" : `Tracking ${stats.totalCards} card${stats.totalCards !== 1 ? "s" : ""} across your collection`}
+              </p>
+            </div>
+            <div style={{ display: "flex", gap: "10px", flexWrap: "wrap" }}>
+              {!installed && (
+                <button
+                  onClick={installPrompt ? handleInstall : () => setShowInstallModal(true)}
+                  style={{
+                    display: "flex", alignItems: "center", gap: "8px",
+                    padding: "10px 18px",
+                    background: "rgba(124,92,252,0.1)",
+                    border: "1px solid rgba(124,92,252,0.3)",
+                    borderRadius: "10px", color: "#a78bfa",
+                    fontFamily: "'Outfit', sans-serif",
+                    fontSize: "14px", fontWeight: 600, cursor: "pointer",
+                  }}
+                >
+                  📲 Install App
+                </button>
+              )}
+              <Link
+                href="/collection"
+                className="add-card-btn"
+                style={{
+                  display: "flex", alignItems: "center", gap: "8px",
+                  padding: "10px 18px",
+                  background: "rgba(0,229,204,0.1)",
+                  border: "1px solid rgba(0,229,204,0.3)",
+                  borderRadius: "10px", color: "#00e5cc",
+                  fontFamily: "'Outfit', sans-serif",
+                  fontSize: "14px", fontWeight: 600,
+                  textDecoration: "none", transition: "background 0.15s",
+                }}
+              >
+                + Add Card
+              </Link>
+            </div>
+          </div>
+
+          {/* Stats Row 1 */}
+          <div className="stat-grid">
+            <StatCard label="Total Cards" value={stats.totalCards} icon={IconCards} />
+            <StatCard label="Total Invested" value={fmt(stats.totalInvested)} icon={IconDollar} />
+            <StatCard label="Current Value" value={fmt(stats.currentValue)} icon={IconValue} />
+          </div>
+
+          {/* Stats Row 2 */}
+          <div className="stat-grid-bottom">
+            <StatCard
+              label="Gain / Loss"
+              value={`${gainPositive ? "+" : ""}${fmt(stats.gainLoss)}`}
+              icon={IconGainLoss}
+              positive={stats.totalInvested > 0 ? gainPositive : undefined}
+              accent={gainPositive ? "rgba(0,229,160,0.08)" : "rgba(255,77,106,0.08)"}
+            />
+            <StatCard
+              label="Portfolio Return"
+              value={`${returnPositive ? "+" : ""}${stats.portfolioReturn.toFixed(1)}%`}
+              icon={IconReturn}
+              positive={stats.totalInvested > 0 ? returnPositive : undefined}
+              accent={returnPositive ? "rgba(0,229,160,0.08)" : "rgba(255,77,106,0.08)"}
+            />
+            <StatCard
+              label="Best Return"
+              value={stats.bestReturnLabel === "-" ? "-" : stats.bestReturnLabel.split(" — ")[0]}
+              sub={stats.bestReturnLabel !== "-" ? stats.bestReturnLabel.split(" — ")[1] : undefined}
+              icon={IconStar}
+              positive={stats.bestReturnLabel !== "-" ? true : undefined}
+              accent="rgba(255,190,60,0.07)"
+            />
+          </div>
+
+          {/* Body Grid: Sport Breakdown + Top Cards */}
+          <div className="body-grid">
+            {/* By Sport */}
+            <div
+              style={{
+                background: "linear-gradient(135deg, #131929 0%, #0f1522 100%)",
+                border: "1px solid rgba(255,255,255,0.07)",
+                borderRadius: "14px",
+                overflow: "hidden",
+              }}
+            >
+              <div style={{ padding: "18px 22px 14px", borderBottom: "1px solid rgba(255,255,255,0.06)", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                <h2 style={{ fontFamily: "'Outfit', sans-serif", fontSize: "14px", fontWeight: 700, color: "#c0c8e8", letterSpacing: "0.02em" }}>
+                  By Sport
+                </h2>
+              </div>
+              <div style={{ overflowX: "auto" }}>
+                <table style={{ width: "100%", borderCollapse: "collapse" }}>
+                  <thead>
+                    <tr>
+                      {["Sport", "Cards", "Invested", "Value", "G/L"].map((h) => (
+                        <th
+                          key={h}
+                          style={{
+                            padding: "10px 16px",
+                            textAlign: h === "Sport" ? "left" : "right",
+                            fontFamily: "'Outfit', sans-serif",
+                            fontSize: "10px",
+                            fontWeight: 700,
+                            color: "#3a4465",
+                            letterSpacing: "0.1em",
+                            textTransform: "uppercase",
+                            whiteSpace: "nowrap",
+                          }}
+                        >
+                          {h}
+                        </th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {Object.keys(stats.bySport).length === 0 ? (
+                      <tr>
+                        <td colSpan={5} style={{ padding: "28px 16px", textAlign: "center", color: "#3a4465", fontFamily: "'Outfit', sans-serif", fontSize: "13px" }}>
+                          No cards yet
+                        </td>
+                      </tr>
+                    ) : (
+                      Object.entries(stats.bySport).map(([sport, data]) => {
+                        const gl = data.value - data.invested;
+                        const glPos = gl >= 0;
+                        return (
+                          <tr key={sport} className="table-row" style={{ borderTop: "1px solid rgba(255,255,255,0.04)", transition: "background 0.15s" }}>
+                            <td style={{ padding: "12px 16px", fontFamily: "'Outfit', sans-serif", fontSize: "13px", fontWeight: 600, color: "#c0c8e8" }}>{sport}</td>
+                            <td style={{ padding: "12px 16px", textAlign: "right", fontFamily: "'JetBrains Mono', monospace", fontSize: "13px", color: "#7a85a8" }}>{data.cards}</td>
+                            <td style={{ padding: "12px 16px", textAlign: "right", fontFamily: "'JetBrains Mono', monospace", fontSize: "13px", color: "#7a85a8" }}>{fmt(data.invested)}</td>
+                            <td style={{ padding: "12px 16px", textAlign: "right", fontFamily: "'JetBrains Mono', monospace", fontSize: "13px", color: "#c0c8e8" }}>{fmt(data.value)}</td>
+                            <td style={{ padding: "12px 16px", textAlign: "right", fontFamily: "'JetBrains Mono', monospace", fontSize: "13px", color: glPos ? "#00e5a0" : "#ff4d6a" }}>
+                              {glPos ? "+" : ""}{fmt(gl)}
+                            </td>
+                          </tr>
+                        );
+                      })
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            {/* Top Cards */}
+            <div
+              style={{
+                background: "linear-gradient(135deg, #131929 0%, #0f1522 100%)",
+                border: "1px solid rgba(255,255,255,0.07)",
+                borderRadius: "14px",
+                overflow: "hidden",
+              }}
+            >
+              <div style={{ padding: "18px 22px 14px", borderBottom: "1px solid rgba(255,255,255,0.06)", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                <h2 style={{ fontFamily: "'Outfit', sans-serif", fontSize: "14px", fontWeight: 700, color: "#c0c8e8" }}>
+                  Top Cards
+                </h2>
+                {stats.topCards.length > 0 && (
+                  <Link href="/collection" style={{ fontSize: "12px", color: "#00e5cc", fontWeight: 600, textDecoration: "none", fontFamily: "'Outfit', sans-serif" }}>
+                    View all →
+                  </Link>
+                )}
+              </div>
+              {stats.topCards.length === 0 ? (
+                <div style={{ padding: "40px 24px", textAlign: "center" }}>
+                  <div style={{ fontSize: "32px", marginBottom: "10px", opacity: 0.3 }}>🃏</div>
+                  <p style={{ color: "#3a4465", fontFamily: "'Outfit', sans-serif", fontSize: "13px" }}>Add cards to see top performers</p>
+                </div>
+              ) : (
+                <div style={{ padding: "16px" }}>
+                  <div className="card-grid">
+                    {stats.topCards.map((card, i) => {
+                      const bought = parseFloat(card.buy) || 0;
+                      const current = parseFloat(card.val) || bought;
+                      const gl = current - bought;
+                      const glPos = gl >= 0;
+                      return (
+                        <div
+                          key={i}
+                          className="card-item"
+                          style={{
+                            background: "#0c0f1a",
+                            border: "1px solid rgba(255,255,255,0.07)",
+                            borderRadius: "10px",
+                            padding: "14px",
+                            cursor: "pointer",
+                            transition: "all 0.2s ease",
+                          }}
+                          onClick={() => router.push("/collection")}
+                        >
+                          <div style={{ fontFamily: "'Outfit', sans-serif", fontSize: "13px", fontWeight: 700, color: "#c0c8e8", marginBottom: "4px", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+                            {card.player || card.name || "Card"}
+                          </div>
+                          <div style={{ fontFamily: "'Outfit', sans-serif", fontSize: "11px", color: "#4a5578", marginBottom: "10px", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+                            {card.year} {card.sport} — {card.grade || "Raw"}
+                          </div>
+                          <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: "15px", fontWeight: 700, color: "#f0f2ff" }}>
+                            {fmt(current)}
+                          </div>
+                          <div style={{ display: "flex", alignItems: "center", gap: "4px", marginTop: "4px", fontSize: "11px", fontFamily: "'Outfit', sans-serif", fontWeight: 600, color: glPos ? "#00e5a0" : "#ff4d6a" }}>
+                            {glPos ? <IconTrending /> : <IconTrendingDown />}
+                            {glPos ? "+" : ""}{fmt(gl)}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        </main>
+
+        {/* Bottom nav — mobile only */}
+        <BottomNav active="dashboard" />
+      </div>
+
+      {/* Install Modal */}
+      {showInstallModal && (
+        <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.75)", zIndex: 200, display: "flex", alignItems: "center", justifyContent: "center", padding: "16px" }}>
+          <div style={{ background: "#151929", border: "1px solid #2a3150", borderRadius: "16px", padding: "28px", maxWidth: "360px", width: "100%", textAlign: "center" }}>
+            <div style={{ fontSize: "36px", marginBottom: "12px" }}>📲</div>
+            <h3 style={{ fontFamily: "'Outfit', sans-serif", fontSize: "18px", fontWeight: 700, color: "#f0f2ff", marginBottom: "8px" }}>Install TopLoad</h3>
+            <p style={{ fontSize: "13px", color: "#6a75a0", marginBottom: "20px", lineHeight: 1.6 }}>Add TopLoad to your home screen for the full app experience.</p>
+            <div style={{ textAlign: "left", display: "flex", flexDirection: "column", gap: "12px", marginBottom: "24px" }}>
+              <div style={{ padding: "14px", borderRadius: "10px", background: "#0c0f1a", border: "1px solid #2a3150" }}>
+                <div style={{ fontSize: "12px", fontWeight: 700, color: "#a78bfa", marginBottom: "6px", textTransform: "uppercase", letterSpacing: "0.08em" }}>📱 iPhone / Safari</div>
+                <div style={{ fontSize: "13px", color: "#8b93b8", lineHeight: 1.6 }}>Tap the <strong style={{ color: "#f0f2ff" }}>Share</strong> button at the bottom → then tap <strong style={{ color: "#f0f2ff" }}>"Add to Home Screen"</strong></div>
+              </div>
+              <div style={{ padding: "14px", borderRadius: "10px", background: "#0c0f1a", border: "1px solid #2a3150" }}>
+                <div style={{ fontSize: "12px", fontWeight: 700, color: "#22d3a7", marginBottom: "6px", textTransform: "uppercase", letterSpacing: "0.08em" }}>🤖 Android / Chrome</div>
+                <div style={{ fontSize: "13px", color: "#8b93b8", lineHeight: 1.6 }}>Tap the <strong style={{ color: "#f0f2ff" }}>3 dots menu</strong> (⋮) → then tap <strong style={{ color: "#f0f2ff" }}>"Add to Home Screen"</strong></div>
+              </div>
+            </div>
+            <button onClick={() => setShowInstallModal(false)} style={{ width: "100%", padding: "12px", borderRadius: "10px", background: "linear-gradient(135deg, #06d6d6, #22f5e0)", border: "none", color: "#000", fontFamily: "'Outfit', sans-serif", fontSize: "14px", fontWeight: 700, cursor: "pointer" }}>Got it!</button>
+          </div>
+        </div>
+      )}
+    </>
+  );
 }
