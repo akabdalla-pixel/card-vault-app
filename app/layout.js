@@ -1,15 +1,8 @@
 import './globals.css'
 
 export const metadata = {
-  title: 'CardVault',
+  title: 'TopLoad',
   description: 'Sports Card Investment Tracker',
-  manifest: '/manifest.json',
-  themeColor: '#111118',
-  appleWebApp: {
-    capable: true,
-    statusBarStyle: 'black-translucent',
-    title: 'CardVault',
-  },
 }
 
 export const viewport = {
@@ -25,7 +18,7 @@ export default function RootLayout({ children }) {
       <head>
         <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet" />
       </head>
-      <body className="bg-[#111118] text-[#eeeef5] antialiased">
+      <body className="bg-[#0c0f1a] text-[#f0f2ff] antialiased">
         {children}
       </body>
     </html>

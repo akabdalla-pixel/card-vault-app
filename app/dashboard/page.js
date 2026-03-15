@@ -98,7 +98,7 @@ export default function DashboardPage() {
   return (
     <div className="flex flex-col max-w-[500px] mx-auto" style={{ height: '100dvh', background: 'var(--bg)' }}>
       <header className="flex items-center justify-between px-5 py-3.5 shrink-0" style={{ borderBottom: '1px solid var(--border)' }}>
-        <div className="text-[22px] font-extrabold tracking-tight">Card<span style={{ color: 'var(--violet2)' }}>Vault</span></div>
+        <div className="text-[22px] font-extrabold tracking-tight">Top<span style={{ color: 'var(--cyan)' }}>Load</span></div>
         <button onClick={() => setModal('settings')} className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: 'var(--card)', border: '1px solid var(--border)', color: 'var(--dim)' }}>
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M12.22 2h-.44a2 2 0 00-2 2v.18a2 2 0 01-1 1.73l-.43.25a2 2 0 01-2 0l-.15-.08a2 2 0 00-2.73.73l-.22.38a2 2 0 00.73 2.73l.15.1a2 2 0 011 1.72v.51a2 2 0 01-1 1.74l-.15.09a2 2 0 00-.73 2.73l.22.38a2 2 0 002.73.73l.15-.08a2 2 0 012 0l.43.25a2 2 0 011 1.73V20a2 2 0 002 2h.44a2 2 0 002-2v-.18a2 2 0 011-1.73l.43-.25a2 2 0 012 0l.15.08a2 2 0 002.73-.73l.22-.39a2 2 0 00-.73-2.73l-.15-.08a2 2 0 01-1-1.74v-.5a2 2 0 011-1.74l.15-.09a2 2 0 00.73-2.73l-.22-.38a2 2 0 00-2.73-.73l-.15.08a2 2 0 01-2 0l-.43-.25a2 2 0 01-1-1.73V4a2 2 0 00-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
         </button>
@@ -123,7 +123,7 @@ export default function DashboardPage() {
                 {sportRows.length ? sportRows.map(s => { const d = byS[s], gl = d.v - d.i; return (
                   <tr key={s}><td className="p-2.5 text-[13px]">{s}</td><td className="p-2.5 font-mono text-[11px]">{d.c}</td><td className="p-2.5 font-mono text-[11px]">{fmt(d.i)}</td><td className="p-2.5 font-mono text-[11px]">{fmt(d.v)}</td><td className={'p-2.5 font-mono text-[11px] ' + (gl >= 0 ? 'text-emerald-400' : 'text-red-400')}>{fgl(gl)}</td></tr>
                 )}) : <tr><td colSpan="5" className="p-5 text-center text-sm" style={{ color: 'var(--faint)' }}>No cards yet</td></tr>}
-                {sportRows.length > 0 && <tr><td className="p-2.5 font-bold" style={{ color: 'var(--violet2)' }}>TOTAL</td><td className="p-2.5 font-mono text-[11px] font-bold" style={{ color: 'var(--violet2)' }}>{totS.c}</td><td className="p-2.5 font-mono text-[11px] font-bold" style={{ color: 'var(--violet2)' }}>{fmt(totS.i)}</td><td className="p-2.5 font-mono text-[11px] font-bold" style={{ color: 'var(--violet2)' }}>{fmt(totS.v)}</td><td className={'p-2.5 font-mono text-[11px] font-bold ' + (totS.v - totS.i >= 0 ? 'text-emerald-400' : 'text-red-400')}>{fgl(totS.v - totS.i)}</td></tr>}
+                {sportRows.length > 0 && <tr><td className="p-2.5 font-bold" style={{ color: 'var(--cyan)' }}>TOTAL</td><td className="p-2.5 font-mono text-[11px] font-bold" style={{ color: 'var(--cyan)' }}>{totS.c}</td><td className="p-2.5 font-mono text-[11px] font-bold" style={{ color: 'var(--cyan)' }}>{fmt(totS.i)}</td><td className="p-2.5 font-mono text-[11px] font-bold" style={{ color: 'var(--cyan)' }}>{fmt(totS.v)}</td><td className={'p-2.5 font-mono text-[11px] font-bold ' + (totS.v - totS.i >= 0 ? 'text-emerald-400' : 'text-red-400')}>{fgl(totS.v - totS.i)}</td></tr>}
               </tbody>
             </table>
           </div>
@@ -146,14 +146,14 @@ export default function DashboardPage() {
             const gs = c.cond && c.grade ? c.cond + ' ' + c.grade : (c.cond || 'Raw')
             return (
               <div key={c.id} className="rounded-2xl p-3.5 mb-2.5 cursor-pointer active:opacity-80" style={{ background: 'var(--card)', border: '1px solid var(--border)' }} onClick={() => openEditCard(c)}>
-                <div className="flex justify-between items-start gap-2 mb-1"><div className="text-[15px] font-semibold truncate flex-1">{c.player || '-'}</div><div className="text-[9px] font-bold uppercase tracking-wide px-2 py-0.5 rounded-md shrink-0" style={{ background: 'rgba(139,92,246,0.15)', color: 'var(--violet2)' }}>{c.sport || '-'}</div></div>
+                <div className="flex justify-between items-start gap-2 mb-1"><div className="text-[15px] font-semibold truncate flex-1">{c.player || '-'}</div><div className="text-[9px] font-bold uppercase tracking-wide px-2 py-0.5 rounded-md shrink-0" style={{ background: 'rgba(6,214,214,0.12)', color: 'var(--cyan)' }}>{c.sport || '-'}</div></div>
                 <div className="flex justify-between text-[13px]" style={{ color: 'var(--dim)' }}><span>{c.name || c.brand || '-'}</span><span>{gs}{q > 1 ? ' x' + q : ''}</span></div>
                 <div className="flex justify-between mt-2 pt-2" style={{ borderTop: '1px solid var(--border)' }}>
                   <div><div className="text-[9px] uppercase tracking-wide mb-0.5" style={{ color: 'var(--faint)' }}>Paid</div><div className="font-mono text-[13px] font-semibold">{fmt(pp * q)}</div></div>
                   <div><div className="text-[9px] uppercase tracking-wide mb-0.5" style={{ color: 'var(--faint)' }}>Value</div><div className="font-mono text-[13px] font-semibold">{fmt(mv * q)}</div></div>
                   <div className="text-right"><div className="text-[9px] uppercase tracking-wide mb-0.5" style={{ color: 'var(--faint)' }}>Return</div><div className={'font-mono text-[13px] font-bold ' + cc(gl)}>{fpct(ret)}</div></div>
                 </div>
-                <a href={ebayUrl(c.player, c.name || c.brand, c.year, c.cond && c.grade ? c.cond + ' ' + c.grade : '')} target="_blank" rel="noopener" onClick={e => e.stopPropagation()} className="inline-flex items-center gap-1 text-[11px] font-semibold px-2.5 py-1 rounded-lg mt-2" style={{ background: 'rgba(96,165,250,0.1)', color: 'var(--sky)' }}>eBay Comps</a>
+                <a href={ebayUrl(c.player, c.name || c.brand, c.year, c.cond && c.grade ? c.cond + ' ' + c.grade : '')} target="_blank" rel="noopener" onClick={e => e.stopPropagation()} className="inline-flex items-center gap-1 text-[11px] font-semibold px-2.5 py-1 rounded-lg mt-2" style={{ background: 'rgba(56,189,248,0.1)', color: 'var(--sky)' }}>eBay Comps</a>
               </div>
             )
           }) : <div className="text-center py-12" style={{ color: 'var(--faint)' }}><p className="text-sm">No cards yet. Tap + to add your first!</p></div>}
@@ -165,7 +165,7 @@ export default function DashboardPage() {
           </div>
           {filteredWishes.length ? filteredWishes.map(w => {
             const bc = w.pri === 'high' ? 'bg-red-400' : w.pri === 'low' ? 'bg-emerald-400' : 'bg-amber-400'
-            const stClass = w.status === 'watching' ? 'bg-sky-400/15 text-sky-400' : w.status === 'buying' ? 'bg-emerald-400/15 text-emerald-400' : w.status === 'bought' ? 'bg-violet-400/15 text-violet-400' : 'bg-gray-400/15 text-gray-400'
+            const stClass = w.status === 'watching' ? 'bg-sky-400/15 text-sky-400' : w.status === 'buying' ? 'bg-emerald-400/15 text-emerald-400' : w.status === 'bought' ? 'bg-cyan-400/15 text-cyan-400' : 'bg-gray-400/15 text-gray-400'
             return (
               <div key={w.id} className="rounded-2xl p-3.5 mb-2.5 cursor-pointer active:opacity-80 relative pl-5" style={{ background: 'var(--card)', border: '1px solid var(--border)' }} onClick={() => openEditWish(w)}>
                 <div className={'absolute left-0 top-0 bottom-0 w-1 rounded-l-2xl ' + bc}></div>
@@ -185,7 +185,7 @@ export default function DashboardPage() {
       </div>
 
       {tab !== 'dash' && (
-        <button onClick={openAdd} className="fixed bottom-20 right-5 w-14 h-14 rounded-full text-white text-3xl font-light flex items-center justify-center z-40 active:scale-90 transition-transform" style={{ background: 'var(--violet)', boxShadow: '0 6px 24px rgba(139,92,246,0.4)' }}>+</button>
+        <button onClick={openAdd} className="fixed bottom-20 right-5 w-14 h-14 rounded-full text-black text-3xl font-light flex items-center justify-center z-40 active:scale-90 transition-transform" style={{ background: 'linear-gradient(135deg, var(--cyan), var(--cyan2))', boxShadow: '0 6px 24px rgba(6,214,214,0.35)' }}>+</button>
       )}
 
       <nav className="flex shrink-0" style={{ borderTop: '1px solid var(--border)', background: 'var(--card)', paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}>
@@ -193,7 +193,7 @@ export default function DashboardPage() {
           ['cards', 'Collection', 'M2 4h20v16H2zM2 10h20M10 10v10'],
           ['wish', 'Wish List', 'M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01z']
         ].map(([id, label, d]) => (
-          <button key={id} onClick={() => setTab(id)} className="flex-1 flex flex-col items-center gap-0.5 py-2.5 text-[10px] font-semibold uppercase tracking-wide" style={{ color: tab === id ? 'var(--violet2)' : 'var(--faint)', background: tab === id ? 'rgba(139,92,246,0.08)' : 'transparent' }}>
+          <button key={id} onClick={() => setTab(id)} className="flex-1 flex flex-col items-center gap-0.5 py-2.5 text-[10px] font-semibold uppercase tracking-wide" style={{ color: tab === id ? 'var(--cyan)' : 'var(--faint)', background: tab === id ? 'rgba(6,214,214,0.06)' : 'transparent' }}>
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className="w-6 h-6"><path d={d}/></svg>
             {label}
           </button>
@@ -228,9 +228,9 @@ export default function DashboardPage() {
               <div className="mb-2"><label className="block text-[11px] font-semibold uppercase tracking-wide mb-1" style={{ color: 'var(--dim)' }}>Market Value ($)</label><input type="number" step="0.01" value={form.val || ''} onChange={e => setForm({ ...form, val: e.target.value })} className={inp} style={inpStyle} placeholder="0.00" /></div>
             </div>
             <div className="mb-3"><label className="block text-[11px] font-semibold uppercase tracking-wide mb-1" style={{ color: 'var(--dim)' }}>Notes</label><input value={form.notes || ''} onChange={e => setForm({ ...form, notes: e.target.value })} className={inp} style={inpStyle} placeholder="Optional" /></div>
-            <button onClick={saveCard} className="w-full p-3.5 rounded-2xl text-[15px] font-bold text-white" style={{ background: 'var(--violet)' }}>Save Card</button>
-            <a href={ebayUrl(form.player, form.name || form.brand, form.year, form.cond && form.grade ? form.cond + ' ' + form.grade : '')} target="_blank" rel="noopener" className="flex items-center justify-center gap-2 w-full p-3.5 rounded-2xl text-[15px] font-bold mt-2" style={{ color: 'var(--sky)', border: '1px solid rgba(96,165,250,0.3)' }}>Check eBay Comps</a>
-            {editing && <button onClick={deleteCard} className="w-full p-3.5 rounded-2xl text-[15px] font-bold mt-2" style={{ color: 'var(--coral)', border: '1px solid rgba(248,113,113,0.3)' }}>Delete Card</button>}
+            <button onClick={saveCard} className="w-full p-3.5 rounded-2xl text-[15px] font-bold text-black" style={{ background: 'linear-gradient(135deg, var(--cyan), var(--cyan2))' }}>Save Card</button>
+            <a href={ebayUrl(form.player, form.name || form.brand, form.year, form.cond && form.grade ? form.cond + ' ' + form.grade : '')} target="_blank" rel="noopener" className="flex items-center justify-center gap-2 w-full p-3.5 rounded-2xl text-[15px] font-bold mt-2" style={{ color: 'var(--sky)', border: '1px solid rgba(56,189,248,0.3)' }}>Check eBay Comps</a>
+            {editing && <button onClick={deleteCard} className="w-full p-3.5 rounded-2xl text-[15px] font-bold mt-2" style={{ color: 'var(--coral)', border: '1px solid rgba(255,107,122,0.3)' }}>Delete Card</button>}
             <button onClick={() => { setModal(null); setEditing(null) }} className="w-full p-3.5 rounded-2xl text-[15px] font-bold mt-2" style={{ background: 'var(--card2)', border: '1px solid var(--border)' }}>Cancel</button>
           </div>
         </div>
@@ -257,8 +257,8 @@ export default function DashboardPage() {
             </div>
             <div className="mb-3"><label className="block text-[11px] font-semibold uppercase tracking-wide mb-1" style={{ color: 'var(--dim)' }}>Status</label><select value={form.status || 'watching'} onChange={e => setForm({ ...form, status: e.target.value })} className={inp} style={inpStyle}><option value="watching">Watching</option><option value="buying">Buying Soon</option><option value="bought">Bought</option><option value="passed">Passed</option></select></div>
             <div className="mb-3"><label className="block text-[11px] font-semibold uppercase tracking-wide mb-1" style={{ color: 'var(--dim)' }}>Notes</label><input value={form.notes || ''} onChange={e => setForm({ ...form, notes: e.target.value })} className={inp} style={inpStyle} placeholder="Optional" /></div>
-            <button onClick={saveWish} className="w-full p-3.5 rounded-2xl text-[15px] font-bold text-white" style={{ background: 'var(--violet)' }}>Save</button>
-            {editing && <button onClick={deleteWish} className="w-full p-3.5 rounded-2xl text-[15px] font-bold mt-2" style={{ color: 'var(--coral)', border: '1px solid rgba(248,113,113,0.3)' }}>Delete</button>}
+            <button onClick={saveWish} className="w-full p-3.5 rounded-2xl text-[15px] font-bold text-black" style={{ background: 'linear-gradient(135deg, var(--cyan), var(--cyan2))' }}>Save</button>
+            {editing && <button onClick={deleteWish} className="w-full p-3.5 rounded-2xl text-[15px] font-bold mt-2" style={{ color: 'var(--coral)', border: '1px solid rgba(255,107,122,0.3)' }}>Delete</button>}
             <button onClick={() => { setModal(null); setEditing(null) }} className="w-full p-3.5 rounded-2xl text-[15px] font-bold mt-2" style={{ background: 'var(--card2)', border: '1px solid var(--border)' }}>Cancel</button>
           </div>
         </div>
@@ -274,7 +274,7 @@ export default function DashboardPage() {
             </div>
             <div className="flex items-center justify-between py-3.5" style={{ borderBottom: '1px solid var(--border)' }}>
               <div><div className="font-semibold" style={{ color: 'var(--coral)' }}>Log Out</div></div>
-              <button onClick={logout} className="px-4 py-2 rounded-xl text-sm font-semibold" style={{ background: 'var(--card2)', border: '1px solid rgba(248,113,113,0.3)', color: 'var(--coral)' }}>Log Out</button>
+              <button onClick={logout} className="px-4 py-2 rounded-xl text-sm font-semibold" style={{ background: 'var(--card2)', border: '1px solid rgba(255,107,122,0.3)', color: 'var(--coral)' }}>Log Out</button>
             </div>
             <button onClick={() => setModal(null)} className="w-full p-3.5 rounded-2xl text-[15px] font-bold mt-4" style={{ background: 'var(--card2)', border: '1px solid var(--border)' }}>Close</button>
           </div>
