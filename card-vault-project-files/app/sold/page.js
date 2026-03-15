@@ -143,7 +143,7 @@ export default function SoldHistoryPage() {
   const winners = cards.filter(c => (parseFloat(c.soldPrice) || 0) > (parseFloat(c.buy) || 0)).length
   const winRate = cards.length > 0 ? (winners / cards.length) * 100 : 0
 
-  const pullY = usePullToRefresh(loadData)
+  const pullY = usePullToRefresh(load)
   if (loading) return (
     <div style={{ display:'flex', minHeight:'100vh', background:'#0a0a0a' }}>
       <div className="sidebar-el" style={{ width:220, minHeight:'100vh', background:'#0d0d0d', borderRight:'1px solid #1e1e1e', flexShrink:0 }} />
