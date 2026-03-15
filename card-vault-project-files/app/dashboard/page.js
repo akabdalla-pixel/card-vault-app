@@ -83,7 +83,7 @@ function SparklineChart({ cards }) {
   const costPath = points.map((p,i) => `${i===0?'M':'L'} ${toX(i)} ${toY(p.cost)}`).join(' ')
   const areaPath = `${valuePath} L ${W} ${H} L 0 ${H} Z`
   const isUp = totalVal >= totalCost
-  const lineColor = isUp ? '#e53935' : '#616161'
+  const lineColor = isUp ? '#22c55e' : '#e53935'
   return (
     <div style={{ background: '#111', border: '1px solid #1e1e1e', borderRadius: 14, padding: '18px 20px', marginBottom: 22 }}>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 }}>
@@ -92,7 +92,7 @@ function SparklineChart({ cards }) {
           <div style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: 26, fontWeight: 700, color: '#f0f0f0', marginTop: 2 }}>{fmt(totalVal)}</div>
         </div>
         <div style={{ textAlign: 'right' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 4, justifyContent: 'flex-end', fontFamily: "'JetBrains Mono',monospace", fontSize: 14, fontWeight: 700, color: isUp ? '#e53935' : '#616161' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 4, justifyContent: 'flex-end', fontFamily: "'JetBrains Mono',monospace", fontSize: 14, fontWeight: 700, color: isUp ? '#22c55e' : '#e53935' }}>
             {isUp ? <IconTrendUp /> : <IconTrendDown />}{isUp?'+':''}{fmt(totalVal-totalCost)}
           </div>
           <div style={{ fontSize: 11, color: '#444', marginTop: 2 }}>vs cost basis</div>
@@ -135,7 +135,7 @@ function QuickValueRow({ card, onUpdate }) {
         <div style={{ fontFamily: "'Outfit',sans-serif", fontSize: 13, fontWeight: 700, color: '#ccc', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{card.player}</div>
         <div style={{ fontSize: 11, color: '#444', marginTop: 1 }}>{[card.year,card.sport,card.grade?'PSA '+card.grade:card.cond].filter(Boolean).join(' · ')}</div>
       </div>
-      <div style={{ display: 'flex', alignItems: 'center', gap: 3, fontSize: 12, fontWeight: 600, color: glPos?'#e53935':'#616161', marginRight: 16, minWidth: 60, justifyContent: 'flex-end' }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 3, fontSize: 12, fontWeight: 600, color: glPos?'#22c55e':'#e53935', marginRight: 16, minWidth: 60, justifyContent: 'flex-end' }}>
         {glPos?<IconTrendUp />:<IconTrendDown />}{glPos?'+':''}{glPct.toFixed(1)}%
       </div>
       {editing ? (
@@ -166,7 +166,7 @@ function TopMovers({ cards }) {
         <div style={{ fontSize: 10, color: '#444' }}>{card.year} {card.sport}</div>
       </div>
       <div style={{ textAlign: 'right', marginLeft: 12 }}>
-        <div style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: 13, fontWeight: 700, color: isGainer?'#e53935':'#616161' }}>{isGainer?'+':''}{card.pct.toFixed(1)}%</div>
+        <div style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: 13, fontWeight: 700, color: isGainer?'#22c55e':'#e53935' }}>{isGainer?'+':''}{card.pct.toFixed(1)}%</div>
         <div style={{ fontSize: 10, color: '#444', fontFamily: "'JetBrains Mono',monospace" }}>{isGainer?'+':''}{fmt(card.gl)}</div>
       </div>
     </div>
@@ -190,7 +190,7 @@ function StatCard({ label, value, sub, positive }) {
     <div style={{ background: '#111', border: '1px solid #1e1e1e', borderRadius: 14, padding: '16px 18px' }}>
       <div style={{ fontSize: 10, fontWeight: 700, color: '#333', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: 10 }}>{label}</div>
       <div style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: 22, fontWeight: 700, color: '#f0f0f0', letterSpacing: '-0.5px', lineHeight: 1 }}>{value}</div>
-      {sub && <div style={{ display: 'flex', alignItems: 'center', gap: 4, marginTop: 8, fontSize: 11, fontFamily: "'Outfit',sans-serif", fontWeight: 600, color: positive===true?'#e53935':positive===false?'#616161':'#444' }}>
+      {sub && <div style={{ display: 'flex', alignItems: 'center', gap: 4, marginTop: 8, fontSize: 11, fontFamily: "'Outfit',sans-serif", fontWeight: 600, color: positive===true?'#22c55e':positive===false?'#e53935':'#444' }}>
         {positive===true&&<IconTrendUp />}{positive===false&&<IconTrendDown />}{sub}
       </div>}
     </div>
@@ -318,8 +318,8 @@ export default function DashboardPage() {
               { label:'Total Invested', value: fmt(totalInvested) },
               { label:'Current Value', value: fmt(currentValue) },
               { label:'Unrealized G/L', value: `${gainPos?'+':''}${fmt(gainLoss)}`, color: gainPos?'#e53935':'#616161' },
-              { label:'Return', value: `${retPos?'+':''}${portfolioReturn.toFixed(1)}%`, color: retPos?'#e53935':'#616161' },
-              { label:'Realized P&L', value: `${realizedPL>=0?'+':''}${fmt(realizedPL)}`, color: realizedPL>=0?'#e53935':'#616161' },
+              { label:'Return', value: `${retPos?'+':''}${portfolioReturn.toFixed(1)}%`, color: retPos?'#22c55e':'#e53935' },
+              { label:'Realized P&L', value: `${realizedPL>=0?'+':''}${fmt(realizedPL)}`, color: realizedPL>=0?'#22c55e':'#e53935' },
             ].map((s,i) => (
               <div key={i} style={{ flexShrink:0,background:'#111',border:'1px solid #1e1e1e',borderRadius:12,padding:'12px 14px',minWidth:130 }}>
                 <div style={{ fontSize:9,color:'#444',fontWeight:700,textTransform:'uppercase',letterSpacing:'0.1em',marginBottom:6,fontFamily:"'Outfit',sans-serif" }}>{s.label}</div>
@@ -388,7 +388,7 @@ export default function DashboardPage() {
                     </div>
                     <div style={{ textAlign:'right' }}>
                       <div style={{ fontSize:10, color:'#444', fontWeight:700, textTransform:'uppercase', letterSpacing:'0.08em', marginBottom:4, fontFamily:"'Outfit',sans-serif" }}>G/L</div>
-                      <div style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:14, fontWeight:700, color: glPos?'#e53935':'#616161' }}>{glPos?'+':''}{glPct.toFixed(1)}%</div>
+                      <div style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:14, fontWeight:700, color: glPos?'#22c55e':'#e53935' }}>{glPos?'+':''}{glPct.toFixed(1)}%</div>
                     </div>
                   </div>
                 </div>

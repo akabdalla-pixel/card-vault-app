@@ -413,7 +413,7 @@ function BreakEvenModal({ card, onClose }) {
               </div>
               <div>
                 <div style={{ fontSize: 10, color: '#444', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 4, fontFamily: "'Outfit',sans-serif" }}>Net Profit</div>
-                <div style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: 14, fontWeight: 700, color: isProfit ? '#e53935' : '#616161' }}>
+                <div style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: 14, fontWeight: 700, color: isProfit ? '#22c55e' : '#e53935' }}>
                   {isProfit ? '+' : ''}{fmt(netProfit)}
                 </div>
               </div>
@@ -422,7 +422,7 @@ function BreakEvenModal({ card, onClose }) {
               <span style={{ fontFamily: "'Outfit',sans-serif", fontSize: 13, color: '#666' }}>
                 {isProfit ? '✅ You make money at this price' : '❌ You lose money at this price'}
               </span>
-              <span style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: 14, fontWeight: 700, color: isProfit ? '#e53935' : '#616161' }}>
+              <span style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: 14, fontWeight: 700, color: isProfit ? '#22c55e' : '#e53935' }}>
                 {isProfit ? '+' : ''}{netProfitPct.toFixed(1)}%
               </span>
             </div>
@@ -607,7 +607,7 @@ export default function CollectionPage() {
                             <td style={{ padding: '12px 14px', textAlign: 'right', fontFamily: "'JetBrains Mono',monospace", fontSize: 13, color: '#666' }}>{fmt(buy)}</td>
                             <td style={{ padding: '12px 14px', textAlign: 'right', fontFamily: "'JetBrains Mono',monospace", fontSize: 13, fontWeight: 700, color: '#f0f2ff' }}>{fmt(displayVal)}</td>
                             <td style={{ padding: '12px 14px', textAlign: 'right' }}>
-                              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 3, fontFamily: "'JetBrains Mono',monospace", fontSize: 12, fontWeight: 600, color: glPos ? '#e53935' : '#616161' }}>{glPos ? <IconUp /> : <IconDown />}{glPos?'+':''}{fmt(gl)}</div>
+                              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 3, fontFamily: "'JetBrains Mono',monospace", fontSize: 12, fontWeight: 600, color: glPos ? '#22c55e' : '#e53935' }}>{glPos ? <IconUp /> : <IconDown />}{glPos?'+':''}{fmt(gl)}</div>
                             </td>
                             <td style={{ padding: '12px 14px', textAlign: 'right' }}>{card.sold ? <span style={{ padding: '3px 8px', borderRadius: 6, background: 'rgba(255,190,46,0.1)', color: '#ffbe2e', fontSize: 11, fontWeight: 700 }}>SOLD</span> : <span style={{ padding: '3px 8px', borderRadius: 6, background: 'rgba(229,57,53,0.1)', color: '#e53935', fontSize: 11, fontWeight: 700 }}>ACTIVE</span>}</td>
                             <td style={{ padding: '12px 14px', textAlign: 'right' }}>
@@ -669,7 +669,7 @@ export default function CollectionPage() {
                         </div>
                         <div style={{ flex: 1 }}>
                           <div style={{ fontSize: 10, color: '#444', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 3 }}>G/L</div>
-                          <div style={{ display: 'flex', alignItems: 'center', gap: 3, fontFamily: "'JetBrains Mono',monospace", fontSize: 14, fontWeight: 700, color: glPos ? '#e53935' : '#616161' }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: 3, fontFamily: "'JetBrains Mono',monospace", fontSize: 14, fontWeight: 700, color: glPos ? '#22c55e' : '#e53935' }}>
                             {glPos ? <IconUp /> : <IconDown />}{glPos?'+':''}{glPct.toFixed(1)}%
                           </div>
                         </div>
