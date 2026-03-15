@@ -36,7 +36,7 @@ const navIcons = { 'Dashboard': IconDashboard, 'Collection': IconCollection, 'In
 const fmt = n => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 2 }).format(n || 0)
 const SPORTS = [
   // Sports Cards
-  'Baseball', 'Basketball', 'Football', 'Soccer', 'Hockey', 'Tennis', 'Golf',
+  'Baseball', 'Basketball', 'Football', 'Soccer', 'Hockey', 'Tennis', 'Golf', 'F1',
   // TCG
   'Pokémon', 'Magic: The Gathering', 'Yu-Gi-Oh!', 'Lorcana', 'One Piece', 'Dragon Ball Super', 'Digimon',
   // Other
