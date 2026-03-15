@@ -371,8 +371,8 @@ export default function CollectionPage() {
     <>
       <style>{`
         .sidebar-el{display:flex;flex-direction:column}.mobile-only{display:none!important}.mob-topbar{display:none}.main-wrap{margin-left:220px;min-height:100vh;width:calc(100% - 220px)}.card-row:hover{background:rgba(255,255,255,0.02)!important}
-        .mobile-cards{display:none}
-        .desktop-table{display:block}
+        .mobile-cards{display:none!important}
+        .desktop-table{display:block!important}
         @media(max-width:768px){.sidebar-el{display:none!important}.mobile-only{display:flex!important}.mob-topbar{display:flex}.main-wrap{margin-left:0!important;width:100%!important;padding-bottom:80px!important}.mobile-cards{display:flex!important}.desktop-table{display:none!important}}
       `}</style>
       <div style={{ display: 'flex', minHeight: '100vh', background: 'var(--bg)' }}>
