@@ -376,14 +376,34 @@ function StatCard({ label, value, sub, icon: Icon, accent, positive }) {
 // ─── Main Dashboard ───────────────────────────────────────────────────────────
 export default function DashboardPage() {
   const [cards, setCards] = useState([]);
+  const [installPrompt, setInstallPrompt] = useState(null);
+  const [installed, setInstalled] = useState(false);
+  const [showInstallModal, setShowInstallModal] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
     setCards(getCards());
     const handler = () => setCards(getCards());
     window.addEventListener("storage", handler);
-    return () => window.removeEventListener("storage", handler);
+
+    const onBeforeInstall = (e) => { e.preventDefault(); setInstallPrompt(e); };
+    window.addEventListener("beforeinstallprompt", onBeforeInstall);
+
+    if (window.matchMedia("(display-mode: standalone)").matches) setInstalled(true);
+    window.addEventListener("appinstalled", () => { setInstalled(true); setInstallPrompt(null); });
+
+    return () => {
+      window.removeEventListener("storage", handler);
+      window.removeEventListener("beforeinstallprompt", onBeforeInstall);
+    };
   }, []);
+
+  async function handleInstall() {
+    if (!installPrompt) return;
+    installPrompt.prompt();
+    const { outcome } = await installPrompt.userChoice;
+    if (outcome === "accepted") { setInstalled(true); setInstallPrompt(null); }
+  }
 
   const stats = computeStats(cards);
   const gainPositive = stats.gainLoss >= 0;
@@ -497,27 +517,40 @@ export default function DashboardPage() {
                 {cards.length === 0 ? "No cards tracked yet — add your first card to get started" : `Tracking ${stats.totalCards} card${stats.totalCards !== 1 ? "s" : ""} across your collection`}
               </p>
             </div>
-            <Link
-              href="/collection"
-              className="add-card-btn"
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: "8px",
-                padding: "10px 18px",
-                background: "rgba(0,229,204,0.1)",
-                border: "1px solid rgba(0,229,204,0.3)",
-                borderRadius: "10px",
-                color: "#00e5cc",
-                fontFamily: "'Outfit', sans-serif",
-                fontSize: "14px",
-                fontWeight: 600,
-                textDecoration: "none",
-                transition: "background 0.15s",
-              }}
-            >
-              + Add Card
-            </Link>
+            <div style={{ display: "flex", gap: "10px", flexWrap: "wrap" }}>
+              {!installed && (
+                <button
+                  onClick={installPrompt ? handleInstall : () => setShowInstallModal(true)}
+                  style={{
+                    display: "flex", alignItems: "center", gap: "8px",
+                    padding: "10px 18px",
+                    background: "rgba(124,92,252,0.1)",
+                    border: "1px solid rgba(124,92,252,0.3)",
+                    borderRadius: "10px", color: "#a78bfa",
+                    fontFamily: "'Outfit', sans-serif",
+                    fontSize: "14px", fontWeight: 600, cursor: "pointer",
+                  }}
+                >
+                  📲 Install App
+                </button>
+              )}
+              <Link
+                href="/collection"
+                className="add-card-btn"
+                style={{
+                  display: "flex", alignItems: "center", gap: "8px",
+                  padding: "10px 18px",
+                  background: "rgba(0,229,204,0.1)",
+                  border: "1px solid rgba(0,229,204,0.3)",
+                  borderRadius: "10px", color: "#00e5cc",
+                  fontFamily: "'Outfit', sans-serif",
+                  fontSize: "14px", fontWeight: 600,
+                  textDecoration: "none", transition: "background 0.15s",
+                }}
+              >
+                + Add Card
+              </Link>
+            </div>
           </div>
 
           {/* Stats Row 1 */}
@@ -694,6 +727,28 @@ export default function DashboardPage() {
         {/* Bottom nav — mobile only */}
         <BottomNav active="dashboard" />
       </div>
+
+      {/* Install Modal */}
+      {showInstallModal && (
+        <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.75)", zIndex: 200, display: "flex", alignItems: "center", justifyContent: "center", padding: "16px" }}>
+          <div style={{ background: "#151929", border: "1px solid #2a3150", borderRadius: "16px", padding: "28px", maxWidth: "360px", width: "100%", textAlign: "center" }}>
+            <div style={{ fontSize: "36px", marginBottom: "12px" }}>📲</div>
+            <h3 style={{ fontFamily: "'Outfit', sans-serif", fontSize: "18px", fontWeight: 700, color: "#f0f2ff", marginBottom: "8px" }}>Install TopLoad</h3>
+            <p style={{ fontSize: "13px", color: "#6a75a0", marginBottom: "20px", lineHeight: 1.6 }}>Add TopLoad to your home screen for the full app experience.</p>
+            <div style={{ textAlign: "left", display: "flex", flexDirection: "column", gap: "12px", marginBottom: "24px" }}>
+              <div style={{ padding: "14px", borderRadius: "10px", background: "#0c0f1a", border: "1px solid #2a3150" }}>
+                <div style={{ fontSize: "12px", fontWeight: 700, color: "#a78bfa", marginBottom: "6px", textTransform: "uppercase", letterSpacing: "0.08em" }}>📱 iPhone / Safari</div>
+                <div style={{ fontSize: "13px", color: "#8b93b8", lineHeight: 1.6 }}>Tap the <strong style={{ color: "#f0f2ff" }}>Share</strong> button at the bottom → then tap <strong style={{ color: "#f0f2ff" }}>"Add to Home Screen"</strong></div>
+              </div>
+              <div style={{ padding: "14px", borderRadius: "10px", background: "#0c0f1a", border: "1px solid #2a3150" }}>
+                <div style={{ fontSize: "12px", fontWeight: 700, color: "#22d3a7", marginBottom: "6px", textTransform: "uppercase", letterSpacing: "0.08em" }}>🤖 Android / Chrome</div>
+                <div style={{ fontSize: "13px", color: "#8b93b8", lineHeight: 1.6 }}>Tap the <strong style={{ color: "#f0f2ff" }}>3 dots menu</strong> (⋮) → then tap <strong style={{ color: "#f0f2ff" }}>"Add to Home Screen"</strong></div>
+              </div>
+            </div>
+            <button onClick={() => setShowInstallModal(false)} style={{ width: "100%", padding: "12px", borderRadius: "10px", background: "linear-gradient(135deg, #06d6d6, #22f5e0)", border: "none", color: "#000", fontFamily: "'Outfit', sans-serif", fontSize: "14px", fontWeight: 700, cursor: "pointer" }}>Got it!</button>
+          </div>
+        </div>
+      )}
     </>
   );
 }
