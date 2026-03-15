@@ -88,6 +88,36 @@ function CollectionSkeleton() {
   )
 }
 
+// ── Swipe to Delete (mobile) ─────────────────────────────────────────────────
+function SwipeRow({ children, onDelete }) {
+  const [swipeX, setSwipeX] = useState(0)
+  const startX = useRef(0)
+  const dragging = useRef(false)
+  const onStart = e => { startX.current = e.touches[0].clientX; dragging.current = true }
+  const onMove = e => {
+    if (!dragging.current) return
+    const dx = Math.min(0, Math.max(-80, e.touches[0].clientX - startX.current))
+    setSwipeX(dx)
+  }
+  const onEnd = () => {
+    dragging.current = false
+    if (swipeX < -55) setSwipeX(-76)
+    else setSwipeX(0)
+  }
+  return (
+    <div style={{ position:'relative', overflow:'hidden', borderRadius:14 }}>
+      <div style={{ position:'absolute', right:0, top:0, bottom:0, width:76, background:'rgba(229,57,53,0.12)', display:'flex', alignItems:'center', justifyContent:'center', cursor:'pointer', borderRadius:'0 14px 14px 0' }}
+        onClick={() => { setSwipeX(0); onDelete() }}>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#e53935" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/></svg>
+      </div>
+      <div style={{ transform:`translateX(${swipeX}px)`, transition:dragging.current?'none':'transform 0.2s ease', willChange:'transform' }}
+        onTouchStart={onStart} onTouchMove={onMove} onTouchEnd={onEnd}>
+        {children}
+      </div>
+    </div>
+  )
+}
+
 // ── Pull to Refresh ───────────────────────────────────────────────────────────
 function usePullToRefresh(onRefresh) {
   const [pullY, setPullY] = useState(0)
