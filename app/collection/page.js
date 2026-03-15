@@ -26,6 +26,8 @@ function IconSearch() { return <svg width="14" height="14" viewBox="0 0 24 24" f
 function IconTag() { return <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg> }
 function IconCalc() { return <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="4" y="2" width="16" height="20" rx="2"/><line x1="8" y1="6" x2="16" y2="6"/><line x1="8" y1="10" x2="10" y2="10"/><line x1="14" y1="10" x2="16" y2="10"/><line x1="8" y1="14" x2="10" y2="14"/><line x1="14" y1="14" x2="16" y2="14"/><line x1="8" y1="18" x2="10" y2="18"/><line x1="14" y1="18" x2="16" y2="18"/></svg> }
 function IconExternalLink() { return <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg> }
+function IconGrid() { return <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg> }
+function IconList() { return <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg> }
 
 function IconSold() { return <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg> }
 function IconMarket() { return <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg> }
@@ -446,6 +448,7 @@ export default function CollectionPage() {
   const [filterStatus, setFilterStatus] = useState('active')
   const [filterGraded, setFilterGraded] = useState('')
   const [sortBy, setSortBy] = useState('date_desc')
+  const [viewMode, setViewMode] = useState('table') // 'table' or 'grid'
   const [deleteId, setDeleteId] = useState(null)
   const [importSuccess, setImportSuccess] = useState(null)
   const [selected, setSelected] = useState(new Set())
@@ -516,6 +519,7 @@ export default function CollectionPage() {
         .sidebar-el{display:flex;flex-direction:column}.mobile-only{display:none!important}.mob-topbar{display:none}.main-wrap{margin-left:220px;min-height:100vh;width:calc(100% - 220px)}.card-row:hover{background:rgba(255,255,255,0.02)!important}
         .mobile-cards{display:none!important}
         .desktop-table{display:block!important}
+        .card-grid{display:none!important}
         .mob-stats{display:none!important}
         .desk-stats{display:grid!important}
         .mob-filters{display:none!important}
@@ -525,6 +529,7 @@ export default function CollectionPage() {
           .sidebar-el{display:none!important}.mobile-only{display:flex!important}.mob-topbar{display:flex}
           .main-wrap{margin-left:0!important;width:100%!important;padding-bottom:80px!important;padding:12px 12px 80px!important}
           .mobile-cards{display:flex!important}.desktop-table{display:none!important}
+          .card-grid{display:none!important}
           .mob-stats{display:flex!important}.desk-stats{display:none!important}
           .mob-filters{display:flex!important}.desk-filters{display:none!important}
           .hide-mob{display:none!important}
@@ -588,7 +593,7 @@ export default function CollectionPage() {
           )}
 
           {/* ── Desktop filters ── */}
-          <div className="desk-filters" style={{ gap: 10, marginBottom: 10, flexWrap: 'wrap' }}>
+          <div className="desk-filters" style={{ gap: 10, marginBottom: 10, flexWrap: 'wrap', alignItems: 'center' }}>
             <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search player, set, brand..." style={{ flex: 1, minWidth: 200, padding: '9px 14px', borderRadius: 10, background: '#111', border: '1px solid #2a2a2a', color: '#f0f0f0', fontSize: 14, outline: 'none', fontFamily: "'Outfit',sans-serif" }} />
             <select value={filterSport} onChange={e => setFilterSport(e.target.value)} style={{ padding: '9px 14px', borderRadius: 10, background: '#111', border: '1px solid #2a2a2a', color: filterSport ? '#f0f0f0' : '#555', fontSize: 14, outline: 'none' }}>
               <option value="">All Sports</option>
@@ -624,9 +629,12 @@ export default function CollectionPage() {
                 ✕ Clear Filters
               </button>
             )}
+            {/* View toggle */}
+            <div style={{ marginLeft: 'auto', display: 'flex', borderRadius: 10, overflow: 'hidden', border: '1px solid #2a2a2a' }}>
+              <button onClick={() => setViewMode('table')} title="Table view" style={{ padding: '8px 12px', background: viewMode === 'table' ? 'rgba(229,57,53,0.15)' : '#111', border: 'none', color: viewMode === 'table' ? '#e53935' : '#555', cursor: 'pointer', display: 'flex', alignItems: 'center' }}><IconList /></button>
+              <button onClick={() => setViewMode('grid')} title="Grid view" style={{ padding: '8px 12px', background: viewMode === 'grid' ? 'rgba(229,57,53,0.15)' : '#111', border: 'none', color: viewMode === 'grid' ? '#e53935' : '#555', cursor: 'pointer', display: 'flex', alignItems: 'center' }}><IconGrid /></button>
+            </div>
           </div>
-
-          {/* ── Mobile filters — compact single row ── */}
           <div className="mob-filters" style={{ gap: 8, marginBottom: 10, flexWrap: 'nowrap', overflowX: 'auto', WebkitOverflowScrolling: 'touch', paddingBottom: 2 }}>
             <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search..." style={{ flex: 1, minWidth: 120, maxWidth: 160, padding: '8px 12px', borderRadius: 10, background: '#111', border: '1px solid #2a2a2a', color: '#f0f0f0', fontSize: 13, outline: 'none', fontFamily: "'Outfit',sans-serif" }} />
             <div style={{ display: 'flex', borderRadius: 10, overflow: 'hidden', border: '1px solid #2a2a2a', flexShrink: 0 }}>
@@ -670,8 +678,63 @@ export default function CollectionPage() {
             </div>
           ) : (
             <>
+              {/* ── Grid View ── */}
+              {viewMode === 'grid' && (
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: 14 }}>
+                  {filtered.map(card => {
+                    const qty = parseInt(card.qty)||1
+                    const buy = (parseFloat(card.buy)||0)*qty
+                    const val = card.sold ? (parseFloat(card.soldPrice)||0) : (parseFloat(card.val)||parseFloat(card.buy)||0)*qty
+                    const gl = val - buy
+                    const glPos = gl >= 0
+                    const glPct = buy > 0 ? (gl/buy)*100 : 0
+                    const isSelected = selected.has(card.id)
+                    return (
+                      <div key={card.id} style={{ background: isSelected ? 'rgba(229,57,53,0.06)' : 'linear-gradient(135deg,#111,#0d0d0d)', border: isSelected ? '1px solid rgba(229,57,53,0.3)' : '1px solid #1e1e1e', borderRadius: 14, padding: '16px', display: 'flex', flexDirection: 'column', gap: 10, position: 'relative', transition: 'all 0.15s', opacity: card.sold ? 0.75 : 1 }}
+                        onMouseEnter={e => { if (!isSelected) e.currentTarget.style.borderColor = '#2a2a2a' }}
+                        onMouseLeave={e => { if (!isSelected) e.currentTarget.style.borderColor = '#1e1e1e' }}>
+                        {/* Checkbox */}
+                        <input type="checkbox" checked={isSelected} onChange={() => toggleSelect(card.id)} style={{ position: 'absolute', top: 12, right: 12, accentColor: '#e53935', width: 15, height: 15, cursor: 'pointer' }} />
+                        {/* Status badge */}
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                          {card.grade
+                            ? <span style={{ padding: '2px 8px', borderRadius: 6, background: 'rgba(229,57,53,0.1)', color: '#e53935', fontSize: 11, fontWeight: 700 }}>PSA {card.grade}</span>
+                            : <span style={{ padding: '2px 8px', borderRadius: 6, background: 'rgba(255,255,255,0.05)', color: '#555', fontSize: 11, fontWeight: 600 }}>{card.cond || 'Raw'}</span>
+                          }
+                          {card.sold && <span style={{ padding: '2px 8px', borderRadius: 6, background: 'rgba(255,190,46,0.1)', color: '#ffbe2e', fontSize: 11, fontWeight: 700 }}>SOLD</span>}
+                        </div>
+                        {/* Player name */}
+                        <div>
+                          <div style={{ fontFamily: "'Outfit',sans-serif", fontSize: 15, fontWeight: 800, color: '#f0f0f0', lineHeight: 1.2 }}>{card.player}</div>
+                          <div style={{ fontSize: 11, color: '#555', marginTop: 4 }}>{[card.year, card.sport, card.brand].filter(Boolean).join(' · ')}</div>
+                        </div>
+                        {/* Values */}
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', paddingTop: 8, borderTop: '1px solid #1e1e1e' }}>
+                          <div>
+                            <div style={{ fontSize: 9, color: '#444', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 2, fontFamily: "'Outfit',sans-serif" }}>Value</div>
+                            <div style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: 16, fontWeight: 700, color: '#f0f0f0' }}>{fmt(val)}</div>
+                          </div>
+                          <div style={{ textAlign: 'right' }}>
+                            <div style={{ fontSize: 9, color: '#444', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 2, fontFamily: "'Outfit',sans-serif" }}>G/L</div>
+                            <div style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: 13, fontWeight: 700, color: glPos ? '#22c55e' : '#e53935' }}>{glPos?'+':''}{glPct.toFixed(1)}%</div>
+                          </div>
+                        </div>
+                        {/* Action buttons */}
+                        <div style={{ display: 'flex', gap: 6 }}>
+                          <button onClick={() => setPriceLookupCard(card)} title="Check prices" style={{ flex: 1, padding: '6px 0', borderRadius: 7, background: 'rgba(124,92,252,0.08)', border: 'none', color: '#a78bfa', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><IconSearch /></button>
+                          {!card.sold && <button onClick={() => setSoldCard(card)} title="Mark sold" style={{ flex: 1, padding: '6px 0', borderRadius: 7, background: 'rgba(255,190,46,0.08)', border: 'none', color: '#ffbe2e', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><IconTag /></button>}
+                          <button onClick={() => setBreakEvenCard(card)} title="Break even" style={{ flex: 1, padding: '6px 0', borderRadius: 7, background: 'rgba(229,57,53,0.08)', border: 'none', color: '#e53935', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><IconCalc /></button>
+                          <button onClick={() => setModal(card)} title="Edit" style={{ flex: 1, padding: '6px 0', borderRadius: 7, background: 'rgba(255,255,255,0.05)', border: 'none', color: '#666', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><IconEdit /></button>
+                          <button onClick={() => setDeleteId(card.id)} title="Delete" style={{ flex: 1, padding: '6px 0', borderRadius: 7, background: 'rgba(229,57,53,0.08)', border: 'none', color: '#e53935', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><IconTrash /></button>
+                        </div>
+                      </div>
+                    )
+                  })}
+                </div>
+              )}
+
               {/* ── Desktop Table ── */}
-              <div className="desktop-table" style={{ background: 'linear-gradient(135deg,#111,#0d0d0d)', border: '1px solid #1e1e1e', borderRadius: 14, overflow: 'hidden' }}>
+              {viewMode === 'table' && <div className="desktop-table" style={{ background: 'linear-gradient(135deg,#111,#0d0d0d)', border: '1px solid #1e1e1e', borderRadius: 14, overflow: 'hidden' }}>
                 <div style={{ overflowX: 'auto' }}>
                   <table style={{ width: '100%', borderCollapse: 'collapse' }}>
                     <thead>
@@ -723,7 +786,7 @@ export default function CollectionPage() {
                     </tbody>
                   </table>
                 </div>
-              </div>
+              </div>}
 
               {/* ── Mobile Cards ── */}
               <div className="mobile-cards" style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
