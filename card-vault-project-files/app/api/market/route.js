@@ -14,7 +14,7 @@ async function getEbayToken() {
     body: 'grant_type=client_credentials&scope=https%3A%2F%2Fapi.ebay.com%2Foauth%2Fapi_scope'
   })
   const data = await res.json()
-  if (!res.ok) throw new Error(data.error_description || 'Token failed: ' + JSON.stringify(data))
+  if (!res.ok) throw new Error(data.error_description || 'Token failed')
   return data.access_token
 }
 
@@ -52,63 +52,60 @@ export async function POST(req) {
 
   if (source === 'ebay') {
     try {
-      const token = await getEbayToken()
+      // Finding API - findCompletedItems (sold listings) using App ID directly
+      const findUrl = `https://svcs.ebay.com/services/search/FindingService/v1`
+      const params = new URLSearchParams({
+        'OPERATION-NAME': 'findCompletedItems',
+        'SERVICE-VERSION': '1.0.0',
+        'SECURITY-APPNAME': EBAY_APP_ID,
+        'RESPONSE-DATA-FORMAT': 'JSON',
+        'keywords': query,
+        'itemFilter(0).name': 'SoldItemsOnly',
+        'itemFilter(0).value': 'true',
+        'sortOrder': 'EndTimeSoonest',
+        'paginationInput.entriesPerPage': '20',
+      })
 
-      // Use Browse API to search items
-      const searchRes = await fetch(
-        `https://api.ebay.com/buy/browse/v1/item_summary/search?` + new URLSearchParams({
-          q: query,
-          limit: '20',
-          sort: 'newlyListed',
-          filter: 'buyingOptions:{FIXED_PRICE}',
-          category_ids: '261328',
-        }),
-        {
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'X-EBAY-C-MARKETPLACE-ID': 'EBAY_US',
-            'Content-Type': 'application/json',
-          }
-        }
-      )
-      const searchData = await searchRes.json()
+      const findRes = await fetch(`${findUrl}?${params}`)
+      const findData = await findRes.json()
 
-      if (searchData.error || !searchData.itemSummaries?.length) {
-        // Try without category
-        const searchRes2 = await fetch(
-          `https://api.ebay.com/buy/browse/v1/item_summary/search?` + new URLSearchParams({
-            q: query,
-            limit: '20',
-            sort: 'newlyListed',
-          }),
-          {
-            headers: {
-              'Authorization': `Bearer ${token}`,
-              'X-EBAY-C-MARKETPLACE-ID': 'EBAY_US',
-              'Content-Type': 'application/json',
-            }
-          }
-        )
-        const searchData2 = await searchRes2.json()
-        return NextResponse.json({ 
+      const ack = findData?.findCompletedItemsResponse?.[0]?.ack?.[0]
+      const items = findData?.findCompletedItemsResponse?.[0]?.searchResult?.[0]?.item || []
+      const errorMsg = findData?.findCompletedItemsResponse?.[0]?.errorMessage?.[0]?.error?.[0]?.message?.[0]
+
+      if (!items.length) {
+        // Also try findItemsByKeywords (active listings) as fallback to verify API works
+        const params2 = new URLSearchParams({
+          'OPERATION-NAME': 'findItemsByKeywords',
+          'SERVICE-VERSION': '1.0.0',
+          'SECURITY-APPNAME': EBAY_APP_ID,
+          'RESPONSE-DATA-FORMAT': 'JSON',
+          'keywords': query,
+          'paginationInput.entriesPerPage': '5',
+        })
+        const activeRes = await fetch(`${findUrl}?${params2}`)
+        const activeData = await activeRes.json()
+        const activeItems = activeData?.findItemsByKeywordsResponse?.[0]?.searchResult?.[0]?.item || []
+
+        return NextResponse.json({
           results: [], avg: 0, high: 0, low: 0, source: 'ebay',
-          debug: { 
-            tokenOk: !!token,
-            itemCount: searchData2.itemSummaries?.length || 0,
-            total: searchData2.total,
-            error: searchData2.errors || searchData.errors,
-            firstItem: searchData2.itemSummaries?.[0],
+          debug: {
+            ack,
+            errorMsg,
+            completedItemCount: items.length,
+            activeItemCount: activeItems.length,
+            activeFirst: activeItems[0]?.title?.[0],
+            appId: EBAY_APP_ID?.slice(0, 10) + '...',
           }
         })
       }
 
-      const results = searchData.itemSummaries.map(item => ({
-        price: parseFloat(item.price?.value || 0),
-        title: item.title || query,
-        date: item.itemEndDate?.split('T')[0] || null,
-        link: item.itemWebUrl || `https://www.ebay.com/sch/i.html?_nkw=${encodeURIComponent(query)}&LH_Sold=1`,
-        image: item.image?.imageUrl || null,
-        condition: item.condition || null,
+      const results = items.map(item => ({
+        price: parseFloat(item.sellingStatus?.[0]?.currentPrice?.[0]?.['__value__'] || 0),
+        title: item.title?.[0] || query,
+        date: item.listingInfo?.[0]?.endTime?.[0]?.split('T')[0] || null,
+        link: item.viewItemURL?.[0] || `https://www.ebay.com/sch/i.html?_nkw=${encodeURIComponent(query)}&LH_Sold=1`,
+        image: item.galleryURL?.[0] || null,
       })).filter(r => r.price > 0)
 
       if (!results.length) return NextResponse.json({ results:[], avg:0, high:0, low:0, source:'ebay' })
