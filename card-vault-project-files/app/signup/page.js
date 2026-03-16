@@ -41,13 +41,11 @@ export default function SignupPage() {
 
         <div style={{ position:'relative', zIndex:1, width:'100%', maxWidth:380, animation:'fadeUp 0.4s ease' }}>
 
-          <div style={{ textAlign:'center', marginBottom:28 }}>
-            <img src={LOGO} alt="TopLoad" style={{ width:200, height:'auto', filter:'brightness(0) invert(1)', animation:'float 4s ease-in-out infinite' }} />
-          </div>
-
           <div style={{ background:'#111', border:'1px solid #1e1e1e', borderRadius:20, padding:32 }}>
-            <h2 style={{ fontFamily:"'Outfit',sans-serif", fontSize:22, fontWeight:900, color:'#f0f0f0', letterSpacing:'-0.5px', margin:'0 0 6px' }}>Create account</h2>
-            
+            <div style={{ display:'flex', justifyContent:'center', marginBottom:24 }}>
+              <img src={LOGO} alt="TopLoad" style={{ width:180, height:'auto', filter:'brightness(0) invert(1)', animation:'float 4s ease-in-out infinite' }} />
+            </div>
+            <h2 style={{ fontFamily:"'Outfit',sans-serif", fontSize:22, fontWeight:900, color:'#f0f0f0', letterSpacing:'-0.5px', margin:'0 0 20px', textAlign:'center' }}>Create account</h2>
 
             {error && (
               <div style={{ marginBottom:16, padding:'10px 14px', borderRadius:10, background:'rgba(248,113,113,0.08)', color:'#f87171', fontSize:13, border:'1px solid rgba(248,113,113,0.2)', fontFamily:"'Outfit',sans-serif" }}>
