@@ -187,7 +187,7 @@ export default function SoldHistoryPage() {
               <div style={{ fontSize: 48, marginBottom: 16, opacity: 0.2 }}>💰</div>
               <h3 style={{ fontFamily: "'Outfit',sans-serif", fontSize: 18, fontWeight: 700, color: '#444', marginBottom: 8 }}>No sales yet</h3>
               <p style={{ color: '#333', fontSize: 13, marginBottom: 20, fontFamily: "'Outfit',sans-serif" }}>Mark cards as sold from your Collection to track your realized gains here.</p>
-              <Link href="/collection" style={{ padding: '10px 20px', borderRadius: 10, background: 'rgba(229,57,53,0.08)', border: '1px solid rgba(229,57,53,0.25)', color: glPos ? '#22c55e' : '#e53935', fontFamily: "'Outfit',sans-serif", fontSize: 14, fontWeight: 600, textDecoration: 'none' }}>Go to Collection</Link>
+              <Link href="/collection" style={{ padding: '10px 20px', borderRadius: 10, background: 'rgba(229,57,53,0.08)', border: '1px solid rgba(229,57,53,0.25)', color: '#e53935', fontFamily: "'Outfit',sans-serif", fontSize: 14, fontWeight: 600, textDecoration: 'none' }}>Go to Collection</Link>
             </div>
           ) : (
             <div style={{ background: 'linear-gradient(135deg,#111,#0d0d0d)', border: '1px solid #1e1e1e', borderRadius: 14, overflow: 'hidden' }}>
@@ -211,7 +211,7 @@ export default function SoldHistoryPage() {
                             {card.year && <div style={{ fontSize: 11, color: '#444' }}>{card.year}</div>}
                           </td>
                           <td style={{ padding: '12px 16px', textAlign: 'right', fontFamily: "'Outfit',sans-serif", fontSize: 12, color: '#666' }}>{card.sport||'—'}</td>
-                          <td style={{ padding: '12px 16px', textAlign: 'right' }}>{card.grade ? <span style={{ padding: '2px 8px', borderRadius: 6, background: 'rgba(229,57,53,0.1)', color: glPos ? '#22c55e' : '#e53935', fontSize: 11, fontWeight: 700 }}>Grade {card.grade}</span> : <span style={{ color: '#444', fontSize: 12 }}>{card.cond||'Raw'}</span>}</td>
+                          <td style={{ padding: '12px 16px', textAlign: 'right' }}>{card.grade ? <span style={{ padding: '2px 8px', borderRadius: 6, background: 'rgba(229,57,53,0.1)', color: plPos ? '#22c55e' : '#e53935', fontSize: 11, fontWeight: 700 }}>Grade {card.grade}</span> : <span style={{ color: '#444', fontSize: 12 }}>{card.cond||'Raw'}</span>}</td>
                           <td style={{ padding: '12px 16px', textAlign: 'right', fontFamily: "'JetBrains Mono',monospace", fontSize: 13, color: '#666' }}>{fmt(buy)}</td>
                           <td style={{ padding: '12px 16px', textAlign: 'right', fontFamily: "'JetBrains Mono',monospace", fontSize: 13, fontWeight: 700, color: '#f0f0f0' }}>{fmt(sold)}</td>
                           <td style={{ padding: '12px 16px', textAlign: 'right' }}>
