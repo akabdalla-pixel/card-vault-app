@@ -20,7 +20,7 @@ export default function SignupPage() {
     if (!form.email.trim()) { setError('Email is required'); return }
     setLoading(true)
     try {
-      const res = await fetch('/api/auth/register', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ username: form.username, email: form.email, password: form.password }) })
+      const res = await fetch('/api/auth/signup', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ username: form.username, email: form.email, password: form.password }) })
       const data = await res.json()
       if (!res.ok) { setError(data.error || `Error ${res.status}: Registration failed`); setLoading(false); return }
       router.push('/dashboard')
