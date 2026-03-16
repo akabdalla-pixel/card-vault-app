@@ -49,20 +49,15 @@ export default function LandingPage() {
           </h1>
 
           <p className="fade3" style={{ fontSize:'clamp(16px,2.5vw,20px)', color:'#555', maxWidth:520, lineHeight:1.6, marginBottom:40 }}>
-            Track values, monitor gains and losses, and get insights on your entire sports card portfolio — all in one place.
+            Your entire collection, organized and valued in one place.
           </p>
 
-          <div className="fade4" style={{ display:'flex', gap:12, flexWrap:'wrap', justifyContent:'center', marginBottom:60 }}>
+          <div className="fade4" style={{ display:'flex', gap:12, flexWrap:'wrap', justifyContent:'center', marginBottom:0 }}>
             <Link href="/signup" className="btn-primary" style={{ fontSize:16, padding:'16px 40px' }}>Get Started Free</Link>
             <Link href="/login" className="btn-secondary" style={{ fontSize:16, padding:'16px 40px' }}>Sign In</Link>
           </div>
 
-          {/* Feature pills */}
-          <div className="fade5" style={{ display:'flex', gap:10, flexWrap:'wrap', justifyContent:'center' }}>
-            {['Portfolio Tracking','Gain & Loss','Grading Support','Price Lookup','Sales History'].map((f,i) => (
-              <div key={i} style={{ padding:'7px 16px', background:'rgba(147,51,234,0.07)', border:'1px solid rgba(147,51,234,0.15)', borderRadius:100, fontSize:12, fontWeight:700, color:'#a855f7' }}>{f}</div>
-            ))}
-          </div>
+
         </div>
 
         {/* CTA */}
