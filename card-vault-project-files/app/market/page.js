@@ -26,6 +26,133 @@ function IconX() { return <svg width="16" height="16" viewBox="0 0 24 24" fill="
 
 const navIcons = { 'Dashboard': IconDashboard, 'Collection': IconCollection, 'Insights': IconInsights, 'Sold History': IconSold, 'Market': IconMarket }
 const fmt = n => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 2 }).format(n || 0)
+const TCG_LIST = ['Pokémon', 'Magic: The Gathering', 'Yu-Gi-Oh!', 'Lorcana', 'One Piece', 'Dragon Ball Super', 'Digimon']
+const TCG_RARITIES = ['Common', 'Uncommon', 'Rare', 'Holo Rare', 'Reverse Holo', 'Ultra Rare', 'Secret Rare', 'Full Art', 'Rainbow Rare', 'Alt Art', 'Gold Rare', 'Promo']
+const EDITIONS = ['1st Edition', 'Unlimited', 'Shadowless', 'Limited', 'First Print']
+const CONDS = ['Mint', 'Near Mint', 'Excellent', 'Very Good', 'Good', 'Poor']
+const EMPTY = { sport: '', year: '', player: '', name: '', brand: '', num: '', cond: '', grade: '', qty: '1', date: '', buy: '', val: '', notes: '', sold: false, soldPrice: '', soldDate: '', rarity: '', edition: '', language: '', auto: false, gradingCo: '', autoGrade: '' }
+const TOP_SPORTS = [
+  { label: 'Football', emoji: '🏈' },
+  { label: 'Basketball', emoji: '🏀' },
+  { label: 'Baseball', emoji: '⚾' },
+  { label: 'Soccer', emoji: '⚽' },
+]
+const MORE_SPORTS = ['Hockey', 'F1', 'Golf', 'Tennis', 'Pokémon', 'Magic: The Gathering', 'Yu-Gi-Oh!', 'Lorcana', 'One Piece', 'Dragon Ball Super', 'Digimon', 'Other']
+
+
+function CardModal({ card, onClose, onSave }) {
+  const isEdit = !!card?.id
+  const [form, setForm] = useState(card || EMPTY)
+  const [saving, setSaving] = useState(false)
+  const [error, setError] = useState('')
+  const [showDetails, setShowDetails] = useState(true)
+  const set = (k, v) => setForm(f => ({ ...f, [k]: v }))
+  const isTCG = TCG_LIST.includes(form.sport)
+  const isTopSport = TOP_SPORTS.some(s => s.label === form.sport)
+  const isMoreSport = MORE_SPORTS.includes(form.sport)
+
+  async function handleSave() {
+    if (!form.player) { setError('Name is required'); return }
+    setSaving(true); setError('')
+    try {
+      const res = await fetch('/api/cards', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(form) })
+      if (!res.ok) { const d = await res.json(); setError(d.error || 'Failed to save'); setSaving(false); return }
+      onSave()
+    } catch { setError('Something went wrong'); setSaving(false) }
+  }
+
+  const inp = (key, placeholder, type = 'text', autoFocus = false) => (
+    <input type={type} placeholder={placeholder} value={form[key]||''} onChange={e => set(key, e.target.value)} autoFocus={autoFocus}
+      style={{ width:'100%', padding:'8px 12px', borderRadius:9, background:'#202020', border:'1px solid #2a2a2a', color:'#f0f0f0', fontSize:14, outline:'none', boxSizing:'border-box' }} />
+  )
+  const lbl = t => <div style={{ fontSize:10, fontWeight:700, color:'#555', textTransform:'uppercase', letterSpacing:'0.08em', marginBottom:4 }}>{t}</div>
+
+  return (
+    <div style={{ position:'fixed', inset:0, background:'rgba(0,0,0,0.85)', zIndex:300, display:'flex', alignItems:'flex-end', justifyContent:'center' }}
+      onClick={e => { if(e.target === e.currentTarget) onClose() }}>
+      <div style={{ background:'#111', borderRadius:'20px 20px 0 0', width:'100%', maxWidth:560, maxHeight:'92vh', overflowY:'auto', padding:'16px 16px 36px' }}>
+        <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:18 }}>
+          <h2 style={{ fontSize:20, fontWeight:800, color:'#f0f0f0', margin:0 }}>Add to Collection</h2>
+          <button onClick={onClose} style={{ background:'none', border:'none', color:'#555', cursor:'pointer', padding:4, fontSize:22, lineHeight:1 }}>×</button>
+        </div>
+
+        {error && <div style={{ marginBottom:14, padding:'10px 14px', borderRadius:10, background:'rgba(147,51,234,0.08)', color:'#9333ea', fontSize:13, border:'1px solid rgba(147,51,234,0.2)' }}>{error}</div>}
+
+        <div style={{ display:'flex', flexDirection:'column', gap:11 }}>
+          <div>
+            {lbl(isTCG ? 'Card Name *' : 'Player Name *')}
+            {inp('player', isTCG ? 'e.g. Charizard' : 'e.g. LeBron James', 'text', true)}
+          </div>
+          <div>
+            {lbl('Sport / Game')}
+            <div style={{ display:'grid', gridTemplateColumns:'repeat(4,1fr)', gap:8, marginBottom:8 }}>
+              {TOP_SPORTS.map(s => (
+                <button key={s.label} onClick={() => set('sport', form.sport === s.label ? '' : s.label)}
+                  style={{ padding:'8px 4px', borderRadius:9, border: form.sport === s.label ? '2px solid rgba(147,51,234,0.6)' : '1px solid #2a2a2a', background: form.sport === s.label ? 'rgba(147,51,234,0.12)' : '#1a1a1a', cursor:'pointer', display:'flex', flexDirection:'column', alignItems:'center', gap:3 }}>
+                  <span style={{ fontSize:20 }}>{s.emoji}</span>
+                  <span style={{ fontSize:10, fontWeight:700, color: form.sport === s.label ? '#9333ea' : '#555' }}>{s.label}</span>
+                </button>
+              ))}
+            </div>
+            <select value={isMoreSport ? form.sport : ''} onChange={e => set('sport', e.target.value)}
+              style={{ width:'100%', padding:'8px 12px', borderRadius:9, background: isMoreSport ? 'rgba(147,51,234,0.08)' : '#1a1a1a', border: isMoreSport ? '1px solid rgba(147,51,234,0.3)' : '1px solid #2a2a2a', color: isMoreSport ? '#9333ea' : '#555', fontSize:14, outline:'none' }}>
+              <option value="">More sports / TCG...</option>
+              {MORE_SPORTS.map(s => <option key={s} value={s}>{s}</option>)}
+            </select>
+          </div>
+          <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:10 }}>
+            <div>
+              {lbl('Grade')}
+              <select value={form.grade||''} onChange={e => set('grade', e.target.value)}
+                style={{ width:'100%', padding:'8px 12px', borderRadius:9, background:'#202020', border:'1px solid #2a2a2a', color: form.grade ? '#f0f0f0' : '#555', fontSize:14, outline:'none' }}>
+                <option value="">Raw / No grade</option>
+                {['10','9.5','9','8.5','8','7.5','7','6.5','6','5','4','3','2','1'].map(g => <option key={g} value={g}>{g}</option>)}
+              </select>
+            </div>
+            <div>
+              {lbl('Grading Co.')}
+              <select value={form.gradingCo||''} onChange={e => set('gradingCo', e.target.value)}
+                style={{ width:'100%', padding:'8px 12px', borderRadius:9, background:'#202020', border:'1px solid #2a2a2a', color: form.gradingCo ? '#f0f0f0' : '#555', fontSize:14, outline:'none' }}>
+                <option value="">No grading co.</option>
+                {['PSA','BGS','SGC','CGC','HGA','CSG','GAI','Other'].map(g => <option key={g} value={g}>{g}</option>)}
+              </select>
+            </div>
+          </div>
+          <label style={{ display:'flex', alignItems:'center', gap:12, padding:'8px 12px', borderRadius:9, background:'#1a1a1a', border: form.auto ? '1px solid rgba(255,190,46,0.3)' : '1px solid #2a2a2a', cursor:'pointer' }}>
+            <input type="checkbox" checked={!!form.auto} onChange={e => set('auto', e.target.checked)} style={{ accentColor:'#ffbe2e', width:18, height:18, cursor:'pointer' }} />
+            <div>
+              <div style={{ fontSize:13, fontWeight:700, color: form.auto ? '#ffbe2e' : '#ccc' }}>Autograph ✍️</div>
+              <div style={{ fontSize:10, color:'#555' }}>This card has an auto</div>
+            </div>
+          </label>
+          <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:10 }}>
+            <div>{lbl('Buy Price ($)')}{inp('buy', '0.00', 'number')}</div>
+            <div>{lbl('Current Value ($)')}{inp('val', '0.00', 'number')}</div>
+          </div>
+          <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:10 }}>
+            <div>{lbl('Year')}{inp('year', 'e.g. 2023')}</div>
+            <div>{lbl('Numbering')}{inp('num', 'e.g. 10/50')}</div>
+          </div>
+          <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:10 }}>
+            <div>{lbl(isTCG ? 'Set / Expansion' : 'Set')}{inp('name', isTCG ? 'e.g. Base Set' : 'e.g. Topps Chrome')}</div>
+            <div>{lbl(isTCG ? 'Publisher' : 'Brand')}{inp('brand', isTCG ? 'e.g. Wizards' : 'e.g. Topps')}</div>
+          </div>
+          <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:10 }}>
+            <div>{lbl('Quantity')}{inp('qty', '1', 'number')}</div>
+            <div>{lbl('Purchase Date')}{inp('date', '', 'date')}</div>
+          </div>
+          <div>{lbl('Condition')}<select value={form.cond||''} onChange={e => set('cond', e.target.value)} style={{ width:'100%', padding:'8px 12px', borderRadius:9, background:'#202020', border:'1px solid #2a2a2a', color: form.cond?'#f0f0f0':'#555', fontSize:14, outline:'none' }}><option value="">Select...</option>{CONDS.map(c=><option key={c} value={c}>{c}</option>)}</select></div>
+          <div>{lbl('Notes')}<textarea value={form.notes||''} onChange={e => set('notes', e.target.value)} rows={2} placeholder="Any extra details..." style={{ width:'100%', padding:'8px 12px', borderRadius:9, background:'#202020', border:'1px solid #2a2a2a', color:'#f0f0f0', fontSize:14, outline:'none', resize:'none', boxSizing:'border-box' }} /></div>
+        </div>
+
+        <button onClick={handleSave} disabled={saving || !form.player}
+          style={{ width:'100%', padding:'12px', borderRadius:11, marginTop:14, background: (!form.player||saving) ? '#1a1a1a' : '#9333ea', border: (!form.player||saving) ? '1px solid #2a2a2a' : 'none', color: (!form.player||saving) ? '#444' : '#fff', fontSize:15, fontWeight:800, cursor: (!form.player||saving) ? 'not-allowed' : 'pointer' }}>
+          {saving ? 'Saving...' : '+ Add to Collection'}
+        </button>
+      </div>
+    </div>
+  )
+}
 
 function Sidebar({ user, onLogout, active }) {
   return (
@@ -83,9 +210,7 @@ export default function MarketPage() {
   const [results, setResults] = useState(null)
   const [searching, setSearching] = useState(false)
   const [error, setError] = useState('')
-  const [addModal, setAddModal] = useState(null) // the listing being added
-  const [addForm, setAddForm] = useState({})
-  const [adding, setAdding] = useState(false)
+  const [addModal, setAddModal] = useState(null)
   const [addSuccess, setAddSuccess] = useState(false)
   const router = useRouter()
 
@@ -122,49 +247,28 @@ export default function MarketPage() {
   }
 
   function openAddModal(listing) {
-    // Parse title to prefill form
     const title = listing.title || ''
     const yearMatch = title.match(/\b(19|20)\d{2}\b/)
     const gradeMatch = title.match(/PSA\s*(\d+)/i) || title.match(/BGS\s*(\d+\.?\d*)/i)
     const gradingCo = title.match(/PSA/i) ? 'PSA' : title.match(/BGS/i) ? 'BGS' : ''
-
-    // Detect sport
-    const sportMap = { basketball:['nba','lebron','jordan','kobe','curry','durant','lakers','celtics'], football:['nfl','mahomes','brady','manning'], baseball:['mlb','baseball'], soccer:['soccer','football','messi','ronaldo','premier'], f1:['f1','formula','ferrari','verstappen','hamilton'] }
+    const sportMap = { Basketball:['nba','lebron','jordan','kobe','curry','durant','lakers','celtics'], Football:['nfl','mahomes','brady','manning'], Baseball:['mlb','baseball'], Soccer:['messi','ronaldo','premier league'], F1:['f1','formula','ferrari','verstappen','hamilton'] }
     let sport = ''
     const tl = title.toLowerCase()
     for (const [s, keywords] of Object.entries(sportMap)) {
-      if (keywords.some(k => tl.includes(k))) { sport = s.charAt(0).toUpperCase()+s.slice(1); break }
+      if (keywords.some(k => tl.includes(k))) { sport = s; break }
     }
-
-    setAddForm({
-      player: title.split(' ').slice(0,3).join(' '), // best guess at player name
+    setAddModal({
+      ...EMPTY,
+      player: title.split(' ').slice(0,3).join(' '),
       year: yearMatch?.[0] || '',
       grade: gradeMatch?.[1] || '',
       gradingCo,
       sport,
       buy: listing.price ? listing.price.toFixed(2) : '',
       val: listing.price ? listing.price.toFixed(2) : '',
-      cond: gradeMatch ? 'Graded' : 'NM',
-      qty: '1',
-      notes: `Purchased from eBay: ${listing.title}`,
+      notes: `eBay: ${listing.title}`,
+      _listing: listing,
     })
-    setAddModal(listing)
-  }
-
-  async function handleAddToCollection() {
-    if (!addForm.player) return
-    setAdding(true)
-    try {
-      await fetch('/api/cards', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(addForm)
-      })
-      setAddModal(null)
-      setAddSuccess(true)
-      setTimeout(() => setAddSuccess(false), 3000)
-    } catch(e) {}
-    setAdding(false)
   }
 
   if (loading) return <div style={{ minHeight:'100vh', display:'flex', alignItems:'center', justifyContent:'center', background:'#0a0a0a' }}><img src={LOGO} alt="TopLoad" style={{ width:120, opacity:0.4, filter:'brightness(0) invert(1)' }} /></div>
@@ -308,86 +412,7 @@ export default function MarketPage() {
         <BottomNav active="Market" />
       </div>
 
-      {/* Add to Collection modal */}
-      {addModal && (
-        <div style={{ position:'fixed', inset:0, background:'rgba(0,0,0,0.88)', zIndex:200, display:'flex', alignItems:'center', justifyContent:'center', padding:16 }}>
-          <div style={{ background:'#111', border:'1px solid #1e1e1e', borderRadius:20, padding:28, maxWidth:480, width:'100%', maxHeight:'90vh', overflowY:'auto' }}>
-            {/* Header */}
-            <div style={{ display:'flex', alignItems:'flex-start', justifyContent:'space-between', marginBottom:20 }}>
-              <div>
-                <div style={{ fontSize:9, fontWeight:800, color:'#a855f7', textTransform:'uppercase', letterSpacing:'0.12em', marginBottom:4 }}>Add to Collection</div>
-                <h3 style={{ fontSize:18, fontWeight:900, color:'#fff', margin:0, letterSpacing:'-0.3px' }}>Review & Confirm</h3>
-              </div>
-              <button onClick={() => setAddModal(null)} style={{ width:32, height:32, borderRadius:8, background:'#1a1a1a', border:'1px solid #2a2a2a', color:'#555', cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'center' }}><IconX /></button>
-            </div>
-
-            {/* Listing preview */}
-            <div style={{ display:'flex', gap:12, padding:'12px', background:'#0d0d0d', border:'1px solid #1a1a1a', borderRadius:10, marginBottom:20 }}>
-              {addModal.image && <img src={addModal.image} alt="" style={{ width:60, height:60, borderRadius:8, objectFit:'cover', flexShrink:0 }} />}
-              <div style={{ minWidth:0 }}>
-                <div style={{ fontSize:12, color:'#888', lineHeight:1.4, marginBottom:4, overflow:'hidden', textOverflow:'ellipsis', display:'-webkit-box', WebkitLineClamp:2, WebkitBoxOrient:'vertical' }}>{addModal.title}</div>
-                <div style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:16, fontWeight:900, color:'#fff' }}>{fmt(addModal.price)}</div>
-              </div>
-            </div>
-
-            {/* Form */}
-            <div style={{ display:'flex', flexDirection:'column', gap:12 }}>
-              {[
-                { label:'Player / Card Name', key:'player', type:'text', placeholder:'e.g. LeBron James' },
-                { label:'Year', key:'year', type:'text', placeholder:'e.g. 2003' },
-                { label:'Sport', key:'sport', type:'text', placeholder:'e.g. Basketball' },
-                { label:'Brand / Set', key:'brand', type:'text', placeholder:'e.g. Topps Chrome' },
-              ].map(f => (
-                <div key={f.key}>
-                  <label style={{ display:'block', fontSize:9, fontWeight:700, color:'#555', textTransform:'uppercase', letterSpacing:'0.1em', marginBottom:5 }}>{f.label}</label>
-                  <input type={f.type} value={addForm[f.key]||''} onChange={e => setAddForm(p=>({...p,[f.key]:e.target.value}))} placeholder={f.placeholder}
-                    style={{ width:'100%', padding:'10px 12px', borderRadius:8, background:'#1a1a1a', border:'1px solid #2a2a2a', color:'#f0f0f0', fontSize:13, boxSizing:'border-box', transition:'border-color 0.15s' }} />
-                </div>
-              ))}
-
-              <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:10 }}>
-                <div>
-                  <label style={{ display:'block', fontSize:9, fontWeight:700, color:'#555', textTransform:'uppercase', letterSpacing:'0.1em', marginBottom:5 }}>Grading Co</label>
-                  <input value={addForm.gradingCo||''} onChange={e => setAddForm(p=>({...p,gradingCo:e.target.value}))} placeholder="PSA / BGS"
-                    style={{ width:'100%', padding:'10px 12px', borderRadius:8, background:'#1a1a1a', border:'1px solid #2a2a2a', color:'#f0f0f0', fontSize:13, boxSizing:'border-box' }} />
-                </div>
-                <div>
-                  <label style={{ display:'block', fontSize:9, fontWeight:700, color:'#555', textTransform:'uppercase', letterSpacing:'0.1em', marginBottom:5 }}>Grade</label>
-                  <input value={addForm.grade||''} onChange={e => setAddForm(p=>({...p,grade:e.target.value}))} placeholder="e.g. 10"
-                    style={{ width:'100%', padding:'10px 12px', borderRadius:8, background:'#1a1a1a', border:'1px solid #2a2a2a', color:'#f0f0f0', fontSize:13, boxSizing:'border-box' }} />
-                </div>
-              </div>
-
-              <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:10 }}>
-                <div>
-                  <label style={{ display:'block', fontSize:9, fontWeight:700, color:'#555', textTransform:'uppercase', letterSpacing:'0.1em', marginBottom:5 }}>Purchase Price</label>
-                  <input type="number" value={addForm.buy||''} onChange={e => setAddForm(p=>({...p,buy:e.target.value}))} placeholder="0.00"
-                    style={{ width:'100%', padding:'10px 12px', borderRadius:8, background:'#1a1a1a', border:'1px solid #2a2a2a', color:'#f0f0f0', fontSize:13, boxSizing:'border-box' }} />
-                </div>
-                <div>
-                  <label style={{ display:'block', fontSize:9, fontWeight:700, color:'#555', textTransform:'uppercase', letterSpacing:'0.1em', marginBottom:5 }}>Qty</label>
-                  <input type="number" value={addForm.qty||'1'} onChange={e => setAddForm(p=>({...p,qty:e.target.value}))} placeholder="1"
-                    style={{ width:'100%', padding:'10px 12px', borderRadius:8, background:'#1a1a1a', border:'1px solid #2a2a2a', color:'#f0f0f0', fontSize:13, boxSizing:'border-box' }} />
-                </div>
-              </div>
-
-              <div>
-                <label style={{ display:'block', fontSize:9, fontWeight:700, color:'#555', textTransform:'uppercase', letterSpacing:'0.1em', marginBottom:5 }}>Notes</label>
-                <input value={addForm.notes||''} onChange={e => setAddForm(p=>({...p,notes:e.target.value}))} placeholder="Optional notes"
-                  style={{ width:'100%', padding:'10px 12px', borderRadius:8, background:'#1a1a1a', border:'1px solid #2a2a2a', color:'#f0f0f0', fontSize:13, boxSizing:'border-box' }} />
-              </div>
-            </div>
-
-            {/* Actions */}
-            <div style={{ display:'flex', gap:10, marginTop:20 }}>
-              <button onClick={() => setAddModal(null)} style={{ flex:1, padding:'12px', borderRadius:10, background:'#1a1a1a', border:'1px solid #2a2a2a', color:'#666', fontSize:14, fontWeight:600, cursor:'pointer' }}>Cancel</button>
-              <button onClick={handleAddToCollection} disabled={adding || !addForm.player} style={{ flex:2, padding:'12px', borderRadius:10, background: adding||!addForm.player?'#1a1a1a':'#9333ea', border:'none', color: adding||!addForm.player?'#555':'#fff', fontSize:14, fontWeight:800, cursor: adding||!addForm.player?'not-allowed':'pointer', transition:'all 0.15s' }}>
-                {adding ? 'Adding...' : '+ Add to Collection'}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      {addModal && <CardModal card={addModal} onClose={() => setAddModal(null)} onSave={() => { setAddModal(null); setAddSuccess(true); setTimeout(() => setAddSuccess(false), 3000) }} />}
     </>
   )
 }
