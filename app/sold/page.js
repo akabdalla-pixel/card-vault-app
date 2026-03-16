@@ -1,6 +1,6 @@
 'use client'
 import { useState, useEffect, useCallback } from 'react'
-import { useRouter, usePathname } from 'next/navigation'
+import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 
 const LOGO = '/logo-transparent.png'
@@ -61,8 +61,7 @@ function Sk({w='100%',h=20,r=8,style={}}) {
 
 const fmt = n => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 2 }).format(n || 0)
 
-function Sidebar({ user, onLogout, cardCount = 0 }) {
-  const pathname = usePathname()
+function Sidebar({ user, onLogout, cardCount = 0, active = "" }) {
   return (
     <aside style={{ width: 220, minHeight: '100vh', background: '#0d0d0d', borderRight: '1px solid #1e1e1e', display: 'flex', flexDirection: 'column', position: 'fixed', top: 0, left: 0, zIndex: 60 }}>
       <div style={{ padding: '16px 16px 12px', borderBottom: '1px solid #1e1e1e', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -71,9 +70,9 @@ function Sidebar({ user, onLogout, cardCount = 0 }) {
       <nav style={{ flex: 1, padding: '14px 10px' }}>
         <div style={{ fontSize: 10, color: '#333', fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', padding: '0 12px', marginBottom: 8 }}>Menu</div>
         {NAV.map(({ label, href }) => {
-          const active = pathname === href
+          const isActive = active === label
           const Icon = navIcons[label]
-          return <Link key={label} href={href} style={{ display: 'flex', alignItems: 'center', gap: 11, padding: '9px 12px', borderRadius: 10, marginBottom: 2, textDecoration: 'none', color: active ? '#e53935' : '#666', background: active ? 'rgba(229,57,53,0.08)' : 'transparent', fontFamily: "'Outfit',sans-serif", fontSize: 14, fontWeight: active ? 600 : 500, borderLeft: active ? '2px solid #e53935' : '2px solid transparent', transition: 'all 0.15s' }}><Icon /><span style={{flex:1}}>{label}</span>{label === 'Collection' && cardCount > 0 && <span style={{fontSize:10,fontWeight:700,background:'rgba(229,57,53,0.15)',color:'#e53935',borderRadius:6,padding:'1px 6px',fontFamily:"'JetBrains Mono',monospace"}}>{cardCount}</span>}</Link>
+          return <Link key={label} href={href} style={{ display: 'flex', alignItems: 'center', gap: 11, padding: '9px 12px', borderRadius: 10, marginBottom: 2, textDecoration: 'none', color: isActive ? '#e53935' : '#666', background: isActive ? 'rgba(229,57,53,0.08)' : 'transparent', fontFamily: "'Outfit',sans-serif", fontSize: 14, fontWeight: isActive ? 600 : 500, borderLeft: isActive ? '2px solid #e53935' : '2px solid transparent', transition: 'all 0.15s' }}><Icon /><span style={{flex:1}}>{label}</span>{label === 'Collection' && cardCount > 0 && <span style={{fontSize:10,fontWeight:700,background:'rgba(229,57,53,0.15)',color:'#e53935',borderRadius:6,padding:'1px 6px',fontFamily:"'JetBrains Mono',monospace"}}>{cardCount}</span>}</Link>
         })}
       </nav>
       <div style={{ padding: '14px 10px', borderTop: '1px solid #1e1e1e' }}>
@@ -85,14 +84,13 @@ function Sidebar({ user, onLogout, cardCount = 0 }) {
   )
 }
 
-function BottomNav() {
-  const pathname = usePathname()
+function BottomNav({ active = "" }) {
   return (
     <nav className="mobile-only" style={{ position: 'fixed', bottom: 0, left: 0, right: 0, height: 64, background: '#0d0d0d', borderTop: '1px solid #1e1e1e', display: 'flex', alignItems: 'center', zIndex: 100 }}>
       {NAV.map(({ label, href }) => {
-        const active = pathname === href
+        const isActive = active === label
         const Icon = navIcons[label]
-        return <Link key={label} href={href} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 4, textDecoration: 'none', color: active ? '#e53935' : '#555', fontFamily: "'Outfit',sans-serif", fontSize: 9, fontWeight: active ? 700 : 500, letterSpacing: '0.04em', textTransform: 'uppercase', paddingBottom: 4 }}><Icon />{label === 'Sold History' ? 'Sold' : label}</Link>
+        return <Link key={label} href={href} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 4, textDecoration: 'none', color: isActive ? '#e53935' : '#555', fontFamily: "'Outfit',sans-serif", fontSize: 9, fontWeight: isActive ? 700 : 500, letterSpacing: '0.04em', textTransform: 'uppercase', paddingBottom: 4 }}><Icon />{label === 'Sold History' ? 'Sold' : label}</Link>
       })}
     </nav>
   )
@@ -153,7 +151,7 @@ export default function SoldHistoryPage() {
         .sidebar-el{display:flex;flex-direction:column}.mobile-only{display:none!important}.mob-topbar{display:none}.main-wrap{margin-left:220px;min-height:100vh;width:calc(100% - 220px)}.sold-row:hover{background:rgba(255,255,255,0.02)!important}
         @media(max-width:768px){.sidebar-el{display:none!important}.mobile-only{display:flex!important}.mob-topbar{display:flex}.main-wrap{margin-left:0!important;width:100%!important;padding-bottom:80px!important}}
       `}</style>
-      <div style={{ display: 'flex', minHeight: '100vh', background: '#0a0a0a' }}>        <div className="sidebar-el"><Sidebar user={user} onLogout={handleLogout} cardCount={cards.filter(c=>!c.sold).length} /></div>
+      <div style={{ display: 'flex', minHeight: '100vh', background: '#0a0a0a' }}>        <div className="sidebar-el"><Sidebar user={user} onLogout={handleLogout} cardCount={cards.filter(c=>!c.sold).length} active="Sold History" /></div>
         <main className="main-wrap" style={{ padding: '28px 28px' }}>
           <div className="mob-topbar" style={{ alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
             <img src={LOGO} alt="TopLoad" style={{ height: 36, width: 'auto', objectFit: 'contain' }} />
@@ -230,7 +228,7 @@ export default function SoldHistoryPage() {
             </div>
           )}
         </main>
-        <BottomNav />
+        <BottomNav active="Sold History" />
         <ToastContainer />
       </div>
     </>
