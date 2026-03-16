@@ -288,7 +288,7 @@ function PersonalRecords({ cards, soldCards }) {
         {records.map((r, i) => {
           const href = r.card?.player ? `/collection?search=${encodeURIComponent(r.card.player)}` : null
           const inner = (
-            <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 12px', background: '#181818', border: '1px solid #1e1e1e', borderRadius: 10, animation:`fadeUp 0.45s ease ${i*0.08}s both`, cursor: href ? 'pointer' : 'default', transition:'background 0.15s', width:'100%' }}
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 12px', background: '#181818', border: '1px solid #1e1e1e', borderRadius: 10, animation:`fadeUp 0.45s ease ${i*0.08}s both`, cursor: href ? 'pointer' : 'default', transition:'background 0.15s', width:'100%', maxWidth: i === records.length-1 && records.length % 2 !== 0 ? '50%' : '100%', margin: i === records.length-1 && records.length % 2 !== 0 ? '0 auto' : '0' }}
               onMouseEnter={e => { if(href) e.currentTarget.style.background='#222' }}
               onMouseLeave={e => { if(href) e.currentTarget.style.background='#181818' }}>
               <div style={{ fontSize: 20, flexShrink: 0 }}>{r.icon}</div>
@@ -301,8 +301,8 @@ function PersonalRecords({ cards, soldCards }) {
             </div>
           )
           return href
-            ? <Link key={i} href={href} style={{ textDecoration:'none' }}>{inner}</Link>
-            : <div key={i}>{inner}</div>
+            ? <Link key={i} href={href} style={{ textDecoration:'none', gridColumn: i === records.length-1 && records.length % 2 !== 0 ? '1 / -1' : 'auto' }}>{inner}</Link>
+            : <div key={i} style={{ gridColumn: i === records.length-1 && records.length % 2 !== 0 ? '1 / -1' : 'auto' }}>{inner}</div>
         })}
       </div>
     </div>
