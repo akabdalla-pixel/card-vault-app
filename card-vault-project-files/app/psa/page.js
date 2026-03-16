@@ -87,6 +87,8 @@ export default function PSALookupPage() {
   const [error, setError] = useState('')
   const [addSuccess, setAddSuccess] = useState(false)
   const [adding, setAdding] = useState(false)
+  const [showAddModal, setShowAddModal] = useState(false)
+  const [addForm, setAddForm] = useState({})
   const [imgFront, setImgFront] = useState(true)
   const [history, setHistory] = useState([])
   const router = useRouter()
@@ -122,27 +124,36 @@ export default function PSALookupPage() {
     setSearching(false)
   }
 
-  async function handleAddToCollection() {
+  function handleAddToCollection() {
     if (!result) return
+    setAddForm({
+      player: result.player || '',
+      year: result.year || '',
+      sport: result.sport || '',
+      brand: result.brand || '',
+      name: result.set || '',
+      grade: result.grade || '',
+      gradingCo: 'PSA',
+      autoGrade: result.autoGrade || '',
+      cond: 'Graded',
+      qty: '1',
+      buy: '',
+      val: '',
+      num: result.cardNumber || '',
+      notes: `PSA Cert #${result.cert}${result.variety ? ' · ' + result.variety : ''}`,
+    })
+    setShowAddModal(true)
+  }
+
+  async function handleConfirmAdd() {
     setAdding(true)
     try {
       await fetch('/api/cards', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          player: result.player || '',
-          year: result.year || '',
-          sport: result.sport || '',
-          brand: result.brand || '',
-          name: result.set || '',
-          grade: result.grade || '',
-          gradingCo: 'PSA',
-          autoGrade: result.autoGrade || '',
-          cond: 'Graded',
-          qty: 1,
-          notes: `PSA Cert #${result.cert}${result.variety ? ' · ' + result.variety : ''}`,
-        })
+        body: JSON.stringify({ ...addForm, qty: parseInt(addForm.qty)||1, buy: parseFloat(addForm.buy)||0, val: parseFloat(addForm.val)||0 })
       })
+      setShowAddModal(false)
       setAddSuccess(true)
       setTimeout(() => setAddSuccess(false), 3000)
     } catch(e) {}
@@ -352,6 +363,76 @@ export default function PSALookupPage() {
         </main>
         <BottomNav active="PSA" />
       </div>
+    
+      {/* Add to Collection Modal */}
+      {showAddModal && (
+        <div style={{ position:'fixed', inset:0, background:'rgba(0,0,0,0.88)', zIndex:200, display:'flex', alignItems:'center', justifyContent:'center', padding:16 }}>
+          <div style={{ background:'#111', border:'1px solid #1e1e1e', borderRadius:20, padding:28, maxWidth:480, width:'100%', maxHeight:'90vh', overflowY:'auto' }}>
+            <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:20 }}>
+              <div>
+                <div style={{ fontSize:9, fontWeight:800, color:'#a855f7', textTransform:'uppercase', letterSpacing:'0.12em', marginBottom:4 }}>Add to Collection</div>
+                <h3 style={{ fontSize:18, fontWeight:900, color:'#fff', margin:0 }}>Review & Edit</h3>
+              </div>
+              <button onClick={() => setShowAddModal(false)} style={{ width:32, height:32, borderRadius:8, background:'#1a1a1a', border:'1px solid #2a2a2a', color:'#555', cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'center' }}><IconX /></button>
+            </div>
+
+            {/* PSA cert badge */}
+            <div style={{ display:'flex', alignItems:'center', gap:10, padding:'10px 14px', background:'rgba(147,51,234,0.07)', border:'1px solid rgba(147,51,234,0.15)', borderRadius:10, marginBottom:20 }}>
+              <IconShield />
+              <span style={{ fontSize:12, color:'#a855f7', fontWeight:700 }}>PSA Cert #{result?.cert} · Grade {result?.grade}</span>
+            </div>
+
+            <div style={{ display:'flex', flexDirection:'column', gap:12 }}>
+              {[
+                { label:'Player / Card Name', key:'player', placeholder:'e.g. LeBron James' },
+                { label:'Year', key:'year', placeholder:'e.g. 2003' },
+                { label:'Sport', key:'sport', placeholder:'e.g. Basketball' },
+                { label:'Brand', key:'brand', placeholder:'e.g. Topps' },
+                { label:'Set / Name', key:'name', placeholder:'e.g. Chrome Refractor' },
+                { label:'Card Number', key:'num', placeholder:'e.g. 123' },
+              ].map(f => (
+                <div key={f.key}>
+                  <label style={{ display:'block', fontSize:9, fontWeight:700, color:'#555', textTransform:'uppercase', letterSpacing:'0.1em', marginBottom:5 }}>{f.label}</label>
+                  <input value={addForm[f.key]||''} onChange={e => setAddForm(p=>({...p,[f.key]:e.target.value}))} placeholder={f.placeholder}
+                    style={{ width:'100%', padding:'10px 12px', borderRadius:8, background:'#1a1a1a', border:'1px solid #2a2a2a', color:'#f0f0f0', fontSize:13, boxSizing:'border-box', outline:'none', transition:'border-color 0.15s' }} />
+                </div>
+              ))}
+
+              <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr 1fr', gap:10 }}>
+                <div>
+                  <label style={{ display:'block', fontSize:9, fontWeight:700, color:'#555', textTransform:'uppercase', letterSpacing:'0.1em', marginBottom:5 }}>Grade</label>
+                  <input value={addForm.grade||''} onChange={e => setAddForm(p=>({...p,grade:e.target.value}))} placeholder="10"
+                    style={{ width:'100%', padding:'10px 12px', borderRadius:8, background:'rgba(147,51,234,0.07)', border:'1px solid rgba(147,51,234,0.2)', color:'#a855f7', fontSize:13, fontWeight:800, boxSizing:'border-box', outline:'none' }} />
+                </div>
+                <div>
+                  <label style={{ display:'block', fontSize:9, fontWeight:700, color:'#555', textTransform:'uppercase', letterSpacing:'0.1em', marginBottom:5 }}>Buy Price</label>
+                  <input type="number" value={addForm.buy||''} onChange={e => setAddForm(p=>({...p,buy:e.target.value}))} placeholder="0.00"
+                    style={{ width:'100%', padding:'10px 12px', borderRadius:8, background:'#1a1a1a', border:'1px solid #2a2a2a', color:'#f0f0f0', fontSize:13, boxSizing:'border-box', outline:'none' }} />
+                </div>
+                <div>
+                  <label style={{ display:'block', fontSize:9, fontWeight:700, color:'#555', textTransform:'uppercase', letterSpacing:'0.1em', marginBottom:5 }}>Qty</label>
+                  <input type="number" value={addForm.qty||'1'} onChange={e => setAddForm(p=>({...p,qty:e.target.value}))} placeholder="1"
+                    style={{ width:'100%', padding:'10px 12px', borderRadius:8, background:'#1a1a1a', border:'1px solid #2a2a2a', color:'#f0f0f0', fontSize:13, boxSizing:'border-box', outline:'none' }} />
+                </div>
+              </div>
+
+              <div>
+                <label style={{ display:'block', fontSize:9, fontWeight:700, color:'#555', textTransform:'uppercase', letterSpacing:'0.1em', marginBottom:5 }}>Notes</label>
+                <input value={addForm.notes||''} onChange={e => setAddForm(p=>({...p,notes:e.target.value}))}
+                  style={{ width:'100%', padding:'10px 12px', borderRadius:8, background:'#1a1a1a', border:'1px solid #2a2a2a', color:'#f0f0f0', fontSize:13, boxSizing:'border-box', outline:'none' }} />
+              </div>
+            </div>
+
+            <div style={{ display:'flex', gap:10, marginTop:20 }}>
+              <button onClick={() => setShowAddModal(false)} style={{ flex:1, padding:'12px', borderRadius:10, background:'#1a1a1a', border:'1px solid #2a2a2a', color:'#666', fontSize:14, fontWeight:600, cursor:'pointer' }}>Cancel</button>
+              <button onClick={handleConfirmAdd} disabled={adding || !addForm.player} style={{ flex:2, padding:'12px', borderRadius:10, background: adding||!addForm.player?'#1a1a1a':'#9333ea', border:'none', color: adding||!addForm.player?'#555':'#fff', fontSize:14, fontWeight:800, cursor: adding||!addForm.player?'not-allowed':'pointer' }}>
+                {adding ? 'Adding...' : '+ Add to Collection'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
     </>
   )
 }
