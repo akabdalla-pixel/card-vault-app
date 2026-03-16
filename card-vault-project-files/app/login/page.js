@@ -41,8 +41,8 @@ export default function LoginPage() {
         <div style={{ position:'relative', zIndex:1, width:'100%', maxWidth:380, animation:'fadeUp 0.4s ease' }}>
 
           {/* Logo */}
-          <div style={{ textAlign:'center', marginBottom:28 }}>
-            <img src={LOGO} alt="TopLoad" style={{ width:200, height:'auto', filter:'brightness(0) invert(1)', animation:'float 4s ease-in-out infinite' }} />
+          <div style={{ display:'flex', justifyContent:'center', alignItems:'center', marginBottom:28 }}>
+            <img src={LOGO} alt="TopLoad" style={{ width:200, height:'auto', filter:'brightness(0) invert(1)', animation:'float 4s ease-in-out infinite', display:'block', margin:'0 auto' }} />
           </div>
 
           {/* Card */}
