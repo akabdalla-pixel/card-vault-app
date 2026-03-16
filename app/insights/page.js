@@ -258,51 +258,51 @@ function PersonalRecords({ cards, soldCards }) {
   const active = cards.filter(c => !c.sold)
   if (!active.length && !soldCards.length) return null
 
+  const fmtC = n => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(n || 0)
   const byVal = [...active].sort((a, b) => (parseFloat(b.val) || 0) - (parseFloat(a.val) || 0))
   const byBuy = [...active].sort((a, b) => (parseFloat(b.buy) || 0) - (parseFloat(a.buy) || 0))
-  const cheapest = [...active].sort((a, b) => (parseFloat(a.buy) || 0) - (parseFloat(b.buy) || 0))[0]
-  const oldest = [...active].filter(c => c.year).sort((a, b) => parseInt(a.year) - parseInt(b.year))[0]
   const newest = [...active].filter(c => c.createdAt).sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))[0]
-  const topGrade = [...active].filter(c => c.grade).sort((a, b) => parseInt(b.grade) - parseInt(a.grade))[0]
-
+  const sportCounts = active.reduce((acc, c) => { if (c.sport) acc[c.sport] = (acc[c.sport]||0)+1; return acc }, {})
+  const topSport = Object.entries(sportCounts).sort((a,b) => b[1]-a[1])[0]
+  const byPct = [...active].filter(c => parseFloat(c.buy) > 0).map(c => {
+    const buy = parseFloat(c.buy)||0, val = parseFloat(c.val)||buy
+    return { ...c, pct: ((val-buy)/buy)*100 }
+  }).sort((a,b) => b.pct-a.pct)
   const bestFlip = soldCards.length ? [...soldCards].sort((a, b) => {
-    const glA = (parseFloat(a.soldPrice) || 0) - (parseFloat(a.buy) || 0)
-    const glB = (parseFloat(b.soldPrice) || 0) - (parseFloat(b.buy) || 0)
+    const glA = (parseFloat(a.soldPrice)||0)-(parseFloat(a.buy)||0)
+    const glB = (parseFloat(b.soldPrice)||0)-(parseFloat(b.buy)||0)
     return glB - glA
   })[0] : null
 
   const records = [
-    { icon: '👑', label: 'Most Valuable', value: byVal[0]?.player || '—', sub: byVal[0] ? fmt(parseFloat(byVal[0].val) || 0) : '', subColor: '#4ade80', card: byVal[0] },
-    { icon: '💸', label: 'Most Expensive Buy', value: byBuy[0]?.player || '—', sub: byBuy[0] ? fmt(parseFloat(byBuy[0].buy) || 0) : '', subColor: '#888', card: byBuy[0] },
-    { icon: '🪙', label: 'Cheapest Card', value: cheapest?.player || '—', sub: cheapest ? fmt(parseFloat(cheapest.buy) || 0) : '', subColor: '#888', card: cheapest },
-    { icon: '🏛️', label: 'Oldest Card', value: oldest?.player || '—', sub: oldest?.year || '', subColor: '#888', card: oldest },
-    { icon: '🆕', label: 'Latest Addition', value: newest?.player || '—', sub: newest ? new Date(newest.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : '', subColor: '#888', card: newest },
-    { icon: '🏅', label: 'Highest Grade', value: topGrade?.player || '—', sub: topGrade ? `Grade ${topGrade.grade}` : 'No graded cards', subColor: '#9333ea', card: topGrade },
-    ...(bestFlip ? [{ icon: '🔥', label: 'Best Flip Ever', value: bestFlip.player, sub: `+${fmt((parseFloat(bestFlip.soldPrice) || 0) - (parseFloat(bestFlip.buy) || 0))}`, subColor: '#4ade80', card: bestFlip }] : []),
+    { icon:'👑', label:'Most Valuable',  value: byVal[0]?.player||'—',  sub: byVal[0] ? fmtC(parseFloat(byVal[0].val)||0) : '',  subColor:'#22c55e', card: byVal[0] },
+    { icon:'📈', label:'Biggest Win %',  value: byPct[0]?.player||'—',  sub: byPct[0] ? `+${byPct[0].pct.toFixed(0)}%` : '—',  subColor:'#a855f7', card: byPct[0] },
+    { icon:'🏆', label:'Top Sport',      value: topSport?.[0]||'—',     sub: topSport ? `${topSport[1]} card${topSport[1]>1?'s':''}` : '—', subColor:'#ffbe2e', card: null },
+    { icon:'💸', label:'Most Expensive', value: byBuy[0]?.player||'—',  sub: byBuy[0] ? fmtC(parseFloat(byBuy[0].buy)||0) : '',  subColor:'#888',    card: byBuy[0] },
+    ...(bestFlip ? [{ icon:'🔥', label:'Best Flip', value: bestFlip.player, sub:`+${fmtC((parseFloat(bestFlip.soldPrice)||0)-(parseFloat(bestFlip.buy)||0))}`, subColor:'#22c55e', card: bestFlip }] : []),
+    { icon:'🆕', label:'Latest Add',     value: newest?.player||'—',    sub: newest ? new Date(newest.createdAt).toLocaleDateString('en-US',{month:'short',day:'numeric'}) : '', subColor:'#555', card: newest },
   ]
 
   return (
-    <div style={{ background: '#111', border: '1px solid #1e1e1e', borderRadius: 14, padding: '16px' }}>
-      <div style={{ fontSize: 9, fontWeight: 800, color: '#a855f7', textTransform: 'uppercase', letterSpacing: '0.12em', marginBottom: 12, display: 'flex', alignItems: 'center', gap: 6 }}><IconStar /><span>Personal Records</span></div>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2,1fr)', gap: 10, justifyItems: 'stretch' }}>
+    <div style={{ background:'#111', border:'1px solid #1e1e1e', borderRadius:14, padding:'16px' }}>
+      <div style={{ fontSize:9, fontWeight:800, color:'#a855f7', textTransform:'uppercase', letterSpacing:'0.12em', marginBottom:12, display:'flex', alignItems:'center', gap:6 }}><IconStar /><span>Personal Records</span></div>
+      <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:8 }}>
         {records.map((r, i) => {
+          const isLastOdd = i === records.length-1 && records.length % 2 !== 0
           const href = r.card?.player ? `/collection?search=${encodeURIComponent(r.card.player)}` : null
           const inner = (
-            <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 12px', background: '#181818', border: '1px solid #1e1e1e', borderRadius: 10, animation:`fadeUp 0.45s ease ${i*0.08}s both`, cursor: href ? 'pointer' : 'default', transition:'background 0.15s', width:'100%', maxWidth: i === records.length-1 && records.length % 2 !== 0 ? '50%' : '100%', margin: i === records.length-1 && records.length % 2 !== 0 ? '0 auto' : '0' }}
+            <div style={{ background:'#181818', border:'1px solid #1e1e1e', borderRadius:10, padding:'10px 12px', cursor:href?'pointer':'default', transition:'background 0.12s', height:'100%' }}
               onMouseEnter={e => { if(href) e.currentTarget.style.background='#222' }}
               onMouseLeave={e => { if(href) e.currentTarget.style.background='#181818' }}>
-              <div style={{ fontSize: 20, flexShrink: 0 }}>{r.icon}</div>
-              <div style={{ minWidth: 0, flex: 1 }}>
-                <div style={{ fontFamily: "'Outfit',sans-serif", fontSize: 10, color: '#444', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 2 }}>{r.label}</div>
-                <div style={{ fontFamily: "'Outfit',sans-serif", fontSize: 12, fontWeight: 700, color: '#ccc', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{r.value}</div>
-                {r.sub && <div style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: 11, color: r.subColor || '#888', marginTop: 1 }}>{r.sub}</div>}
-              </div>
-              {href && <span style={{ fontSize:10, color:'#9333ea', fontFamily:"'Outfit',sans-serif", fontWeight:700, flexShrink:0 }}></span>}
+              <div style={{ fontSize:18, marginBottom:5 }}>{r.icon}</div>
+              <div style={{ fontSize:9, fontWeight:700, color:'#444', textTransform:'uppercase', letterSpacing:'0.08em', marginBottom:3 }}>{r.label}</div>
+              <div style={{ fontSize:12, fontWeight:800, color:'#f0f0f0', overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap', marginBottom:2 }}>{r.value}</div>
+              <div style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:11, fontWeight:800, color:r.subColor }}>{r.sub}</div>
             </div>
           )
           return href
-            ? <Link key={i} href={href} style={{ textDecoration:'none', gridColumn: i === records.length-1 && records.length % 2 !== 0 ? '1 / -1' : 'auto' }}>{inner}</Link>
-            : <div key={i} style={{ gridColumn: i === records.length-1 && records.length % 2 !== 0 ? '1 / -1' : 'auto' }}>{inner}</div>
+            ? <Link key={i} href={href} style={{ textDecoration:'none', gridColumn:isLastOdd?'1/-1':'auto', display:'flex', justifyContent:isLastOdd?'center':'stretch' }}><div style={{ width:isLastOdd?'50%':'100%' }}>{inner}</div></Link>
+            : <div key={i} style={{ gridColumn:isLastOdd?'1/-1':'auto', display:'flex', justifyContent:isLastOdd?'center':'stretch' }}><div style={{ width:isLastOdd?'50%':'100%' }}>{inner}</div></div>
         })}
       </div>
     </div>
