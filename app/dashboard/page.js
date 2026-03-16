@@ -116,7 +116,7 @@ const fmt = n => new Intl.NumberFormat('en-US', { style: 'currency', currency: '
 
 function Sidebar({ user, onLogout, active, cardCount = 0 }) {
   return (
-    <aside style={{ width: 220, minHeight: '100vh', background: '#111', borderRight: '1px solid #1e1e1e', display: 'flex', flexDirection: 'column', position: 'fixed', top: 0, left: 0, zIndex: 60 }}>
+    <aside style={{ width: 220, minHeight: '100vh', background: '#111111', borderRight: '1px solid #2a2a2a', display: 'flex', flexDirection: 'column', position: 'fixed', top: 0, left: 0, zIndex: 60 }}>
       <div style={{ padding: '16px 16px 12px', borderBottom: '1px solid #1e1e1e', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         <img src={LOGO} alt="TopLoad" style={{ width: 130, height: 'auto', objectFit: 'contain', filter: 'drop-shadow(0 0 8px rgba(147,51,234,0.4))' }} />
       </div>
@@ -129,7 +129,10 @@ function Sidebar({ user, onLogout, active, cardCount = 0 }) {
         })}
       </nav>
       <div style={{ padding: '14px 10px', borderTop: '1px solid #1e1e1e' }}>
-        {user && <div style={{ padding: '10px 12px', marginBottom: 4, borderRadius: 10, background: '#181818', fontFamily: "'Outfit',sans-serif" }}><div style={{ fontSize: 12, fontWeight: 700, color: '#ccc' }}>@{user.username}</div><div style={{ fontSize: 11, color: '#444', marginTop: 1 }}>{user.email}</div></div>}
+        {user && <div style={{ display:'flex', alignItems:'center', gap:8, padding:'8px 10px', marginBottom:4, borderRadius:10, background:'#181818', fontFamily:"'Outfit',sans-serif" }}>
+          <div style={{ width:28, height:28, borderRadius:8, background:'#9333ea', display:'flex', alignItems:'center', justifyContent:'center', fontSize:11, fontWeight:900, color:'#fff', flexShrink:0 }}>{user.username?.[0]?.toUpperCase()||'A'}</div>
+          <div><div style={{ fontSize:11, fontWeight:700, color:'#ccc' }}>@{user.username}</div><div style={{ fontSize:9, color:'#555', marginTop:1 }}>{user.email}</div></div>
+        </div>}
         <Link href="/settings" style={{ display: 'flex', alignItems: 'center', gap: 11, padding: '9px 12px', borderRadius: 10, marginBottom: 2, textDecoration: 'none', color: '#555', fontFamily: "'Outfit',sans-serif", fontSize: 14, fontWeight: 500 }}><IconSettings />Settings</Link>
         <button onClick={onLogout} style={{ display: 'flex', alignItems: 'center', gap: 11, padding: '9px 12px', borderRadius: 10, width: '100%', background: 'transparent', border: 'none', cursor: 'pointer', color: '#555', fontFamily: "'Outfit',sans-serif", fontSize: 14, fontWeight: 500 }}><IconLogout />Sign Out</button>
       </div>
@@ -173,7 +176,7 @@ function SparklineChart({ cards }) {
   const isUp = totalVal >= totalCost
   const lineColor = isUp ? '#4ade80' : '#9333ea'
   return (
-    <div style={{ background: '#111', border: '1px solid #1e1e1e', borderRadius: 14, padding: '18px 20px', marginBottom: 22 }}>
+    <div style={{ background: '#181818', border: '1px solid #222', borderRadius: 14, padding: '18px 20px', marginBottom: 22 }}>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 }}>
         <div>
           <div style={{ fontFamily: "'Outfit',sans-serif", fontSize: 13, fontWeight: 700, color: '#999' }}>Portfolio Value</div>
@@ -261,11 +264,11 @@ function TopMovers({ cards }) {
   )
   return (
     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 22 }}>
-      <div style={{ background: '#111', border: '1px solid #1e1e1e', borderRadius: 14, padding: '16px 18px' }}>
+      <div style={{ background: '#181818', border: '1px solid #222', borderRadius: 14, padding: '16px 18px' }}>
         <div style={{ fontFamily: "'Outfit',sans-serif", fontSize: 12, fontWeight: 700, color: '#9333ea', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 10 }}>🚀 Top Gainers</div>
         {gainers.length ? gainers.map(c=><MoverRow key={c.id} card={c} isGainer={true}/>) : <div style={{ color:'#333',fontSize:12 }}>No gainers yet</div>}
       </div>
-      <div style={{ background: '#111', border: '1px solid #1e1e1e', borderRadius: 14, padding: '16px 18px' }}>
+      <div style={{ background: '#181818', border: '1px solid #222', borderRadius: 14, padding: '16px 18px' }}>
         <div style={{ fontFamily: "'Outfit',sans-serif", fontSize: 12, fontWeight: 700, color: '#616161', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 10 }}>📉 Top Losers</div>
         {losers.length ? losers.map(c=><MoverRow key={c.id} card={c} isGainer={false}/>) : <div style={{ color:'#333',fontSize:12 }}>No losers yet</div>}
       </div>
@@ -274,11 +277,13 @@ function TopMovers({ cards }) {
 }
 
 function StatCard({ label, value, sub, positive, style = {} }) {
+  const accent = positive === true ? '#4ade80' : positive === false ? '#f87171' : '#9333ea'
   return (
-    <div style={{ background: '#111', border: '1px solid #1e1e1e', borderRadius: 14, padding: '16px 18px', ...style }}>
-      <div style={{ fontSize: 10, fontWeight: 700, color: '#333', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: 10 }}>{label}</div>
-      <div style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: 22, fontWeight: 700, color: '#f0f0f0', letterSpacing: '-0.5px', lineHeight: 1 }}>{value}</div>
-      {sub && <div style={{ display: 'flex', alignItems: 'center', gap: 4, marginTop: 8, fontSize: 11, fontFamily: "'Outfit',sans-serif", fontWeight: 600, color: positive===true?'#4ade80':positive===false?'#f87171':'#444' }}>
+    <div style={{ background: '#181818', border: '1px solid #222', borderRadius: 12, padding: '14px 16px', position: 'relative', overflow: 'hidden', ...style }}>
+      <div style={{ position:'absolute', top:0, left:0, right:0, height:2, background:`linear-gradient(90deg,${accent},transparent)` }} />
+      <div style={{ fontSize: 9, fontWeight: 700, color: '#555', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 8, fontFamily:"'Outfit',sans-serif" }}>{label}</div>
+      <div style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: 18, fontWeight: 800, color: positive===true?'#4ade80':positive===false?'#f87171':'#f0f0f0', letterSpacing: '-0.5px', lineHeight: 1 }}>{value}</div>
+      {sub && <div style={{ display: 'flex', alignItems: 'center', gap: 4, marginTop: 6, fontSize: 10, fontFamily: "'Outfit',sans-serif", fontWeight: 600, color: positive===true?'#4ade80':positive===false?'#f87171':'#444' }}>
         {positive===true&&<IconTrendUp />}{positive===false&&<IconTrendDown />}{sub}
       </div>}
     </div>
@@ -463,38 +468,39 @@ export default function DashboardPage() {
             const glPct = buy > 0 ? (gl / buy) * 100 : 0
             const today = new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })
             return (
-              <Link href={`/collection?search=${encodeURIComponent(cardOfTheDay.player)}`} style={{ textDecoration:'none', display:'block' }}>
-              <div style={{ marginTop:22, animation:'scaleIn 0.3s ease', background:'linear-gradient(135deg,#1a0a0a,#0d0d0d)', border:'1px solid rgba(147,51,234,0.2)', borderRadius:14, padding:'18px 22px', position:'relative', overflow:'hidden', cursor:'pointer', transition:'border-color 0.15s' }}
-                onMouseEnter={e=>e.currentTarget.style.borderColor='rgba(147,51,234,0.5)'}
-                onMouseLeave={e=>e.currentTarget.style.borderColor='rgba(147,51,234,0.2)'}>
-                <div style={{ position:'absolute', top:0, left:0, right:0, height:2, background:'linear-gradient(90deg,#9333ea,#a855f7,#9333ea)' }} />
-              <div style={{ display:'flex', alignItems:'flex-start', justifyContent:'space-between', flexWrap:'wrap', gap:12 }}>
+              <Link href={`/collection?search=${encodeURIComponent(cardOfTheDay.player)}`} style={{ textDecoration:'none', display:'block', marginTop:20 }}>
+              <div style={{ animation:'scaleIn 0.3s ease', background:'#181818', border:'1px solid #2a2a2a', borderRadius:14, padding:'18px 22px', position:'relative', overflow:'hidden', cursor:'pointer', transition:'border-color 0.15s' }}
+                onMouseEnter={e=>e.currentTarget.style.borderColor='rgba(147,51,234,0.4)'}
+                onMouseLeave={e=>e.currentTarget.style.borderColor='#2a2a2a'}>
+                {/* top accent */}
+                <div style={{ position:'absolute', top:0, left:0, right:0, height:2, background:'linear-gradient(90deg,#9333ea,#a855f7,transparent)' }} />
+                {/* watermark emoji */}
+                <div style={{ position:'absolute', right:18, top:'50%', transform:'translateY(-50%)', fontSize:48, opacity:0.06, pointerEvents:'none' }}>🃏</div>
+                <div style={{ display:'flex', alignItems:'flex-start', justifyContent:'space-between', flexWrap:'wrap', gap:12 }}>
                   <div style={{ flex:1, minWidth:0 }}>
-                    <div style={{ display:'flex', alignItems:'center', gap:8, marginBottom:8 }}>
-                      <span style={{ fontSize:18 }}>🃏</span>
-                      <div>
-                        <div style={{ fontFamily:"'Outfit',sans-serif", fontSize:10, fontWeight:700, color:'#9333ea', textTransform:'uppercase', letterSpacing:'0.1em' }}>Card of the Day</div>
-                        <div style={{ fontSize:10, color:'#444', fontFamily:"'Outfit',sans-serif", marginTop:1 }}>{today}</div>
-                      </div>
+                    <div style={{ display:'flex', alignItems:'center', gap:6, marginBottom:10 }}>
+                      <div style={{ width:6, height:6, borderRadius:'50%', background:'#9333ea', boxShadow:'0 0 6px rgba(147,51,234,0.5)' }} />
+                      <div style={{ fontFamily:"'Outfit',sans-serif", fontSize:9, fontWeight:800, color:'#a855f7', textTransform:'uppercase', letterSpacing:'0.12em' }}>Card of the Day</div>
+                      <div style={{ fontSize:10, color:'#444', fontFamily:"'Outfit',sans-serif" }}>· {today}</div>
                     </div>
-                    <div style={{ fontFamily:"'Outfit',sans-serif", fontSize:20, fontWeight:800, color:'#f0f0f0', letterSpacing:'-0.5px' }}>{cardOfTheDay.player}</div>
-                    <div style={{ fontSize:12, color:'#555', marginTop:4, fontFamily:"'Outfit',sans-serif" }}>
+                    <div style={{ fontFamily:"'Outfit',sans-serif", fontSize:18, fontWeight:900, color:'#f5f5f5', letterSpacing:'-0.3px' }}>{cardOfTheDay.player}</div>
+                    <div style={{ fontSize:11, color:'#555', marginTop:3, fontFamily:"'Outfit',sans-serif" }}>
                       {[cardOfTheDay.year, cardOfTheDay.sport, cardOfTheDay.brand, cardOfTheDay.grade ? `Grade ${cardOfTheDay.grade}` : cardOfTheDay.cond].filter(Boolean).join(' · ')}
                     </div>
-                    <div style={{ fontSize:10, color:'#9333ea', marginTop:6, fontFamily:"'Outfit',sans-serif", fontWeight:600, opacity:0.7 }}>View in Collection →</div>
+                    <div style={{ fontSize:11, color:'#a855f7', marginTop:8, fontFamily:"'Outfit',sans-serif", fontWeight:700 }}>View in Collection →</div>
                   </div>
-                  <div style={{ display:'flex', gap:14, flexShrink:0, flexWrap:'wrap' }}>
+                  <div style={{ display:'flex', gap:16, flexShrink:0, flexWrap:'wrap' }}>
                     <div style={{ textAlign:'right' }}>
-                      <div style={{ fontSize:10, color:'#444', fontWeight:700, textTransform:'uppercase', letterSpacing:'0.08em', marginBottom:4, fontFamily:"'Outfit',sans-serif" }}>Buy</div>
-                      <div style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:14, color:'#666' }}>{fmt(buy)}</div>
+                      <div style={{ fontSize:9, color:'#444', fontWeight:700, textTransform:'uppercase', letterSpacing:'0.08em', marginBottom:4, fontFamily:"'Outfit',sans-serif" }}>Buy</div>
+                      <div style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:13, color:'#666' }}>{fmt(buy)}</div>
                     </div>
                     <div style={{ textAlign:'right' }}>
-                      <div style={{ fontSize:10, color:'#444', fontWeight:700, textTransform:'uppercase', letterSpacing:'0.08em', marginBottom:4, fontFamily:"'Outfit',sans-serif" }}>Value</div>
-                      <div style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:14, fontWeight:700, color:'#f0f0f0' }}>{fmt(val)}</div>
+                      <div style={{ fontSize:9, color:'#444', fontWeight:700, textTransform:'uppercase', letterSpacing:'0.08em', marginBottom:4, fontFamily:"'Outfit',sans-serif" }}>Value</div>
+                      <div style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:13, fontWeight:700, color:'#f0f0f0' }}>{fmt(val)}</div>
                     </div>
                     <div style={{ textAlign:'right' }}>
-                      <div style={{ fontSize:10, color:'#444', fontWeight:700, textTransform:'uppercase', letterSpacing:'0.08em', marginBottom:4, fontFamily:"'Outfit',sans-serif" }}>G/L</div>
-                      <div style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:14, fontWeight:700, color: glPos?'#4ade80':'#f87171' }}>{glPos?'+':''}{glPct.toFixed(1)}%</div>
+                      <div style={{ fontSize:9, color:'#444', fontWeight:700, textTransform:'uppercase', letterSpacing:'0.08em', marginBottom:4, fontFamily:"'Outfit',sans-serif" }}>G/L</div>
+                      <div style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:13, fontWeight:700, color: glPos?'#4ade80':'#f87171' }}>{glPos?'+':''}{glPct.toFixed(1)}%</div>
                     </div>
                   </div>
                 </div>

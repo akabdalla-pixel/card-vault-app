@@ -64,7 +64,7 @@ const fmt = n => new Intl.NumberFormat('en-US', { style: 'currency', currency: '
 
 function Sidebar({ user, onLogout, cardCount = 0, active = "" }) {
   return (
-    <aside style={{ width: 220, minHeight: '100vh', background: '#111', borderRight: '1px solid #1e1e1e', display: 'flex', flexDirection: 'column', position: 'fixed', top: 0, left: 0, zIndex: 60 }}>
+    <aside style={{ width: 220, minHeight: '100vh', background: '#111111', borderRight: '1px solid #2a2a2a', display: 'flex', flexDirection: 'column', position: 'fixed', top: 0, left: 0, zIndex: 60 }}>
       <div style={{ padding: '16px 16px 12px', borderBottom: '1px solid #1e1e1e', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         <img src={LOGO} alt="TopLoad" style={{ width: 140, height: 'auto', objectFit: 'contain' }} />
       </div>
@@ -77,7 +77,10 @@ function Sidebar({ user, onLogout, cardCount = 0, active = "" }) {
         })}
       </nav>
       <div style={{ padding: '14px 10px', borderTop: '1px solid #1e1e1e' }}>
-        {user && <div style={{ padding: '10px 12px', marginBottom: 4, borderRadius: 10, background: '#181818', fontFamily: "'Outfit',sans-serif" }}><div style={{ fontSize: 12, fontWeight: 700, color: '#ccc' }}>@{user.username}</div><div style={{ fontSize: 11, color: '#444', marginTop: 1 }}>{user.email}</div></div>}
+        {user && <div style={{ display:'flex', alignItems:'center', gap:8, padding:'8px 10px', marginBottom:4, borderRadius:10, background:'#181818', fontFamily:"'Outfit',sans-serif" }}>
+          <div style={{ width:28, height:28, borderRadius:8, background:'#9333ea', display:'flex', alignItems:'center', justifyContent:'center', fontSize:11, fontWeight:900, color:'#fff', flexShrink:0 }}>{user.username?.[0]?.toUpperCase()||'A'}</div>
+          <div><div style={{ fontSize:11, fontWeight:700, color:'#ccc' }}>@{user.username}</div><div style={{ fontSize:9, color:'#555', marginTop:1 }}>{user.email}</div></div>
+        </div>}
         <Link href="/settings" style={{ display: 'flex', alignItems: 'center', gap: 11, padding: '9px 12px', borderRadius: 10, marginBottom: 2, textDecoration: 'none', color: '#555', fontFamily: "'Outfit',sans-serif", fontSize: 14, fontWeight: 500 }}><IconSettings />Settings</Link>
         <button onClick={onLogout} style={{ display: 'flex', alignItems: 'center', gap: 11, padding: '9px 12px', borderRadius: 10, width: '100%', background: 'transparent', border: 'none', cursor: 'pointer', color: '#555', fontFamily: "'Outfit',sans-serif", fontSize: 14, fontWeight: 500 }}><IconLogout />Sign Out</button>
       </div>
@@ -124,7 +127,7 @@ export default function SoldHistoryPage() {
   const winRate = cards.length > 0 ? (winners / cards.length) * 100 : 0
   if (loading) return (
     <div style={{ display:'flex', minHeight:'100vh', background:'#0a0a0a' }}>
-      <div className="sidebar-el" style={{ width:220, minHeight:'100vh', background:'#111', borderRight:'1px solid #1e1e1e', flexShrink:0 }} />
+      <div className="sidebar-el" style={{ width:220, minHeight:'100vh', background:'#111111', borderRight:'1px solid #2a2a2a', flexShrink:0 }} />
       <div style={{ flex:1, padding:28 }}>
         <Sk h={28} r={8} style={{ marginBottom:8, maxWidth:200 }} />
         <Sk h={14} r={6} style={{ marginBottom:24, maxWidth:140 }} />

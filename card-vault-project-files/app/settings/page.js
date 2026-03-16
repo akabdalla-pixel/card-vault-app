@@ -56,7 +56,7 @@ function ToastContainer() {
 
 function Sidebar({ user, onLogout, cardCount = 0 }) {
   return (
-    <aside style={{ width:220, minHeight:'100vh', background:'#111', borderRight:'1px solid #1e1e1e', display:'flex', flexDirection:'column', position:'fixed', top:0, left:0, zIndex:60 }}>
+    <aside style={{ width:220, minHeight:'100vh', background:'#111111', borderRight:'1px solid #2a2a2a', display:'flex', flexDirection:'column', position:'fixed', top:0, left:0, zIndex:60 }}>
       <div style={{ padding:'16px 16px 12px', borderBottom:'1px solid #1e1e1e', display:'flex', alignItems:'center', justifyContent:'center' }}>
         <img src={LOGO} alt="TopLoad" style={{ width:130, height:'auto', objectFit:'contain', filter:'drop-shadow(0 0 8px rgba(147,51,234,0.4))' }} />
       </div>
@@ -68,7 +68,10 @@ function Sidebar({ user, onLogout, cardCount = 0 }) {
         })}
       </nav>
       <div style={{ padding:'14px 10px', borderTop:'1px solid #1e1e1e' }}>
-        {user && <div style={{ padding:'10px 12px', marginBottom:4, borderRadius:10, background:'rgba(255,255,255,0.03)' }}><div style={{ fontSize:12, fontWeight:700, color:'#ccc', fontFamily:"'Outfit',sans-serif" }}>@{user.username}</div><div style={{ fontSize:11, color:'#444', marginTop:1, fontFamily:"'Outfit',sans-serif" }}>{user.email}</div></div>}
+                {user && <div style={{ display:'flex', alignItems:'center', gap:8, padding:'8px 10px', marginBottom:4, borderRadius:10, background:'#181818', fontFamily:"'Outfit',sans-serif" }}>
+          <div style={{ width:28, height:28, borderRadius:8, background:'#9333ea', display:'flex', alignItems:'center', justifyContent:'center', fontSize:11, fontWeight:900, color:'#fff', flexShrink:0 }}>{user.username?.[0]?.toUpperCase()||'A'}</div>
+          <div><div style={{ fontSize:11, fontWeight:700, color:'#ccc' }}>@{user.username}</div><div style={{ fontSize:9, color:'#555', marginTop:1 }}>{user.email}</div></div>
+        </div>}
         <Link href="/settings" style={{ display:'flex', alignItems:'center', gap:11, padding:'9px 12px', borderRadius:10, marginBottom:2, textDecoration:'none', color:'#9333ea', background:'rgba(147,51,234,0.08)', borderLeft:'2px solid #9333ea', fontFamily:"'Outfit',sans-serif", fontSize:14, fontWeight:600 }}><IconSettings />Settings</Link>
         <button onClick={onLogout} style={{ display:'flex', alignItems:'center', gap:11, padding:'9px 12px', borderRadius:10, width:'100%', background:'transparent', border:'none', cursor:'pointer', color:'#555', fontFamily:"'Outfit',sans-serif", fontSize:14, fontWeight:500 }}><IconLogout />Sign Out</button>
       </div>
@@ -219,7 +222,7 @@ export default function SettingsPage() {
 
   if (loading) return (
     <div style={{ display:'flex', minHeight:'100vh', background:'#0a0a0a' }}>
-      <div className="sidebar-el" style={{ width:220, minHeight:'100vh', background:'#111', borderRight:'1px solid #1e1e1e', flexShrink:0 }} />
+      <div className="sidebar-el" style={{ width:220, minHeight:'100vh', background:'#111111', borderRight:'1px solid #2a2a2a', flexShrink:0 }} />
       <div style={{ flex:1, display:'flex', alignItems:'center', justifyContent:'center' }}>
         <img src={LOGO} alt="TopLoad" style={{ width:100, opacity:0.3, filter:'drop-shadow(0 0 8px rgba(147,51,234,0.4))' }} />
       </div>
@@ -233,7 +236,7 @@ export default function SettingsPage() {
         placeholder={placeholder}
         value={pwForm[key]}
         onChange={e => setPwForm(p => ({...p, [key]: e.target.value}))}
-        style={{ width:'100%', padding:'10px 40px 10px 14px', borderRadius:10, background:'#1a1a1a', border:'1px solid #2a2a2a', color:'#f0f0f0', fontSize:14, outline:'none', fontFamily:"'Outfit',sans-serif", boxSizing:'border-box' }}
+        style={{ width:'100%', padding:'10px 40px 10px 14px', borderRadius:10, background:'#202020', border:'1px solid #2a2a2a', color:'#f0f0f0', fontSize:14, outline:'none', fontFamily:"'Outfit',sans-serif", boxSizing:'border-box' }}
       />
       <button type="button" onClick={() => setShowPw(p => ({...p, [key]: !p[key]}))} style={{ position:'absolute', right:12, top:'50%', transform:'translateY(-50%)', background:'none', border:'none', color:'#555', cursor:'pointer', padding:0, display:'flex' }}>
         {showPw[key] ? <IconEyeOff /> : <IconEye />}
@@ -276,7 +279,7 @@ export default function SettingsPage() {
                 {[['Username', `@${user?.username}`], ['Email', user?.email]].map(([label, val]) => (
                   <div key={label}>
                     <div style={{ fontSize:10, fontWeight:700, color:'#444', textTransform:'uppercase', letterSpacing:'0.08em', marginBottom:4, fontFamily:"'Outfit',sans-serif" }}>{label}</div>
-                    <div style={{ padding:'10px 14px', borderRadius:10, background:'#1a1a1a', border:'1px solid #2a2a2a', fontFamily:"'Outfit',sans-serif", fontSize:14, color:'#888' }}>{val}</div>
+                    <div style={{ padding:'10px 14px', borderRadius:10, background:'#202020', border:'1px solid #2a2a2a', fontFamily:"'Outfit',sans-serif", fontSize:14, color:'#888' }}>{val}</div>
                   </div>
                 ))}
               </div>

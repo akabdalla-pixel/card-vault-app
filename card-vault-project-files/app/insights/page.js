@@ -69,7 +69,7 @@ const CHART_COLORS = ['#9333ea','#ff7043','#ffb300','#66bb6a','#42a5f5','#ab47bc
 
 function Sidebar({ user, onLogout, active, cardCount = 0 }) {
   return (
-    <aside style={{ width: 220, minHeight: '100vh', background: '#111', borderRight: '1px solid #1e1e1e', display: 'flex', flexDirection: 'column', position: 'fixed', top: 0, left: 0, zIndex: 60 }}>
+    <aside style={{ width: 220, minHeight: '100vh', background: '#111111', borderRight: '1px solid #2a2a2a', display: 'flex', flexDirection: 'column', position: 'fixed', top: 0, left: 0, zIndex: 60 }}>
       <div style={{ padding: '16px 16px 12px', borderBottom: '1px solid #1e1e1e', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         <img src={LOGO} alt="TopLoad" style={{ width: 130, height: 'auto', objectFit: 'contain', filter: 'drop-shadow(0 0 8px rgba(147,51,234,0.4))' }} />
       </div>
@@ -82,7 +82,10 @@ function Sidebar({ user, onLogout, active, cardCount = 0 }) {
         })}
       </nav>
       <div style={{ padding: '14px 10px', borderTop: '1px solid #1e1e1e' }}>
-        {user && <div style={{ padding: '10px 12px', marginBottom: 4, borderRadius: 10, background: '#181818' }}><div style={{ fontSize: 12, fontWeight: 700, color: '#ccc', fontFamily: "'Outfit',sans-serif" }}>@{user.username}</div><div style={{ fontSize: 11, color: '#444', marginTop: 1, fontFamily: "'Outfit',sans-serif" }}>{user.email}</div></div>}
+                {user && <div style={{ display:'flex', alignItems:'center', gap:8, padding:'8px 10px', marginBottom:4, borderRadius:10, background:'#181818', fontFamily:"'Outfit',sans-serif" }}>
+          <div style={{ width:28, height:28, borderRadius:8, background:'#9333ea', display:'flex', alignItems:'center', justifyContent:'center', fontSize:11, fontWeight:900, color:'#fff', flexShrink:0 }}>{user.username?.[0]?.toUpperCase()||'A'}</div>
+          <div><div style={{ fontSize:11, fontWeight:700, color:'#ccc' }}>@{user.username}</div><div style={{ fontSize:9, color:'#555', marginTop:1 }}>{user.email}</div></div>
+        </div>}
         <Link href="/settings" style={{ display: 'flex', alignItems: 'center', gap: 11, padding: '9px 12px', borderRadius: 10, marginBottom: 2, textDecoration: 'none', color: '#555', fontFamily: "'Outfit',sans-serif", fontSize: 14, fontWeight: 500 }}><IconSettings />Settings</Link>
         <button onClick={onLogout} style={{ display: 'flex', alignItems: 'center', gap: 11, padding: '9px 12px', borderRadius: 10, width: '100%', background: 'transparent', border: 'none', cursor: 'pointer', color: '#555', fontFamily: "'Outfit',sans-serif", fontSize: 14, fontWeight: 500 }}><IconLogout />Sign Out</button>
       </div>
@@ -121,7 +124,7 @@ function DonutChart({ data, title, size = 180 }) {
   })
   const [hovered, setHovered] = useState(null)
   return (
-    <div style={{ background: '#111', border: '1px solid #1e1e1e', borderRadius: 16, padding: '20px 22px' }}>
+    <div style={{ background: '#181818', border: '1px solid #222', borderRadius: 16, padding: '20px 22px' }}>
       <div style={{ fontFamily: "'Outfit',sans-serif", fontSize: 13, fontWeight: 700, color: '#ccc', marginBottom: 16 }}>{title}</div>
       <div style={{ display: 'flex', alignItems: 'center', gap: 24, flexWrap: 'wrap' }}>
         <div style={{ position: 'relative', flexShrink: 0 }}>
@@ -165,7 +168,7 @@ function BarChart({ data, title, valuePrefix = '', valueSuffix = '', color = RED
   const max = Math.max(...data.map(d => d.value), 1)
   const [hovered, setHovered] = useState(null)
   return (
-    <div style={{ background: '#111', border: '1px solid #1e1e1e', borderRadius: 16, padding: '20px 22px' }}>
+    <div style={{ background: '#181818', border: '1px solid #222', borderRadius: 16, padding: '20px 22px' }}>
       <div style={{ fontFamily: "'Outfit',sans-serif", fontSize: 13, fontWeight: 700, color: '#ccc', marginBottom: 18 }}>{title}</div>
       <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
         {data.map((d, i) => (
@@ -206,7 +209,7 @@ function TopCardsRank({ cards }) {
   const top = [...cards].filter(c => !c.sold).sort((a, b) => (parseFloat(b.val) || 0) - (parseFloat(a.val) || 0)).slice(0, 5)
   const max = parseFloat(top[0]?.val) || 1
   return (
-    <div style={{ background: '#111', border: '1px solid #1e1e1e', borderRadius: 16, padding: '20px 22px' }}>
+    <div style={{ background: '#181818', border: '1px solid #222', borderRadius: 16, padding: '20px 22px' }}>
       <div style={{ fontFamily: "'Outfit',sans-serif", fontSize: 13, fontWeight: 700, color: '#ccc', marginBottom: 18, display: 'flex', alignItems: 'center', gap: 8 }}><IconTrophy /><span>Top 5 Most Valuable</span></div>
       <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
         {top.map((card, i) => { // stagger
@@ -283,7 +286,7 @@ function PersonalRecords({ cards, soldCards }) {
   ]
 
   return (
-    <div style={{ background: '#111', border: '1px solid #1e1e1e', borderRadius: 16, padding: '20px 22px' }}>
+    <div style={{ background: '#181818', border: '1px solid #222', borderRadius: 16, padding: '20px 22px' }}>
       <div style={{ fontFamily: "'Outfit',sans-serif", fontSize: 13, fontWeight: 700, color: '#ccc', marginBottom: 16, display: 'flex', alignItems: 'center', gap: 8 }}><IconStar /><span>Personal Records</span></div>
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2,1fr)', gap: 10 }}>
         {records.map((r, i) => {

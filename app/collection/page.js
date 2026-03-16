@@ -93,7 +93,7 @@ function CollectionSkeleton() {
       <Sk h={42} r={10} style={{ marginBottom:10 }} />
       <Sk h={36} r={10} style={{ marginBottom:16 }} />
       {[1,2,3,4].map(i => (
-        <div key={i} style={{ background:'#111', border:'1px solid #1e1e1e', borderRadius:14, padding:'14px 16px', marginBottom:10, animation:`fadeUp 0.45s ease ${i*0.12}s both` }}>
+        <div key={i} style={{ background:'#181818', border:'1px solid #222', borderRadius:14, padding:'14px 16px', marginBottom:10, animation:`fadeUp 0.45s ease ${i*0.12}s both` }}>
           <div style={{ display:'flex', justifyContent:'space-between', marginBottom:10 }}><Sk w={160} h={16} r={6} /><Sk w={50} h={22} r={6} /></div>
           <div style={{ display:'flex', gap:10, marginBottom:10 }}><Sk w={70} h={34} r={8} /><Sk w={70} h={34} r={8} /><Sk w={70} h={34} r={8} /></div>
           <div style={{ display:'flex', gap:6 }}><Sk h={32} r={8} style={{ flex:1 }} /><Sk h={32} r={8} style={{ flex:1 }} /><Sk h={32} r={8} style={{ flex:1 }} /></div>
@@ -227,7 +227,10 @@ function Sidebar({ user, onLogout, cardCount = 0, active = "" }) {
         })}
       </nav>
       <div style={{ padding: '14px 10px', borderTop: '1px solid #1e1e1e' }}>
-        {user && <div style={{ padding: '10px 12px', marginBottom: 4, borderRadius: 10, background: '#181818', fontFamily: "'Outfit',sans-serif" }}><div style={{ fontSize: 12, fontWeight: 700, color: '#ccc' }}>@{user.username}</div><div style={{ fontSize: 11, color: '#444', marginTop: 1 }}>{user.email}</div></div>}
+        {user && <div style={{ display:'flex', alignItems:'center', gap:8, padding:'8px 10px', marginBottom:4, borderRadius:10, background:'#181818', fontFamily:"'Outfit',sans-serif" }}>
+          <div style={{ width:28, height:28, borderRadius:8, background:'#9333ea', display:'flex', alignItems:'center', justifyContent:'center', fontSize:11, fontWeight:900, color:'#fff', flexShrink:0 }}>{user.username?.[0]?.toUpperCase()||'A'}</div>
+          <div><div style={{ fontSize:11, fontWeight:700, color:'#ccc' }}>@{user.username}</div><div style={{ fontSize:9, color:'#555', marginTop:1 }}>{user.email}</div></div>
+        </div>}
         <Link href="/settings" style={{ display: 'flex', alignItems: 'center', gap: 11, padding: '9px 12px', borderRadius: 10, marginBottom: 2, textDecoration: 'none', color: '#555', fontFamily: "'Outfit',sans-serif", fontSize: 14, fontWeight: 500 }}><IconSettings />Settings</Link>
         <button onClick={onLogout} style={{ display: 'flex', alignItems: 'center', gap: 11, padding: '9px 12px', borderRadius: 10, width: '100%', background: 'transparent', border: 'none', cursor: 'pointer', color: '#555', fontFamily: "'Outfit',sans-serif", fontSize: 14, fontWeight: 500 }}><IconLogout />Sign Out</button>
       </div>
@@ -304,7 +307,7 @@ function CardModal({ card, onClose, onSave }) {
 
   const inp = (key, placeholder, type = 'text', autoFocus = false) => (
     <input type={type} placeholder={placeholder} value={form[key]||''} onChange={e => set(key, e.target.value)} autoFocus={autoFocus}
-      style={{ width:'100%', padding:'8px 12px', borderRadius:9, background:'#1a1a1a', border:'1px solid #2a2a2a', color:'#f0f0f0', fontSize:14, outline:'none', fontFamily:"'Outfit',sans-serif", boxSizing:'border-box' }} />
+      style={{ width:'100%', padding:'8px 12px', borderRadius:9, background:'#202020', border:'1px solid #2a2a2a', color:'#f0f0f0', fontSize:14, outline:'none', fontFamily:"'Outfit',sans-serif", boxSizing:'border-box' }} />
   )
   const lbl = t => <div style={{ fontSize:10, fontWeight:700, color:'#555', textTransform:'uppercase', letterSpacing:'0.08em', marginBottom:4, fontFamily:"'Outfit',sans-serif" }}>{t}</div>
 
@@ -355,7 +358,7 @@ function CardModal({ card, onClose, onSave }) {
             <div>
               {lbl('Grade')}
               <select value={form.grade||''} onChange={e => set('grade', e.target.value)}
-                style={{ width:'100%', padding:'8px 12px', borderRadius:9, background:'#1a1a1a', border:'1px solid #2a2a2a', color: form.grade ? '#f0f0f0' : '#555', fontSize:14, outline:'none', fontFamily:"'Outfit',sans-serif" }}>
+                style={{ width:'100%', padding:'8px 12px', borderRadius:9, background:'#202020', border:'1px solid #2a2a2a', color: form.grade ? '#f0f0f0' : '#555', fontSize:14, outline:'none', fontFamily:"'Outfit',sans-serif" }}>
                 <option value="">Raw / No grade</option>
                 {['10','9.5','9','8.5','8','7.5','7','6.5','6','5','4','3','2','1'].map(g => <option key={g} value={g}>{g}</option>)}
               </select>
@@ -363,7 +366,7 @@ function CardModal({ card, onClose, onSave }) {
             <div>
               {lbl('Grading Co.')}
               <select value={form.gradingCo||''} onChange={e => set('gradingCo', e.target.value)}
-                style={{ width:'100%', padding:'8px 12px', borderRadius:9, background:'#1a1a1a', border:'1px solid #2a2a2a', color: form.gradingCo ? '#f0f0f0' : '#555', fontSize:14, outline:'none', fontFamily:"'Outfit',sans-serif" }}>
+                style={{ width:'100%', padding:'8px 12px', borderRadius:9, background:'#202020', border:'1px solid #2a2a2a', color: form.gradingCo ? '#f0f0f0' : '#555', fontSize:14, outline:'none', fontFamily:"'Outfit',sans-serif" }}>
                 <option value="">No grading co.</option>
                 {['PSA','BGS','SGC','CGC','HGA','CSG','GAI','Other'].map(g => <option key={g} value={g}>{g}</option>)}
               </select>
@@ -402,7 +405,7 @@ function CardModal({ card, onClose, onSave }) {
             <div>
               {lbl('Auto Grade')}
               <select value={form.autoGrade||''} onChange={e => set('autoGrade', e.target.value)}
-                style={{ width:'100%', padding:'8px 12px', borderRadius:9, background:'#1a1a1a', border:'1px solid #2a2a2a', color: form.autoGrade?'#f0f0f0':'#555', fontSize:14, outline:'none', fontFamily:"'Outfit',sans-serif" }}>
+                style={{ width:'100%', padding:'8px 12px', borderRadius:9, background:'#202020', border:'1px solid #2a2a2a', color: form.autoGrade?'#f0f0f0':'#555', fontSize:14, outline:'none', fontFamily:"'Outfit',sans-serif" }}>
                 <option value="">No auto grade</option>
                 {['10','9.5','9','8.5','8','7','6','5'].map(g => <option key={g} value={g}>{g}</option>)}
               </select>
@@ -413,22 +416,22 @@ function CardModal({ card, onClose, onSave }) {
             </div>
             {isTCG ? (
               <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:10 }}>
-                <div>{lbl('Rarity')}<select value={form.rarity||''} onChange={e => set('rarity', e.target.value)} style={{ width:'100%', padding:'11px 14px', borderRadius:10, background:'#1a1a1a', border:'1px solid #2a2a2a', color: form.rarity?'#f0f0f0':'#555', fontSize:14, outline:'none', fontFamily:"'Outfit',sans-serif" }}><option value="">Select...</option>{TCG_RARITIES.map(r=><option key={r} value={r}>{r}</option>)}</select></div>
-                <div>{lbl('Edition')}<select value={form.edition||''} onChange={e => set('edition', e.target.value)} style={{ width:'100%', padding:'11px 14px', borderRadius:10, background:'#1a1a1a', border:'1px solid #2a2a2a', color: form.edition?'#f0f0f0':'#555', fontSize:14, outline:'none', fontFamily:"'Outfit',sans-serif" }}><option value="">Select...</option>{EDITIONS.map(e=><option key={e} value={e}>{e}</option>)}</select></div>
+                <div>{lbl('Rarity')}<select value={form.rarity||''} onChange={e => set('rarity', e.target.value)} style={{ width:'100%', padding:'11px 14px', borderRadius:10, background:'#202020', border:'1px solid #2a2a2a', color: form.rarity?'#f0f0f0':'#555', fontSize:14, outline:'none', fontFamily:"'Outfit',sans-serif" }}><option value="">Select...</option>{TCG_RARITIES.map(r=><option key={r} value={r}>{r}</option>)}</select></div>
+                <div>{lbl('Edition')}<select value={form.edition||''} onChange={e => set('edition', e.target.value)} style={{ width:'100%', padding:'11px 14px', borderRadius:10, background:'#202020', border:'1px solid #2a2a2a', color: form.edition?'#f0f0f0':'#555', fontSize:14, outline:'none', fontFamily:"'Outfit',sans-serif" }}><option value="">Select...</option>{EDITIONS.map(e=><option key={e} value={e}>{e}</option>)}</select></div>
               </div>
             ) : (
-              <div>{lbl('Condition')}<select value={form.cond||''} onChange={e => set('cond', e.target.value)} style={{ width:'100%', padding:'11px 14px', borderRadius:10, background:'#1a1a1a', border:'1px solid #2a2a2a', color: form.cond?'#f0f0f0':'#555', fontSize:14, outline:'none', fontFamily:"'Outfit',sans-serif" }}><option value="">Select...</option>{CONDS.map(c=><option key={c} value={c}>{c}</option>)}</select></div>
+              <div>{lbl('Condition')}<select value={form.cond||''} onChange={e => set('cond', e.target.value)} style={{ width:'100%', padding:'11px 14px', borderRadius:10, background:'#202020', border:'1px solid #2a2a2a', color: form.cond?'#f0f0f0':'#555', fontSize:14, outline:'none', fontFamily:"'Outfit',sans-serif" }}><option value="">Select...</option>{CONDS.map(c=><option key={c} value={c}>{c}</option>)}</select></div>
             )}
             <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:10 }}>
               <div>{lbl('Quantity')}{inp('qty', '1', 'number')}</div>
               <div>{lbl('Purchase Date')}{inp('date', '', 'date')}</div>
             </div>
-            <div>{lbl('Notes')}<textarea value={form.notes||''} onChange={e => set('notes', e.target.value)} rows={2} placeholder="Any extra details..." style={{ width:'100%', padding:'11px 14px', borderRadius:10, background:'#1a1a1a', border:'1px solid #2a2a2a', color:'#f0f0f0', fontSize:14, outline:'none', resize:'none', fontFamily:"'Outfit',sans-serif", boxSizing:'border-box' }} /></div>
+            <div>{lbl('Notes')}<textarea value={form.notes||''} onChange={e => set('notes', e.target.value)} rows={2} placeholder="Any extra details..." style={{ width:'100%', padding:'11px 14px', borderRadius:10, background:'#202020', border:'1px solid #2a2a2a', color:'#f0f0f0', fontSize:14, outline:'none', resize:'none', fontFamily:"'Outfit',sans-serif", boxSizing:'border-box' }} /></div>
           </>}
 
           {/* Sold toggle (edit only) */}
           {isEdit && <>
-            <label style={{ display:'flex', alignItems:'center', gap:12, padding:'11px 14px', borderRadius:10, background:'#1a1a1a', border:'1px solid #2a2a2a', cursor:'pointer' }}>
+            <label style={{ display:'flex', alignItems:'center', gap:12, padding:'11px 14px', borderRadius:10, background:'#202020', border:'1px solid #2a2a2a', cursor:'pointer' }}>
               <input type="checkbox" checked={!!form.sold} onChange={e => set('sold', e.target.checked)} style={{ accentColor:'#9333ea', width:18, height:18 }} />
               <div style={{ fontFamily:"'Outfit',sans-serif", fontSize:14, fontWeight:600, color:'#ccc' }}>Mark as Sold 💰</div>
             </label>
@@ -456,7 +459,7 @@ function PriceLookupModal({ card, onClose }) {
   const links = getPriceLinks(card)
   return (
     <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.7)', zIndex: 200, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16 }}>
-      <div style={{ background: '#111', border: '1px solid #2a2a2a', borderRadius: 16, width: '100%', maxWidth: 420, padding: 24 }}>
+      <div style={{ background: '#181818', border: '1px solid #2a2a2a', borderRadius: 16, width: '100%', maxWidth: 420, padding: 24 }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 6 }}>
           <h2 style={{ fontFamily: "'Outfit',sans-serif", fontSize: 17, fontWeight: 700, color: '#f0f2ff', margin: 0 }}>Check Prices</h2>
           <button onClick={onClose} style={{ background: 'none', border: 'none', color: '#555', cursor: 'pointer', padding: 4 }}><IconClose /></button>
@@ -495,7 +498,7 @@ function SoldModal({ card, onClose, onSave }) {
 
   return (
     <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.7)', zIndex: 200, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16 }}>
-      <div style={{ background: '#111', border: '1px solid #2a2a2a', borderRadius: 16, width: '100%', maxWidth: 380, padding: 24 }}>
+      <div style={{ background: '#181818', border: '1px solid #2a2a2a', borderRadius: 16, width: '100%', maxWidth: 380, padding: 24 }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
           <h2 style={{ fontFamily: "'Outfit',sans-serif", fontSize: 17, fontWeight: 700, color: '#f0f2ff', margin: 0 }}>Mark as Sold</h2>
           <button onClick={onClose} style={{ background: 'none', border: 'none', color: '#555', cursor: 'pointer', padding: 4 }}><IconClose /></button>
@@ -504,11 +507,11 @@ function SoldModal({ card, onClose, onSave }) {
         <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
           <div>
             <label style={{ display: 'block', fontSize: 11, fontWeight: 600, color: '#555', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 6 }}>Sold Price ($)</label>
-            <input type="number" value={soldPrice} onChange={e => setSoldPrice(e.target.value)} placeholder="Enter sale price" style={{ width: '100%', padding: '10px 12px', borderRadius: 10, background: '#1a1a1a', border: '1px solid #2a2a2a', color: '#f0f0f0', fontSize: 14, outline: 'none' }} />
+            <input type="number" value={soldPrice} onChange={e => setSoldPrice(e.target.value)} placeholder="Enter sale price" style={{ width: '100%', padding: '10px 12px', borderRadius: 10, background: '#202020', border: '1px solid #2a2a2a', color: '#f0f0f0', fontSize: 14, outline: 'none' }} />
           </div>
           <div>
             <label style={{ display: 'block', fontSize: 11, fontWeight: 600, color: '#555', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 6 }}>Sold Date</label>
-            <input type="date" value={soldDate} onChange={e => setSoldDate(e.target.value)} style={{ width: '100%', padding: '10px 12px', borderRadius: 10, background: '#1a1a1a', border: '1px solid #2a2a2a', color: '#f0f0f0', fontSize: 14, outline: 'none' }} />
+            <input type="date" value={soldDate} onChange={e => setSoldDate(e.target.value)} style={{ width: '100%', padding: '10px 12px', borderRadius: 10, background: '#202020', border: '1px solid #2a2a2a', color: '#f0f0f0', fontSize: 14, outline: 'none' }} />
           </div>
           {soldPrice && (
             <div style={{ padding: '12px 16px', borderRadius: 10, background: profit >= 0 ? 'rgba(34,211,167,0.08)' : 'rgba(168,85,247,0.08)', border: '1px solid ' + (profit >= 0 ? 'rgba(147,51,234,0.2)' : 'rgba(168,85,247,0.2)') }}>
@@ -519,7 +522,7 @@ function SoldModal({ card, onClose, onSave }) {
           )}
         </div>
         <div style={{ display: 'flex', gap: 10, marginTop: 20 }}>
-          <button onClick={onClose} style={{ flex: 1, padding: 11, borderRadius: 10, background: '#1a1a1a', border: '1px solid #2a2a2a', color: '#666', fontFamily: "'Outfit',sans-serif", fontSize: 14, fontWeight: 600, cursor: 'pointer' }}>Cancel</button>
+          <button onClick={onClose} style={{ flex: 1, padding: 11, borderRadius: 10, background: '#202020', border: '1px solid #2a2a2a', color: '#666', fontFamily: "'Outfit',sans-serif", fontSize: 14, fontWeight: 600, cursor: 'pointer' }}>Cancel</button>
           <button onClick={handleSave} disabled={saving || !soldPrice} style={{ flex: 1, padding: 11, borderRadius: 10, background: 'linear-gradient(135deg,#9333ea,#a855f7)', border: 'none', color: '#000', fontFamily: "'Outfit',sans-serif", fontSize: 14, fontWeight: 700, cursor: 'pointer', opacity: (saving || !soldPrice) ? 0.5 : 1 }}>{saving ? 'Saving...' : 'Mark Sold'}</button>
         </div>
       </div>
@@ -558,7 +561,7 @@ function ImportModal({ onClose, onImport }) {
 
   return (
     <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.7)', zIndex: 200, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16 }}>
-      <div style={{ background: '#111', border: '1px solid #2a2a2a', borderRadius: 16, width: '100%', maxWidth: 460, padding: 24 }}>
+      <div style={{ background: '#181818', border: '1px solid #2a2a2a', borderRadius: 16, width: '100%', maxWidth: 460, padding: 24 }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
           <h2 style={{ fontFamily: "'Outfit',sans-serif", fontSize: 17, fontWeight: 700, color: '#f0f2ff', margin: 0 }}>Import CSV</h2>
           <button onClick={onClose} style={{ background: 'none', border: 'none', color: '#555', cursor: 'pointer', padding: 4 }}><IconClose /></button>
@@ -577,7 +580,7 @@ function ImportModal({ onClose, onImport }) {
           </div>
         )}
         <div style={{ display: 'flex', gap: 10 }}>
-          <button onClick={onClose} style={{ flex: 1, padding: 11, borderRadius: 10, background: '#1a1a1a', border: '1px solid #2a2a2a', color: '#666', fontFamily: "'Outfit',sans-serif", fontSize: 14, fontWeight: 600, cursor: 'pointer' }}>Cancel</button>
+          <button onClick={onClose} style={{ flex: 1, padding: 11, borderRadius: 10, background: '#202020', border: '1px solid #2a2a2a', color: '#666', fontFamily: "'Outfit',sans-serif", fontSize: 14, fontWeight: 600, cursor: 'pointer' }}>Cancel</button>
           <button onClick={handleImport} disabled={!cards.length || importing} style={{ flex: 1, padding: 11, borderRadius: 10, background: 'linear-gradient(135deg,#9333ea,#a855f7)', border: 'none', color: '#000', fontFamily: "'Outfit',sans-serif", fontSize: 14, fontWeight: 700, cursor: 'pointer', opacity: (!cards.length || importing) ? 0.5 : 1 }}>{importing ? 'Importing...' : 'Import ' + cards.length + ' Cards'}</button>
         </div>
       </div>
@@ -608,11 +611,11 @@ function BreakEvenModal({ card, onClose }) {
 
   const fmt = n => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 2 }).format(n || 0)
 
-  const inputStyle = { width: '100%', padding: '9px 12px', borderRadius: 8, background: '#1a1a1a', border: '1px solid #2a2a2a', color: '#f0f0f0', fontSize: 14, outline: 'none', fontFamily: "'JetBrains Mono',monospace", boxSizing: 'border-box', transition: 'border-color 0.15s' }
+  const inputStyle = { width: '100%', padding: '9px 12px', borderRadius: 8, background: '#202020', border: '1px solid #2a2a2a', color: '#f0f0f0', fontSize: 14, outline: 'none', fontFamily: "'JetBrains Mono',monospace", boxSizing: 'border-box', transition: 'border-color 0.15s' }
 
   return (
     <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.85)', zIndex: 200, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16 }}>
-      <div style={{ background: '#111', border: '1px solid #2a2a2a', borderRadius: 16, padding: 28, maxWidth: 420, width: '100%' }}>
+      <div style={{ background: '#181818', border: '1px solid #2a2a2a', borderRadius: 16, padding: 28, maxWidth: 420, width: '100%' }}>
         {/* Header */}
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
           <div>
@@ -623,7 +626,7 @@ function BreakEvenModal({ card, onClose }) {
         </div>
 
         {/* Buy price display */}
-        <div style={{ padding: '12px 14px', borderRadius: 10, background: '#1a1a1a', border: '1px solid #2a2a2a', marginBottom: 18 }}>
+        <div style={{ padding: '12px 14px', borderRadius: 10, background: '#202020', border: '1px solid #2a2a2a', marginBottom: 18 }}>
           <div style={{ fontSize: 10, color: '#444', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 4, fontFamily: "'Outfit',sans-serif" }}>Your Cost Basis</div>
           <div style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: 22, fontWeight: 700, color: '#f0f0f0' }}>{fmt(buy)}</div>
           {parseInt(card.qty) > 1 && <div style={{ fontSize: 11, color: '#444', marginTop: 2, fontFamily: "'Outfit',sans-serif" }}>{card.qty} × {fmt(parseFloat(card.buy))}</div>}
@@ -869,16 +872,17 @@ function CollectionPage() {
             {cards.length > 0 && (
               <div style={{ display:'grid', gridTemplateColumns:'repeat(5,1fr)', gap:12 }}>
                 {[
-                  { label:'Active Cards', value: statActive.length, color:'#f0f0f0', accent:'#9333ea' },
-                  { label:'Total Invested', value: fmt(totalInvested), color:'#f0f0f0', accent:'#555' },
-                  { label:'Portfolio Value', value: fmt(totalValue), color:'#f0f0f0', accent:'#555' },
-                  { label:'Unrealized G/L', value: (totalValue-totalInvested>=0?'+':'')+fmt(totalValue-totalInvested), color: totalValue>=totalInvested?'#4ade80':'#f87171', accent: totalValue>=totalInvested?'#4ade80':'#f87171' },
-                  { label:'Realized P&L', value: (realizedPL>=0?'+':'')+fmt(realizedPL), color: realizedPL>=0?'#4ade80':'#f87171', accent: realizedPL>=0?'#4ade80':'#f87171' },
+                  { label:'Active Cards', value: statActive.length, sub:'in collection', color:'#f0f0f0', accent:'#9333ea' },
+                  { label:'Invested', value: fmt(totalInvested), sub:'cost basis', color:'#f0f0f0', accent:'#444' },
+                  { label:'Portfolio Value', value: fmt(totalValue), sub:'current', color:'#f0f0f0', accent:'#444' },
+                  { label:'Unrealized G/L', value: (totalValue-totalInvested>=0?'+':'')+fmt(totalValue-totalInvested), sub:(totalValue-totalInvested>=0?'+':'')+((totalInvested>0?(totalValue-totalInvested)/totalInvested*100:0).toFixed(1))+'%', color: totalValue>=totalInvested?'#4ade80':'#f87171', accent: totalValue>=totalInvested?'#4ade80':'#f87171' },
+                  { label:'Realized P&L', value: (realizedPL>=0?'+':'')+fmt(realizedPL), sub:'all time', color: realizedPL>=0?'#4ade80':'#f87171', accent: realizedPL>=0?'#4ade80':'#f87171' },
                 ].map((s,i) => (
-                  <div key={i} style={{ background:'#111', border:'1px solid #1e1e1e', borderRadius:12, padding:'14px 16px', position:'relative', overflow:'hidden' }}>
+                  <div key={i} style={{ background:'#181818', border:'1px solid #222', borderRadius:12, padding:'14px 16px', position:'relative', overflow:'hidden' }}>
                     <div style={{ position:'absolute', top:0, left:0, right:0, height:2, background:`linear-gradient(90deg,${s.accent},transparent)` }} />
-                    <div style={{ fontSize:9, fontWeight:700, color:'#444', textTransform:'uppercase', letterSpacing:'0.1em', marginBottom:8, fontFamily:"'Outfit',sans-serif" }}>{s.label}</div>
+                    <div style={{ fontSize:9, fontWeight:700, color:'#555', textTransform:'uppercase', letterSpacing:'0.1em', marginBottom:8, fontFamily:"'Outfit',sans-serif" }}>{s.label}</div>
                     <div style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:18, fontWeight:800, color:s.color, letterSpacing:'-0.5px' }}>{s.value}</div>
+                    <div style={{ fontSize:10, color:'#444', marginTop:4, fontFamily:"'Outfit',sans-serif" }}>{s.sub}</div>
                   </div>
                 ))}
               </div>
@@ -902,7 +906,7 @@ function CollectionPage() {
                 { label: 'G/L', value: (totalValue-totalInvested>=0?'+':'')+fmt(totalValue-totalInvested), color: totalValue>=totalInvested?'#4ade80':'#9333ea' },
                 { label: 'P&L', value: (realizedPL>=0?'+':'')+fmt(realizedPL), color: realizedPL>=0?'#4ade80':'#9333ea' },
               ].map((s,i) => (
-                <div key={i} style={{ flexShrink:0, background:'#111', border:'1px solid #1e1e1e', borderRadius:10, padding:'10px 12px', minWidth:90, textAlign:'center' }}>
+                <div key={i} style={{ flexShrink:0, background:'#181818', border:'1px solid #222', borderRadius:10, padding:'10px 12px', minWidth:90, textAlign:'center' }}>
                   <div style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:13, fontWeight:700, color:s.color||'#f0f0f0' }}>{s.value}</div>
                   <div style={{ fontSize:9, color:'#444', fontWeight:700, textTransform:'uppercase', letterSpacing:'0.08em', marginTop:3, fontFamily:"'Outfit',sans-serif" }}>{s.label}</div>
                 </div>
@@ -929,7 +933,7 @@ function CollectionPage() {
             return (
               <div style={{ display:'flex', gap:6, marginBottom:14, overflowX:'auto', paddingBottom:2, WebkitOverflowScrolling:'touch' }}>
                 {tabs.map(t => (
-                  <button key={t.val} onClick={() => setSportTab(t.val)} style={{ display:'flex', alignItems:'center', gap:6, padding:'7px 14px', borderRadius:20, border: sportTab === t.val ? '1px solid rgba(147,51,234,0.4)' : '1px solid #2a2a2a', background: sportTab === t.val ? 'rgba(147,51,234,0.1)' : '#111', color: sportTab === t.val ? '#9333ea' : '#555', fontFamily:"'Outfit',sans-serif", fontSize:13, fontWeight: sportTab === t.val ? 700 : 500, cursor:'pointer', whiteSpace:'nowrap', flexShrink:0, transition:'all 0.15s' }}>
+                  <button key={t.val} onClick={() => setSportTab(t.val)} style={{ display:'flex', alignItems:'center', gap:6, padding:'7px 14px', borderRadius:20, border: sportTab === t.val ? '1px solid #9333ea' : '1px solid #2a2a2a', background: sportTab === t.val ? 'rgba(147,51,234,0.08)' : '#181818', color: sportTab === t.val ? '#9333ea' : '#555', fontFamily:"'Outfit',sans-serif", fontSize:13, fontWeight: sportTab === t.val ? 700 : 500, cursor:'pointer', whiteSpace:'nowrap', flexShrink:0, transition:'all 0.15s' }}>
                     <span>{t.emoji}</span>{t.label}
                     {sportTab === t.val && t.val !== 'all' && (
                       <span style={{ fontSize:10, background:'rgba(147,51,234,0.2)', borderRadius:10, padding:'1px 6px', fontFamily:"'JetBrains Mono',monospace" }}>
@@ -943,14 +947,14 @@ function CollectionPage() {
           })()}
 
           <div className="desk-filters" style={{ gap: 8, marginBottom: 8, flexWrap: 'wrap', alignItems: 'center' }}>
-            <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search player, brand, set..." style={{ flex: 1, minWidth: 220, padding: '8px 14px', borderRadius: 9, background: '#111', border: '1px solid #222', color: '#f0f0f0', fontSize: 13, outline: 'none', fontFamily: "'Outfit',sans-serif" }} />
+            <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search player, brand, set..." style={{ flex: 1, minWidth: 220, padding: '8px 14px', borderRadius: 9, background: '#181818', border: '1px solid #2a2a2a', color: '#f0f0f0', fontSize: 13, outline: 'none', fontFamily: "'Outfit',sans-serif" }} />
             <select value={filterSport} onChange={e => setFilterSport(e.target.value)} style={{ padding: '8px 12px', borderRadius: 9, background: '#111', border: '1px solid #222', color: filterSport ? '#f0f0f0' : '#555', fontSize: 13, outline: 'none', fontFamily: "'Outfit',sans-serif" }}>
               <option value="">All Sports</option>
               {SPORTS.map(s => <option key={s} value={s}>{s}</option>)}
             </select>
             <div style={{ display: 'flex', borderRadius: 9, overflow: 'hidden', border: '1px solid #222' }}>
               {[['active','Active'],['sold','Sold'],['all','All']].map(([val, label]) => (
-                <button key={val} onClick={() => setFilterStatus(val)} style={{ padding: '8px 14px', background: filterStatus===val ? 'rgba(147,51,234,0.15)' : '#111', border: 'none', color: filterStatus===val ? '#9333ea' : '#555', fontFamily: "'Outfit',sans-serif", fontSize: 13, fontWeight: filterStatus===val ? 700 : 500, cursor: 'pointer' }}>{label}</button>
+                <button key={val} onClick={() => setFilterStatus(val)} style={{ padding: '8px 14px', background: filterStatus===val ? 'rgba(147,51,234,0.08)' : '#181818', border: 'none', color: filterStatus===val ? '#9333ea' : '#555', fontFamily: "'Outfit',sans-serif", fontSize: 13, fontWeight: filterStatus===val ? 700 : 500, cursor: 'pointer' }}>{label}</button>
               ))}
             </div>
           </div>
@@ -958,12 +962,12 @@ function CollectionPage() {
             {/* Graded filter */}
             <div style={{ display: 'flex', borderRadius: 10, overflow: 'hidden', border: '1px solid #2a2a2a' }}>
               {[['','All Cards'],['graded','Graded'],['raw','Raw']].map(([val, label]) => (
-                <button key={val} onClick={() => setFilterGraded(val)} style={{ padding: '8px 12px', background: filterGraded===val ? 'rgba(147,51,234,0.15)' : '#111', border: 'none', color: filterGraded===val ? '#9333ea' : '#555', fontFamily: "'Outfit',sans-serif", fontSize: 12, fontWeight: filterGraded===val ? 700 : 500, cursor: 'pointer', whiteSpace: 'nowrap' }}>{label}</button>
+                <button key={val} onClick={() => setFilterGraded(val)} style={{ padding: '8px 12px', background: filterGraded===val ? 'rgba(147,51,234,0.08)' : '#181818', border: 'none', color: filterGraded===val ? '#9333ea' : '#555', fontFamily: "'Outfit',sans-serif", fontSize: 12, fontWeight: filterGraded===val ? 700 : 500, cursor: 'pointer', whiteSpace: 'nowrap' }}>{label}</button>
               ))}
             </div>
-            <button onClick={() => setFilterAuto(v => !v)} style={{ padding: '8px 14px', borderRadius: 10, background: filterAuto ? 'rgba(255,190,46,0.12)' : '#111', border: filterAuto ? '1px solid rgba(255,190,46,0.35)' : '1px solid #2a2a2a', color: filterAuto ? '#ffbe2e' : '#555', fontFamily: "'Outfit',sans-serif", fontSize: 12, fontWeight: filterAuto ? 700 : 500, cursor: 'pointer', whiteSpace: 'nowrap' }}>✍️ Autos Only</button>
+            <button onClick={() => setFilterAuto(v => !v)} style={{ padding: '8px 14px', borderRadius: 10, background: filterAuto ? 'rgba(255,190,46,0.1)' : '#181818', border: filterAuto ? '1px solid rgba(255,190,46,0.35)' : '1px solid #2a2a2a', color: filterAuto ? '#ffbe2e' : '#555', fontFamily: "'Outfit',sans-serif", fontSize: 12, fontWeight: filterAuto ? 700 : 500, cursor: 'pointer', whiteSpace: 'nowrap' }}>✍️ Autos Only</button>
             {/* Sort */}
-            <select value={sortBy} onChange={e => setSortBy(e.target.value)} style={{ padding: '8px 14px', borderRadius: 10, background: '#111', border: '1px solid #2a2a2a', color: '#f0f0f0', fontSize: 13, outline: 'none', fontFamily: "'Outfit',sans-serif", cursor: 'pointer' }}>
+            <select value={sortBy} onChange={e => setSortBy(e.target.value)} style={{ padding: '8px 14px', borderRadius: 10, background: '#181818', border: '1px solid #2a2a2a', color: '#f0f0f0', fontSize: 13, outline: 'none', fontFamily: "'Outfit',sans-serif", cursor: 'pointer' }}>
               <option value="date_desc">Date Added (Newest)</option>
               <option value="date_asc">Date Added (Oldest)</option>
               <option value="price_desc">Value (High to Low)</option>
@@ -974,7 +978,7 @@ function CollectionPage() {
               <option value="name_desc">Player (Z → A)</option>
             </select>
             {/* Price Range */}
-            <div style={{ display:'flex', alignItems:'center', gap:6, background:'#111', border:'1px solid #2a2a2a', borderRadius:10, padding:'0 10px' }}>
+            <div style={{ display:'flex', alignItems:'center', gap:6, background:'#181818', border:'1px solid #2a2a2a', borderRadius:10, padding:'0 10px' }}>
               <span style={{ fontSize:11, color:'#444', fontWeight:700, fontFamily:"'Outfit',sans-serif", whiteSpace:'nowrap' }}>$</span>
               <input
                 type="number"
@@ -1006,17 +1010,17 @@ function CollectionPage() {
           </div>
           <div className="mob-filters" style={{ gap: 8, marginBottom: 10, flexWrap: 'nowrap', overflowX: 'auto', WebkitOverflowScrolling: 'touch', paddingBottom: 2 }}>
             {/* 1. Search */}
-            <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search..." style={{ flex: 1, minWidth: 110, maxWidth: 150, padding: '8px 12px', borderRadius: 10, background: '#111', border: '1px solid #2a2a2a', color: '#f0f0f0', fontSize: 13, outline: 'none', fontFamily: "'Outfit',sans-serif" }} />
+            <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search..." style={{ flex: 1, minWidth: 110, maxWidth: 150, padding: '8px 12px', borderRadius: 10, background: '#181818', border: '1px solid #2a2a2a', color: '#f0f0f0', fontSize: 13, outline: 'none', fontFamily: "'Outfit',sans-serif" }} />
             {/* 2. All / Graded / Raw */}
             <div style={{ display: 'flex', borderRadius: 10, overflow: 'hidden', border: '1px solid #2a2a2a', flexShrink: 0 }}>
               {[['','All'],['graded','Graded'],['raw','Raw']].map(([val, label]) => (
-                <button key={val} onClick={() => setFilterGraded(val)} style={{ padding: '8px 10px', background: filterGraded===val ? 'rgba(147,51,234,0.15)' : '#111', border: 'none', color: filterGraded===val ? '#9333ea' : '#555', fontFamily: "'Outfit',sans-serif", fontSize: 12, fontWeight: filterGraded===val ? 700 : 500, cursor: 'pointer', whiteSpace: 'nowrap' }}>{label}</button>
+                <button key={val} onClick={() => setFilterGraded(val)} style={{ padding: '8px 10px', background: filterGraded===val ? 'rgba(147,51,234,0.08)' : '#181818', border: 'none', color: filterGraded===val ? '#9333ea' : '#555', fontFamily: "'Outfit',sans-serif", fontSize: 12, fontWeight: filterGraded===val ? 700 : 500, cursor: 'pointer', whiteSpace: 'nowrap' }}>{label}</button>
               ))}
             </div>
             {/* 3. ✍️ Auto */}
-            <button onClick={() => setFilterAuto(v => !v)} style={{ padding: '8px 10px', borderRadius: 10, background: filterAuto ? 'rgba(255,190,46,0.12)' : '#111', border: filterAuto ? '1px solid rgba(255,190,46,0.35)' : '1px solid #2a2a2a', color: filterAuto ? '#ffbe2e' : '#555', fontFamily: "'Outfit',sans-serif", fontSize: 12, fontWeight: filterAuto ? 700 : 500, cursor: 'pointer', flexShrink:0, whiteSpace:'nowrap' }}>✍️ Auto</button>
+            <button onClick={() => setFilterAuto(v => !v)} style={{ padding: '8px 10px', borderRadius: 10, background: filterAuto ? 'rgba(255,190,46,0.1)' : '#181818', border: filterAuto ? '1px solid rgba(255,190,46,0.35)' : '1px solid #2a2a2a', color: filterAuto ? '#ffbe2e' : '#555', fontFamily: "'Outfit',sans-serif", fontSize: 12, fontWeight: filterAuto ? 700 : 500, cursor: 'pointer', flexShrink:0, whiteSpace:'nowrap' }}>✍️ Auto</button>
             {/* 4. Sort */}
-            <select value={sortBy} onChange={e => setSortBy(e.target.value)} style={{ flexShrink: 0, padding: '8px 10px', borderRadius: 10, background: '#111', border: '1px solid #2a2a2a', color: '#f0f0f0', fontSize: 12, outline: 'none', fontFamily: "'Outfit',sans-serif" }}>
+            <select value={sortBy} onChange={e => setSortBy(e.target.value)} style={{ flexShrink: 0, padding: '8px 10px', borderRadius: 10, background: '#181818', border: '1px solid #2a2a2a', color: '#f0f0f0', fontSize: 12, outline: 'none', fontFamily: "'Outfit',sans-serif" }}>
               <option value="date_desc">Newest</option>
               <option value="date_asc">Oldest</option>
               <option value="price_desc">Value ↓</option>
@@ -1025,7 +1029,7 @@ function CollectionPage() {
               <option value="name_desc">Z→A</option>
             </select>
             {/* 5. Price range */}
-            <div style={{ display:'flex', alignItems:'center', gap:4, background:'#111', border:'1px solid #2a2a2a', borderRadius:10, padding:'0 8px', flexShrink:0 }}>
+            <div style={{ display:'flex', alignItems:'center', gap:4, background:'#181818', border:'1px solid #2a2a2a', borderRadius:10, padding:'0 8px', flexShrink:0 }}>
               <span style={{ fontSize:10, color:'#444', fontWeight:700 }}>$</span>
               <input type="number" placeholder="Min" value={priceMin} onChange={e => setPriceMin(e.target.value)} style={{ width:44, padding:'8px 0', background:'transparent', border:'none', color:'#f0f0f0', fontSize:12, outline:'none', fontFamily:"'JetBrains Mono',monospace" }} />
               <span style={{ fontSize:10, color:'#333' }}>—</span>
@@ -1033,13 +1037,13 @@ function CollectionPage() {
             </div>
             {/* 6. Grid / List */}
             <div style={{ display: 'flex', borderRadius: 10, overflow: 'hidden', border: '1px solid #2a2a2a', flexShrink: 0 }}>
-              <button onClick={() => setViewMode('table')} style={{ padding: '8px 10px', background: viewMode==='table' ? 'rgba(147,51,234,0.15)' : '#111', border: 'none', color: viewMode==='table' ? '#9333ea' : '#555', cursor: 'pointer', display: 'flex', alignItems: 'center' }}><IconList /></button>
-              <button onClick={() => setViewMode('grid')} style={{ padding: '8px 10px', background: viewMode==='grid' ? 'rgba(147,51,234,0.15)' : '#111', border: 'none', color: viewMode==='grid' ? '#9333ea' : '#555', cursor: 'pointer', display: 'flex', alignItems: 'center' }}><IconGrid /></button>
+              <button onClick={() => setViewMode('table')} style={{ padding: '8px 10px', background: viewMode==='table' ? 'rgba(147,51,234,0.08)' : '#181818', border: 'none', color: viewMode==='table' ? '#9333ea' : '#555', cursor: 'pointer', display: 'flex', alignItems: 'center' }}><IconList /></button>
+              <button onClick={() => setViewMode('grid')} style={{ padding: '8px 10px', background: viewMode==='grid' ? 'rgba(147,51,234,0.08)' : '#181818', border: 'none', color: viewMode==='grid' ? '#9333ea' : '#555', cursor: 'pointer', display: 'flex', alignItems: 'center' }}><IconGrid /></button>
             </div>
             {/* 7. Active / Sold / All */}
             <div style={{ display: 'flex', borderRadius: 10, overflow: 'hidden', border: '1px solid #2a2a2a', flexShrink: 0 }}>
               {[['active','Active'],['sold','Sold'],['all','All']].map(([val, label]) => (
-                <button key={val} onClick={() => setFilterStatus(val)} style={{ padding: '8px 10px', background: filterStatus===val ? 'rgba(147,51,234,0.15)' : '#111', border: 'none', color: filterStatus===val ? '#9333ea' : '#555', fontFamily: "'Outfit',sans-serif", fontSize: 12, fontWeight: filterStatus===val ? 700 : 500, cursor: 'pointer', whiteSpace: 'nowrap' }}>{label}</button>
+                <button key={val} onClick={() => setFilterStatus(val)} style={{ padding: '8px 10px', background: filterStatus===val ? 'rgba(147,51,234,0.08)' : '#181818', border: 'none', color: filterStatus===val ? '#9333ea' : '#555', fontFamily: "'Outfit',sans-serif", fontSize: 12, fontWeight: filterStatus===val ? 700 : 500, cursor: 'pointer', whiteSpace: 'nowrap' }}>{label}</button>
               ))}
             </div>
           </div>
@@ -1070,7 +1074,7 @@ function CollectionPage() {
                     { icon:'💰', label:'Track its value', sub:'Update current value anytime to see your P&L' },
                     { icon:'📊', label:'Watch your portfolio grow', sub:'Stats and insights update automatically' },
                   ].map((s,i) => (
-                    <div key={i} style={{ display:'flex', alignItems:'center', gap:12, padding:'11px 14px', background:'#111', border:'1px solid #1e1e1e', borderRadius:12, textAlign:'left', animation:`fadeUp 0.45s ease ${i*0.12}s both` }}>
+                    <div key={i} style={{ display:'flex', alignItems:'center', gap:12, padding:'11px 14px', background:'#181818', border:'1px solid #222', borderRadius:12, textAlign:'left', animation:`fadeUp 0.45s ease ${i*0.12}s both` }}>
                       <div style={{ fontSize:20, flexShrink:0 }}>{s.icon}</div>
                       <div>
                         <div style={{ fontFamily:"'Outfit',sans-serif", fontSize:13, fontWeight:700, color:'#ccc' }}>{s.label}</div>
@@ -1113,7 +1117,7 @@ function CollectionPage() {
                         {/* Status badge */}
                         <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
                           {card.grade
-                            ? <span style={{ padding: '2px 8px', borderRadius: 6, background: 'rgba(147,51,234,0.1)', color: '#9333ea', fontSize: 11, fontWeight: 700 }}>{card.grade ? card.grade : ''}</span>
+                            ? <span style={{ padding: '2px 8px', borderRadius: 6, background: 'rgba(147,51,234,0.08)', color: '#a855f7', fontSize: 9, fontWeight: 800, letterSpacing:'0.05em', border:'1px solid rgba(147,51,234,0.15)' }}>{card.grade ? card.grade : ''}</span>
                             : <span style={{ padding: '2px 8px', borderRadius: 6, background: 'rgba(255,255,255,0.05)', color: '#555', fontSize: 11, fontWeight: 600 }}>{card.cond || 'Raw'}</span>
                           }
                           {card.sold && <span style={{ padding: '2px 8px', borderRadius: 6, background: 'rgba(255,190,46,0.1)', color: '#ffbe2e', fontSize: 11, fontWeight: 700 }}>SOLD</span>}
@@ -1178,14 +1182,14 @@ function CollectionPage() {
                             </td>
                             <td style={{ padding: '12px 14px', textAlign: 'right', fontFamily: "'Outfit',sans-serif", fontSize: 12, color: '#666' }}>{card.sport||'—'}</td>
                             <td style={{ padding: '12px 14px', textAlign: 'right', fontFamily: "'JetBrains Mono',monospace", fontSize: 12, color: '#666' }}>{card.year||'—'}</td>
-                            <td style={{ padding: '12px 14px', textAlign: 'right' }}>{card.grade ? <span style={{ padding: '2px 8px', borderRadius: 6, background: 'rgba(147,51,234,0.1)', color: '#9333ea', fontSize: 11, fontWeight: 700 }}>{card.grade ? card.grade : ''}</span> : <span style={{ color: '#444', fontSize: 12 }}>{card.cond||'—'}</span>}</td>
+                            <td style={{ padding: '12px 14px', textAlign: 'right' }}>{card.grade ? <span style={{ padding: '2px 8px', borderRadius: 6, background: 'rgba(147,51,234,0.08)', color: '#a855f7', fontSize: 9, fontWeight: 800, letterSpacing:'0.05em', border:'1px solid rgba(147,51,234,0.15)' }}>{card.grade ? card.grade : ''}</span> : <span style={{ color: '#444', fontSize: 12 }}>{card.cond||'—'}</span>}</td>
                             <td style={{ padding: '12px 14px', textAlign: 'right', fontFamily: "'JetBrains Mono',monospace", fontSize: 12, color: '#666' }}>{qty}</td>
                             <td style={{ padding: '12px 14px', textAlign: 'right', fontFamily: "'JetBrains Mono',monospace", fontSize: 13, color: '#666' }}>{fmt(buy)}</td>
                             <td style={{ padding: '12px 14px', textAlign: 'right', fontFamily: "'JetBrains Mono',monospace", fontSize: 13, fontWeight: 700, color: '#f0f2ff' }}>{fmt(displayVal)}</td>
                             <td style={{ padding: '12px 14px', textAlign: 'right' }}>
                               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 3, fontFamily: "'JetBrains Mono',monospace", fontSize: 12, fontWeight: 600, color: glPos ? '#4ade80' : '#9333ea' }}>{glPos ? <IconUp /> : <IconDown />}{glPos?'+':''}{fmt(gl)}</div>
                             </td>
-                            <td style={{ padding: '12px 14px', textAlign: 'right' }}>{card.sold ? <span style={{ padding: '3px 8px', borderRadius: 6, background: 'rgba(255,190,46,0.1)', color: '#ffbe2e', fontSize: 11, fontWeight: 700 }}>SOLD</span> : <span style={{ padding: '3px 8px', borderRadius: 6, background: 'rgba(147,51,234,0.1)', color: '#9333ea', fontSize: 11, fontWeight: 700 }}>ACTIVE</span>}</td>
+                            <td style={{ padding: '12px 14px', textAlign: 'right' }}>{card.sold ? <span style={{ padding: '3px 8px', borderRadius: 6, background: 'rgba(255,190,46,0.1)', color: '#ffbe2e', fontSize: 11, fontWeight: 700 }}>SOLD</span> : <span style={{ padding: '3px 8px', borderRadius: 6, background: 'rgba(147,51,234,0.08)', color: '#a855f7', fontSize: 9, fontWeight: 800, letterSpacing:'0.05em', border:'1px solid rgba(147,51,234,0.15)' }}>ACTIVE</span>}</td>
                             <td style={{ padding: '12px 14px', textAlign: 'right' }}>
                               <div style={{ display: 'flex', gap: 5, justifyContent: 'flex-end' }}>
                                 <button onClick={() => setPriceLookupCard(card)} title="Check prices" style={{ padding: '5px 8px', borderRadius: 7, background: 'rgba(124,92,252,0.08)', border: 'none', color: '#a78bfa', cursor: 'pointer' }}><IconSearch /></button>
@@ -1246,7 +1250,7 @@ function CollectionPage() {
                         <div style={{ marginLeft: 10, flexShrink: 0 }}>
                           {card.sold
                             ? <span style={{ padding: '3px 10px', borderRadius: 6, background: 'rgba(255,190,46,0.1)', color: '#ffbe2e', fontSize: 11, fontWeight: 700 }}>SOLD</span>
-                            : <span style={{ padding: '3px 10px', borderRadius: 6, background: 'rgba(147,51,234,0.1)', color: '#9333ea', fontSize: 11, fontWeight: 700 }}>ACTIVE</span>
+                            : <span style={{ padding: '3px 10px', borderRadius: 6, background: 'rgba(147,51,234,0.08)', color: '#a855f7', fontSize: 9, fontWeight: 800, letterSpacing:'0.05em', border:'1px solid rgba(147,51,234,0.15)' }}>ACTIVE</span>
                           }
                         </div>
                       </div>
@@ -1307,12 +1311,12 @@ function CollectionPage() {
       <ToastContainer />
       {deleteId && (
         <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.7)', zIndex: 200, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16 }}>
-          <div style={{ background: '#111', border: '1px solid #2a2a2a', borderRadius: 16, padding: 28, maxWidth: 360, width: '100%', textAlign: 'center' }}>
+          <div style={{ background: '#181818', border: '1px solid #2a2a2a', borderRadius: 16, padding: 28, maxWidth: 360, width: '100%', textAlign: 'center' }}>
             <div style={{ fontSize: 28, marginBottom: 12 }}>🗑️</div>
             <h3 style={{ fontFamily: "'Outfit',sans-serif", fontSize: 17, fontWeight: 700, color: '#f0f2ff', marginBottom: 8 }}>Delete this card?</h3>
             <p style={{ fontSize: 13, color: '#555', marginBottom: 20 }}>This action cannot be undone.</p>
             <div style={{ display: 'flex', gap: 10 }}>
-              <button onClick={() => setDeleteId(null)} style={{ flex: 1, padding: 11, borderRadius: 10, background: '#1a1a1a', border: '1px solid #2a2a2a', color: '#666', fontFamily: "'Outfit',sans-serif", fontSize: 14, fontWeight: 600, cursor: 'pointer' }}>Cancel</button>
+              <button onClick={() => setDeleteId(null)} style={{ flex: 1, padding: 11, borderRadius: 10, background: '#202020', border: '1px solid #2a2a2a', color: '#666', fontFamily: "'Outfit',sans-serif", fontSize: 14, fontWeight: 600, cursor: 'pointer' }}>Cancel</button>
               <button onClick={() => handleDelete(deleteId)} style={{ flex: 1, padding: 11, borderRadius: 10, background: 'rgba(168,85,247,0.15)', border: '1px solid rgba(168,85,247,0.3)', color: '#616161', fontFamily: "'Outfit',sans-serif", fontSize: 14, fontWeight: 700, cursor: 'pointer' }}>Delete</button>
             </div>
           </div>
