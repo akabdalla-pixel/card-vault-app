@@ -33,7 +33,7 @@ export async function GET(req) {
     return NextResponse.json({
       valid: true,
       cert: cert_data.CertNumber,
-      grade: cert_data.CardGrade,
+      grade: cert_data.CardGrade ? cert_data.CardGrade.replace(/[^0-9.]/g, '').trim() : null,
       autoGrade: cert_data.AutoGrade || null,
       gradeDescription: cert_data.GradeDescription || null,
       player: cert_data.Subject || null,
