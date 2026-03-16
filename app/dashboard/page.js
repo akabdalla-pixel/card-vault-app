@@ -20,7 +20,7 @@ function ToastContainer() {
     }
     return () => { _toastFn = null }
   }, [])
-  const colors = { success: '#22c55e', error: '#e53935', info: '#888' }
+  const colors = { success: '#22c55e', error: '#9333ea', info: '#888' }
   const icons = { success: '✓', error: '✕', info: 'ℹ' }
   if (!toasts.length) return null
   return (
@@ -29,7 +29,7 @@ function ToastContainer() {
         <div key={t.id} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 18px', borderRadius: 12, background: '#1a1a1a', border: `1px solid ${colors[t.type]}40`, boxShadow: `0 8px 24px rgba(0,0,0,0.5)`, fontFamily: "'Outfit',sans-serif", fontSize: 13, fontWeight: 600, color: '#f0f0f0', pointerEvents: 'auto', animation: 'toastIn 0.2s ease', whiteSpace: 'nowrap' }}>
           <span style={{ color: colors[t.type] }}>{icons[t.type]}</span>
           {t.msg}
-          {t.onUndo && <button onClick={t.onUndo} style={{ marginLeft: 4, padding: '2px 8px', borderRadius: 6, background: 'rgba(255,255,255,0.08)', border: 'none', color: '#e53935', fontFamily: "'Outfit',sans-serif", fontSize: 12, fontWeight: 700, cursor: 'pointer', pointerEvents: 'auto' }}>Undo</button>}
+          {t.onUndo && <button onClick={t.onUndo} style={{ marginLeft: 4, padding: '2px 8px', borderRadius: 6, background: 'rgba(255,255,255,0.08)', border: 'none', color: '#9333ea', fontFamily: "'Outfit',sans-serif", fontSize: 12, fontWeight: 700, cursor: 'pointer', pointerEvents: 'auto' }}>Undo</button>}
         </div>
       ))}
     </div>
@@ -118,14 +118,14 @@ function Sidebar({ user, onLogout, active, cardCount = 0 }) {
   return (
     <aside style={{ width: 220, minHeight: '100vh', background: '#0d0d0d', borderRight: '1px solid #1e1e1e', display: 'flex', flexDirection: 'column', position: 'fixed', top: 0, left: 0, zIndex: 60 }}>
       <div style={{ padding: '16px 16px 12px', borderBottom: '1px solid #1e1e1e', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <img src={LOGO} alt="TopLoad" style={{ width: 130, height: 'auto', objectFit: 'contain', filter: 'drop-shadow(0 0 8px rgba(229,57,53,0.4))' }} />
+        <img src={LOGO} alt="TopLoad" style={{ width: 130, height: 'auto', objectFit: 'contain', filter: 'drop-shadow(0 0 8px rgba(147,51,234,0.4))' }} />
       </div>
       <nav style={{ flex: 1, padding: '14px 10px' }}>
         <div style={{ fontSize: 10, color: '#333', fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', padding: '0 12px', marginBottom: 8 }}>Menu</div>
         {_NAV.map(({ label, href }) => {
           const isActive = active === label
           const Icon = navIcons[label]
-          return <Link key={label} href={href} style={{ display: 'flex', alignItems: 'center', gap: 11, padding: '9px 12px', borderRadius: 10, marginBottom: 2, textDecoration: 'none', color: isActive ? '#e53935' : '#666', background: isActive ? 'rgba(229,57,53,0.08)' : 'transparent', fontFamily: "'Outfit',sans-serif", fontSize: 14, fontWeight: isActive ? 600 : 500, borderLeft: isActive ? '2px solid #e53935' : '2px solid transparent', transition: 'all 0.15s' }}><Icon /><span style={{flex:1}}>{label}</span>{label === 'Collection' && cardCount > 0 && <span style={{fontSize:10,fontWeight:700,background:'rgba(229,57,53,0.15)',color:'#e53935',borderRadius:6,padding:'1px 6px',fontFamily:"'JetBrains Mono',monospace"}}>{cardCount}</span>}</Link>
+          return <Link key={label} href={href} style={{ display: 'flex', alignItems: 'center', gap: 11, padding: '9px 12px', borderRadius: 10, marginBottom: 2, textDecoration: 'none', color: isActive ? '#9333ea' : '#666', background: isActive ? 'rgba(147,51,234,0.08)' : 'transparent', fontFamily: "'Outfit',sans-serif", fontSize: 14, fontWeight: isActive ? 600 : 500, borderLeft: isActive ? '2px solid #9333ea' : '2px solid transparent', transition: 'all 0.15s' }}><Icon /><span style={{flex:1}}>{label}</span>{label === 'Collection' && cardCount > 0 && <span style={{fontSize:10,fontWeight:700,background:'rgba(147,51,234,0.15)',color:'#9333ea',borderRadius:6,padding:'1px 6px',fontFamily:"'JetBrains Mono',monospace"}}>{cardCount}</span>}</Link>
         })}
       </nav>
       <div style={{ padding: '14px 10px', borderTop: '1px solid #1e1e1e' }}>
@@ -143,7 +143,7 @@ function BottomNav({ active }) {
       {_NAV.map(({ label, href }) => {
         const isActive = active === label
         const Icon = navIcons[label]
-        return <Link key={label} href={href} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 4, textDecoration: 'none', color: isActive ? '#e53935' : '#555', fontFamily: "'Outfit',sans-serif", fontSize: 9, fontWeight: isActive ? 700 : 500, letterSpacing: '0.04em', textTransform: 'uppercase', paddingBottom: 4 }}><Icon />{label === 'Sold History' ? 'Sold' : label}</Link>
+        return <Link key={label} href={href} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 4, textDecoration: 'none', color: isActive ? '#9333ea' : '#555', fontFamily: "'Outfit',sans-serif", fontSize: 9, fontWeight: isActive ? 700 : 500, letterSpacing: '0.04em', textTransform: 'uppercase', paddingBottom: 4 }}><Icon />{label === 'Sold History' ? 'Sold' : label}</Link>
       })}
     </nav>
   )
@@ -171,7 +171,7 @@ function SparklineChart({ cards }) {
   const costPath = points.map((p,i) => `${i===0?'M':'L'} ${toX(i)} ${toY(p.cost)}`).join(' ')
   const areaPath = `${valuePath} L ${W} ${H} L 0 ${H} Z`
   const isUp = totalVal >= totalCost
-  const lineColor = isUp ? '#22c55e' : '#e53935'
+  const lineColor = isUp ? '#22c55e' : '#9333ea'
   return (
     <div style={{ background: '#111', border: '1px solid #1e1e1e', borderRadius: 14, padding: '18px 20px', marginBottom: 22 }}>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 }}>
@@ -180,7 +180,7 @@ function SparklineChart({ cards }) {
           <div style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: 26, fontWeight: 700, color: '#f0f0f0', marginTop: 2 }}>{fmt(totalVal)}</div>
         </div>
         <div style={{ textAlign: 'right' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 4, justifyContent: 'flex-end', fontFamily: "'JetBrains Mono',monospace", fontSize: 14, fontWeight: 700, color: isUp ? '#22c55e' : '#e53935' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 4, justifyContent: 'flex-end', fontFamily: "'JetBrains Mono',monospace", fontSize: 14, fontWeight: 700, color: isUp ? '#22c55e' : '#9333ea' }}>
             {isUp ? <IconTrendUp /> : <IconTrendDown />}{isUp?'+':''}{fmt(totalVal-totalCost)}
           </div>
           <div style={{ fontSize: 11, color: '#444', marginTop: 2 }}>vs cost basis</div>
@@ -223,17 +223,17 @@ function QuickValueRow({ card, onUpdate }) {
         <div style={{ fontFamily: "'Outfit',sans-serif", fontSize: 13, fontWeight: 700, color: '#ccc', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{card.player}</div>
         <div style={{ fontSize: 11, color: '#444', marginTop: 1 }}>{[card.year,card.sport,card.grade?'PSA '+card.grade:card.cond].filter(Boolean).join(' · ')}</div>
       </div>
-      <div style={{ display: 'flex', alignItems: 'center', gap: 3, fontSize: 12, fontWeight: 600, color: glPos?'#22c55e':'#e53935', marginRight: 16, minWidth: 60, justifyContent: 'flex-end' }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 3, fontSize: 12, fontWeight: 600, color: glPos?'#22c55e':'#9333ea', marginRight: 16, minWidth: 60, justifyContent: 'flex-end' }}>
         {glPos?<IconTrendUp />:<IconTrendDown />}{glPos?'+':''}{glPct.toFixed(1)}%
       </div>
       {editing ? (
         <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
-          <input type="number" value={val} onChange={e => setVal(e.target.value)} autoFocus style={{ width: 90, padding: '5px 8px', borderRadius: 7, background: '#1a1a1a', border: '1px solid #e53935', color: '#f0f0f0', fontSize: 13, outline: 'none', fontFamily: "'JetBrains Mono',monospace", textAlign: 'right' }} onKeyDown={e => { if(e.key==='Enter') handleSave(); if(e.key==='Escape') setEditing(false) }} />
-          <button onClick={handleSave} disabled={saving} style={{ padding: '5px 8px', borderRadius: 7, background: 'rgba(229,57,53,0.15)', border: 'none', color: '#e53935', cursor: 'pointer' }}><IconCheck /></button>
+          <input type="number" value={val} onChange={e => setVal(e.target.value)} autoFocus style={{ width: 90, padding: '5px 8px', borderRadius: 7, background: '#1a1a1a', border: '1px solid #9333ea', color: '#f0f0f0', fontSize: 13, outline: 'none', fontFamily: "'JetBrains Mono',monospace", textAlign: 'right' }} onKeyDown={e => { if(e.key==='Enter') handleSave(); if(e.key==='Escape') setEditing(false) }} />
+          <button onClick={handleSave} disabled={saving} style={{ padding: '5px 8px', borderRadius: 7, background: 'rgba(147,51,234,0.15)', border: 'none', color: '#9333ea', cursor: 'pointer' }}><IconCheck /></button>
         </div>
       ) : (
         <div onClick={() => setEditing(true)} style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: 14, fontWeight: 700, color: '#f0f0f0', cursor: 'pointer', padding: '4px 8px', borderRadius: 7, border: '1px solid transparent', transition: 'all 0.15s' }}
-          onMouseEnter={e => { e.currentTarget.style.borderColor='rgba(229,57,53,0.4)'; e.currentTarget.style.background='rgba(229,57,53,0.06)' }}
+          onMouseEnter={e => { e.currentTarget.style.borderColor='rgba(147,51,234,0.4)'; e.currentTarget.style.background='rgba(147,51,234,0.06)' }}
           onMouseLeave={e => { e.currentTarget.style.borderColor='transparent'; e.currentTarget.style.background='transparent' }}>
           {fmt(current)}
         </div>
@@ -254,7 +254,7 @@ function TopMovers({ cards }) {
         <div style={{ fontSize: 10, color: '#444' }}>{card.year} {card.sport}</div>
       </div>
       <div style={{ textAlign: 'right', marginLeft: 12 }}>
-        <div style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: 13, fontWeight: 700, color: isGainer?'#22c55e':'#e53935' }}>{isGainer?'+':''}{card.pct.toFixed(1)}%</div>
+        <div style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: 13, fontWeight: 700, color: isGainer?'#22c55e':'#9333ea' }}>{isGainer?'+':''}{card.pct.toFixed(1)}%</div>
         <div style={{ fontSize: 10, color: '#444', fontFamily: "'JetBrains Mono',monospace" }}>{isGainer?'+':''}{fmt(card.gl)}</div>
       </div>
     </div>
@@ -262,7 +262,7 @@ function TopMovers({ cards }) {
   return (
     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 22 }}>
       <div style={{ background: '#111', border: '1px solid #1e1e1e', borderRadius: 14, padding: '16px 18px' }}>
-        <div style={{ fontFamily: "'Outfit',sans-serif", fontSize: 12, fontWeight: 700, color: '#e53935', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 10 }}>🚀 Top Gainers</div>
+        <div style={{ fontFamily: "'Outfit',sans-serif", fontSize: 12, fontWeight: 700, color: '#9333ea', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 10 }}>🚀 Top Gainers</div>
         {gainers.length ? gainers.map(c=><MoverRow key={c.id} card={c} isGainer={true}/>) : <div style={{ color:'#333',fontSize:12 }}>No gainers yet</div>}
       </div>
       <div style={{ background: '#111', border: '1px solid #1e1e1e', borderRadius: 14, padding: '16px 18px' }}>
@@ -278,7 +278,7 @@ function StatCard({ label, value, sub, positive, style = {} }) {
     <div style={{ background: '#111', border: '1px solid #1e1e1e', borderRadius: 14, padding: '16px 18px', ...style }}>
       <div style={{ fontSize: 10, fontWeight: 700, color: '#333', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: 10 }}>{label}</div>
       <div style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: 22, fontWeight: 700, color: '#f0f0f0', letterSpacing: '-0.5px', lineHeight: 1 }}>{value}</div>
-      {sub && <div style={{ display: 'flex', alignItems: 'center', gap: 4, marginTop: 8, fontSize: 11, fontFamily: "'Outfit',sans-serif", fontWeight: 600, color: positive===true?'#22c55e':positive===false?'#e53935':'#444' }}>
+      {sub && <div style={{ display: 'flex', alignItems: 'center', gap: 4, marginTop: 8, fontSize: 11, fontFamily: "'Outfit',sans-serif", fontWeight: 600, color: positive===true?'#22c55e':positive===false?'#9333ea':'#444' }}>
         {positive===true&&<IconTrendUp />}{positive===false&&<IconTrendDown />}{sub}
       </div>}
     </div>
@@ -392,16 +392,16 @@ export default function DashboardPage() {
       <div style={{ display:'flex',minHeight:'100vh',background:'#0a0a0a' }}>
         <div className="sidebar-el"><Sidebar user={user} onLogout={handleLogout} active="Dashboard" cardCount={activeCards.length} /></div>        <main className="main-wrap" style={{ padding:'28px 28px 40px' }}>
           <div className="mob-topbar" style={{ alignItems:'center',justifyContent:'space-between',marginBottom:16 }}>
-            <img src={LOGO} alt="TopLoad" style={{ height:32,width:'auto',objectFit:'contain',filter:'drop-shadow(0 0 8px rgba(229,57,53,0.4))' }} />
-            <Link href="/collection" style={{ display:'flex',alignItems:'center',gap:6,padding:'8px 14px',background:'rgba(229,57,53,0.1)',border:'1px solid rgba(229,57,53,0.25)',borderRadius:10,color:'#e53935',fontFamily:"'Outfit',sans-serif",fontSize:13,fontWeight:700,textDecoration:'none' }}>+ Add Card</Link>
+            <img src={LOGO} alt="TopLoad" style={{ height:32,width:'auto',objectFit:'contain',filter:'drop-shadow(0 0 8px rgba(147,51,234,0.4))' }} />
+            <Link href="/collection" style={{ display:'flex',alignItems:'center',gap:6,padding:'8px 14px',background:'rgba(147,51,234,0.1)',border:'1px solid rgba(147,51,234,0.25)',borderRadius:10,color:'#9333ea',fontFamily:"'Outfit',sans-serif",fontSize:13,fontWeight:700,textDecoration:'none' }}>+ Add Card</Link>
           </div>
 
           {/* ── Mobile: Big Value Hero ── */}
-          <div className="mob-chart" style={{ background:'linear-gradient(135deg,#1a0505,#0d0d0d)',border:'1px solid rgba(229,57,53,0.15)',borderRadius:16,padding:'20px 18px',marginBottom:14 }}>
+          <div className="mob-chart" style={{ background:'linear-gradient(135deg,#1a0505,#0d0d0d)',border:'1px solid rgba(147,51,234,0.15)',borderRadius:16,padding:'20px 18px',marginBottom:14 }}>
             <div style={{ fontSize:12,color:'#555',fontFamily:"'Outfit',sans-serif",fontWeight:600,marginBottom:4 }}>Portfolio Value</div>
             <div style={{ fontFamily:"'JetBrains Mono',monospace",fontSize:36,fontWeight:800,color:'#f0f0f0',letterSpacing:'-1px',lineHeight:1 }}>{fmt(currentValue)}</div>
             <div style={{ display:'flex',alignItems:'center',gap:6,marginTop:8 }}>
-              <div style={{ display:'flex',alignItems:'center',gap:4,fontFamily:"'JetBrains Mono',monospace",fontSize:14,fontWeight:700,color:gainPos?'#22c55e':'#e53935' }}>
+              <div style={{ display:'flex',alignItems:'center',gap:4,fontFamily:"'JetBrains Mono',monospace",fontSize:14,fontWeight:700,color:gainPos?'#22c55e':'#9333ea' }}>
                 {gainPos?'▲':'▼'} {gainPos?'+':''}{fmt(gainLoss)}
               </div>
               <div style={{ fontSize:12,color:'#555',fontFamily:"'Outfit',sans-serif" }}>({gainPos?'+':''}{portfolioReturn.toFixed(1)}%)</div>
@@ -409,7 +409,7 @@ export default function DashboardPage() {
             <div style={{ display:'flex',gap:16,marginTop:14,paddingTop:14,borderTop:'1px solid rgba(255,255,255,0.05)' }}>
               <div><div style={{ fontSize:10,color:'#444',fontFamily:"'Outfit',sans-serif",fontWeight:700,textTransform:'uppercase',letterSpacing:'0.08em',marginBottom:3 }}>Invested</div><div style={{ fontFamily:"'JetBrains Mono',monospace",fontSize:14,color:'#888' }}>{fmt(totalInvested)}</div></div>
               <div><div style={{ fontSize:10,color:'#444',fontFamily:"'Outfit',sans-serif",fontWeight:700,textTransform:'uppercase',letterSpacing:'0.08em',marginBottom:3 }}>Cards</div><div style={{ fontFamily:"'JetBrains Mono',monospace",fontSize:14,color:'#888' }}>{activeCards.length}</div></div>
-              <div><div style={{ fontSize:10,color:'#444',fontFamily:"'Outfit',sans-serif",fontWeight:700,textTransform:'uppercase',letterSpacing:'0.08em',marginBottom:3 }}>Realized P&L</div><div style={{ fontFamily:"'JetBrains Mono',monospace",fontSize:14,color:realizedPL>=0?'#22c55e':'#e53935' }}>{realizedPL>=0?'+':''}{fmt(realizedPL)}</div></div>
+              <div><div style={{ fontSize:10,color:'#444',fontFamily:"'Outfit',sans-serif",fontWeight:700,textTransform:'uppercase',letterSpacing:'0.08em',marginBottom:3 }}>Realized P&L</div><div style={{ fontFamily:"'JetBrains Mono',monospace",fontSize:14,color:realizedPL>=0?'#22c55e':'#9333ea' }}>{realizedPL>=0?'+':''}{fmt(realizedPL)}</div></div>
             </div>
           </div>
 
@@ -419,9 +419,9 @@ export default function DashboardPage() {
               { label:'Active Cards', value: activeCards.length },
               { label:'Total Invested', value: fmt(totalInvested) },
               { label:'Current Value', value: fmt(currentValue) },
-              { label:'Unrealized G/L', value: `${gainPos?'+':''}${fmt(gainLoss)}`, color: gainPos?'#22c55e':'#e53935' },
-              { label:'Return', value: `${retPos?'+':''}${portfolioReturn.toFixed(1)}%`, color: retPos?'#22c55e':'#e53935' },
-              { label:'Realized P&L', value: `${realizedPL>=0?'+':''}${fmt(realizedPL)}`, color: realizedPL>=0?'#22c55e':'#e53935' },
+              { label:'Unrealized G/L', value: `${gainPos?'+':''}${fmt(gainLoss)}`, color: gainPos?'#22c55e':'#9333ea' },
+              { label:'Return', value: `${retPos?'+':''}${portfolioReturn.toFixed(1)}%`, color: retPos?'#22c55e':'#9333ea' },
+              { label:'Realized P&L', value: `${realizedPL>=0?'+':''}${fmt(realizedPL)}`, color: realizedPL>=0?'#22c55e':'#9333ea' },
             ].map((s,i) => (
               <div key={i} style={{ flexShrink:0,background:'#111',border:'1px solid #1e1e1e',borderRadius:12,padding:'12px 14px',minWidth:130 }}>
                 <div style={{ fontSize:9,color:'#444',fontWeight:700,textTransform:'uppercase',letterSpacing:'0.1em',marginBottom:6,fontFamily:"'Outfit',sans-serif" }}>{s.label}</div>
@@ -435,8 +435,8 @@ export default function DashboardPage() {
               <p style={{ fontSize:13,color:'#555',marginTop:4,fontWeight:500 }}>{activeCards.length===0?"Add your first card to get started":`Tracking ${activeCards.length} active card${activeCards.length!==1?'s':''}`}</p>
             </div>
             <div style={{ display:'flex',gap:8 }}>
-              {!installed && <button onClick={installPrompt?handleInstall:()=>setShowInstallModal(true)} style={{ display:'flex',alignItems:'center',gap:7,padding:'9px 14px',background:'rgba(229,57,53,0.08)',border:'1px solid rgba(229,57,53,0.2)',borderRadius:10,color:'#e53935',fontFamily:"'Outfit',sans-serif",fontSize:13,fontWeight:600,cursor:'pointer' }}>📲 Install App</button>}
-              <Link href="/collection" style={{ display:'flex',alignItems:'center',gap:7,padding:'9px 14px',background:'rgba(229,57,53,0.08)',border:'1px solid rgba(229,57,53,0.25)',borderRadius:10,color:'#e53935',fontFamily:"'Outfit',sans-serif",fontSize:13,fontWeight:600,textDecoration:'none' }}>+ Add Card</Link>
+              {!installed && <button onClick={installPrompt?handleInstall:()=>setShowInstallModal(true)} style={{ display:'flex',alignItems:'center',gap:7,padding:'9px 14px',background:'rgba(147,51,234,0.08)',border:'1px solid rgba(147,51,234,0.2)',borderRadius:10,color:'#9333ea',fontFamily:"'Outfit',sans-serif",fontSize:13,fontWeight:600,cursor:'pointer' }}>📲 Install App</button>}
+              <Link href="/collection" style={{ display:'flex',alignItems:'center',gap:7,padding:'9px 14px',background:'rgba(147,51,234,0.08)',border:'1px solid rgba(147,51,234,0.25)',borderRadius:10,color:'#9333ea',fontFamily:"'Outfit',sans-serif",fontSize:13,fontWeight:600,textDecoration:'none' }}>+ Add Card</Link>
             </div>
           </div>
           {cards.length>0&&<div className="desk-chart"><SparklineChart cards={cards} /></div>}
@@ -464,16 +464,16 @@ export default function DashboardPage() {
             const today = new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })
             return (
               <Link href={`/collection?search=${encodeURIComponent(cardOfTheDay.player)}`} style={{ textDecoration:'none', display:'block' }}>
-              <div style={{ marginTop:22, animation:'scaleIn 0.3s ease', background:'linear-gradient(135deg,#1a0a0a,#0d0d0d)', border:'1px solid rgba(229,57,53,0.2)', borderRadius:14, padding:'18px 22px', position:'relative', overflow:'hidden', cursor:'pointer', transition:'border-color 0.15s' }}
-                onMouseEnter={e=>e.currentTarget.style.borderColor='rgba(229,57,53,0.5)'}
-                onMouseLeave={e=>e.currentTarget.style.borderColor='rgba(229,57,53,0.2)'}>
-                <div style={{ position:'absolute', top:0, left:0, right:0, height:2, background:'linear-gradient(90deg,#e53935,#ff5252,#e53935)' }} />
+              <div style={{ marginTop:22, animation:'scaleIn 0.3s ease', background:'linear-gradient(135deg,#1a0a0a,#0d0d0d)', border:'1px solid rgba(147,51,234,0.2)', borderRadius:14, padding:'18px 22px', position:'relative', overflow:'hidden', cursor:'pointer', transition:'border-color 0.15s' }}
+                onMouseEnter={e=>e.currentTarget.style.borderColor='rgba(147,51,234,0.5)'}
+                onMouseLeave={e=>e.currentTarget.style.borderColor='rgba(147,51,234,0.2)'}>
+                <div style={{ position:'absolute', top:0, left:0, right:0, height:2, background:'linear-gradient(90deg,#9333ea,#a855f7,#9333ea)' }} />
               <div style={{ display:'flex', alignItems:'flex-start', justifyContent:'space-between', flexWrap:'wrap', gap:12 }}>
                   <div style={{ flex:1, minWidth:0 }}>
                     <div style={{ display:'flex', alignItems:'center', gap:8, marginBottom:8 }}>
                       <span style={{ fontSize:18 }}>🃏</span>
                       <div>
-                        <div style={{ fontFamily:"'Outfit',sans-serif", fontSize:10, fontWeight:700, color:'#e53935', textTransform:'uppercase', letterSpacing:'0.1em' }}>Card of the Day</div>
+                        <div style={{ fontFamily:"'Outfit',sans-serif", fontSize:10, fontWeight:700, color:'#9333ea', textTransform:'uppercase', letterSpacing:'0.1em' }}>Card of the Day</div>
                         <div style={{ fontSize:10, color:'#444', fontFamily:"'Outfit',sans-serif", marginTop:1 }}>{today}</div>
                       </div>
                     </div>
@@ -481,7 +481,7 @@ export default function DashboardPage() {
                     <div style={{ fontSize:12, color:'#555', marginTop:4, fontFamily:"'Outfit',sans-serif" }}>
                       {[cardOfTheDay.year, cardOfTheDay.sport, cardOfTheDay.brand, cardOfTheDay.grade ? `Grade ${cardOfTheDay.grade}` : cardOfTheDay.cond].filter(Boolean).join(' · ')}
                     </div>
-                    <div style={{ fontSize:10, color:'#e53935', marginTop:6, fontFamily:"'Outfit',sans-serif", fontWeight:600, opacity:0.7 }}>View in Collection →</div>
+                    <div style={{ fontSize:10, color:'#9333ea', marginTop:6, fontFamily:"'Outfit',sans-serif", fontWeight:600, opacity:0.7 }}>View in Collection →</div>
                   </div>
                   <div style={{ display:'flex', gap:14, flexShrink:0, flexWrap:'wrap' }}>
                     <div style={{ textAlign:'right' }}>
@@ -494,7 +494,7 @@ export default function DashboardPage() {
                     </div>
                     <div style={{ textAlign:'right' }}>
                       <div style={{ fontSize:10, color:'#444', fontWeight:700, textTransform:'uppercase', letterSpacing:'0.08em', marginBottom:4, fontFamily:"'Outfit',sans-serif" }}>G/L</div>
-                      <div style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:14, fontWeight:700, color: glPos?'#22c55e':'#e53935' }}>{glPos?'+':''}{glPct.toFixed(1)}%</div>
+                      <div style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:14, fontWeight:700, color: glPos?'#22c55e':'#9333ea' }}>{glPos?'+':''}{glPct.toFixed(1)}%</div>
                     </div>
                   </div>
                 </div>
@@ -512,7 +512,7 @@ export default function DashboardPage() {
                 </div>
                 <div>
                   {activeCards.slice(0,3).map(card=><QuickValueRow key={card.id} card={card} onUpdate={loadData} />)}
-                  {activeCards.length>3&&<div style={{ padding:'10px 16px',borderTop:'1px solid #1e1e1e' }}><Link href="/collection" style={{ fontSize:12,color:'#e53935',textDecoration:'none',fontFamily:"'Outfit',sans-serif",fontWeight:600 }}>View all {activeCards.length} cards →</Link></div>}
+                  {activeCards.length>3&&<div style={{ padding:'10px 16px',borderTop:'1px solid #1e1e1e' }}><Link href="/collection" style={{ fontSize:12,color:'#9333ea',textDecoration:'none',fontFamily:"'Outfit',sans-serif",fontWeight:600 }}>View all {activeCards.length} cards →</Link></div>}
                 </div>
               </div>
             )}
@@ -532,7 +532,7 @@ export default function DashboardPage() {
                         <td style={{ padding:'11px 16px',textAlign:'right',fontFamily:"'JetBrains Mono',monospace",fontSize:12,color:'#666' }}>{d.cards}</td>
                         <td style={{ padding:'11px 16px',textAlign:'right',fontFamily:"'JetBrains Mono',monospace",fontSize:12,color:'#666' }}>{fmt(d.invested)}</td>
                         <td style={{ padding:'11px 16px',textAlign:'right',fontFamily:"'JetBrains Mono',monospace",fontSize:13,fontWeight:700,color:'#f0f0f0' }}>{fmt(d.value)}</td>
-                        <td style={{ padding:'11px 16px',textAlign:'right',fontFamily:"'JetBrains Mono',monospace",fontSize:12,fontWeight:600,color:gl>=0?'#22c55e':'#e53935' }}>{gl>=0?'+':''}{fmt(gl)}</td>
+                        <td style={{ padding:'11px 16px',textAlign:'right',fontFamily:"'JetBrains Mono',monospace",fontSize:12,fontWeight:600,color:gl>=0?'#22c55e':'#9333ea' }}>{gl>=0?'+':''}{fmt(gl)}</td>
                       </tr>
                     })}
                   </tbody>
@@ -547,12 +547,12 @@ export default function DashboardPage() {
       {showInstallModal&&(
         <div style={{ position:'fixed',inset:0,background:'rgba(0,0,0,0.85)',zIndex:200,display:'flex',alignItems:'center',justifyContent:'center',padding:16 }}>
           <div style={{ background:'#111',border:'1px solid #2a2a2a',borderRadius:16,padding:28,maxWidth:360,width:'100%',textAlign:'center' }}>
-            <img src={LOGO} alt="TopLoad" style={{ width:100,marginBottom:16,filter:'drop-shadow(0 0 8px rgba(229,57,53,0.4))' }} />
+            <img src={LOGO} alt="TopLoad" style={{ width:100,marginBottom:16,filter:'drop-shadow(0 0 8px rgba(147,51,234,0.4))' }} />
             <h3 style={{ fontFamily:"'Outfit',sans-serif",fontSize:18,fontWeight:700,color:'#f0f0f0',marginBottom:8 }}>Install TopLoad</h3>
             <p style={{ fontSize:13,color:'#666',marginBottom:20,lineHeight:1.6 }}>Add to your home screen for the full app experience.</p>
             <div style={{ textAlign:'left',display:'flex',flexDirection:'column',gap:10,marginBottom:24 }}>
               <div style={{ padding:'12px 14px',borderRadius:10,background:'#1a1a1a',border:'1px solid #2a2a2a' }}>
-                <div style={{ fontSize:11,fontWeight:700,color:'#e53935',marginBottom:4,textTransform:'uppercase',letterSpacing:'0.08em' }}>📱 iPhone · Safari</div>
+                <div style={{ fontSize:11,fontWeight:700,color:'#9333ea',marginBottom:4,textTransform:'uppercase',letterSpacing:'0.08em' }}>📱 iPhone · Safari</div>
                 <div style={{ fontSize:12,color:'#777',lineHeight:1.6 }}>Tap <strong style={{ color:'#ccc' }}>Share</strong> → <strong style={{ color:'#ccc' }}>Add to Home Screen</strong></div>
               </div>
               <div style={{ padding:'12px 14px',borderRadius:10,background:'#1a1a1a',border:'1px solid #2a2a2a' }}>
@@ -560,7 +560,7 @@ export default function DashboardPage() {
                 <div style={{ fontSize:12,color:'#777',lineHeight:1.6 }}>Tap <strong style={{ color:'#ccc' }}>⋮ menu</strong> → <strong style={{ color:'#ccc' }}>Add to Home Screen</strong></div>
               </div>
             </div>
-            <button onClick={()=>setShowInstallModal(false)} style={{ width:'100%',padding:12,borderRadius:10,background:'linear-gradient(135deg,#e53935,#ff5252)',border:'none',color:'#fff',fontFamily:"'Outfit',sans-serif",fontSize:14,fontWeight:700,cursor:'pointer' }}>Got it!</button>
+            <button onClick={()=>setShowInstallModal(false)} style={{ width:'100%',padding:12,borderRadius:10,background:'linear-gradient(135deg,#9333ea,#a855f7)',border:'none',color:'#fff',fontFamily:"'Outfit',sans-serif",fontSize:14,fontWeight:700,cursor:'pointer' }}>Got it!</button>
           </div>
         </div>
       )}

@@ -40,7 +40,7 @@ function ToastContainer() {
     }
     return () => { _toastFn = null }
   }, [])
-  const colors = { success: '#22c55e', error: '#e53935', info: '#888' }
+  const colors = { success: '#22c55e', error: '#9333ea', info: '#888' }
   const icons = { success: '✓', error: '✕', info: 'ℹ' }
   if (!toasts.length) return null
   return (
@@ -58,18 +58,18 @@ function Sidebar({ user, onLogout, cardCount = 0 }) {
   return (
     <aside style={{ width:220, minHeight:'100vh', background:'#0d0d0d', borderRight:'1px solid #1e1e1e', display:'flex', flexDirection:'column', position:'fixed', top:0, left:0, zIndex:60 }}>
       <div style={{ padding:'16px 16px 12px', borderBottom:'1px solid #1e1e1e', display:'flex', alignItems:'center', justifyContent:'center' }}>
-        <img src={LOGO} alt="TopLoad" style={{ width:130, height:'auto', objectFit:'contain', filter:'drop-shadow(0 0 8px rgba(229,57,53,0.4))' }} />
+        <img src={LOGO} alt="TopLoad" style={{ width:130, height:'auto', objectFit:'contain', filter:'drop-shadow(0 0 8px rgba(147,51,234,0.4))' }} />
       </div>
       <nav style={{ flex:1, padding:'14px 10px' }}>
         <div style={{ fontSize:10, color:'#333', fontWeight:700, letterSpacing:'0.1em', textTransform:'uppercase', padding:'0 12px', marginBottom:8 }}>Menu</div>
         {NAV.map(({ label, href }) => {
           const Icon = navIcons[label]
-          return <Link key={label} href={href} style={{ display:'flex', alignItems:'center', gap:11, padding:'9px 12px', borderRadius:10, marginBottom:2, textDecoration:'none', color:'#666', background:'transparent', fontFamily:"'Outfit',sans-serif", fontSize:14, fontWeight:500, borderLeft:'2px solid transparent', transition:'all 0.15s' }}><Icon /><span style={{flex:1}}>{label}</span>{label==='Collection'&&cardCount>0&&<span style={{fontSize:10,fontWeight:700,background:'rgba(229,57,53,0.15)',color:'#e53935',borderRadius:6,padding:'1px 6px',fontFamily:"'JetBrains Mono',monospace"}}>{cardCount}</span>}</Link>
+          return <Link key={label} href={href} style={{ display:'flex', alignItems:'center', gap:11, padding:'9px 12px', borderRadius:10, marginBottom:2, textDecoration:'none', color:'#666', background:'transparent', fontFamily:"'Outfit',sans-serif", fontSize:14, fontWeight:500, borderLeft:'2px solid transparent', transition:'all 0.15s' }}><Icon /><span style={{flex:1}}>{label}</span>{label==='Collection'&&cardCount>0&&<span style={{fontSize:10,fontWeight:700,background:'rgba(147,51,234,0.15)',color:'#9333ea',borderRadius:6,padding:'1px 6px',fontFamily:"'JetBrains Mono',monospace"}}>{cardCount}</span>}</Link>
         })}
       </nav>
       <div style={{ padding:'14px 10px', borderTop:'1px solid #1e1e1e' }}>
         {user && <div style={{ padding:'10px 12px', marginBottom:4, borderRadius:10, background:'rgba(255,255,255,0.03)' }}><div style={{ fontSize:12, fontWeight:700, color:'#ccc', fontFamily:"'Outfit',sans-serif" }}>@{user.username}</div><div style={{ fontSize:11, color:'#444', marginTop:1, fontFamily:"'Outfit',sans-serif" }}>{user.email}</div></div>}
-        <Link href="/settings" style={{ display:'flex', alignItems:'center', gap:11, padding:'9px 12px', borderRadius:10, marginBottom:2, textDecoration:'none', color:'#e53935', background:'rgba(229,57,53,0.08)', borderLeft:'2px solid #e53935', fontFamily:"'Outfit',sans-serif", fontSize:14, fontWeight:600 }}><IconSettings />Settings</Link>
+        <Link href="/settings" style={{ display:'flex', alignItems:'center', gap:11, padding:'9px 12px', borderRadius:10, marginBottom:2, textDecoration:'none', color:'#9333ea', background:'rgba(147,51,234,0.08)', borderLeft:'2px solid #9333ea', fontFamily:"'Outfit',sans-serif", fontSize:14, fontWeight:600 }}><IconSettings />Settings</Link>
         <button onClick={onLogout} style={{ display:'flex', alignItems:'center', gap:11, padding:'9px 12px', borderRadius:10, width:'100%', background:'transparent', border:'none', cursor:'pointer', color:'#555', fontFamily:"'Outfit',sans-serif", fontSize:14, fontWeight:500 }}><IconLogout />Sign Out</button>
       </div>
     </aside>
@@ -82,7 +82,7 @@ function BottomNav() {
       {[...NAV, { label:'Settings', href:'/settings' }].slice(0,4).map(({ label, href }) => {
         const Icon = navIcons[label] || IconSettings
         const isActive = label === 'Settings'
-        return <Link key={label} href={href} style={{ flex:1, display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', gap:4, textDecoration:'none', color:isActive?'#e53935':'#555', fontFamily:"'Outfit',sans-serif", fontSize:9, fontWeight:isActive?700:500, letterSpacing:'0.04em', textTransform:'uppercase', paddingBottom:4 }}><Icon />{label==='Sold History'?'Sold':label}</Link>
+        return <Link key={label} href={href} style={{ flex:1, display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', gap:4, textDecoration:'none', color:isActive?'#9333ea':'#555', fontFamily:"'Outfit',sans-serif", fontSize:9, fontWeight:isActive?700:500, letterSpacing:'0.04em', textTransform:'uppercase', paddingBottom:4 }}><Icon />{label==='Sold History'?'Sold':label}</Link>
       })}
     </nav>
   )
@@ -91,12 +91,12 @@ function BottomNav() {
 // ── Section Card ──────────────────────────────────────────────
 function Section({ title, subtitle, icon, children, danger = false }) {
   return (
-    <div style={{ background: danger ? 'linear-gradient(135deg,#1a0808,#0d0d0d)' : 'linear-gradient(135deg,#111,#0d0d0d)', border: `1px solid ${danger ? 'rgba(229,57,53,0.25)' : '#1e1e1e'}`, borderRadius:14, padding:22, position:'relative', overflow:'hidden' }}>
-      {danger && <div style={{ position:'absolute', top:0, left:0, right:0, height:2, background:'linear-gradient(90deg,#e53935,#ff5252)' }} />}
+    <div style={{ background: danger ? 'linear-gradient(135deg,#1a0808,#0d0d0d)' : 'linear-gradient(135deg,#111,#0d0d0d)', border: `1px solid ${danger ? 'rgba(147,51,234,0.25)' : '#1e1e1e'}`, borderRadius:14, padding:22, position:'relative', overflow:'hidden' }}>
+      {danger && <div style={{ position:'absolute', top:0, left:0, right:0, height:2, background:'linear-gradient(90deg,#9333ea,#a855f7)' }} />}
       <div style={{ display:'flex', alignItems:'center', gap:10, marginBottom:16 }}>
         {icon && <span style={{ fontSize:18 }}>{icon}</span>}
         <div>
-          <h2 style={{ fontFamily:"'Outfit',sans-serif", fontSize:14, fontWeight:700, color: danger ? '#ff5252' : '#ccc', margin:0 }}>{title}</h2>
+          <h2 style={{ fontFamily:"'Outfit',sans-serif", fontSize:14, fontWeight:700, color: danger ? '#a855f7' : '#ccc', margin:0 }}>{title}</h2>
           {subtitle && <p style={{ fontSize:12, color:'#444', margin:'3px 0 0', fontFamily:"'Outfit',sans-serif" }}>{subtitle}</p>}
         </div>
       </div>
@@ -221,7 +221,7 @@ export default function SettingsPage() {
     <div style={{ display:'flex', minHeight:'100vh', background:'#0a0a0a' }}>
       <div className="sidebar-el" style={{ width:220, minHeight:'100vh', background:'#0d0d0d', borderRight:'1px solid #1e1e1e', flexShrink:0 }} />
       <div style={{ flex:1, display:'flex', alignItems:'center', justifyContent:'center' }}>
-        <img src={LOGO} alt="TopLoad" style={{ width:100, opacity:0.3, filter:'drop-shadow(0 0 8px rgba(229,57,53,0.4))' }} />
+        <img src={LOGO} alt="TopLoad" style={{ width:100, opacity:0.3, filter:'drop-shadow(0 0 8px rgba(147,51,234,0.4))' }} />
       </div>
     </div>
   )
@@ -257,7 +257,7 @@ export default function SettingsPage() {
         <main className="main-wrap" style={{ padding:'30px 28px' }}>
           {/* Mobile topbar */}
           <div className="mob-topbar" style={{ alignItems:'center', justifyContent:'space-between', marginBottom:20 }}>
-            <img src={LOGO} alt="TopLoad" style={{ height:32, filter:'drop-shadow(0 0 8px rgba(229,57,53,0.4))' }} />
+            <img src={LOGO} alt="TopLoad" style={{ height:32, filter:'drop-shadow(0 0 8px rgba(147,51,234,0.4))' }} />
             <div style={{ fontFamily:"'Outfit',sans-serif", fontSize:16, fontWeight:800, color:'#f0f0f0' }}>Settings</div>
             <div style={{ width:32 }} />
           </div>
@@ -290,9 +290,9 @@ export default function SettingsPage() {
                     { label:'Active Cards', value: activeCards.length },
                     { label:'Total Invested', value: fmt(totalInvested) },
                     { label:'Current Value', value: fmt(totalValue) },
-                    { label:'Unrealized G/L', value: `${totalValue-totalInvested>=0?'+':''}${fmt(totalValue-totalInvested)}`, color: totalValue>=totalInvested?'#22c55e':'#e53935' },
+                    { label:'Unrealized G/L', value: `${totalValue-totalInvested>=0?'+':''}${fmt(totalValue-totalInvested)}`, color: totalValue>=totalInvested?'#22c55e':'#9333ea' },
                     { label:'Cards Sold', value: soldCards.length },
-                    { label:'Realized P&L', value: `${realizedPL>=0?'+':''}${fmt(realizedPL)}`, color: realizedPL>=0?'#22c55e':'#e53935' },
+                    { label:'Realized P&L', value: `${realizedPL>=0?'+':''}${fmt(realizedPL)}`, color: realizedPL>=0?'#22c55e':'#9333ea' },
                   ].map((s,i) => (
                     <div key={i} style={{ background:'#1a1a1a', borderRadius:10, padding:'12px 14px', animation:`fadeUp 0.3s ease ${i*0.06}s both` }}>
                       <div style={{ fontSize:9, color:'#444', fontWeight:700, textTransform:'uppercase', letterSpacing:'0.08em', marginBottom:4, fontFamily:"'Outfit',sans-serif" }}>{s.label}</div>
@@ -306,7 +306,7 @@ export default function SettingsPage() {
             {/* ── Change Password ── */}
             <Section title="Change Password" subtitle="Update your login password" icon="🔒">
               <form onSubmit={handleChangePassword} style={{ display:'flex', flexDirection:'column', gap:12 }}>
-                {pwError && <div style={{ padding:'10px 14px', borderRadius:10, background:'rgba(229,57,53,0.08)', border:'1px solid rgba(229,57,53,0.2)', color:'#e53935', fontSize:13, fontFamily:"'Outfit',sans-serif" }}>{pwError}</div>}
+                {pwError && <div style={{ padding:'10px 14px', borderRadius:10, background:'rgba(147,51,234,0.08)', border:'1px solid rgba(147,51,234,0.2)', color:'#9333ea', fontSize:13, fontFamily:"'Outfit',sans-serif" }}>{pwError}</div>}
                 <div>
                   <div style={{ fontSize:10, fontWeight:700, color:'#444', textTransform:'uppercase', letterSpacing:'0.08em', marginBottom:6, fontFamily:"'Outfit',sans-serif" }}>Current Password</div>
                   {pwInput('current', 'Enter current password')}
@@ -319,7 +319,7 @@ export default function SettingsPage() {
                   <div style={{ fontSize:10, fontWeight:700, color:'#444', textTransform:'uppercase', letterSpacing:'0.08em', marginBottom:6, fontFamily:"'Outfit',sans-serif" }}>Confirm New Password</div>
                   {pwInput('confirm', 'Repeat new password')}
                 </div>
-                <button type="submit" disabled={pwLoading || !pwForm.current || !pwForm.next || !pwForm.confirm} style={{ display:'flex', alignItems:'center', justifyContent:'center', gap:8, padding:'11px 20px', borderRadius:10, background:'rgba(229,57,53,0.1)', border:'1px solid rgba(229,57,53,0.3)', color:'#e53935', fontFamily:"'Outfit',sans-serif", fontSize:14, fontWeight:700, cursor:'pointer', opacity: (!pwForm.current||!pwForm.next||!pwForm.confirm) ? 0.4 : 1 }}>
+                <button type="submit" disabled={pwLoading || !pwForm.current || !pwForm.next || !pwForm.confirm} style={{ display:'flex', alignItems:'center', justifyContent:'center', gap:8, padding:'11px 20px', borderRadius:10, background:'rgba(147,51,234,0.1)', border:'1px solid rgba(147,51,234,0.3)', color:'#9333ea', fontFamily:"'Outfit',sans-serif", fontSize:14, fontWeight:700, cursor:'pointer', opacity: (!pwForm.current||!pwForm.next||!pwForm.confirm) ? 0.4 : 1 }}>
                   {pwLoading ? 'Updating...' : <><IconCheck />Update Password</>}
                 </button>
               </form>
@@ -333,7 +333,7 @@ export default function SettingsPage() {
                     <div style={{ fontFamily:"'Outfit',sans-serif", fontSize:13, fontWeight:700, color:'#ccc' }}>Export as CSV</div>
                     <div style={{ fontFamily:"'Outfit',sans-serif", fontSize:11, color:'#555', marginTop:2 }}>Compatible with Excel, Google Sheets, and import back into TopLoad</div>
                   </div>
-                  <button onClick={exportCSV} disabled={!cards.length} style={{ display:'flex', alignItems:'center', gap:6, padding:'8px 16px', borderRadius:10, background:'rgba(229,57,53,0.08)', border:'1px solid rgba(229,57,53,0.2)', color:'#e53935', fontFamily:"'Outfit',sans-serif", fontSize:13, fontWeight:600, cursor:'pointer', flexShrink:0, opacity:cards.length?1:0.4 }}>
+                  <button onClick={exportCSV} disabled={!cards.length} style={{ display:'flex', alignItems:'center', gap:6, padding:'8px 16px', borderRadius:10, background:'rgba(147,51,234,0.08)', border:'1px solid rgba(147,51,234,0.2)', color:'#9333ea', fontFamily:"'Outfit',sans-serif", fontSize:13, fontWeight:600, cursor:'pointer', flexShrink:0, opacity:cards.length?1:0.4 }}>
                     <IconDownload />CSV
                   </button>
                 </div>
@@ -356,19 +356,19 @@ export default function SettingsPage() {
             <Section title="Danger Zone" subtitle="These actions are permanent and cannot be undone" icon="⚠️" danger>
 
               {/* Delete All Cards */}
-              <div style={{ borderRadius:12, border:'1px solid rgba(229,57,53,0.2)', overflow:'hidden', marginBottom:12 }}>
+              <div style={{ borderRadius:12, border:'1px solid rgba(147,51,234,0.2)', overflow:'hidden', marginBottom:12 }}>
                 <div style={{ padding:'14px 16px', display:'flex', alignItems:'center', justifyContent:'space-between', gap:12 }}>
                   <div>
                     <div style={{ fontFamily:"'Outfit',sans-serif", fontSize:13, fontWeight:700, color:'#ccc' }}>Delete All Cards</div>
                     <div style={{ fontFamily:"'Outfit',sans-serif", fontSize:11, color:'#555', marginTop:2 }}>Permanently removes all {cards.length} cards from your collection</div>
                   </div>
-                  <button onClick={() => setShowDeleteCards(!showDeleteCards)} disabled={!cards.length} style={{ padding:'8px 14px', borderRadius:10, background:'rgba(229,57,53,0.08)', border:'1px solid rgba(229,57,53,0.25)', color:'#e53935', fontFamily:"'Outfit',sans-serif", fontSize:13, fontWeight:600, cursor:'pointer', flexShrink:0, opacity:cards.length?1:0.4 }}>
+                  <button onClick={() => setShowDeleteCards(!showDeleteCards)} disabled={!cards.length} style={{ padding:'8px 14px', borderRadius:10, background:'rgba(147,51,234,0.08)', border:'1px solid rgba(147,51,234,0.25)', color:'#9333ea', fontFamily:"'Outfit',sans-serif", fontSize:13, fontWeight:600, cursor:'pointer', flexShrink:0, opacity:cards.length?1:0.4 }}>
                     {showDeleteCards ? 'Cancel' : 'Delete All'}
                   </button>
                 </div>
                 {showDeleteCards && (
-                  <div style={{ padding:'14px 16px', borderTop:'1px solid rgba(229,57,53,0.15)', background:'rgba(229,57,53,0.04)' }}>
-                    <p style={{ fontFamily:"'Outfit',sans-serif", fontSize:13, color:'#e53935', marginBottom:12, display:'flex', alignItems:'center', gap:6 }}>
+                  <div style={{ padding:'14px 16px', borderTop:'1px solid rgba(147,51,234,0.15)', background:'rgba(147,51,234,0.04)' }}>
+                    <p style={{ fontFamily:"'Outfit',sans-serif", fontSize:13, color:'#9333ea', marginBottom:12, display:'flex', alignItems:'center', gap:6 }}>
                       <IconAlert />Type <strong>DELETE</strong> to confirm
                     </p>
                     <div style={{ display:'flex', gap:10 }}>
@@ -376,9 +376,9 @@ export default function SettingsPage() {
                         value={deleteCardsConfirm}
                         onChange={e => setDeleteCardsConfirm(e.target.value)}
                         placeholder="Type DELETE"
-                        style={{ flex:1, padding:'9px 14px', borderRadius:10, background:'#111', border:'1px solid rgba(229,57,53,0.3)', color:'#f0f0f0', fontSize:14, outline:'none', fontFamily:"'Outfit',sans-serif" }}
+                        style={{ flex:1, padding:'9px 14px', borderRadius:10, background:'#111', border:'1px solid rgba(147,51,234,0.3)', color:'#f0f0f0', fontSize:14, outline:'none', fontFamily:"'Outfit',sans-serif" }}
                       />
-                      <button onClick={handleDeleteAllCards} disabled={deleteCardsConfirm!=='DELETE'||deleteCardsLoading} style={{ padding:'9px 16px', borderRadius:10, background: deleteCardsConfirm==='DELETE' ? 'rgba(229,57,53,0.15)' : 'rgba(255,255,255,0.04)', border:'1px solid rgba(229,57,53,0.3)', color: deleteCardsConfirm==='DELETE' ? '#e53935' : '#444', fontFamily:"'Outfit',sans-serif", fontSize:13, fontWeight:700, cursor:'pointer', flexShrink:0 }}>
+                      <button onClick={handleDeleteAllCards} disabled={deleteCardsConfirm!=='DELETE'||deleteCardsLoading} style={{ padding:'9px 16px', borderRadius:10, background: deleteCardsConfirm==='DELETE' ? 'rgba(147,51,234,0.15)' : 'rgba(255,255,255,0.04)', border:'1px solid rgba(147,51,234,0.3)', color: deleteCardsConfirm==='DELETE' ? '#9333ea' : '#444', fontFamily:"'Outfit',sans-serif", fontSize:13, fontWeight:700, cursor:'pointer', flexShrink:0 }}>
                         {deleteCardsLoading ? 'Deleting...' : <><IconTrash />Confirm</>}
                       </button>
                     </div>
@@ -387,19 +387,19 @@ export default function SettingsPage() {
               </div>
 
               {/* Delete Account */}
-              <div style={{ borderRadius:12, border:'1px solid rgba(229,57,53,0.2)', overflow:'hidden' }}>
+              <div style={{ borderRadius:12, border:'1px solid rgba(147,51,234,0.2)', overflow:'hidden' }}>
                 <div style={{ padding:'14px 16px', display:'flex', alignItems:'center', justifyContent:'space-between', gap:12 }}>
                   <div>
-                    <div style={{ fontFamily:"'Outfit',sans-serif", fontSize:13, fontWeight:700, color:'#e53935' }}>Delete Account</div>
+                    <div style={{ fontFamily:"'Outfit',sans-serif", fontSize:13, fontWeight:700, color:'#9333ea' }}>Delete Account</div>
                     <div style={{ fontFamily:"'Outfit',sans-serif", fontSize:11, color:'#555', marginTop:2 }}>Permanently deletes your account and all data. Cannot be undone.</div>
                   </div>
-                  <button onClick={() => setShowDeleteAccount(!showDeleteAccount)} style={{ padding:'8px 14px', borderRadius:10, background:'rgba(229,57,53,0.15)', border:'1px solid rgba(229,57,53,0.4)', color:'#e53935', fontFamily:"'Outfit',sans-serif", fontSize:13, fontWeight:700, cursor:'pointer', flexShrink:0 }}>
+                  <button onClick={() => setShowDeleteAccount(!showDeleteAccount)} style={{ padding:'8px 14px', borderRadius:10, background:'rgba(147,51,234,0.15)', border:'1px solid rgba(147,51,234,0.4)', color:'#9333ea', fontFamily:"'Outfit',sans-serif", fontSize:13, fontWeight:700, cursor:'pointer', flexShrink:0 }}>
                     {showDeleteAccount ? 'Cancel' : 'Delete Account'}
                   </button>
                 </div>
                 {showDeleteAccount && (
-                  <div style={{ padding:'14px 16px', borderTop:'1px solid rgba(229,57,53,0.15)', background:'rgba(229,57,53,0.04)' }}>
-                    <p style={{ fontFamily:"'Outfit',sans-serif", fontSize:13, color:'#e53935', marginBottom:12, display:'flex', alignItems:'center', gap:6 }}>
+                  <div style={{ padding:'14px 16px', borderTop:'1px solid rgba(147,51,234,0.15)', background:'rgba(147,51,234,0.04)' }}>
+                    <p style={{ fontFamily:"'Outfit',sans-serif", fontSize:13, color:'#9333ea', marginBottom:12, display:'flex', alignItems:'center', gap:6 }}>
                       <IconAlert />Type your username <strong>@{user?.username}</strong> to confirm
                     </p>
                     <div style={{ display:'flex', gap:10 }}>
@@ -407,9 +407,9 @@ export default function SettingsPage() {
                         value={deleteAccountConfirm}
                         onChange={e => setDeleteAccountConfirm(e.target.value)}
                         placeholder={user?.username}
-                        style={{ flex:1, padding:'9px 14px', borderRadius:10, background:'#111', border:'1px solid rgba(229,57,53,0.3)', color:'#f0f0f0', fontSize:14, outline:'none', fontFamily:"'Outfit',sans-serif" }}
+                        style={{ flex:1, padding:'9px 14px', borderRadius:10, background:'#111', border:'1px solid rgba(147,51,234,0.3)', color:'#f0f0f0', fontSize:14, outline:'none', fontFamily:"'Outfit',sans-serif" }}
                       />
-                      <button onClick={handleDeleteAccount} disabled={deleteAccountConfirm!==user?.username||deleteAccountLoading} style={{ padding:'9px 16px', borderRadius:10, background: deleteAccountConfirm===user?.username ? 'rgba(229,57,53,0.2)' : 'rgba(255,255,255,0.04)', border:'1px solid rgba(229,57,53,0.4)', color: deleteAccountConfirm===user?.username ? '#e53935' : '#444', fontFamily:"'Outfit',sans-serif", fontSize:13, fontWeight:700, cursor:'pointer', flexShrink:0 }}>
+                      <button onClick={handleDeleteAccount} disabled={deleteAccountConfirm!==user?.username||deleteAccountLoading} style={{ padding:'9px 16px', borderRadius:10, background: deleteAccountConfirm===user?.username ? 'rgba(147,51,234,0.2)' : 'rgba(255,255,255,0.04)', border:'1px solid rgba(147,51,234,0.4)', color: deleteAccountConfirm===user?.username ? '#9333ea' : '#444', fontFamily:"'Outfit',sans-serif", fontSize:13, fontWeight:700, cursor:'pointer', flexShrink:0 }}>
                         {deleteAccountLoading ? 'Deleting...' : <><IconTrash />Confirm</>}
                       </button>
                     </div>

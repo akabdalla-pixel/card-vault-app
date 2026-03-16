@@ -36,7 +36,7 @@ function ToastContainer() {
     }
     return () => { _toastFn=null }
   },[])
-  const colors={success:'#22c55e',error:'#e53935',info:'#888'}
+  const colors={success:'#22c55e',error:'#9333ea',info:'#888'}
   const icons={success:'✓',error:'✕',info:'ℹ'}
   if(!toasts.length) return null
   return (
@@ -45,7 +45,7 @@ function ToastContainer() {
         <div key={t.id} style={{display:'flex',alignItems:'center',gap:10,padding:'10px 18px',borderRadius:12,background:'#1e1e1e',border:`1px solid ${colors[t.type]}50`,boxShadow:'0 8px 28px rgba(0,0,0,0.6)',fontFamily:"'Outfit',sans-serif",fontSize:13,fontWeight:600,color:'#f0f0f0',pointerEvents:'auto',animation:'toastIn 0.2s ease',whiteSpace:'nowrap'}}>
           <span style={{color:colors[t.type]}}>{icons[t.type]}</span>
           {t.msg}
-          {t.onUndo&&<button onClick={t.onUndo} style={{marginLeft:6,padding:'2px 10px',borderRadius:6,background:'rgba(255,255,255,0.08)',border:'none',color:'#e53935',fontFamily:"'Outfit',sans-serif",fontSize:12,fontWeight:700,cursor:'pointer',pointerEvents:'auto'}}>Undo</button>}
+          {t.onUndo&&<button onClick={t.onUndo} style={{marginLeft:6,padding:'2px 10px',borderRadius:6,background:'rgba(255,255,255,0.08)',border:'none',color:'#9333ea',fontFamily:"'Outfit',sans-serif",fontSize:12,fontWeight:700,cursor:'pointer',pointerEvents:'auto'}}>Undo</button>}
         </div>
       ))}
     </div>
@@ -73,7 +73,7 @@ function Sidebar({ user, onLogout, cardCount = 0, active = "" }) {
         {NAV.map(({ label, href }) => {
           const isActive = active === label
           const Icon = navIcons[label]
-          return <Link key={label} href={href} style={{ display: 'flex', alignItems: 'center', gap: 11, padding: '9px 12px', borderRadius: 10, marginBottom: 2, textDecoration: 'none', color: isActive ? '#e53935' : '#666', background: isActive ? 'rgba(229,57,53,0.08)' : 'transparent', fontFamily: "'Outfit',sans-serif", fontSize: 14, fontWeight: isActive ? 600 : 500, borderLeft: isActive ? '2px solid #e53935' : '2px solid transparent', transition: 'all 0.15s' }}><Icon /><span style={{flex:1}}>{label}</span>{label === 'Collection' && cardCount > 0 && <span style={{fontSize:10,fontWeight:700,background:'rgba(229,57,53,0.15)',color:'#e53935',borderRadius:6,padding:'1px 6px',fontFamily:"'JetBrains Mono',monospace"}}>{cardCount}</span>}</Link>
+          return <Link key={label} href={href} style={{ display: 'flex', alignItems: 'center', gap: 11, padding: '9px 12px', borderRadius: 10, marginBottom: 2, textDecoration: 'none', color: isActive ? '#9333ea' : '#666', background: isActive ? 'rgba(147,51,234,0.08)' : 'transparent', fontFamily: "'Outfit',sans-serif", fontSize: 14, fontWeight: isActive ? 600 : 500, borderLeft: isActive ? '2px solid #9333ea' : '2px solid transparent', transition: 'all 0.15s' }}><Icon /><span style={{flex:1}}>{label}</span>{label === 'Collection' && cardCount > 0 && <span style={{fontSize:10,fontWeight:700,background:'rgba(147,51,234,0.15)',color:'#9333ea',borderRadius:6,padding:'1px 6px',fontFamily:"'JetBrains Mono',monospace"}}>{cardCount}</span>}</Link>
         })}
       </nav>
       <div style={{ padding: '14px 10px', borderTop: '1px solid #1e1e1e' }}>
@@ -91,7 +91,7 @@ function BottomNav({ active = "" }) {
       {NAV.map(({ label, href }) => {
         const isActive = active === label
         const Icon = navIcons[label]
-        return <Link key={label} href={href} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 4, textDecoration: 'none', color: isActive ? '#e53935' : '#555', fontFamily: "'Outfit',sans-serif", fontSize: 9, fontWeight: isActive ? 700 : 500, letterSpacing: '0.04em', textTransform: 'uppercase', paddingBottom: 4 }}><Icon />{label === 'Sold History' ? 'Sold' : label}</Link>
+        return <Link key={label} href={href} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 4, textDecoration: 'none', color: isActive ? '#9333ea' : '#555', fontFamily: "'Outfit',sans-serif", fontSize: 9, fontWeight: isActive ? 700 : 500, letterSpacing: '0.04em', textTransform: 'uppercase', paddingBottom: 4 }}><Icon />{label === 'Sold History' ? 'Sold' : label}</Link>
       })}
     </nav>
   )
@@ -171,9 +171,9 @@ export default function SoldHistoryPage() {
                 ['Cards Sold', cards.length, '#f0f0f0'],
                 ['Total Revenue', fmt(totalRevenue), '#f0f0f0'],
                 ['Total Cost', fmt(totalCost), '#f0f0f0'],
-                ['Realized P&L', (totalPL>=0?'+':'')+fmt(totalPL), totalPL>=0?'#22c55e':'#e53935'],
-                ['Avg Return', (avgReturn>=0?'+':'')+avgReturn.toFixed(1)+'%', avgReturn>=0?'#22c55e':'#e53935'],
-                ['Win Rate', winRate.toFixed(0)+'%', winRate>=50?'#e53935':'#616161'],
+                ['Realized P&L', (totalPL>=0?'+':'')+fmt(totalPL), totalPL>=0?'#22c55e':'#9333ea'],
+                ['Avg Return', (avgReturn>=0?'+':'')+avgReturn.toFixed(1)+'%', avgReturn>=0?'#22c55e':'#9333ea'],
+                ['Win Rate', winRate.toFixed(0)+'%', winRate>=50?'#9333ea':'#616161'],
               ].map(([label, value, color]) => (
                 <div key={label} style={{ padding: '12px 14px', borderRadius: 12, background: 'linear-gradient(135deg,#111,#0d0d0d)', border: '1px solid #1e1e1e' }}>
                   <div style={{ fontSize: 10, color: '#444', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 6 }}>{label}</div>
@@ -188,7 +188,7 @@ export default function SoldHistoryPage() {
               <div style={{ fontSize: 48, marginBottom: 16, opacity: 0.2 }}>💰</div>
               <h3 style={{ fontFamily: "'Outfit',sans-serif", fontSize: 18, fontWeight: 700, color: '#444', marginBottom: 8 }}>No sales yet</h3>
               <p style={{ color: '#333', fontSize: 13, marginBottom: 20, fontFamily: "'Outfit',sans-serif" }}>Mark cards as sold from your Collection to track your realized gains here.</p>
-              <Link href="/collection" style={{ padding: '10px 20px', borderRadius: 10, background: 'rgba(229,57,53,0.08)', border: '1px solid rgba(229,57,53,0.25)', color: '#e53935', fontFamily: "'Outfit',sans-serif", fontSize: 14, fontWeight: 600, textDecoration: 'none' }}>Go to Collection</Link>
+              <Link href="/collection" style={{ padding: '10px 20px', borderRadius: 10, background: 'rgba(147,51,234,0.08)', border: '1px solid rgba(147,51,234,0.25)', color: '#9333ea', fontFamily: "'Outfit',sans-serif", fontSize: 14, fontWeight: 600, textDecoration: 'none' }}>Go to Collection</Link>
             </div>
           ) : (
             <div style={{ background: 'linear-gradient(135deg,#111,#0d0d0d)', border: '1px solid #1e1e1e', borderRadius: 14, overflow: 'hidden' }}>
@@ -212,13 +212,13 @@ export default function SoldHistoryPage() {
                             {card.year && <div style={{ fontSize: 11, color: '#444' }}>{card.year}</div>}
                           </td>
                           <td style={{ padding: '12px 16px', textAlign: 'right', fontFamily: "'Outfit',sans-serif", fontSize: 12, color: '#666' }}>{card.sport||'—'}</td>
-                          <td style={{ padding: '12px 16px', textAlign: 'right' }}>{card.grade ? <span style={{ padding: '2px 8px', borderRadius: 6, background: 'rgba(229,57,53,0.1)', color: plPos ? '#22c55e' : '#e53935', fontSize: 11, fontWeight: 700 }}>Grade {card.grade}</span> : <span style={{ color: '#444', fontSize: 12 }}>{card.cond||'Raw'}</span>}</td>
+                          <td style={{ padding: '12px 16px', textAlign: 'right' }}>{card.grade ? <span style={{ padding: '2px 8px', borderRadius: 6, background: 'rgba(147,51,234,0.1)', color: plPos ? '#22c55e' : '#9333ea', fontSize: 11, fontWeight: 700 }}>Grade {card.grade}</span> : <span style={{ color: '#444', fontSize: 12 }}>{card.cond||'Raw'}</span>}</td>
                           <td style={{ padding: '12px 16px', textAlign: 'right', fontFamily: "'JetBrains Mono',monospace", fontSize: 13, color: '#666' }}>{fmt(buy)}</td>
                           <td style={{ padding: '12px 16px', textAlign: 'right', fontFamily: "'JetBrains Mono',monospace", fontSize: 13, fontWeight: 700, color: '#f0f0f0' }}>{fmt(sold)}</td>
                           <td style={{ padding: '12px 16px', textAlign: 'right' }}>
-                            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 3, fontFamily: "'JetBrains Mono',monospace", fontSize: 13, fontWeight: 700, color: plPos?'#22c55e':'#e53935' }}>{plPos?<IconUp />:<IconDown />}{plPos?'+':''}{fmt(pl)}</div>
+                            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 3, fontFamily: "'JetBrains Mono',monospace", fontSize: 13, fontWeight: 700, color: plPos?'#22c55e':'#9333ea' }}>{plPos?<IconUp />:<IconDown />}{plPos?'+':''}{fmt(pl)}</div>
                           </td>
-                          <td style={{ padding: '12px 16px', textAlign: 'right', fontFamily: "'JetBrains Mono',monospace", fontSize: 12, fontWeight: 600, color: plPos?'#22c55e':'#e53935' }}>{plPos?'+':''}{pct.toFixed(1)}%</td>
+                          <td style={{ padding: '12px 16px', textAlign: 'right', fontFamily: "'JetBrains Mono',monospace", fontSize: 12, fontWeight: 600, color: plPos?'#22c55e':'#9333ea' }}>{plPos?'+':''}{pct.toFixed(1)}%</td>
                           <td style={{ padding: '12px 16px', textAlign: 'right', fontFamily: "'Outfit',sans-serif", fontSize: 12, color: '#555' }}>{card.soldDate ? new Date(card.soldDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : '—'}</td>
                         </tr>
                       )

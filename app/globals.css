@@ -1,29 +1,33 @@
 @import "tailwindcss";
 
 :root {
-  --bg: #0c0f1a;
-  --card: #151929;
-  --card2: #1c2236;
-  --border: #2a3150;
-  --text: #f0f2ff;
-  --dim: #8b93b8;
-  --faint: #5a6388;
-  --mint: #22d3a7;
-  --coral: #ff6b7a;
-  --amber: #ffbe2e;
-  --sky: #38bdf8;
-  --cyan: #06d6d6;
-  --cyan2: #22f5e0;
-  --violet: #7c5cfc;
-  --violet2: #a78bfa;
-  --primary: #06d6d6;
-  --primary2: #22f5e0;
+  /* Keep old vars in case anything references them, mapped to purple */
+  --bg: #0a0a0a;
+  --card: #181818;
+  --card2: #202020;
+  --border: #2a2a2a;
+  --text: #f0f0f0;
+  --dim: #666;
+  --faint: #444;
+  --purple: #9333ea;
+  --purple2: #a855f7;
+  --purple3: #c084fc;
+  --purple-glow: rgba(147,51,234,0.2);
+  --purple-tint: rgba(147,51,234,0.08);
+  /* Old vars remapped */
+  --cyan: #9333ea;
+  --cyan2: #a855f7;
+  --coral: #f87171;
+  --mint: #4ade80;
+  --amber: #f59e0b;
+  --primary: #9333ea;
+  --primary2: #a855f7;
 }
 
 * { -webkit-tap-highlight-color: transparent; }
-body { font-family: 'Outfit', -apple-system, sans-serif; }
+body { font-family: 'Outfit', -apple-system, sans-serif; background: #0a0a0a; }
 .font-mono { font-family: 'JetBrains Mono', monospace; }
-input, select { font-family: 'Outfit', -apple-system, sans-serif; }
+input, select, textarea { font-family: 'Outfit', -apple-system, sans-serif; }
 ::-webkit-scrollbar { display: none; }
 
 /* ── Animations ─────────────────────────────────────────────── */
@@ -31,34 +35,33 @@ input, select { font-family: 'Outfit', -apple-system, sans-serif; }
   0%   { background-position: 200% 0 }
   100% { background-position: -200% 0 }
 }
-
 @keyframes fadeUp {
   from { opacity: 0; transform: translateY(16px) }
   to   { opacity: 1; transform: translateY(0) }
 }
-
 @keyframes fadeIn {
   from { opacity: 0 }
   to   { opacity: 1 }
 }
-
 @keyframes scaleIn {
   from { opacity: 0; transform: scale(0.95) }
   to   { opacity: 1; transform: scale(1) }
 }
-
 @keyframes toastIn {
   from { opacity: 0; transform: translateY(10px) }
   to   { opacity: 1; transform: translateY(0) }
 }
-
 @keyframes spin {
   to { transform: rotate(360deg) }
 }
+@keyframes glow {
+  0%, 100% { filter: drop-shadow(0 0 12px rgba(147,51,234,0.4)) }
+  50%       { filter: drop-shadow(0 0 22px rgba(147,51,234,0.7)) }
+}
 
-/* ── Button press ────────────────────────────────────────────── */
+/* ── Button press ─────────────────────────────────────────────── */
 button:not(:disabled):active {
-  transform: scale(0.93) !important;
-  opacity: 0.8 !important;
+  transform: scale(0.94) !important;
+  opacity: 0.85 !important;
   transition: transform 0.1s ease, opacity 0.1s ease !important;
 }
