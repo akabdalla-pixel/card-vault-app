@@ -13,17 +13,19 @@ export default function SignupPage() {
   const set = (k, v) => setForm(f => ({ ...f, [k]: v }))
 
   async function handleSubmit(e) {
-    e.preventDefault()
     setError('')
     if (form.password !== form.confirm) { setError('Passwords do not match'); return }
     if (form.password.length < 8) { setError('Password must be at least 8 characters'); return }
+    if (!form.username.trim()) { setError('Username is required'); return }
+    if (!form.email.trim()) { setError('Email is required'); return }
     setLoading(true)
     try {
       const res = await fetch('/api/auth/register', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ username: form.username, email: form.email, password: form.password }) })
       const data = await res.json()
-      if (!res.ok) { setError(data.error || 'Something went wrong'); setLoading(false); return }
+      if (!res.ok) { setError(data.error || `Error ${res.status}: Registration failed`); setLoading(false); return }
       router.push('/dashboard')
-    } catch { setError('Something went wrong'); setLoading(false) }
+    } catch(e) { setError('Network error — please try again. ' + e.message); setLoading(false) }
+  }
   }
 
   return (
