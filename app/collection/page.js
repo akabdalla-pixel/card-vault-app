@@ -50,7 +50,7 @@ const TCG_RARITIES = ['Common', 'Uncommon', 'Rare', 'Holo Rare', 'Reverse Holo',
 const EDITIONS = ['1st Edition', 'Unlimited', 'Shadowless', 'Limited', 'First Print']
 const LANGUAGES = ['English', 'Japanese', 'Korean', 'Chinese', 'German', 'French', 'Italian', 'Spanish', 'Portuguese']
 const CONDS = ['Mint', 'Near Mint', 'Excellent', 'Very Good', 'Good', 'Poor']
-const EMPTY = { sport: '', year: '', player: '', name: '', brand: '', num: '', cond: '', grade: '', qty: '1', date: '', buy: '', val: '', notes: '', sold: false, soldPrice: '', soldDate: '', rarity: '', edition: '', language: '', auto: false, gradingCo: '' }
+const EMPTY = { sport: '', year: '', player: '', name: '', brand: '', num: '', cond: '', grade: '', qty: '1', date: '', buy: '', val: '', notes: '', sold: false, soldPrice: '', soldDate: '', rarity: '', edition: '', language: '', auto: false, gradingCo: '', autoGrade: '' }
 
 // ── Toast ──────────────────────────────────────────────────────────────────────
 var _toastFn = null
@@ -303,14 +303,14 @@ function CardModal({ card, onClose, onSave }) {
 
   const inp = (key, placeholder, type = 'text', autoFocus = false) => (
     <input type={type} placeholder={placeholder} value={form[key]||''} onChange={e => set(key, e.target.value)} autoFocus={autoFocus}
-      style={{ width:'100%', padding:'11px 14px', borderRadius:10, background:'#1a1a1a', border:'1px solid #2a2a2a', color:'#f0f0f0', fontSize:15, outline:'none', fontFamily:"'Outfit',sans-serif", boxSizing:'border-box' }} />
+      style={{ width:'100%', padding:'8px 12px', borderRadius:9, background:'#1a1a1a', border:'1px solid #2a2a2a', color:'#f0f0f0', fontSize:14, outline:'none', fontFamily:"'Outfit',sans-serif", boxSizing:'border-box' }} />
   )
-  const lbl = t => <div style={{ fontSize:11, fontWeight:700, color:'#555', textTransform:'uppercase', letterSpacing:'0.08em', marginBottom:5, fontFamily:"'Outfit',sans-serif" }}>{t}</div>
+  const lbl = t => <div style={{ fontSize:10, fontWeight:700, color:'#555', textTransform:'uppercase', letterSpacing:'0.08em', marginBottom:4, fontFamily:"'Outfit',sans-serif" }}>{t}</div>
 
   return (
     <div style={{ position:'fixed', inset:0, background:'rgba(0,0,0,0.8)', zIndex:200, display:'flex', alignItems:'flex-end', justifyContent:'center' }}
       onClick={e => { if(e.target === e.currentTarget) onClose() }}>
-      <div style={{ background:'#111', borderRadius:'20px 20px 0 0', width:'100%', maxWidth:560, maxHeight:'92vh', overflowY:'auto', padding:'20px 18px 44px' }}>
+      <div style={{ background:'#111', borderRadius:'20px 20px 0 0', width:'100%', maxWidth:560, maxHeight:'92vh', overflowY:'auto', padding:'16px 16px 36px' }}>
 
         {/* Header */}
         <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:18 }}>
@@ -322,7 +322,7 @@ function CardModal({ card, onClose, onSave }) {
 
         {error && <div style={{ marginBottom:14, padding:'10px 14px', borderRadius:10, background:'rgba(229,57,53,0.08)', color:'#e53935', fontSize:13, border:'1px solid rgba(229,57,53,0.2)', fontFamily:"'Outfit',sans-serif" }}>{error}</div>}
 
-        <div style={{ display:'flex', flexDirection:'column', gap:14 }}>
+        <div style={{ display:'flex', flexDirection:'column', gap:11 }}>
 
           {/* ── 1. Name ── */}
           <div>
@@ -336,14 +336,14 @@ function CardModal({ card, onClose, onSave }) {
             <div style={{ display:'grid', gridTemplateColumns:'repeat(4,1fr)', gap:8, marginBottom:8 }}>
               {TOP_SPORTS.map(s => (
                 <button key={s.label} onClick={() => set('sport', form.sport === s.label ? '' : s.label)}
-                  style={{ padding:'10px 4px', borderRadius:10, border: form.sport === s.label ? '2px solid rgba(229,57,53,0.6)' : '1px solid #2a2a2a', background: form.sport === s.label ? 'rgba(229,57,53,0.12)' : '#1a1a1a', cursor:'pointer', display:'flex', flexDirection:'column', alignItems:'center', gap:3 }}>
-                  <span style={{ fontSize:22 }}>{s.emoji}</span>
-                  <span style={{ fontFamily:"'Outfit',sans-serif", fontSize:11, fontWeight:700, color: form.sport === s.label ? '#e53935' : '#555' }}>{s.label}</span>
+                  style={{ padding:'8px 4px', borderRadius:9, border: form.sport === s.label ? '2px solid rgba(229,57,53,0.6)' : '1px solid #2a2a2a', background: form.sport === s.label ? 'rgba(229,57,53,0.12)' : '#1a1a1a', cursor:'pointer', display:'flex', flexDirection:'column', alignItems:'center', gap:3 }}>
+                  <span style={{ fontSize:20 }}>{s.emoji}</span>
+                  <span style={{ fontFamily:"'Outfit',sans-serif", fontSize:10, fontWeight:700, color: form.sport === s.label ? '#e53935' : '#555' }}>{s.label}</span>
                 </button>
               ))}
             </div>
             <select value={isMoreSport ? form.sport : ''} onChange={e => set('sport', e.target.value)}
-              style={{ width:'100%', padding:'10px 14px', borderRadius:10, background: isMoreSport ? 'rgba(229,57,53,0.08)' : '#1a1a1a', border: isMoreSport ? '1px solid rgba(229,57,53,0.3)' : '1px solid #2a2a2a', color: isMoreSport ? '#e53935' : '#555', fontSize:14, outline:'none', fontFamily:"'Outfit',sans-serif" }}>
+              style={{ width:'100%', padding:'8px 12px', borderRadius:9, background: isMoreSport ? 'rgba(229,57,53,0.08)' : '#1a1a1a', border: isMoreSport ? '1px solid rgba(229,57,53,0.3)' : '1px solid #2a2a2a', color: isMoreSport ? '#e53935' : '#555', fontSize:14, outline:'none', fontFamily:"'Outfit',sans-serif" }}>
               <option value="">More sports / TCG...</option>
               {MORE_SPORTS.map(s => <option key={s} value={s}>{s}</option>)}
             </select>
@@ -354,7 +354,7 @@ function CardModal({ card, onClose, onSave }) {
             <div>
               {lbl('Grade')}
               <select value={form.grade||''} onChange={e => set('grade', e.target.value)}
-                style={{ width:'100%', padding:'11px 14px', borderRadius:10, background:'#1a1a1a', border:'1px solid #2a2a2a', color: form.grade ? '#f0f0f0' : '#555', fontSize:14, outline:'none', fontFamily:"'Outfit',sans-serif" }}>
+                style={{ width:'100%', padding:'8px 12px', borderRadius:9, background:'#1a1a1a', border:'1px solid #2a2a2a', color: form.grade ? '#f0f0f0' : '#555', fontSize:14, outline:'none', fontFamily:"'Outfit',sans-serif" }}>
                 <option value="">Raw / No grade</option>
                 {['10','9.5','9','8.5','8','7.5','7','6.5','6','5','4','3','2','1'].map(g => <option key={g} value={g}>{g}</option>)}
               </select>
@@ -362,7 +362,7 @@ function CardModal({ card, onClose, onSave }) {
             <div>
               {lbl('Grading Co.')}
               <select value={form.gradingCo||''} onChange={e => set('gradingCo', e.target.value)}
-                style={{ width:'100%', padding:'11px 14px', borderRadius:10, background:'#1a1a1a', border:'1px solid #2a2a2a', color: form.gradingCo ? '#f0f0f0' : '#555', fontSize:14, outline:'none', fontFamily:"'Outfit',sans-serif" }}>
+                style={{ width:'100%', padding:'8px 12px', borderRadius:9, background:'#1a1a1a', border:'1px solid #2a2a2a', color: form.gradingCo ? '#f0f0f0' : '#555', fontSize:14, outline:'none', fontFamily:"'Outfit',sans-serif" }}>
                 <option value="">No grading co.</option>
                 {['PSA','BGS','SGC','CGC','HGA','CSG','GAI','Other'].map(g => <option key={g} value={g}>{g}</option>)}
               </select>
@@ -370,11 +370,11 @@ function CardModal({ card, onClose, onSave }) {
           </div>
 
           {/* ── 4. Auto checkbox ── */}
-          <label style={{ display:'flex', alignItems:'center', gap:12, padding:'11px 14px', borderRadius:10, background:'#1a1a1a', border: form.auto ? '1px solid rgba(255,190,46,0.3)' : '1px solid #2a2a2a', cursor:'pointer' }}>
+          <label style={{ display:'flex', alignItems:'center', gap:12, padding:'8px 12px', borderRadius:9, background:'#1a1a1a', border: form.auto ? '1px solid rgba(255,190,46,0.3)' : '1px solid #2a2a2a', cursor:'pointer' }}>
             <input type="checkbox" checked={!!form.auto} onChange={e => set('auto', e.target.checked)} style={{ accentColor:'#ffbe2e', width:18, height:18, cursor:'pointer' }} />
             <div>
-              <div style={{ fontFamily:"'Outfit',sans-serif", fontSize:14, fontWeight:700, color: form.auto ? '#ffbe2e' : '#ccc' }}>Autograph ✍️</div>
-              <div style={{ fontFamily:"'Outfit',sans-serif", fontSize:11, color:'#555' }}>This card has an auto</div>
+              <div style={{ fontFamily:"'Outfit',sans-serif", fontSize:13, fontWeight:700, color: form.auto ? '#ffbe2e' : '#ccc' }}>Autograph ✍️</div>
+              <div style={{ fontFamily:"'Outfit',sans-serif", fontSize:10, color:'#555' }}>This card has an auto</div>
             </div>
           </label>
 
@@ -397,6 +397,14 @@ function CardModal({ card, onClose, onSave }) {
             <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:10 }}>
               <div>{lbl('Year')}{inp('year', 'e.g. 2023')}</div>
               <div>{lbl('Numbering (e.g. 10/50)')}{inp('num', 'e.g. 10/50')}</div>
+            </div>
+            <div>
+              {lbl('Auto Grade')}
+              <select value={form.autoGrade||''} onChange={e => set('autoGrade', e.target.value)}
+                style={{ width:'100%', padding:'8px 12px', borderRadius:9, background:'#1a1a1a', border:'1px solid #2a2a2a', color: form.autoGrade?'#f0f0f0':'#555', fontSize:14, outline:'none', fontFamily:"'Outfit',sans-serif" }}>
+                <option value="">No auto grade</option>
+                {['10','9.5','9','8.5','8','7','6','5'].map(g => <option key={g} value={g}>{g}</option>)}
+              </select>
             </div>
             <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:10 }}>
               <div>{lbl(isTCG ? 'Set / Expansion' : 'Set')}{inp('name', isTCG ? 'e.g. Base Set' : 'e.g. Topps Chrome')}</div>
@@ -433,7 +441,7 @@ function CardModal({ card, onClose, onSave }) {
 
         {/* Save button */}
         <button onClick={handleSave} disabled={saving || !form.player}
-          style={{ width:'100%', padding:'14px', borderRadius:12, marginTop:18, background: (!form.player||saving) ? '#1a1a1a' : 'linear-gradient(135deg,#e53935,#ff5252)', border: (!form.player||saving) ? '1px solid #2a2a2a' : 'none', color: (!form.player||saving) ? '#444' : '#fff', fontFamily:"'Outfit',sans-serif", fontSize:16, fontWeight:800, cursor: (!form.player||saving) ? 'not-allowed' : 'pointer', letterSpacing:'-0.3px' }}>
+          style={{ width:'100%', padding:'12px', borderRadius:11, marginTop:14, background: (!form.player||saving) ? '#1a1a1a' : 'linear-gradient(135deg,#e53935,#ff5252)', border: (!form.player||saving) ? '1px solid #2a2a2a' : 'none', color: (!form.player||saving) ? '#444' : '#fff', fontFamily:"'Outfit',sans-serif", fontSize:15, fontWeight:800, cursor: (!form.player||saving) ? 'not-allowed' : 'pointer', letterSpacing:'-0.3px' }}>
           {saving ? 'Saving...' : (isEdit ? 'Save Changes' : '+ Add Card')}
         </button>
 
@@ -704,6 +712,7 @@ function CollectionPage() {
   const [sortBy, setSortBy] = useState('date_desc')
   const [priceMin, setPriceMin] = useState('')
   const [priceMax, setPriceMax] = useState('')
+  const [filterAuto, setFilterAuto] = useState(false)
   const [viewMode, setViewMode] = useState('table') // 'table' or 'grid'
   const [deleteId, setDeleteId] = useState(null)
   const [importSuccess, setImportSuccess] = useState(null)
@@ -760,7 +769,8 @@ function CollectionPage() {
     const cardVal = parseFloat(c.val) || parseFloat(c.buy) || 0
     const matchMin = !priceMin || cardVal >= parseFloat(priceMin)
     const matchMax = !priceMax || cardVal <= parseFloat(priceMax)
-    return matchSearch && matchSport && matchSportTab && matchStatus && matchGraded && matchMin && matchMax
+    const matchAuto = !filterAuto || !!c.auto
+    return matchSearch && matchSport && matchSportTab && matchStatus && matchGraded && matchMin && matchMax && matchAuto
   }).sort((a, b) => {
     switch (sortBy) {
       case 'price_asc': return ((parseFloat(a.val)||parseFloat(a.buy)||0)*(parseInt(a.qty)||1)) - ((parseFloat(b.val)||parseFloat(b.buy)||0)*(parseInt(b.qty)||1))
@@ -939,6 +949,7 @@ function CollectionPage() {
                 <button key={val} onClick={() => setFilterGraded(val)} style={{ padding: '8px 12px', background: filterGraded===val ? 'rgba(229,57,53,0.15)' : '#111', border: 'none', color: filterGraded===val ? '#e53935' : '#555', fontFamily: "'Outfit',sans-serif", fontSize: 12, fontWeight: filterGraded===val ? 700 : 500, cursor: 'pointer', whiteSpace: 'nowrap' }}>{label}</button>
               ))}
             </div>
+            <button onClick={() => setFilterAuto(v => !v)} style={{ padding: '8px 14px', borderRadius: 10, background: filterAuto ? 'rgba(255,190,46,0.12)' : '#111', border: filterAuto ? '1px solid rgba(255,190,46,0.35)' : '1px solid #2a2a2a', color: filterAuto ? '#ffbe2e' : '#555', fontFamily: "'Outfit',sans-serif", fontSize: 12, fontWeight: filterAuto ? 700 : 500, cursor: 'pointer', whiteSpace: 'nowrap' }}>✍️ Autos Only</button>
             {/* Sort */}
             <select value={sortBy} onChange={e => setSortBy(e.target.value)} style={{ padding: '8px 14px', borderRadius: 10, background: '#111', border: '1px solid #2a2a2a', color: '#f0f0f0', fontSize: 13, outline: 'none', fontFamily: "'Outfit',sans-serif", cursor: 'pointer' }}>
               <option value="date_desc">Date Added (Newest)</option>
@@ -971,7 +982,7 @@ function CollectionPage() {
             </div>
             {/* Active filter count */}
             {(filterGraded || filterSport || sortBy !== 'date_desc' || priceMin || priceMax) && (
-              <button onClick={() => { setFilterGraded(''); setFilterSport(''); setSortBy('date_desc'); setPriceMin(''); setPriceMax(''); setSportTab('all') }} style={{ padding: '8px 12px', borderRadius: 10, background: 'rgba(229,57,53,0.08)', border: '1px solid rgba(229,57,53,0.2)', color: '#e53935', fontFamily: "'Outfit',sans-serif", fontSize: 12, fontWeight: 600, cursor: 'pointer' }}>
+              <button onClick={() => { setFilterGraded(''); setFilterSport(''); setSortBy('date_desc'); setPriceMin(''); setPriceMax(''); setSportTab('all'); setFilterAuto(false) }} style={{ padding: '8px 12px', borderRadius: 10, background: 'rgba(229,57,53,0.08)', border: '1px solid rgba(229,57,53,0.2)', color: '#e53935', fontFamily: "'Outfit',sans-serif", fontSize: 12, fontWeight: 600, cursor: 'pointer' }}>
                 ✕ Clear Filters
               </button>
             )}
@@ -993,6 +1004,7 @@ function CollectionPage() {
                 <button key={val} onClick={() => setFilterGraded(val)} style={{ padding: '8px 10px', background: filterGraded===val ? 'rgba(229,57,53,0.15)' : '#111', border: 'none', color: filterGraded===val ? '#e53935' : '#555', fontFamily: "'Outfit',sans-serif", fontSize: 12, fontWeight: filterGraded===val ? 700 : 500, cursor: 'pointer', whiteSpace: 'nowrap' }}>{label}</button>
               ))}
             </div>
+            <button onClick={() => setFilterAuto(v => !v)} style={{ padding: '8px 10px', borderRadius: 10, background: filterAuto ? 'rgba(255,190,46,0.12)' : '#111', border: filterAuto ? '1px solid rgba(255,190,46,0.35)' : '1px solid #2a2a2a', color: filterAuto ? '#ffbe2e' : '#555', fontFamily: "'Outfit',sans-serif", fontSize: 12, fontWeight: filterAuto ? 700 : 500, cursor: 'pointer', flexShrink:0, whiteSpace:'nowrap' }}>✍️ Auto</button>
             <select value={sortBy} onChange={e => setSortBy(e.target.value)} style={{ flexShrink: 0, padding: '8px 10px', borderRadius: 10, background: '#111', border: '1px solid #2a2a2a', color: '#f0f0f0', fontSize: 12, outline: 'none', fontFamily: "'Outfit',sans-serif" }}>
               <option value="date_desc">Newest</option>
               <option value="date_asc">Oldest</option>
