@@ -706,7 +706,7 @@ export default function CollectionPage() {
         @media(max-width:768px){
           .sidebar-el{display:none!important}.mobile-only{display:flex!important}.mob-topbar{display:flex}
           .main-wrap{margin-left:0!important;width:100%!important;padding-bottom:80px!important;padding:12px 12px 80px!important}
-          .mobile-cards{display:flex!important}.desktop-table{display:none!important}
+          .mobile-cards{display:flex!important}.desktop-table{display:none!important}.card-grid{grid-template-columns:repeat(2,1fr)!important;gap:10px!important}.desktop-grid{display:none!important}
           .card-grid{display:none!important}
           .mob-stats{display:flex!important}.desk-stats{display:none!important}
           .mob-filters{display:flex!important}.desk-filters{display:none!important}
@@ -945,7 +945,7 @@ export default function CollectionPage() {
             <>
               {/* ── Grid View ── */}
               {viewMode === 'grid' && (
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: 14 }}>
+                <div className="desktop-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(160px, 1fr))', gap: 12 }}>
                   {filtered.map((card, idx) => {
                     const qty = parseInt(card.qty)||1
                     const buy = (parseFloat(card.buy)||0)*qty
@@ -1053,8 +1053,8 @@ export default function CollectionPage() {
                 </div>
               </div>}
 
-              {/* ── Mobile Cards — only show when in list mode ── */}
-              {viewMode === 'table' && <div className="mobile-cards" style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+              {/* ── Mobile Cards ── */}
+              <div className="mobile-cards" style={viewMode === 'grid' ? { display: 'grid', gridTemplateColumns: 'repeat(2,1fr)', gap: 10 } : { display: 'flex', flexDirection: 'column', gap: 10 }}>
                 {filtered.map((card, idx) => {
                   const qty = parseInt(card.qty)||1
                   const buy = (parseFloat(card.buy)||0)*qty
@@ -1062,7 +1062,22 @@ export default function CollectionPage() {
                   const gl = displayVal - buy
                   const glPos = gl >= 0
                   const glPct = buy > 0 ? (gl / buy) * 100 : 0
-                  const cardContent = (
+                  const cardContent = viewMode === 'grid' ? (
+                    // ── Grid tile (compact) ──────────────────────────────────
+                    <div style={{ background: selected.has(card.id) ? 'rgba(229,57,53,0.06)' : 'linear-gradient(135deg,#111,#0d0d0d)', border: selected.has(card.id) ? '1px solid rgba(229,57,53,0.3)' : '1px solid #1e1e1e', borderRadius: 12, padding: '12px', opacity: card.sold ? 0.8 : 1, animation:`fadeUp 0.45s ease ${idx*0.1}s both`, position:'relative' }}>
+                      <input type="checkbox" checked={selected.has(card.id)} onChange={() => toggleSelect(card.id)} style={{ position:'absolute', top:8, right:8, accentColor:'#e53935', width:14, height:14, cursor:'pointer' }} />
+                      <div style={{ fontFamily:"'Outfit',sans-serif", fontSize:12, fontWeight:700, color:'#f0f0f0', marginBottom:4, paddingRight:18, lineHeight:1.3 }}>{card.player}</div>
+                      <div style={{ fontSize:10, color:'#555', marginBottom:8 }}>{[card.year, card.sport].filter(Boolean).join(' · ')}</div>
+                      {card.grade && <div style={{ display:'inline-block', padding:'1px 6px', borderRadius:6, background:'rgba(229,57,53,0.1)', color:'#e53935', fontSize:10, fontWeight:700, marginBottom:6 }}>Grade {card.grade}</div>}
+                      <div style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:14, fontWeight:700, color:'#f0f0f0', marginBottom:2 }}>{fmt(displayVal)}</div>
+                      <div style={{ fontSize:11, fontWeight:700, color: glPos ? '#22c55e' : '#e53935' }}>{glPos?'+':''}{fmt(gl)} <span style={{fontWeight:500,color:'#444'}}>({glPos?'+':''}{glPct.toFixed(1)}%)</span></div>
+                      <div style={{ display:'flex', gap:4, marginTop:8 }}>
+                        <button onClick={() => setModal(card)} style={{ flex:1, padding:'6px 0', borderRadius:7, background:'rgba(255,255,255,0.05)', border:'1px solid #2a2a2a', color:'#666', fontSize:11, cursor:'pointer' }}>Edit</button>
+                        {!card.sold && <button onClick={() => setSoldCard(card)} style={{ flex:1, padding:'6px 0', borderRadius:7, background:'rgba(255,190,46,0.08)', border:'1px solid rgba(255,190,46,0.2)', color:'#ffbe2e', fontSize:11, cursor:'pointer' }}>Sell</button>}
+                      </div>
+                    </div>
+                  ) : (
+                    // ── List card (full) ─────────────────────────────────────
                     <div style={{ background: selected.has(card.id) ? 'rgba(229,57,53,0.06)' : 'linear-gradient(135deg,#111,#0d0d0d)', border: selected.has(card.id) ? '1px solid rgba(229,57,53,0.3)' : '1px solid #1e1e1e', borderRadius: 14, padding: '14px 16px', opacity: card.sold ? 0.8 : 1, animation:`fadeUp 0.45s ease ${idx*0.1}s both` }}>
                       {/* Top row: checkbox + name + status badge */}
                       <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 10 }}>
@@ -1122,10 +1137,10 @@ export default function CollectionPage() {
                         </button>
                       </div>
                     </div>
-                  )
+                  ) // end list card
                   return <SwipeRow key={card.id} onDelete={() => setDeleteId(card.id)}>{cardContent}</SwipeRow>
                 })}
-              </div>}
+              </div>
             </>
           )}
         </main>
