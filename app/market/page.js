@@ -7,9 +7,9 @@ const LOGO = '/logo-transparent.png'
 const NAV = [
   { label: 'Dashboard', href: '/dashboard' },
   { label: 'Collection', href: '/collection' },
-  { label: 'Market', href: '/market' },
   { label: 'Insights', href: '/insights' },
   { label: 'Sold History', href: '/sold' },
+  { label: 'Market', href: '/market' },
 ]
 
 function IconDashboard() { return <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg> }
@@ -24,39 +24,51 @@ function IconExternal() { return <svg width="13" height="13" viewBox="0 0 24 24"
 function IconTrendUp() { return <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg> }
 function IconTrendDown() { return <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="23 18 13.5 8.5 8.5 13.5 1 6"/><polyline points="17 18 23 18 23 12"/></svg> }
 
-const navIcons = { 'Dashboard': IconDashboard, 'Collection': IconCollection, 'Market': IconMarket, 'Insights': IconInsights, 'Sold History': IconSold }
+const navIcons = { 'Dashboard': IconDashboard, 'Collection': IconCollection, 'Insights': IconInsights, 'Sold History': IconSold, 'Market': IconMarket }
 const fmt = n => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 2 }).format(n || 0)
 
 function Sidebar({ user, onLogout, active }) {
   return (
-    <aside style={{ width: 220, minHeight: '100vh', background: '#0d0d0d', borderRight: '1px solid #1e1e1e', display: 'flex', flexDirection: 'column', position: 'fixed', top: 0, left: 0, zIndex: 60 }}>
-      <div style={{ padding: '16px 16px 12px', borderBottom: '1px solid #1e1e1e', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <img src={LOGO} alt="TopLoad" style={{ width: 130, height: 'auto', objectFit: 'contain', filter: 'drop-shadow(0 0 8px rgba(229,57,53,0.4))' }} />
+    <aside style={{ width:200, minHeight:'100vh', background:'#000', borderRight:'1px solid #111', display:'flex', flexDirection:'column', position:'fixed', top:0, left:0, zIndex:60 }}>
+      <div style={{ padding:'20px 16px 16px', borderBottom:'1px solid #111', display:'flex', alignItems:'center', justifyContent:'center' }}>
+        <img src={LOGO} alt="TopLoad" style={{ width:140, height:'auto', objectFit:'contain', filter:'brightness(0) invert(1)' }} />
       </div>
-      <nav style={{ flex: 1, padding: '14px 10px' }}>
-        <div style={{ fontSize: 10, color: '#333', fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', padding: '0 12px', marginBottom: 8 }}>Menu</div>
+      <nav style={{ flex:1, padding:'12px 8px' }}>
         {NAV.map(({ label, href }) => {
           const isActive = active === label
           const Icon = navIcons[label]
-          return <Link key={label} href={href} style={{ display: 'flex', alignItems: 'center', gap: 11, padding: '9px 12px', borderRadius: 10, marginBottom: 2, textDecoration: 'none', color: isActive ? '#e53935' : '#666', background: isActive ? 'rgba(229,57,53,0.08)' : 'transparent', fontFamily: "'Outfit',sans-serif", fontSize: 14, fontWeight: isActive ? 600 : 500, borderLeft: isActive ? '2px solid #e53935' : '2px solid transparent', transition: 'all 0.15s' }}><Icon />{label}</Link>
+          return (
+            <Link key={label} href={href} style={{ display:'flex', alignItems:'center', gap:10, padding:'9px 12px', borderRadius:10, marginBottom:2, textDecoration:'none', color: isActive ? '#fff' : '#555', background: isActive ? '#9333ea' : 'transparent', fontSize:13, fontWeight: isActive ? 700 : 500, transition:'all 0.15s' }}>
+              <Icon /><span style={{flex:1}}>{label}</span>
+            </Link>
+          )
         })}
       </nav>
-      <div style={{ padding: '14px 10px', borderTop: '1px solid #1e1e1e' }}>
-        {user && <div style={{ padding: '10px 12px', marginBottom: 4, borderRadius: 10, background: 'rgba(255,255,255,0.03)' }}><div style={{ fontSize: 12, fontWeight: 700, color: '#ccc', fontFamily: "'Outfit',sans-serif" }}>@{user.username}</div><div style={{ fontSize: 11, color: '#444', marginTop: 1, fontFamily: "'Outfit',sans-serif" }}>{user.email}</div></div>}
-        <Link href="/settings" style={{ display: 'flex', alignItems: 'center', gap: 11, padding: '9px 12px', borderRadius: 10, marginBottom: 2, textDecoration: 'none', color: '#555', fontFamily: "'Outfit',sans-serif", fontSize: 14, fontWeight: 500 }}><IconSettings />Settings</Link>
-        <button onClick={onLogout} style={{ display: 'flex', alignItems: 'center', gap: 11, padding: '9px 12px', borderRadius: 10, width: '100%', background: 'transparent', border: 'none', cursor: 'pointer', color: '#555', fontFamily: "'Outfit',sans-serif", fontSize: 14, fontWeight: 500 }}><IconLogout />Sign Out</button>
+      <div style={{ padding:'12px 8px', borderTop:'1px solid #111' }}>
+        <Link href="/settings" style={{ display:'flex', alignItems:'center', gap:10, padding:'9px 12px', borderRadius:10, textDecoration:'none', color:'#555', fontSize:13, fontWeight:500 }}><IconSettings /><span>Settings</span></Link>
+        <button onClick={onLogout} style={{ display:'flex', alignItems:'center', gap:10, padding:'9px 12px', borderRadius:10, width:'100%', background:'transparent', border:'none', cursor:'pointer', color:'#555', fontSize:13, fontWeight:500 }}><IconLogout /><span>Sign Out</span></button>
+        {user && <div style={{ display:'flex', alignItems:'center', gap:8, padding:'8px 10px', marginTop:4, borderRadius:10, background:'#111' }}>
+          <div style={{ width:28, height:28, borderRadius:8, background:'#9333ea', display:'flex', alignItems:'center', justifyContent:'center', fontSize:12, fontWeight:900, color:'#fff', flexShrink:0 }}>{user.username?.[0]?.toUpperCase()||'A'}</div>
+          <div><div style={{ fontSize:11, fontWeight:700, color:'#ccc' }}>@{user.username}</div><div style={{ fontSize:9, color:'#555', marginTop:1 }}>{user.email}</div></div>
+        </div>}
       </div>
     </aside>
   )
 }
 
 function BottomNav({ active }) {
+  const SHORT = { 'Dashboard':'Home', 'Collection':'Cards', 'Insights':'Stats', 'Sold History':'Sold', 'Market':'Market' }
   return (
-    <nav className="mobile-only" style={{ position: 'fixed', bottom: 0, left: 0, right: 0, height: 64, background: '#0d0d0d', borderTop: '1px solid #1e1e1e', display: 'flex', alignItems: 'center', zIndex: 100 }}>
+    <nav className="mobile-only" style={{ position:'fixed', bottom:0, left:0, right:0, height:64, background:'#000', borderTop:'1px solid #111', display:'flex', alignItems:'center', zIndex:100 }}>
       {NAV.map(({ label, href }) => {
         const isActive = active === label
         const Icon = navIcons[label]
-        return <Link key={label} href={href} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 4, textDecoration: 'none', color: isActive ? '#e53935' : '#555', fontFamily: "'Outfit',sans-serif", fontSize: 9, fontWeight: isActive ? 700 : 500, letterSpacing: '0.04em', textTransform: 'uppercase', paddingBottom: 4 }}><Icon />{label}</Link>
+        return (
+          <Link key={label} href={href} style={{ flex:1, display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', gap:3, textDecoration:'none', paddingBottom:4 }}>
+            <div style={{ width:28, height:28, borderRadius:8, display:'flex', alignItems:'center', justifyContent:'center', background: isActive ? '#9333ea' : 'transparent', color: isActive ? '#fff' : '#444' }}><Icon /></div>
+            <span style={{ fontSize:9, fontWeight:800, color: isActive ? '#9333ea' : '#444', letterSpacing:'0.08em', textTransform:'uppercase' }}>{SHORT[label]||label}</span>
+          </Link>
+        )
       })}
     </nav>
   )
@@ -141,16 +153,16 @@ export default function MarketPage() {
 
   const activeCards = myCards.filter(c => !c.sold)
 
-  if (loading) return <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#0a0a0a' }}><img src={LOGO} alt="TopLoad" style={{ width: 120, opacity: 0.4, filter: 'drop-shadow(0 0 8px rgba(229,57,53,0.4))' }} /></div>
+  if (loading) return <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#0a0a0a' }}><img src={LOGO} alt="TopLoad" style={{ width: 120, opacity: 0.4, filter: 'drop-shadow(0 0 8px rgba(147,51,234,0.35))' }} /></div>
 
   return (
     <>
       <style>{`
-        .sidebar-el{display:flex;flex-direction:column}.mobile-only{display:none!important}.mob-topbar{display:none}.main-wrap{margin-left:220px;min-height:100vh;width:calc(100% - 220px)}
+        .sidebar-el{display:flex;flex-direction:column}.mobile-only{display:none!important}.mob-topbar{display:none}.main-wrap{margin-left:200px;min-height:100vh;width:calc(100% - 200px)}
         @media(max-width:768px){.sidebar-el{display:none!important}.mobile-only{display:flex!important}.mob-topbar{display:flex}.main-wrap{margin-left:0!important;width:100%!important;padding-bottom:80px!important}}
         .result-row:hover{background:rgba(255,255,255,0.03)!important}
         .src-btn{padding:9px 18px;border-radius:10px;border:1px solid #2a2a2a;font-family:'Outfit',sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:all 0.15s}
-        .src-btn.active{background:rgba(229,57,53,0.12);border-color:rgba(229,57,53,0.35);color:#e53935}
+        .src-btn.active{background:rgba(147,51,234,0.12);border-color:rgba(147,51,234,0.35);color:#9333ea}
         .src-btn:not(.active){background:#111;color:#555}
       `}</style>
       <div style={{ display: 'flex', minHeight: '100vh', background: '#0a0a0a' }}>
@@ -159,7 +171,7 @@ export default function MarketPage() {
 
           {/* Mobile topbar */}
           <div className="mob-topbar" style={{ alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
-            <img src={LOGO} alt="TopLoad" style={{ height: 36, filter: 'drop-shadow(0 0 8px rgba(229,57,53,0.4))' }} />
+            <img src={LOGO} alt="TopLoad" style={{ height: 36, filter: 'drop-shadow(0 0 8px rgba(147,51,234,0.35))' }} />
             <button onClick={handleLogout} style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '8px 14px', borderRadius: 10, background: 'rgba(255,255,255,0.05)', border: 'none', color: '#555', fontFamily: "'Outfit',sans-serif", fontSize: 13, fontWeight: 600, cursor: 'pointer' }}><IconLogout />Sign Out</button>
           </div>
 
@@ -179,12 +191,12 @@ export default function MarketPage() {
                     onChange={e => setQuery(e.target.value)}
                     placeholder="e.g. 2003 LeBron James Topps Chrome PSA 9"
                     style={{ width: '100%', padding: '11px 14px 11px 40px', borderRadius: 10, background: '#1a1a1a', border: '1px solid #2a2a2a', color: '#f0f0f0', fontSize: 14, outline: 'none', fontFamily: "'Outfit',sans-serif", boxSizing: 'border-box', transition: 'border-color 0.15s' }}
-                    onFocus={e => e.target.style.borderColor = '#e53935'}
+                    onFocus={e => e.target.style.borderColor = '#9333ea'}
                     onBlur={e => e.target.style.borderColor = '#2a2a2a'}
                   />
                   <div style={{ position: 'absolute', left: 13, top: '50%', transform: 'translateY(-50%)', color: '#444', pointerEvents: 'none' }}><IconSearch /></div>
                 </div>
-                <button type="submit" disabled={searching || !query.trim()} style={{ padding: '11px 22px', borderRadius: 10, background: searching ? '#1a1a1a' : 'linear-gradient(135deg,#e53935,#ff5252)', border: 'none', color: searching ? '#555' : '#fff', fontFamily: "'Outfit',sans-serif", fontSize: 14, fontWeight: 700, cursor: searching ? 'not-allowed' : 'pointer', whiteSpace: 'nowrap' }}>
+                <button type="submit" disabled={searching || !query.trim()} style={{ padding: '11px 22px', borderRadius: 10, background: searching ? '#1a1a1a' : 'linear-gradient(135deg,#9333ea,#ff5252)', border: 'none', color: searching ? '#555' : '#fff', fontFamily: "'Outfit',sans-serif", fontSize: 14, fontWeight: 700, cursor: searching ? 'not-allowed' : 'pointer', whiteSpace: 'nowrap' }}>
                   {searching ? 'Searching...' : 'Search'}
                 </button>
               </div>
@@ -205,7 +217,7 @@ export default function MarketPage() {
                 <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
                   {activeCards.slice(0, 6).map(card => (
                     <button key={card.id} onClick={() => { const q = [card.year, card.player, card.brand, card.grade ? `PSA ${card.grade}` : card.cond].filter(Boolean).join(' '); setQuery(q) }} style={{ padding: '5px 10px', borderRadius: 8, background: '#1a1a1a', border: '1px solid #2a2a2a', color: '#888', fontFamily: "'Outfit',sans-serif", fontSize: 12, cursor: 'pointer', transition: 'all 0.15s' }}
-                      onMouseEnter={e => { e.currentTarget.style.borderColor = 'rgba(229,57,53,0.4)'; e.currentTarget.style.color = '#e53935' }}
+                      onMouseEnter={e => { e.currentTarget.style.borderColor = 'rgba(147,51,234,0.35)'; e.currentTarget.style.color = '#9333ea' }}
                       onMouseLeave={e => { e.currentTarget.style.borderColor = '#2a2a2a'; e.currentTarget.style.color = '#888' }}>
                       {card.player} {card.year && `'${card.year.slice(-2)}`} {card.grade && `PSA ${card.grade}`}
                     </button>
@@ -217,7 +229,7 @@ export default function MarketPage() {
 
           {/* Success toast */}
           {applySuccess && (
-            <div style={{ marginBottom: 16, padding: '12px 16px', borderRadius: 10, background: 'rgba(229,57,53,0.1)', border: '1px solid rgba(229,57,53,0.25)', color: '#e53935', fontFamily: "'Outfit',sans-serif", fontSize: 13, fontWeight: 600 }}>
+            <div style={{ marginBottom: 16, padding: '12px 16px', borderRadius: 10, background: 'rgba(147,51,234,0.1)', border: '1px solid rgba(147,51,234,0.25)', color: '#9333ea', fontFamily: "'Outfit',sans-serif", fontSize: 13, fontWeight: 600 }}>
               ✓ Card value updated in your collection
             </div>
           )}
@@ -277,10 +289,10 @@ export default function MarketPage() {
                               <div style={{ fontSize: 10, color: '#444', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 2 }}>Market Avg</div>
                               <div style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: 13, fontWeight: 700, color: '#f0f0f0' }}>{fmt(results.avg)}</div>
                             </div>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: 4, fontFamily: "'JetBrains Mono',monospace", fontSize: 13, fontWeight: 700, color: isUp ? '#e53935' : '#616161' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: 4, fontFamily: "'JetBrains Mono',monospace", fontSize: 13, fontWeight: 700, color: isUp ? '#9333ea' : '#616161' }}>
                               {isUp ? <IconTrendUp /> : <IconTrendDown />}{isUp ? '+' : ''}{diffPct.toFixed(1)}%
                             </div>
-                            <button onClick={() => setApplyCard(card)} style={{ padding: '6px 12px', borderRadius: 8, background: 'rgba(229,57,53,0.08)', border: '1px solid rgba(229,57,53,0.2)', color: '#e53935', fontFamily: "'Outfit',sans-serif", fontSize: 12, fontWeight: 600, cursor: 'pointer', whiteSpace: 'nowrap' }}>
+                            <button onClick={() => setApplyCard(card)} style={{ padding: '6px 12px', borderRadius: 8, background: 'rgba(147,51,234,0.08)', border: '1px solid rgba(147,51,234,0.2)', color: '#9333ea', fontFamily: "'Outfit',sans-serif", fontSize: 12, fontWeight: 600, cursor: 'pointer', whiteSpace: 'nowrap' }}>
                               Apply Avg
                             </button>
                           </div>
@@ -297,7 +309,7 @@ export default function MarketPage() {
                   <h2 style={{ fontFamily: "'Outfit',sans-serif", fontSize: 13, fontWeight: 700, color: '#ccc', margin: 0 }}>
                     Sold Listings · <span style={{ color: '#555' }}>{results.source === 'both' ? '130Point + eBay' : results.source === '130point' ? '130Point' : 'eBay Direct'}</span>
                   </h2>
-                  <a href={`https://www.ebay.com/sch/i.html?_nkw=${encodeURIComponent(query)}&LH_Sold=1`} target="_blank" rel="noopener noreferrer" style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: 12, color: '#e53935', textDecoration: 'none', fontFamily: "'Outfit',sans-serif", fontWeight: 600 }}>
+                  <a href={`https://www.ebay.com/sch/i.html?_nkw=${encodeURIComponent(query)}&LH_Sold=1`} target="_blank" rel="noopener noreferrer" style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: 12, color: '#9333ea', textDecoration: 'none', fontFamily: "'Outfit',sans-serif", fontWeight: 600 }}>
                     View on eBay <IconExternal />
                   </a>
                 </div>
@@ -358,11 +370,11 @@ export default function MarketPage() {
             <div style={{ display: 'flex', gap: 16, marginBottom: 20, padding: '12px 14px', borderRadius: 10, background: '#1a1a1a', border: '1px solid #2a2a2a' }}>
               <div><div style={{ fontSize: 10, color: '#444', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 4 }}>Current Value</div><div style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: 16, color: '#888' }}>{fmt(parseFloat(applyCard.val) || parseFloat(applyCard.buy) || 0)}</div></div>
               <div style={{ color: '#333', alignSelf: 'center', fontSize: 20 }}>→</div>
-              <div><div style={{ fontSize: 10, color: '#444', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 4 }}>Market Average</div><div style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: 16, fontWeight: 700, color: '#e53935' }}>{fmt(results?.avg)}</div></div>
+              <div><div style={{ fontSize: 10, color: '#444', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 4 }}>Market Average</div><div style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: 16, fontWeight: 700, color: '#9333ea' }}>{fmt(results?.avg)}</div></div>
             </div>
             <div style={{ display: 'flex', gap: 10 }}>
               <button onClick={() => setApplyCard(null)} style={{ flex: 1, padding: 11, borderRadius: 10, background: '#1a1a1a', border: '1px solid #2a2a2a', color: '#666', fontFamily: "'Outfit',sans-serif", fontSize: 14, fontWeight: 600, cursor: 'pointer' }}>Cancel</button>
-              <button onClick={() => handleApplyToCard(applyCard.id, results?.avg)} style={{ flex: 1, padding: 11, borderRadius: 10, background: 'linear-gradient(135deg,#e53935,#ff5252)', border: 'none', color: '#fff', fontFamily: "'Outfit',sans-serif", fontSize: 14, fontWeight: 700, cursor: 'pointer' }}>Apply Price</button>
+              <button onClick={() => handleApplyToCard(applyCard.id, results?.avg)} style={{ flex: 1, padding: 11, borderRadius: 10, background: 'linear-gradient(135deg,#9333ea,#ff5252)', border: 'none', color: '#fff', fontFamily: "'Outfit',sans-serif", fontSize: 14, fontWeight: 700, cursor: 'pointer' }}>Apply Price</button>
             </div>
           </div>
         </div>
