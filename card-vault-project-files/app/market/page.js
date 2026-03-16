@@ -372,18 +372,13 @@ export default function MarketPage() {
           {results && (
             <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fill,minmax(200px,1fr))', gap:12 }}>
               {results.results.map((r, i) => (
-                <div key={i} className="listing-card" style={{ background:'#111', border:'1px solid #1a1a1a', borderRadius:12, overflow:'hidden', cursor:'pointer' }}
-                  onClick={() => openAddModal(r)}>
+                <a key={i} href={r.link} target="_blank" rel="noopener noreferrer" className="listing-card" style={{ background:'#111', border:'1px solid #1a1a1a', borderRadius:12, overflow:'hidden', textDecoration:'none', display:'block' }}>
                   {/* Image */}
                   <div style={{ width:'100%', aspectRatio:'1', background:'#1a1a1a', display:'flex', alignItems:'center', justifyContent:'center', overflow:'hidden', position:'relative' }}>
                     {r.image
                       ? <img src={r.image} alt={r.title} style={{ width:'100%', height:'100%', objectFit:'cover' }} />
                       : <div style={{ fontSize:40, opacity:0.15 }}>🃏</div>
                     }
-                    {/* Add button overlay */}
-                    <div style={{ position:'absolute', top:8, right:8, width:28, height:28, borderRadius:7, background:'#9333ea', display:'flex', alignItems:'center', justifyContent:'center', opacity:0.9 }}>
-                      <IconPlus />
-                    </div>
                   </div>
                   {/* Info */}
                   <div style={{ padding:'10px 12px' }}>
@@ -392,11 +387,11 @@ export default function MarketPage() {
                       <div style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:15, fontWeight:900, color:'#fff' }}>{fmt(r.price)}</div>
                       {r.condition && <div style={{ fontSize:9, fontWeight:700, color:'#555', textTransform:'uppercase' }}>{r.condition}</div>}
                     </div>
-                    <button style={{ marginTop:8, width:'100%', padding:'7px', borderRadius:8, background:'rgba(147,51,234,0.1)', border:'1px solid rgba(147,51,234,0.2)', color:'#a855f7', fontSize:11, fontWeight:800, cursor:'pointer', textTransform:'uppercase', letterSpacing:'0.06em' }}>
+                    <button onClick={e => { e.preventDefault(); e.stopPropagation(); openAddModal(r) }} style={{ marginTop:8, width:'100%', padding:'7px', borderRadius:8, background:'rgba(147,51,234,0.1)', border:'1px solid rgba(147,51,234,0.2)', color:'#a855f7', fontSize:11, fontWeight:800, cursor:'pointer', textTransform:'uppercase', letterSpacing:'0.06em' }}>
                       + Add to Collection
                     </button>
                   </div>
-                </div>
+                </a>
               ))}
             </div>
           )}
