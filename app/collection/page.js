@@ -213,26 +213,30 @@ function parseCSV(text) {
 
 function Sidebar({ user, onLogout, cardCount = 0, active = "" }) {
   return (
-    <aside style={{ width:64, minHeight:'100vh', background:'#000', borderRight:'1px solid #111', display:'flex', flexDirection:'column', alignItems:'center', position:'fixed', top:0, left:0, zIndex:60, padding:'16px 0' }}>
-      <div style={{ marginBottom:24, paddingBottom:16, borderBottom:'1px solid #111', width:'100%', display:'flex', justifyContent:'center' }}>
-        <img src="/logo-transparent.png" alt="TopLoad" style={{ width:32, height:32, objectFit:'contain', filter:'brightness(0) invert(1)' }} />
+    <aside style={{ width:200, minHeight:'100vh', background:'#000', borderRight:'1px solid #111', display:'flex', flexDirection:'column', position:'fixed', top:0, left:0, zIndex:60 }}>
+      <div style={{ padding:'20px 16px 16px', borderBottom:'1px solid #111', display:'flex', alignItems:'center', justifyContent:'center' }}>
+        <img src="/logo-transparent.png" alt="TopLoad" style={{ width:140, height:'auto', objectFit:'contain', filter:'brightness(0) invert(1)' }} />
       </div>
-      <nav style={{ flex:1, display:'flex', flexDirection:'column', alignItems:'center', gap:4, width:'100%', padding:'0 8px' }}>
+      <nav style={{ flex:1, padding:'12px 8px' }}>
         {NAV.map(({ label, href }) => {
           const isActive = active === label
           const Icon = navIcons[label]
           return (
-            <Link key={label} href={href} title={label} style={{ width:44, height:44, borderRadius:12, display:'flex', alignItems:'center', justifyContent:'center', textDecoration:'none', background: isActive ? '#9333ea' : 'transparent', color: isActive ? '#fff' : '#444', transition:'all 0.15s', position:'relative' }}>
+            <Link key={label} href={href} style={{ display:'flex', alignItems:'center', gap:10, padding:'9px 12px', borderRadius:10, marginBottom:2, textDecoration:'none', color: isActive ? '#fff' : '#555', background: isActive ? '#9333ea' : 'transparent', fontSize:13, fontWeight: isActive ? 700 : 500, transition:'all 0.15s', letterSpacing:'0.01em' }}>
               <Icon />
-              {label === 'Collection' && cardCount > 0 && <span style={{ position:'absolute', top:6, right:6, width:8, height:8, background:'#9333ea', borderRadius:'50%', border:'1.5px solid #000' }} />}
+              <span style={{flex:1}}>{label}</span>
+              {label === 'Collection' && cardCount > 0 && <span style={{ fontSize:9, fontWeight:800, background: isActive ? 'rgba(255,255,255,0.2)' : 'rgba(147,51,234,0.2)', color: isActive ? '#fff' : '#a855f7', borderRadius:5, padding:'1px 6px' }}>{cardCount}</span>}
             </Link>
           )
         })}
       </nav>
-      <div style={{ display:'flex', flexDirection:'column', alignItems:'center', gap:8, paddingTop:16, borderTop:'1px solid #111', width:'100%' }}>
-        <Link href="/settings" title="Settings" style={{ width:44, height:44, borderRadius:12, display:'flex', alignItems:'center', justifyContent:'center', textDecoration:'none', color:'#444' }}><IconSettings /></Link>
-        <button onClick={onLogout} title="Sign Out" style={{ width:44, height:44, borderRadius:12, display:'flex', alignItems:'center', justifyContent:'center', background:'transparent', border:'none', cursor:'pointer', color:'#444' }}><IconLogout /></button>
-        {user && <div style={{ width:32, height:32, borderRadius:8, background:'#9333ea', display:'flex', alignItems:'center', justifyContent:'center', fontSize:12, fontWeight:900, color:'#fff', cursor:'default' }}>{user.username?.[0]?.toUpperCase()||'A'}</div>}
+      <div style={{ padding:'12px 8px', borderTop:'1px solid #111' }}>
+        <Link href="/settings" style={{ display:'flex', alignItems:'center', gap:10, padding:'9px 12px', borderRadius:10, marginBottom:2, textDecoration:'none', color:'#555', fontSize:13, fontWeight:500 }}><IconSettings /><span>Settings</span></Link>
+        <button onClick={onLogout} style={{ display:'flex', alignItems:'center', gap:10, padding:'9px 12px', borderRadius:10, width:'100%', background:'transparent', border:'none', cursor:'pointer', color:'#555', fontSize:13, fontWeight:500 }}><IconLogout /><span>Sign Out</span></button>
+        {user && <div style={{ display:'flex', alignItems:'center', gap:8, padding:'8px 10px', marginTop:4, borderRadius:10, background:'#111' }}>
+          <div style={{ width:28, height:28, borderRadius:8, background:'#9333ea', display:'flex', alignItems:'center', justifyContent:'center', fontSize:12, fontWeight:900, color:'#fff', flexShrink:0 }}>{user.username?.[0]?.toUpperCase()||'A'}</div>
+          <div style={{overflow:'hidden'}}><div style={{ fontSize:11, fontWeight:700, color:'#ccc', overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>@{user.username}</div><div style={{ fontSize:9, color:'#555', marginTop:1 }}>{user.email}</div></div>
+        </div>}
       </div>
     </aside>
   )
@@ -248,7 +252,7 @@ function BottomNav({ active = "" }) {
         return (
           <Link key={label} href={href} style={{ flex:1, display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', gap:3, textDecoration:'none', paddingBottom:4 }}>
             <div style={{ width:28, height:28, borderRadius:8, display:'flex', alignItems:'center', justifyContent:'center', background: isActive ? '#9333ea' : 'transparent', color: isActive ? '#fff' : '#444', transition:'all 0.15s' }}><Icon /></div>
-            <span style={{ fontSize:9, fontWeight:800, color: isActive ? '#9333ea' : '#444', letterSpacing:'0.08em', textTransform:'uppercase', fontFamily:"'Inter',sans-serif" }}>{SHORT[label]||label}</span>
+            <span style={{ fontSize:9, fontWeight:800, color: isActive ? '#9333ea' : '#444', letterSpacing:'0.08em', textTransform:'uppercase' }}>{SHORT[label]||label}</span>
           </Link>
         )
       })}
@@ -830,7 +834,7 @@ function CollectionPage() {
         @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800;900&display=swap');
         *{font-family:'Space Grotesk',-apple-system,sans-serif!important}
         [style*="JetBrains"],[style*="monospace"]{font-family:'JetBrains Mono',monospace!important}
-        .sidebar-el{display:flex;flex-direction:column}.mobile-only{display:none!important}.mob-topbar{display:none}.main-wrap{margin-left:64px;min-height:100vh;width:calc(100% - 64px)}.card-row:hover{background:rgba(255,255,255,0.02)!important}
+        .sidebar-el{display:flex;flex-direction:column}.mobile-only{display:none!important}.mob-topbar{display:none}.main-wrap{margin-left:200px;min-height:100vh;width:calc(100% - 200px)}.card-row:hover{background:rgba(255,255,255,0.02)!important}
         .mobile-cards{display:none!important}
         .desktop-table{display:block!important}
         .card-grid{display:none!important}
@@ -868,7 +872,6 @@ function CollectionPage() {
           <div className="hide-mob" style={{ marginBottom:28 }}>
             <div style={{ display:'flex', alignItems:'flex-end', justifyContent:'space-between', marginBottom:24 }}>
               <div>
-                <div style={{ fontSize:11, fontWeight:700, color:'#9333ea', textTransform:'uppercase', letterSpacing:'0.15em', marginBottom:6 }}>My Collection</div>
                 <h1 style={{ fontSize:38, fontWeight:900, color:'#fff', letterSpacing:'-1.5px', margin:0, textTransform:'uppercase', lineHeight:1 }}>COLLECTION</h1>
                 <p style={{ fontSize:12, color:'#555', marginTop:6, fontWeight:500 }}>{cards.length} cards · {activeCards.length} active · {soldCards.length} sold</p>
               </div>
