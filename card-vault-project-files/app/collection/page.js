@@ -284,10 +284,9 @@ function CardModal({ card, onClose, onSave }) {
   const [form, setForm] = useState(card || EMPTY)
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
+  const [showDetails, setShowDetails] = useState(isEdit)
   const set = (k, v) => setForm(f => ({ ...f, [k]: v }))
   const isTCG = TCG_LIST.includes(form.sport)
-
-  // Is this sport one of the top 4?
   const isTopSport = TOP_SPORTS.some(s => s.label === form.sport)
   const isMoreSport = MORE_SPORTS.includes(form.sport)
 
@@ -315,8 +314,10 @@ function CardModal({ card, onClose, onSave }) {
 
         {/* Header */}
         <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:18 }}>
-          <h2 style={{ fontFamily:"'Outfit',sans-serif", fontSize:20, fontWeight:800, color:'#f0f0f0', margin:0 }}>{isEdit ? 'Edit Card' : 'Add Card'}</h2>
-          <button onClick={onClose} style={{ background:'none', border:'none', color:'#555', cursor:'pointer', padding:4, fontSize:20, lineHeight:1 }}>×</button>
+          <h2 style={{ fontFamily:"'Outfit',sans-serif", fontSize:20, fontWeight:800, color:'#f0f0f0', margin:0 }}>
+            {isEdit ? 'Edit Card' : 'Quick Add'}
+          </h2>
+          <button onClick={onClose} style={{ background:'none', border:'none', color:'#555', cursor:'pointer', padding:4, fontSize:22, lineHeight:1 }}>×</button>
         </div>
 
         {error && <div style={{ marginBottom:14, padding:'10px 14px', borderRadius:10, background:'rgba(229,57,53,0.08)', color:'#e53935', fontSize:13, border:'1px solid rgba(229,57,53,0.2)', fontFamily:"'Outfit',sans-serif" }}>{error}</div>}
@@ -326,13 +327,13 @@ function CardModal({ card, onClose, onSave }) {
           {/* ── 1. Name ── */}
           <div>
             {lbl(isTCG ? 'Card Name *' : 'Player Name *')}
-            {inp('player', isEdit ? '' : (isTCG ? 'e.g. Charizard' : 'e.g. LeBron James'), 'text', !isEdit)}
+            {inp('player', isTCG ? 'e.g. Charizard' : 'e.g. LeBron James', 'text', true)}
           </div>
 
-          {/* ── 2. Sport — top 4 as big buttons + more dropdown ── */}
+          {/* ── 2. Sport — top 4 big buttons + more dropdown ── */}
           <div>
             {lbl('Sport / Game')}
-            <div style={{ display:'grid', gridTemplateColumns:'repeat(4,1fr)', gap:8, marginBottom: (!isTopSport && form.sport) ? 0 : 8 }}>
+            <div style={{ display:'grid', gridTemplateColumns:'repeat(4,1fr)', gap:8, marginBottom:8 }}>
               {TOP_SPORTS.map(s => (
                 <button key={s.label} onClick={() => set('sport', form.sport === s.label ? '' : s.label)}
                   style={{ padding:'10px 4px', borderRadius:10, border: form.sport === s.label ? '2px solid rgba(229,57,53,0.6)' : '1px solid #2a2a2a', background: form.sport === s.label ? 'rgba(229,57,53,0.12)' : '#1a1a1a', cursor:'pointer', display:'flex', flexDirection:'column', alignItems:'center', gap:3 }}>
@@ -341,7 +342,6 @@ function CardModal({ card, onClose, onSave }) {
                 </button>
               ))}
             </div>
-            {/* More sports dropdown */}
             <select value={isMoreSport ? form.sport : ''} onChange={e => set('sport', e.target.value)}
               style={{ width:'100%', padding:'10px 14px', borderRadius:10, background: isMoreSport ? 'rgba(229,57,53,0.08)' : '#1a1a1a', border: isMoreSport ? '1px solid rgba(229,57,53,0.3)' : '1px solid #2a2a2a', color: isMoreSport ? '#e53935' : '#555', fontSize:14, outline:'none', fontFamily:"'Outfit',sans-serif" }}>
               <option value="">More sports / TCG...</option>
@@ -349,92 +349,75 @@ function CardModal({ card, onClose, onSave }) {
             </select>
           </div>
 
-          {/* ── 3. Year + Card Number/Numbering ── */}
+          {/* ── 3. Grade + Grade Company (two dropdowns side by side) ── */}
           <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:10 }}>
-            <div>{lbl('Year')}{inp('year', 'e.g. 2023')}</div>
-            <div>{lbl('Numbering (e.g. 10/50)')}{inp('num', 'e.g. 10/50')}</div>
-          </div>
-
-          {/* ── 4. Set + Brand ── */}
-          <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:10 }}>
-            <div>{lbl(isTCG ? 'Set / Expansion' : 'Set')}{inp('name', isTCG ? 'e.g. Base Set' : 'e.g. Topps Chrome')}</div>
-            <div>{lbl(isTCG ? 'Publisher' : 'Brand')}{inp('brand', isTCG ? 'e.g. Wizards' : 'e.g. Topps')}</div>
-          </div>
-
-          {/* ── 5. Graded toggle ── */}
-          <div>
-            {lbl('Condition')}
-            <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:8 }}>
-              {/* Raw / Ungraded */}
-              <button onClick={() => { set('grade', ''); set('cond', form.cond || 'Near Mint') }}
-                style={{ padding:'10px', borderRadius:10, border: !form.grade ? '2px solid rgba(229,57,53,0.5)' : '1px solid #2a2a2a', background: !form.grade ? 'rgba(229,57,53,0.08)' : '#1a1a1a', cursor:'pointer', display:'flex', alignItems:'center', gap:8 }}>
-                <span style={{ fontSize:18 }}>📦</span>
-                <div style={{ textAlign:'left' }}>
-                  <div style={{ fontFamily:"'Outfit',sans-serif", fontSize:13, fontWeight:700, color: !form.grade ? '#e53935' : '#666' }}>Raw</div>
-                  <div style={{ fontFamily:"'Outfit',sans-serif", fontSize:10, color:'#444' }}>Ungraded card</div>
-                </div>
-              </button>
-              {/* Graded */}
-              <button onClick={() => { set('cond', ''); if(!form.grade) set('grade', '') }}
-                style={{ padding:'10px', borderRadius:10, border: form.grade !== undefined && form.grade !== '' ? '2px solid rgba(229,57,53,0.5)' : '1px solid #2a2a2a', background: form.grade !== undefined && form.grade !== '' ? 'rgba(229,57,53,0.08)' : '#1a1a1a', cursor:'pointer', display:'flex', alignItems:'center', gap:8 }}
-                onClick={() => { if(!form.grade) { set('grade', ''); set('cond', '') } }}>
-                <span style={{ fontSize:18 }}>🏅</span>
-                <div style={{ textAlign:'left' }}>
-                  <div style={{ fontFamily:"'Outfit',sans-serif", fontSize:13, fontWeight:700, color: '#666' }}>Graded</div>
-                  <div style={{ fontFamily:"'Outfit',sans-serif", fontSize:10, color:'#444' }}>PSA, BGS, SGC...</div>
-                </div>
-              </button>
-            </div>
-
-            {/* If graded - show grade input */}
-            {(form.grade !== undefined) && (
-              <div style={{ marginTop:8, display:'grid', gridTemplateColumns:'1fr 1fr', gap:8 }}>
-                <div>{lbl('Grade')}{inp('grade', 'e.g. 9, 10, 9.5')}</div>
-                <div>
-                  {lbl('Grading Co.')}
-                  <select value={form.gradingCo||''} onChange={e => set('gradingCo', e.target.value)}
-                    style={{ width:'100%', padding:'11px 14px', borderRadius:10, background:'#1a1a1a', border:'1px solid #2a2a2a', color: form.gradingCo ? '#f0f0f0' : '#555', fontSize:14, outline:'none', fontFamily:"'Outfit',sans-serif" }}>
-                    <option value="">Select...</option>
-                    {['PSA','BGS','SGC','CGC','HGA','CSG','GAI','Other'].map(g => <option key={g} value={g}>{g}</option>)}
-                  </select>
-                </div>
-              </div>
-            )}
-
-            {/* If raw - show condition */}
-            {!form.grade && form.cond !== undefined && (
-              <div style={{ marginTop:8 }}>
-                <select value={form.cond||''} onChange={e => set('cond', e.target.value)}
-                  style={{ width:'100%', padding:'11px 14px', borderRadius:10, background:'#1a1a1a', border:'1px solid #2a2a2a', color: form.cond ? '#f0f0f0' : '#555', fontSize:14, outline:'none', fontFamily:"'Outfit',sans-serif" }}>
-                  <option value="">Condition...</option>
-                  {CONDS.map(c => <option key={c} value={c}>{c}</option>)}
-                </select>
-              </div>
-            )}
-          </div>
-
-          {/* ── 6. Auto checkbox ── */}
-          <label style={{ display:'flex', alignItems:'center', gap:12, padding:'11px 14px', borderRadius:10, background:'#1a1a1a', border: form.auto ? '1px solid rgba(229,57,53,0.3)' : '1px solid #2a2a2a', cursor:'pointer' }}>
-            <input type="checkbox" checked={!!form.auto} onChange={e => set('auto', e.target.checked)} style={{ accentColor:'#e53935', width:18, height:18, cursor:'pointer' }} />
             <div>
-              <div style={{ fontFamily:"'Outfit',sans-serif", fontSize:14, fontWeight:700, color: form.auto ? '#e53935' : '#ccc' }}>Autograph ✍️</div>
+              {lbl('Grade')}
+              <select value={form.grade||''} onChange={e => set('grade', e.target.value)}
+                style={{ width:'100%', padding:'11px 14px', borderRadius:10, background:'#1a1a1a', border:'1px solid #2a2a2a', color: form.grade ? '#f0f0f0' : '#555', fontSize:14, outline:'none', fontFamily:"'Outfit',sans-serif" }}>
+                <option value="">Raw / No grade</option>
+                {['10','9.5','9','8.5','8','7.5','7','6.5','6','5','4','3','2','1'].map(g => <option key={g} value={g}>{g}</option>)}
+              </select>
+            </div>
+            <div>
+              {lbl('Grading Co.')}
+              <select value={form.gradingCo||''} onChange={e => set('gradingCo', e.target.value)}
+                style={{ width:'100%', padding:'11px 14px', borderRadius:10, background:'#1a1a1a', border:'1px solid #2a2a2a', color: form.gradingCo ? '#f0f0f0' : '#555', fontSize:14, outline:'none', fontFamily:"'Outfit',sans-serif" }}>
+                <option value="">No grading co.</option>
+                {['PSA','BGS','SGC','CGC','HGA','CSG','GAI','Other'].map(g => <option key={g} value={g}>{g}</option>)}
+              </select>
+            </div>
+          </div>
+
+          {/* ── 4. Auto checkbox ── */}
+          <label style={{ display:'flex', alignItems:'center', gap:12, padding:'11px 14px', borderRadius:10, background:'#1a1a1a', border: form.auto ? '1px solid rgba(255,190,46,0.3)' : '1px solid #2a2a2a', cursor:'pointer' }}>
+            <input type="checkbox" checked={!!form.auto} onChange={e => set('auto', e.target.checked)} style={{ accentColor:'#ffbe2e', width:18, height:18, cursor:'pointer' }} />
+            <div>
+              <div style={{ fontFamily:"'Outfit',sans-serif", fontSize:14, fontWeight:700, color: form.auto ? '#ffbe2e' : '#ccc' }}>Autograph ✍️</div>
               <div style={{ fontFamily:"'Outfit',sans-serif", fontSize:11, color:'#555' }}>This card has an auto</div>
             </div>
           </label>
 
-          {/* ── 7. Buy Price + Value ── */}
+          {/* ── 5. Buy Price + Value ── */}
           <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:10 }}>
             <div>{lbl('Buy Price ($)')}{inp('buy', '0.00', 'number')}</div>
             <div>{lbl('Current Value ($)')}{inp('val', '0.00', 'number')}</div>
           </div>
 
-          {/* ── 8. Qty (collapsed by default, small) ── */}
-          <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:10 }}>
-            <div>{lbl('Qty')}{inp('qty', '1', 'number')}</div>
-            <div>{lbl('Purchase Date')}{inp('date', '', 'date')}</div>
-          </div>
+          {/* ── 6. More Details toggle ── */}
+          {!isEdit && (
+            <button onClick={() => setShowDetails(v => !v)}
+              style={{ width:'100%', padding:'10px', borderRadius:10, background:'transparent', border:'1px solid #2a2a2a', color:'#555', fontFamily:"'Outfit',sans-serif", fontSize:13, fontWeight:600, cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'center', gap:6 }}>
+              {showDetails ? '↑ Hide details' : '↓ More details (year, set, brand, numbering...)'}
+            </button>
+          )}
 
-          {/* ── Sold toggle ── */}
+          {/* ── 7. Extra Details (collapsed by default on add) ── */}
+          {showDetails && <>
+            <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:10 }}>
+              <div>{lbl('Year')}{inp('year', 'e.g. 2023')}</div>
+              <div>{lbl('Numbering (e.g. 10/50)')}{inp('num', 'e.g. 10/50')}</div>
+            </div>
+            <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:10 }}>
+              <div>{lbl(isTCG ? 'Set / Expansion' : 'Set')}{inp('name', isTCG ? 'e.g. Base Set' : 'e.g. Topps Chrome')}</div>
+              <div>{lbl(isTCG ? 'Publisher' : 'Brand')}{inp('brand', isTCG ? 'e.g. Wizards' : 'e.g. Topps')}</div>
+            </div>
+            {isTCG ? (
+              <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:10 }}>
+                <div>{lbl('Rarity')}<select value={form.rarity||''} onChange={e => set('rarity', e.target.value)} style={{ width:'100%', padding:'11px 14px', borderRadius:10, background:'#1a1a1a', border:'1px solid #2a2a2a', color: form.rarity?'#f0f0f0':'#555', fontSize:14, outline:'none', fontFamily:"'Outfit',sans-serif" }}><option value="">Select...</option>{TCG_RARITIES.map(r=><option key={r} value={r}>{r}</option>)}</select></div>
+                <div>{lbl('Edition')}<select value={form.edition||''} onChange={e => set('edition', e.target.value)} style={{ width:'100%', padding:'11px 14px', borderRadius:10, background:'#1a1a1a', border:'1px solid #2a2a2a', color: form.edition?'#f0f0f0':'#555', fontSize:14, outline:'none', fontFamily:"'Outfit',sans-serif" }}><option value="">Select...</option>{EDITIONS.map(e=><option key={e} value={e}>{e}</option>)}</select></div>
+              </div>
+            ) : (
+              <div>{lbl('Condition')}<select value={form.cond||''} onChange={e => set('cond', e.target.value)} style={{ width:'100%', padding:'11px 14px', borderRadius:10, background:'#1a1a1a', border:'1px solid #2a2a2a', color: form.cond?'#f0f0f0':'#555', fontSize:14, outline:'none', fontFamily:"'Outfit',sans-serif" }}><option value="">Select...</option>{CONDS.map(c=><option key={c} value={c}>{c}</option>)}</select></div>
+            )}
+            <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:10 }}>
+              <div>{lbl('Quantity')}{inp('qty', '1', 'number')}</div>
+              <div>{lbl('Purchase Date')}{inp('date', '', 'date')}</div>
+            </div>
+            <div>{lbl('Notes')}<textarea value={form.notes||''} onChange={e => set('notes', e.target.value)} rows={2} placeholder="Any extra details..." style={{ width:'100%', padding:'11px 14px', borderRadius:10, background:'#1a1a1a', border:'1px solid #2a2a2a', color:'#f0f0f0', fontSize:14, outline:'none', resize:'none', fontFamily:"'Outfit',sans-serif", boxSizing:'border-box' }} /></div>
+          </>}
+
+          {/* Sold toggle (edit only) */}
           {isEdit && <>
             <label style={{ display:'flex', alignItems:'center', gap:12, padding:'11px 14px', borderRadius:10, background:'#1a1a1a', border:'1px solid #2a2a2a', cursor:'pointer' }}>
               <input type="checkbox" checked={!!form.sold} onChange={e => set('sold', e.target.checked)} style={{ accentColor:'#e53935', width:18, height:18 }} />
@@ -448,9 +431,9 @@ function CardModal({ card, onClose, onSave }) {
 
         </div>
 
-        {/* ── Save ── */}
+        {/* Save button */}
         <button onClick={handleSave} disabled={saving || !form.player}
-          style={{ width:'100%', padding:'14px', borderRadius:12, marginTop:20, background: (!form.player||saving) ? '#1a1a1a' : 'linear-gradient(135deg,#e53935,#ff5252)', border: (!form.player||saving) ? '1px solid #2a2a2a' : 'none', color: (!form.player||saving) ? '#444' : '#fff', fontFamily:"'Outfit',sans-serif", fontSize:16, fontWeight:800, cursor: (!form.player||saving) ? 'not-allowed' : 'pointer', letterSpacing:'-0.3px' }}>
+          style={{ width:'100%', padding:'14px', borderRadius:12, marginTop:18, background: (!form.player||saving) ? '#1a1a1a' : 'linear-gradient(135deg,#e53935,#ff5252)', border: (!form.player||saving) ? '1px solid #2a2a2a' : 'none', color: (!form.player||saving) ? '#444' : '#fff', fontFamily:"'Outfit',sans-serif", fontSize:16, fontWeight:800, cursor: (!form.player||saving) ? 'not-allowed' : 'pointer', letterSpacing:'-0.3px' }}>
           {saving ? 'Saving...' : (isEdit ? 'Save Changes' : '+ Add Card')}
         </button>
 
