@@ -246,14 +246,37 @@ function BottomNav({ active = "" }) {
   )
 }
 
+// ── SPORTS ICONS for quick-select ────────────────────────────────────────────
+const SPORT_OPTIONS = [
+  { label: 'Baseball', emoji: '⚾' },
+  { label: 'Basketball', emoji: '🏀' },
+  { label: 'Football', emoji: '🏈' },
+  { label: 'Soccer', emoji: '⚽' },
+  { label: 'Hockey', emoji: '🏒' },
+  { label: 'F1', emoji: '🏎️' },
+  { label: 'Golf', emoji: '⛳' },
+  { label: 'Tennis', emoji: '🎾' },
+  { label: 'Pokémon', emoji: '🎴' },
+  { label: 'Magic: The Gathering', emoji: '🧙' },
+  { label: 'Yu-Gi-Oh!', emoji: '⚔️' },
+  { label: 'Lorcana', emoji: '✨' },
+  { label: 'One Piece', emoji: '🏴‍☠️' },
+  { label: 'Dragon Ball Super', emoji: '🐉' },
+  { label: 'Digimon', emoji: '👾' },
+  { label: 'Other', emoji: '🃏' },
+]
+
 function CardModal({ card, onClose, onSave }) {
+  const isEdit = !!card?.id
   const [form, setForm] = useState(card || EMPTY)
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
+  const [step, setStep] = useState(isEdit ? 'full' : 'quick') // 'quick' | 'step1' | 'step2' | 'full'
   const set = (k, v) => setForm(f => ({ ...f, [k]: v }))
+  const isTCG = TCG_LIST.includes(form.sport)
 
   async function handleSave() {
-    if (!form.player) { setError('Player name is required'); return }
+    if (!form.player) { setError('Player / Card name is required'); return }
     setSaving(true); setError('')
     try {
       const method = form.id ? 'PUT' : 'POST'
@@ -263,66 +286,220 @@ function CardModal({ card, onClose, onSave }) {
     } catch { setError('Something went wrong'); setSaving(false) }
   }
 
-  const field = (label, key, type = 'text', opts = null) => (
-    <div>
-      <label style={{ display: 'block', fontSize: 11, fontWeight: 600, color: '#555', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 6 }}>{label}</label>
-      {opts ? (
-        <select value={form[key]||''} onChange={e => set(key, e.target.value)} style={{ width: '100%', padding: '9px 12px', borderRadius: 10, background: '#1a1a1a', border: '1px solid #2a2a2a', color: form[key] ? 'var(--text)' : '#4a5578', fontSize: 14, outline: 'none' }}>
-          <option value="">Select...</option>
-          {opts.map(o => <option key={o} value={o}>{o}</option>)}
-        </select>
-      ) : (
-        <input type={type} value={form[key]||''} onChange={e => set(key, e.target.value)} style={{ width: '100%', padding: '9px 12px', borderRadius: 10, background: '#1a1a1a', border: '1px solid #2a2a2a', color: '#f0f0f0', fontSize: 14, outline: 'none' }} />
-      )}
+  const inp = (key, placeholder, type = 'text', autoFocus = false) => (
+    <input
+      type={type}
+      placeholder={placeholder}
+      value={form[key]||''}
+      onChange={e => set(key, e.target.value)}
+      autoFocus={autoFocus}
+      style={{ width:'100%', padding:'12px 14px', borderRadius:12, background:'#1a1a1a', border:'1px solid #2a2a2a', color:'#f0f0f0', fontSize:15, outline:'none', fontFamily:"'Outfit',sans-serif", boxSizing:'border-box' }}
+    />
+  )
+
+  const lbl = (text) => (
+    <div style={{ fontSize:11, fontWeight:700, color:'#555', textTransform:'uppercase', letterSpacing:'0.08em', marginBottom:6, fontFamily:"'Outfit',sans-serif" }}>{text}</div>
+  )
+
+  const sel = (key, opts, placeholder = 'Select...') => (
+    <select value={form[key]||''} onChange={e => set(key, e.target.value)}
+      style={{ width:'100%', padding:'12px 14px', borderRadius:12, background:'#1a1a1a', border:'1px solid #2a2a2a', color: form[key] ? '#f0f0f0' : '#555', fontSize:15, outline:'none', fontFamily:"'Outfit',sans-serif" }}>
+      <option value="">{placeholder}</option>
+      {opts.map(o => <option key={o} value={o}>{o}</option>)}
+    </select>
+  )
+
+  const header = (title, sub) => (
+    <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:20 }}>
+      <div>
+        <h2 style={{ fontFamily:"'Outfit',sans-serif", fontSize:18, fontWeight:800, color:'#f0f0f0', margin:0 }}>{title}</h2>
+        {sub && <p style={{ fontFamily:"'Outfit',sans-serif", fontSize:12, color:'#555', margin:'3px 0 0' }}>{sub}</p>}
+      </div>
+      <button onClick={onClose} style={{ background:'none', border:'none', color:'#555', cursor:'pointer', padding:4 }}><IconClose /></button>
     </div>
   )
 
-  return (
-    <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.7)', zIndex: 200, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16 }}>
-      <div style={{ background: '#111', border: '1px solid #2a2a2a', borderRadius: 16, width: '100%', maxWidth: 560, maxHeight: '90vh', overflowY: 'auto', padding: 24 }}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
-          <h2 style={{ fontFamily: "'Outfit',sans-serif", fontSize: 18, fontWeight: 700, color: '#f0f2ff', margin: 0 }}>{form.id ? 'Edit Card' : 'Add Card'}</h2>
-          <button onClick={onClose} style={{ background: 'none', border: 'none', color: '#555', cursor: 'pointer', padding: 4 }}><IconClose /></button>
-        </div>
-        {error && <div style={{ marginBottom: 16, padding: '10px 14px', borderRadius: 10, background: 'rgba(255,107,122,0.1)', color: '#ff5252', fontSize: 13, border: '1px solid rgba(255,107,122,0.2)' }}>{error}</div>}
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
-          <div style={{ gridColumn: '1/-1' }}>{field(TCG_LIST.includes(form.sport) ? 'Card Name *' : 'Player / Card Name *', 'player')}</div>
-          {field('Sport / Game', 'sport', 'text', SPORTS)}
-          {field('Year', 'year')}
-          {field(TCG_LIST.includes(form.sport) ? 'Set / Expansion' : 'Card Name / Set', 'name')}
-          {field(TCG_LIST.includes(form.sport) ? 'Series / Publisher' : 'Brand', 'brand')}
-          {field('Card Number', 'num')}
-          {TCG_LIST.includes(form.sport) ? field('Rarity', 'rarity', 'text', TCG_RARITIES) : field('Condition', 'cond', 'text', CONDS)}
-          {TCG_LIST.includes(form.sport) ? field('Edition', 'edition', 'text', EDITIONS) : field('Grade', 'grade')}
-          {TCG_LIST.includes(form.sport) && field('Language', 'language', 'text', LANGUAGES)}
-          {!TCG_LIST.includes(form.sport) && field('Grade', 'grade')}
-          {field('Quantity', 'qty', 'number')}
-          {field('Purchase Date', 'date', 'date')}
-          {field('Buy Price ($)', 'buy', 'number')}
-          {field('Current Value ($)', 'val', 'number')}
-          <div style={{ gridColumn: '1/-1', borderTop: '1px solid #1e1e1e', paddingTop: 14, marginTop: 4 }}>
-            <label style={{ display: 'flex', alignItems: 'center', gap: 10, cursor: 'pointer' }}>
-              <input type="checkbox" checked={!!form.sold} onChange={e => set('sold', e.target.checked)} style={{ width: 16, height: 16, accentColor: 'var(--cyan)' }} />
-              <span style={{ fontFamily: "'Outfit',sans-serif", fontSize: 14, fontWeight: 600, color: '#ccc' }}>Mark as Sold</span>
+  const saveBtn = (label = 'Save Card') => (
+    <button onClick={handleSave} disabled={saving || !form.player} style={{ width:'100%', padding:'13px', borderRadius:12, background: (!form.player||saving) ? '#1a1a1a' : 'linear-gradient(135deg,#e53935,#ff5252)', border: (!form.player||saving) ? '1px solid #2a2a2a' : 'none', color: (!form.player||saving) ? '#444' : '#fff', fontFamily:"'Outfit',sans-serif", fontSize:15, fontWeight:700, cursor: (!form.player||saving) ? 'not-allowed' : 'pointer', marginTop:8 }}>
+      {saving ? 'Saving...' : label}
+    </button>
+  )
+
+  // ── EDIT MODE — show full form ─────────────────────────────────────────────
+  if (isEdit) return (
+    <div style={{ position:'fixed', inset:0, background:'rgba(0,0,0,0.75)', zIndex:200, display:'flex', alignItems:'center', justifyContent:'center', padding:16 }}>
+      <div style={{ background:'#111', border:'1px solid #2a2a2a', borderRadius:16, width:'100%', maxWidth:560, maxHeight:'90vh', overflowY:'auto', padding:24 }}>
+        {header('Edit Card')}
+        {error && <div style={{ marginBottom:16, padding:'10px 14px', borderRadius:10, background:'rgba(229,57,53,0.08)', color:'#e53935', fontSize:13, border:'1px solid rgba(229,57,53,0.2)' }}>{error}</div>}
+        <div style={{ display:'flex', flexDirection:'column', gap:14 }}>
+          <div>{lbl(isTCG ? 'Card Name *' : 'Player / Card Name *')}{inp('player', 'e.g. LeBron James', 'text', true)}</div>
+          <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:12 }}>
+            <div>{lbl('Sport / Game')}{sel('sport', SPORTS)}</div>
+            <div>{lbl('Year')}{inp('year', 'e.g. 2023')}</div>
+          </div>
+          <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:12 }}>
+            <div>{lbl(isTCG ? 'Set / Expansion' : 'Card Name / Set')}{inp('name', isTCG ? 'e.g. Base Set' : 'e.g. Topps Chrome')}</div>
+            <div>{lbl(isTCG ? 'Series / Publisher' : 'Brand')}{inp('brand', isTCG ? 'e.g. Wizards' : 'e.g. Topps')}</div>
+          </div>
+          <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:12 }}>
+            <div>{lbl('Card Number')}{inp('num', 'e.g. #100')}</div>
+            {isTCG
+              ? <div>{lbl('Rarity')}{sel('rarity', TCG_RARITIES)}</div>
+              : <div>{lbl('Condition')}{sel('cond', CONDS)}</div>
+            }
+          </div>
+          <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:12 }}>
+            {isTCG
+              ? <><div>{lbl('Edition')}{sel('edition', EDITIONS)}</div><div>{lbl('Language')}{sel('language', LANGUAGES)}</div></>
+              : <><div>{lbl('Grade')}{inp('grade', 'e.g. 9.5')}</div><div>{lbl('Quantity')}{inp('qty', '1', 'number')}</div></>
+            }
+          </div>
+          <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:12 }}>
+            <div>{lbl('Buy Price ($)')}{inp('buy', '0.00', 'number')}</div>
+            <div>{lbl('Current Value ($)')}{inp('val', '0.00', 'number')}</div>
+          </div>
+          <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:12 }}>
+            <div>{lbl('Purchase Date')}{inp('date', '', 'date')}</div>
+            <div>{lbl('Quantity')}{inp('qty', '1', 'number')}</div>
+          </div>
+          <div>
+            <label style={{ display:'flex', alignItems:'center', gap:10, cursor:'pointer', padding:'12px 14px', borderRadius:10, background:'#1a1a1a', border:'1px solid #2a2a2a' }}>
+              <input type="checkbox" checked={!!form.sold} onChange={e => set('sold', e.target.checked)} style={{ accentColor:'#e53935', width:16, height:16 }} />
+              <span style={{ fontFamily:"'Outfit',sans-serif", fontSize:14, fontWeight:600, color:'#ccc' }}>Mark as Sold</span>
             </label>
           </div>
-          {form.sold && <>
-            {field('Sold Price ($)', 'soldPrice', 'number')}
-            {field('Sold Date', 'soldDate', 'date')}
-          </>}
-          <div style={{ gridColumn: '1/-1' }}>
-            <label style={{ display: 'block', fontSize: 11, fontWeight: 600, color: '#555', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 6 }}>Notes</label>
-            <textarea value={form.notes||''} onChange={e => set('notes', e.target.value)} rows={3} style={{ width: '100%', padding: '9px 12px', borderRadius: 10, background: '#1a1a1a', border: '1px solid #2a2a2a', color: '#f0f0f0', fontSize: 14, outline: 'none', resize: 'vertical', fontFamily: "'Outfit',sans-serif" }} />
-          </div>
+          {form.sold && <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:12 }}>
+            <div>{lbl('Sold Price ($)')}{inp('soldPrice', '0.00', 'number')}</div>
+            <div>{lbl('Sold Date')}{inp('soldDate', '', 'date')}</div>
+          </div>}
+          <div>{lbl('Notes')}<textarea value={form.notes||''} onChange={e => set('notes', e.target.value)} rows={2} style={{ width:'100%', padding:'12px 14px', borderRadius:12, background:'#1a1a1a', border:'1px solid #2a2a2a', color:'#f0f0f0', fontSize:14, outline:'none', resize:'vertical', fontFamily:"'Outfit',sans-serif', boxSizing:'border-box" }} /></div>
         </div>
-        <div style={{ display: 'flex', gap: 10, marginTop: 20 }}>
-          <button onClick={onClose} style={{ flex: 1, padding: 11, borderRadius: 10, background: '#1a1a1a', border: '1px solid #2a2a2a', color: '#666', fontFamily: "'Outfit',sans-serif", fontSize: 14, fontWeight: 600, cursor: 'pointer' }}>Cancel</button>
-          <button onClick={handleSave} disabled={saving} style={{ flex: 1, padding: 11, borderRadius: 10, background: 'linear-gradient(135deg,#e53935,#ff5252)', border: 'none', color: '#000', fontFamily: "'Outfit',sans-serif", fontSize: 14, fontWeight: 700, cursor: 'pointer', opacity: saving ? 0.6 : 1 }}>{saving ? 'Saving...' : 'Save Card'}</button>
+        <div style={{ display:'flex', gap:10, marginTop:20 }}>
+          <button onClick={onClose} style={{ flex:1, padding:12, borderRadius:12, background:'#1a1a1a', border:'1px solid #2a2a2a', color:'#666', fontFamily:"'Outfit',sans-serif", fontSize:14, fontWeight:600, cursor:'pointer' }}>Cancel</button>
+          <button onClick={handleSave} disabled={saving} style={{ flex:2, padding:12, borderRadius:12, background:'linear-gradient(135deg,#e53935,#ff5252)', border:'none', color:'#fff', fontFamily:"'Outfit',sans-serif", fontSize:14, fontWeight:700, cursor:'pointer', opacity:saving?0.6:1 }}>{saving?'Saving...':'Save Changes'}</button>
         </div>
       </div>
     </div>
   )
+
+  // ── ADD MODE ───────────────────────────────────────────────────────────────
+  return (
+    <div style={{ position:'fixed', inset:0, background:'rgba(0,0,0,0.75)', zIndex:200, display:'flex', alignItems:'flex-end', justifyContent:'center', padding:0 }}>
+      <div style={{ background:'#111', border:'1px solid #2a2a2a', borderRadius:'20px 20px 0 0', width:'100%', maxWidth:600, maxHeight:'92vh', overflowY:'auto', padding:'24px 20px 40px' }}>
+
+        {/* ── QUICK ADD ── */}
+        {step === 'quick' && <>
+          {header('Quick Add', 'Just the essentials — fill details later')}
+          {error && <div style={{ marginBottom:16, padding:'10px 14px', borderRadius:10, background:'rgba(229,57,53,0.08)', color:'#e53935', fontSize:13, border:'1px solid rgba(229,57,53,0.2)' }}>{error}</div>}
+          <div style={{ display:'flex', flexDirection:'column', gap:14 }}>
+            <div>
+              {lbl('Player / Card Name *')}
+              {inp('player', 'e.g. LeBron James, Charizard, Verstappen...', 'text', true)}
+            </div>
+            {/* Sport quick-pick grid */}
+            <div>
+              {lbl('Sport / Game')}
+              <div style={{ display:'grid', gridTemplateColumns:'repeat(4,1fr)', gap:8 }}>
+                {SPORT_OPTIONS.map(s => (
+                  <button key={s.label} onClick={() => set('sport', form.sport === s.label ? '' : s.label)}
+                    style={{ padding:'10px 6px', borderRadius:10, border: form.sport === s.label ? '1px solid rgba(229,57,53,0.5)' : '1px solid #2a2a2a', background: form.sport === s.label ? 'rgba(229,57,53,0.12)' : '#1a1a1a', cursor:'pointer', display:'flex', flexDirection:'column', alignItems:'center', gap:4 }}>
+                    <span style={{ fontSize:20 }}>{s.emoji}</span>
+                    <span style={{ fontFamily:"'Outfit',sans-serif", fontSize:10, fontWeight:600, color: form.sport === s.label ? '#e53935' : '#555', textAlign:'center', lineHeight:1.2 }}>{s.label.length > 8 ? s.label.split(' ')[0] : s.label}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+            <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:12 }}>
+              <div>{lbl('Buy Price ($)')}{inp('buy', '0.00', 'number')}</div>
+              <div>{lbl('Current Value ($)')}{inp('val', '0.00', 'number')}</div>
+            </div>
+          </div>
+          <div style={{ display:'flex', flexDirection:'column', gap:10, marginTop:20 }}>
+            {saveBtn('Add Card')}
+            <button onClick={() => setStep('full')} style={{ width:'100%', padding:'12px', borderRadius:12, background:'transparent', border:'1px solid #2a2a2a', color:'#555', fontFamily:"'Outfit',sans-serif", fontSize:14, fontWeight:600, cursor:'pointer' }}>
+              Add with full details ↓
+            </button>
+          </div>
+        </>}
+
+        {/* ── FULL ADD ── */}
+        {step === 'full' && <>
+          <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:20 }}>
+            <div style={{ display:'flex', alignItems:'center', gap:10 }}>
+              <button onClick={() => setStep('quick')} style={{ background:'none', border:'none', color:'#555', cursor:'pointer', fontSize:18, padding:0, lineHeight:1 }}>←</button>
+              <div>
+                <h2 style={{ fontFamily:"'Outfit',sans-serif", fontSize:18, fontWeight:800, color:'#f0f0f0', margin:0 }}>Full Details</h2>
+                <p style={{ fontFamily:"'Outfit',sans-serif", fontSize:12, color:'#555', margin:'3px 0 0' }}>Everything about this card</p>
+              </div>
+            </div>
+            <button onClick={onClose} style={{ background:'none', border:'none', color:'#555', cursor:'pointer', padding:4 }}><IconClose /></button>
+          </div>
+          {error && <div style={{ marginBottom:16, padding:'10px 14px', borderRadius:10, background:'rgba(229,57,53,0.08)', color:'#e53935', fontSize:13, border:'1px solid rgba(229,57,53,0.2)' }}>{error}</div>}
+          <div style={{ display:'flex', flexDirection:'column', gap:14 }}>
+            <div>{lbl(isTCG ? 'Card Name *' : 'Player / Card Name *')}{inp('player', 'e.g. LeBron James', 'text', true)}</div>
+            <div>
+              {lbl('Sport / Game')}
+              <div style={{ display:'grid', gridTemplateColumns:'repeat(4,1fr)', gap:8, marginBottom:8 }}>
+                {SPORT_OPTIONS.map(s => (
+                  <button key={s.label} onClick={() => set('sport', form.sport === s.label ? '' : s.label)}
+                    style={{ padding:'10px 6px', borderRadius:10, border: form.sport === s.label ? '1px solid rgba(229,57,53,0.5)' : '1px solid #2a2a2a', background: form.sport === s.label ? 'rgba(229,57,53,0.12)' : '#1a1a1a', cursor:'pointer', display:'flex', flexDirection:'column', alignItems:'center', gap:4 }}>
+                    <span style={{ fontSize:20 }}>{s.emoji}</span>
+                    <span style={{ fontFamily:"'Outfit',sans-serif", fontSize:10, fontWeight:600, color: form.sport === s.label ? '#e53935' : '#555', textAlign:'center', lineHeight:1.2 }}>{s.label.length > 8 ? s.label.split(' ')[0] : s.label}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+            <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:12 }}>
+              <div>{lbl('Year')}{inp('year', 'e.g. 2023')}</div>
+              <div>{lbl('Card Number')}{inp('num', 'e.g. #100')}</div>
+            </div>
+            <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:12 }}>
+              <div>{lbl(isTCG ? 'Set / Expansion' : 'Card Name / Set')}{inp('name', isTCG ? 'e.g. Base Set' : 'e.g. Topps Chrome')}</div>
+              <div>{lbl(isTCG ? 'Publisher' : 'Brand')}{inp('brand', isTCG ? 'e.g. Wizards' : 'e.g. Topps')}</div>
+            </div>
+            {isTCG ? (
+              <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:12 }}>
+                <div>{lbl('Rarity')}{sel('rarity', TCG_RARITIES)}</div>
+                <div>{lbl('Edition')}{sel('edition', EDITIONS)}</div>
+                <div>{lbl('Language')}{sel('language', LANGUAGES)}</div>
+              </div>
+            ) : (
+              <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:12 }}>
+                <div>{lbl('Condition')}{sel('cond', CONDS)}</div>
+                <div>{lbl('Grade')}{inp('grade', 'e.g. 9.5')}</div>
+              </div>
+            )}
+            <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:12 }}>
+              <div>{lbl('Buy Price ($)')}{inp('buy', '0.00', 'number')}</div>
+              <div>{lbl('Current Value ($)')}{inp('val', '0.00', 'number')}</div>
+            </div>
+            <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:12 }}>
+              <div>{lbl('Quantity')}{inp('qty', '1', 'number')}</div>
+              <div>{lbl('Purchase Date')}{inp('date', '', 'date')}</div>
+            </div>
+            <div>
+              <label style={{ display:'flex', alignItems:'center', gap:10, cursor:'pointer', padding:'12px 14px', borderRadius:10, background:'#1a1a1a', border:'1px solid #2a2a2a' }}>
+                <input type="checkbox" checked={!!form.sold} onChange={e => set('sold', e.target.checked)} style={{ accentColor:'#e53935', width:16, height:16 }} />
+                <span style={{ fontFamily:"'Outfit',sans-serif", fontSize:14, fontWeight:600, color:'#ccc' }}>Mark as Sold</span>
+              </label>
+            </div>
+            {form.sold && <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:12 }}>
+              <div>{lbl('Sold Price ($)')}{inp('soldPrice', '0.00', 'number')}</div>
+              <div>{lbl('Sold Date')}{inp('soldDate', '', 'date')}</div>
+            </div>}
+            <div>
+              {lbl('Notes')}
+              <textarea value={form.notes||''} onChange={e => set('notes', e.target.value)} rows={2} placeholder="Any extra details..." style={{ width:'100%', padding:'12px 14px', borderRadius:12, background:'#1a1a1a', border:'1px solid #2a2a2a', color:'#f0f0f0', fontSize:14, outline:'none', resize:'vertical', fontFamily:"'Outfit',sans-serif", boxSizing:'border-box' }} />
+            </div>
+          </div>
+          {saveBtn('Add Card')}
+        </>}
+
+      </div>
+    </div>
+  )
 }
+
 
 function PriceLookupModal({ card, onClose }) {
   const links = getPriceLinks(card)
