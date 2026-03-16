@@ -1071,9 +1071,12 @@ export default function CollectionPage() {
                       {card.grade && <div style={{ display:'inline-block', padding:'1px 6px', borderRadius:6, background:'rgba(229,57,53,0.1)', color:'#e53935', fontSize:10, fontWeight:700, marginBottom:6 }}>Grade {card.grade}</div>}
                       <div style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:14, fontWeight:700, color:'#f0f0f0', marginBottom:2 }}>{fmt(displayVal)}</div>
                       <div style={{ fontSize:11, fontWeight:700, color: glPos ? '#22c55e' : '#e53935' }}>{glPos?'+':''}{fmt(gl)} <span style={{fontWeight:500,color:'#444'}}>({glPos?'+':''}{glPct.toFixed(1)}%)</span></div>
-                      <div style={{ display:'flex', gap:4, marginTop:8 }}>
-                        <button onClick={() => setModal(card)} style={{ flex:1, padding:'6px 0', borderRadius:7, background:'rgba(255,255,255,0.05)', border:'1px solid #2a2a2a', color:'#666', fontSize:11, cursor:'pointer' }}>Edit</button>
-                        {!card.sold && <button onClick={() => setSoldCard(card)} style={{ flex:1, padding:'6px 0', borderRadius:7, background:'rgba(255,190,46,0.08)', border:'1px solid rgba(255,190,46,0.2)', color:'#ffbe2e', fontSize:11, cursor:'pointer' }}>Sell</button>}
+                      <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:4, marginTop:8 }}>
+                        <button onClick={() => setPriceLookupCard(card)} style={{ padding:'6px 4px', borderRadius:7, background:'rgba(99,91,255,0.08)', border:'1px solid rgba(99,91,255,0.2)', color:'#635bff', fontSize:10, fontWeight:600, cursor:'pointer', fontFamily:"'Outfit',sans-serif" }}>🔍 Prices</button>
+                        {!card.sold && <button onClick={() => setSoldCard(card)} style={{ padding:'6px 4px', borderRadius:7, background:'rgba(255,190,46,0.08)', border:'1px solid rgba(255,190,46,0.2)', color:'#ffbe2e', fontSize:10, fontWeight:600, cursor:'pointer', fontFamily:"'Outfit',sans-serif" }}>🏷 Sell</button>}
+                        <button onClick={() => setBreakEvenCard(card)} style={{ padding:'6px 4px', borderRadius:7, background:'rgba(229,57,53,0.08)', border:'1px solid rgba(229,57,53,0.2)', color:'#e53935', fontSize:10, fontWeight:600, cursor:'pointer', fontFamily:"'Outfit',sans-serif" }}>📊 Calc</button>
+                        <button onClick={() => setModal(card)} style={{ padding:'6px 4px', borderRadius:7, background:'rgba(255,255,255,0.05)', border:'1px solid #2a2a2a', color:'#666', fontSize:10, fontWeight:600, cursor:'pointer', fontFamily:"'Outfit',sans-serif" }}>✏️ Edit</button>
+                        <button onClick={() => setDeleteId(card.id)} style={{ gridColumn:'1/-1', padding:'5px 4px', borderRadius:7, background:'rgba(255,107,122,0.06)', border:'1px solid rgba(255,107,122,0.15)', color:'#555', fontSize:10, fontWeight:600, cursor:'pointer', fontFamily:"'Outfit',sans-serif" }}>🗑 Delete</button>
                       </div>
                     </div>
                   ) : (
