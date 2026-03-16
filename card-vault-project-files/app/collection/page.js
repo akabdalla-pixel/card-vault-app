@@ -8,6 +8,7 @@ const NAV = [
   { label: 'Collection', href: '/collection' },
   { label: 'Insights', href: '/insights' },
   { label: 'Sold History', href: '/sold' },
+  { label: 'Market', href: '/market' },
 ]
 
 function IconDashboard() { return <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg> }
@@ -32,7 +33,7 @@ function IconList() { return <svg width="15" height="15" viewBox="0 0 24 24" fil
 function IconSold() { return <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg> }
 function IconMarket() { return <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg> }
 function IconInsights() { return <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg> }
-const navIcons = { 'Dashboard': IconDashboard, 'Collection': IconCollection, 'Insights': IconInsights, 'Sold History': IconSold }
+const navIcons = { 'Dashboard': IconDashboard, 'Collection': IconCollection, 'Insights': IconInsights, 'Sold History': IconSold, 'Market': IconMarket }
 const fmt = n => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 2 }).format(n || 0)
 const SPORTS = [
   // Sports Cards
@@ -851,16 +852,37 @@ function CollectionPage() {
             <button onClick={() => setModal('add')} className="press" style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '8px 14px', background: 'rgba(229,57,53,0.1)', border: '1px solid rgba(229,57,53,0.25)', borderRadius: 10, color: '#e53935', fontFamily: "'Outfit',sans-serif", fontSize: 13, fontWeight: 700, cursor: 'pointer' }} className='press'>+ Add Card</button>
           </div>
           {/* ── Desktop header ── */}
-          <div className="hide-mob" style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12, marginBottom: 22 }}>
-            <div>
-              <h1 style={{ fontFamily: "'Outfit',sans-serif", fontSize: 24, fontWeight: 800, color: '#f0f2ff', letterSpacing: '-0.5px', margin: 0 }}>Collection</h1>
-              <p style={{ fontSize: 13, color: '#555', marginTop: 4, fontWeight: 500 }}>{cards.length} cards · {activeCards.length} active · {soldCards.length} sold</p>
+          <div className="hide-mob" style={{ marginBottom: 24 }}>
+            {/* Title row */}
+            <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom: 20 }}>
+              <div>
+                <h1 style={{ fontFamily:"'Outfit',sans-serif", fontSize:26, fontWeight:900, color:'#f0f0f0', letterSpacing:'-0.5px', margin:0 }}>Collection</h1>
+                <p style={{ fontSize:12, color:'#444', marginTop:3, fontWeight:500, fontFamily:"'Outfit',sans-serif" }}>{cards.length} cards · {activeCards.length} active · {soldCards.length} sold</p>
+              </div>
+              <div style={{ display:'flex', gap:8 }}>
+                <button onClick={() => setShowImport(true)} style={{ display:'flex', alignItems:'center', gap:6, padding:'8px 14px', background:'transparent', border:'1px solid #2a2a2a', borderRadius:9, color:'#555', fontFamily:"'Outfit',sans-serif", fontSize:13, fontWeight:600, cursor:'pointer' }}><IconUpload />Import</button>
+                <button onClick={() => exportCSV(cards)} disabled={!cards.length} style={{ display:'flex', alignItems:'center', gap:6, padding:'8px 14px', background:'transparent', border:'1px solid #2a2a2a', borderRadius:9, color:'#555', fontFamily:"'Outfit',sans-serif", fontSize:13, fontWeight:600, cursor:'pointer', opacity:cards.length?1:0.4 }}><IconDownload />Export</button>
+                <button onClick={() => setModal('add')} style={{ display:'flex', alignItems:'center', gap:6, padding:'8px 18px', background:'#e53935', border:'none', borderRadius:9, color:'#fff', fontFamily:"'Outfit',sans-serif", fontSize:13, fontWeight:700, cursor:'pointer', boxShadow:'0 2px 12px rgba(229,57,53,0.35)' }}>+ Add Card</button>
+              </div>
             </div>
-            <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-              <button onClick={() => setShowImport(true)} style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '9px 14px', background: 'rgba(255,255,255,0.05)', border: '1px solid #2a2a2a', borderRadius: 10, color: '#666', fontFamily: "'Outfit',sans-serif", fontSize: 13, fontWeight: 600, cursor: 'pointer' }}><IconUpload />Import CSV</button>
-              <button onClick={() => exportCSV(cards)} disabled={!cards.length} style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '9px 14px', background: 'rgba(255,255,255,0.05)', border: '1px solid #2a2a2a', borderRadius: 10, color: '#666', fontFamily: "'Outfit',sans-serif", fontSize: 13, fontWeight: 600, cursor: 'pointer', opacity: cards.length ? 1 : 0.4 }}><IconDownload />Export CSV</button>
-              <button onClick={() => setModal('add')} className="press" style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '9px 14px', background: 'rgba(229,57,53,0.08)', border: '1px solid rgba(229,57,53,0.25)', borderRadius: 10, color: '#e53935', fontFamily: "'Outfit',sans-serif", fontSize: 13, fontWeight: 600, cursor: 'pointer' }} className='press'>+ Add Card</button>
-            </div>
+            {/* Stats row — inline horizontal */}
+            {cards.length > 0 && (
+              <div style={{ display:'grid', gridTemplateColumns:'repeat(5,1fr)', gap:12 }}>
+                {[
+                  { label:'Active Cards', value: statActive.length, mono: false },
+                  { label:'Total Invested', value: fmt(totalInvested), mono: true },
+                  { label:'Portfolio Value', value: fmt(totalValue), mono: true },
+                  { label:'Unrealized G/L', value: (totalValue-totalInvested>=0?'+':'')+fmt(totalValue-totalInvested), mono: true, color: totalValue>=totalInvested?'#22c55e':'#e53935' },
+                  { label:'Realized P&L', value: (realizedPL>=0?'+':'')+fmt(realizedPL), mono: true, color: realizedPL>=0?'#22c55e':'#e53935' },
+                ].map((s,i) => (
+                  <div key={i} style={{ background:'linear-gradient(135deg,#141414,#0f0f0f)', border:'1px solid #1e1e1e', borderRadius:12, padding:'14px 16px', position:'relative', overflow:'hidden' }}>
+                    <div style={{ position:'absolute', top:0, left:0, right:0, height:2, background: i>=3 ? (s.color==='#22c55e'?'linear-gradient(90deg,#22c55e,#16a34a)':'linear-gradient(90deg,#e53935,#ff5252)') : 'linear-gradient(90deg,#e53935,rgba(229,57,53,0.2))', opacity:0.6 }} />
+                    <div style={{ fontSize:10, fontWeight:700, color:'#444', textTransform:'uppercase', letterSpacing:'0.1em', marginBottom:8, fontFamily:"'Outfit',sans-serif" }}>{s.label}</div>
+                    <div style={{ fontFamily: s.mono?"'JetBrains Mono',monospace":"'Outfit',sans-serif", fontSize:s.mono?18:22, fontWeight:700, color:s.color||'#f0f0f0', letterSpacing: s.mono?'-0.5px':'-1px' }}>{s.value}</div>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
 
           {importSuccess !== null && (
@@ -888,17 +910,7 @@ function CollectionPage() {
             </div>
           )}
 
-          {/* ── Desktop: stat grid ── */}
-          {cards.length > 0 && (
-            <div className="desk-stats" style={{ gridTemplateColumns: 'repeat(auto-fit,minmax(130px,1fr))', gap: 10, marginBottom: 18 }}>
-              {[['Active Cards', statActive.length, '#f0f0f0'], ['Invested', fmt(totalInvested), '#f0f0f0'], ['Portfolio Value', fmt(totalValue), '#f0f0f0'], ['Unrealized G/L', (totalValue-totalInvested>=0?'+':'')+fmt(totalValue-totalInvested), totalValue>=totalInvested?'#22c55e':'#e53935'], ['Realized P&L', (realizedPL>=0?'+':'')+fmt(realizedPL), realizedPL>=0?'#22c55e':'#e53935']].map(([label, value, color]) => (
-                <div key={label} style={{ padding: '10px 14px', borderRadius: 10, background: '#111', border: '1px solid #2a2a2a' }}>
-                  <div style={{ fontSize: 10, color: '#444', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 4 }}>{label}</div>
-                  <div style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: 13, fontWeight: 700, color }}>{value}</div>
-                </div>
-              ))}
-            </div>
-          )}
+
 
           {/* ── Desktop filters ── */}
           {/* ── Sport / TCG Tab Bar ── */}
@@ -930,19 +942,19 @@ function CollectionPage() {
             )
           })()}
 
-          <div className="desk-filters" style={{ gap: 10, marginBottom: 10, flexWrap: 'wrap', alignItems: 'center' }}>
-            <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search player, set, brand..." style={{ flex: 1, minWidth: 200, padding: '9px 14px', borderRadius: 10, background: '#111', border: '1px solid #2a2a2a', color: '#f0f0f0', fontSize: 14, outline: 'none', fontFamily: "'Outfit',sans-serif" }} />
-            <select value={filterSport} onChange={e => setFilterSport(e.target.value)} style={{ padding: '9px 14px', borderRadius: 10, background: '#111', border: '1px solid #2a2a2a', color: filterSport ? '#f0f0f0' : '#555', fontSize: 14, outline: 'none' }}>
+          <div className="desk-filters" style={{ gap: 8, marginBottom: 8, flexWrap: 'wrap', alignItems: 'center' }}>
+            <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search player, brand, set..." style={{ flex: 1, minWidth: 220, padding: '8px 14px', borderRadius: 9, background: '#111', border: '1px solid #222', color: '#f0f0f0', fontSize: 13, outline: 'none', fontFamily: "'Outfit',sans-serif" }} />
+            <select value={filterSport} onChange={e => setFilterSport(e.target.value)} style={{ padding: '8px 12px', borderRadius: 9, background: '#111', border: '1px solid #222', color: filterSport ? '#f0f0f0' : '#555', fontSize: 13, outline: 'none', fontFamily: "'Outfit',sans-serif" }}>
               <option value="">All Sports</option>
               {SPORTS.map(s => <option key={s} value={s}>{s}</option>)}
             </select>
-            <div style={{ display: 'flex', borderRadius: 10, overflow: 'hidden', border: '1px solid #2a2a2a' }}>
+            <div style={{ display: 'flex', borderRadius: 9, overflow: 'hidden', border: '1px solid #222' }}>
               {[['active','Active'],['sold','Sold'],['all','All']].map(([val, label]) => (
-                <button key={val} onClick={() => setFilterStatus(val)} style={{ padding: '9px 14px', background: filterStatus===val ? 'rgba(229,57,53,0.15)' : '#111', border: 'none', color: filterStatus===val ? '#e53935' : '#555', fontFamily: "'Outfit',sans-serif", fontSize: 13, fontWeight: filterStatus===val ? 700 : 500, cursor: 'pointer' }}>{label}</button>
+                <button key={val} onClick={() => setFilterStatus(val)} style={{ padding: '8px 14px', background: filterStatus===val ? 'rgba(229,57,53,0.15)' : '#111', border: 'none', color: filterStatus===val ? '#e53935' : '#555', fontFamily: "'Outfit',sans-serif", fontSize: 13, fontWeight: filterStatus===val ? 700 : 500, cursor: 'pointer' }}>{label}</button>
               ))}
             </div>
           </div>
-          <div className="desk-filters" style={{ gap: 10, marginBottom: 16, flexWrap: 'wrap' }}>
+          <div className="desk-filters" style={{ gap: 8, marginBottom: 14, flexWrap: 'wrap', alignItems: 'center' }}>
             {/* Graded filter */}
             <div style={{ display: 'flex', borderRadius: 10, overflow: 'hidden', border: '1px solid #2a2a2a' }}>
               {[['','All Cards'],['graded','Graded'],['raw','Raw']].map(([val, label]) => (
@@ -1145,7 +1157,7 @@ function CollectionPage() {
                         <th style={{ padding: '11px 14px', width: 36 }}>
                           <input type="checkbox" checked={filtered.length > 0 && selected.size === filtered.length} onChange={() => { if (selected.size === filtered.length) setSelected(new Set()); else setSelected(new Set(filtered.map(c => c.id))) }} style={{ accentColor: '#e53935', width: 15, height: 15, cursor: 'pointer' }} />
                         </th>
-                        {['Player','Sport','Year','Grade','Qty','Buy Price','Value','G/L','Status',''].map((h,i) => <th key={i} style={{ padding: '11px 14px', textAlign: i===0?'left':'right', fontFamily: "'Outfit',sans-serif", fontSize: 10, fontWeight: 700, color: '#333', letterSpacing: '0.1em', textTransform: 'uppercase', whiteSpace: 'nowrap' }}>{h}</th>)}
+                        {['Player','Sport','Year','Grade','Qty','Buy Price','Value','G/L','Status',''].map((h,i) => <th key={i} style={{ padding: '10px 16px', textAlign: i===0?'left':'right', fontFamily: "'Outfit',sans-serif", fontSize: 10, fontWeight: 700, color: '#2a2a2a', letterSpacing: '0.12em', textTransform: 'uppercase', whiteSpace: 'nowrap', background: '#0d0d0d', borderBottom: '1px solid #1e1e1e' }}>{h}</th>)}
                       </tr>
                     </thead>
                     <tbody>
