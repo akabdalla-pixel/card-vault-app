@@ -993,18 +993,17 @@ function CollectionPage() {
             </div>
           </div>
           <div className="mob-filters" style={{ gap: 8, marginBottom: 10, flexWrap: 'nowrap', overflowX: 'auto', WebkitOverflowScrolling: 'touch', paddingBottom: 2 }}>
-            <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search..." style={{ flex: 1, minWidth: 120, maxWidth: 160, padding: '8px 12px', borderRadius: 10, background: '#111', border: '1px solid #2a2a2a', color: '#f0f0f0', fontSize: 13, outline: 'none', fontFamily: "'Outfit',sans-serif" }} />
-            <div style={{ display: 'flex', borderRadius: 10, overflow: 'hidden', border: '1px solid #2a2a2a', flexShrink: 0 }}>
-              {[['active','Active'],['sold','Sold'],['all','All']].map(([val, label]) => (
-                <button key={val} onClick={() => setFilterStatus(val)} style={{ padding: '8px 10px', background: filterStatus===val ? 'rgba(229,57,53,0.15)' : '#111', border: 'none', color: filterStatus===val ? '#e53935' : '#555', fontFamily: "'Outfit',sans-serif", fontSize: 12, fontWeight: filterStatus===val ? 700 : 500, cursor: 'pointer', whiteSpace: 'nowrap' }}>{label}</button>
-              ))}
-            </div>
+            {/* 1. Search */}
+            <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search..." style={{ flex: 1, minWidth: 110, maxWidth: 150, padding: '8px 12px', borderRadius: 10, background: '#111', border: '1px solid #2a2a2a', color: '#f0f0f0', fontSize: 13, outline: 'none', fontFamily: "'Outfit',sans-serif" }} />
+            {/* 2. All / Graded / Raw */}
             <div style={{ display: 'flex', borderRadius: 10, overflow: 'hidden', border: '1px solid #2a2a2a', flexShrink: 0 }}>
               {[['','All'],['graded','Graded'],['raw','Raw']].map(([val, label]) => (
                 <button key={val} onClick={() => setFilterGraded(val)} style={{ padding: '8px 10px', background: filterGraded===val ? 'rgba(229,57,53,0.15)' : '#111', border: 'none', color: filterGraded===val ? '#e53935' : '#555', fontFamily: "'Outfit',sans-serif", fontSize: 12, fontWeight: filterGraded===val ? 700 : 500, cursor: 'pointer', whiteSpace: 'nowrap' }}>{label}</button>
               ))}
             </div>
+            {/* 3. ✍️ Auto */}
             <button onClick={() => setFilterAuto(v => !v)} style={{ padding: '8px 10px', borderRadius: 10, background: filterAuto ? 'rgba(255,190,46,0.12)' : '#111', border: filterAuto ? '1px solid rgba(255,190,46,0.35)' : '1px solid #2a2a2a', color: filterAuto ? '#ffbe2e' : '#555', fontFamily: "'Outfit',sans-serif", fontSize: 12, fontWeight: filterAuto ? 700 : 500, cursor: 'pointer', flexShrink:0, whiteSpace:'nowrap' }}>✍️ Auto</button>
+            {/* 4. Sort */}
             <select value={sortBy} onChange={e => setSortBy(e.target.value)} style={{ flexShrink: 0, padding: '8px 10px', borderRadius: 10, background: '#111', border: '1px solid #2a2a2a', color: '#f0f0f0', fontSize: 12, outline: 'none', fontFamily: "'Outfit',sans-serif" }}>
               <option value="date_desc">Newest</option>
               <option value="date_asc">Oldest</option>
@@ -1013,16 +1012,23 @@ function CollectionPage() {
               <option value="name_asc">A→Z</option>
               <option value="name_desc">Z→A</option>
             </select>
+            {/* 5. Price range */}
+            <div style={{ display:'flex', alignItems:'center', gap:4, background:'#111', border:'1px solid #2a2a2a', borderRadius:10, padding:'0 8px', flexShrink:0 }}>
+              <span style={{ fontSize:10, color:'#444', fontWeight:700 }}>$</span>
+              <input type="number" placeholder="Min" value={priceMin} onChange={e => setPriceMin(e.target.value)} style={{ width:44, padding:'8px 0', background:'transparent', border:'none', color:'#f0f0f0', fontSize:12, outline:'none', fontFamily:"'JetBrains Mono',monospace" }} />
+              <span style={{ fontSize:10, color:'#333' }}>—</span>
+              <input type="number" placeholder="Max" value={priceMax} onChange={e => setPriceMax(e.target.value)} style={{ width:44, padding:'8px 0', background:'transparent', border:'none', color:'#f0f0f0', fontSize:12, outline:'none', fontFamily:"'JetBrains Mono',monospace" }} />
+            </div>
+            {/* 6. Grid / List */}
             <div style={{ display: 'flex', borderRadius: 10, overflow: 'hidden', border: '1px solid #2a2a2a', flexShrink: 0 }}>
               <button onClick={() => setViewMode('table')} style={{ padding: '8px 10px', background: viewMode==='table' ? 'rgba(229,57,53,0.15)' : '#111', border: 'none', color: viewMode==='table' ? '#e53935' : '#555', cursor: 'pointer', display: 'flex', alignItems: 'center' }}><IconList /></button>
               <button onClick={() => setViewMode('grid')} style={{ padding: '8px 10px', background: viewMode==='grid' ? 'rgba(229,57,53,0.15)' : '#111', border: 'none', color: viewMode==='grid' ? '#e53935' : '#555', cursor: 'pointer', display: 'flex', alignItems: 'center' }}><IconGrid /></button>
             </div>
-            {/* Price range on mobile */}
-            <div style={{ display:'flex', alignItems:'center', gap:4, background:'#111', border:'1px solid #2a2a2a', borderRadius:10, padding:'0 8px', flexShrink:0 }}>
-              <span style={{ fontSize:10, color:'#444', fontWeight:700 }}>$</span>
-              <input type="number" placeholder="Min" value={priceMin} onChange={e => setPriceMin(e.target.value)} style={{ width:48, padding:'8px 0', background:'transparent', border:'none', color:'#f0f0f0', fontSize:12, outline:'none', fontFamily:"'JetBrains Mono',monospace" }} />
-              <span style={{ fontSize:10, color:'#333' }}>—</span>
-              <input type="number" placeholder="Max" value={priceMax} onChange={e => setPriceMax(e.target.value)} style={{ width:48, padding:'8px 0', background:'transparent', border:'none', color:'#f0f0f0', fontSize:12, outline:'none', fontFamily:"'JetBrains Mono',monospace" }} />
+            {/* 7. Active / Sold / All */}
+            <div style={{ display: 'flex', borderRadius: 10, overflow: 'hidden', border: '1px solid #2a2a2a', flexShrink: 0 }}>
+              {[['active','Active'],['sold','Sold'],['all','All']].map(([val, label]) => (
+                <button key={val} onClick={() => setFilterStatus(val)} style={{ padding: '8px 10px', background: filterStatus===val ? 'rgba(229,57,53,0.15)' : '#111', border: 'none', color: filterStatus===val ? '#e53935' : '#555', fontFamily: "'Outfit',sans-serif", fontSize: 12, fontWeight: filterStatus===val ? 700 : 500, cursor: 'pointer', whiteSpace: 'nowrap' }}>{label}</button>
+              ))}
             </div>
           </div>
 
