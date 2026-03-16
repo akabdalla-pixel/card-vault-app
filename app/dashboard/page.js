@@ -370,19 +370,19 @@ export default function DashboardPage() {
   return (
     <>
       <style>{`
-        @keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
-  @keyframes toastIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
-  @keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
-  @keyframes fadeIn{from{opacity:0}to{opacity:1}}
-  @keyframes scaleIn{from{opacity:0;transform:scale(0.96)}to{opacity:1;transform:scale(1)}}
-  @keyframes spin{to{transform:rotate(360deg)}}
-  button:not(:disabled):active{transform:scale(0.94)!important;opacity:0.85!important}
-  a.press:active{transform:scale(0.94)!important;opacity:0.85!important}
-  .press{transition:transform 0.1s ease,opacity 0.1s ease!important}
-  .press:active{transform:scale(0.93)!important;opacity:0.8!important}
         @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800;900&display=swap');
         *{font-family:'Space Grotesk',-apple-system,sans-serif!important}
         [style*="JetBrains"],[style*="monospace"]{font-family:'JetBrains Mono',monospace!important}
+        @keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+        @keyframes toastIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+        @keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+        @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+        @keyframes scaleIn{from{opacity:0;transform:scale(0.96)}to{opacity:1;transform:scale(1)}}
+        @keyframes spin{to{transform:rotate(360deg)}}
+        button:not(:disabled):active{transform:scale(0.94)!important;opacity:0.85!important}
+        a.press:active{transform:scale(0.94)!important;opacity:0.85!important}
+        .press{transition:transform 0.1s ease,opacity 0.1s ease!important}
+        .press:active{transform:scale(0.93)!important;opacity:0.8!important}
         .sidebar-el{display:flex;flex-direction:column}.mobile-only{display:none!important}.mob-topbar{display:none}.main-wrap{margin-left:64px;min-height:100vh;width:calc(100% - 64px)}
         .stat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
         .stat-grid2{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:14px}
@@ -412,7 +412,7 @@ export default function DashboardPage() {
           </div>
 
           {/* ── Mobile: Big Value Hero ── */}
-          <div className="mob-chart" style={{ background:'linear-gradient(135deg,#1a0505,#0d0d0d)',border:'1px solid rgba(147,51,234,0.15)',borderRadius:16,padding:'20px 18px',marginBottom:14 }}>
+          <div className="mob-chart" style={{ background:'#111',border:'1px solid rgba(147,51,234,0.15)',borderRadius:16,padding:'20px 18px',marginBottom:14 }}>
             <div style={{ fontSize:12,color:'#555',fontFamily:"'Outfit',sans-serif",fontWeight:600,marginBottom:4 }}>Portfolio Value</div>
             <div style={{ fontFamily:"'JetBrains Mono',monospace",fontSize:36,fontWeight:800,color:'#f0f0f0',letterSpacing:'-1px',lineHeight:1 }}>{fmt(currentValue)}</div>
             <div style={{ display:'flex',alignItems:'center',gap:6,marginTop:8 }}>
