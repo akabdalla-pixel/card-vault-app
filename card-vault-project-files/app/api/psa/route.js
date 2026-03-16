@@ -25,7 +25,7 @@ export async function GET(req) {
     const data = await res.json()
 
     if (!data.IsValidRequest) {
-      return NextResponse.json({ error: data.ServerMessage || 'Invalid cert number' }, { status: 404 })
+      return NextResponse.json({ error: data.ServerMessage || 'Invalid cert number', debug: { IsValidRequest: data.IsValidRequest, ServerMessage: data.ServerMessage, keys: Object.keys(data) } }, { status: 404 })
     }
 
     const cert_data = data.PSACert
