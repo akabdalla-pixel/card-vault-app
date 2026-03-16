@@ -50,7 +50,7 @@ const TCG_RARITIES = ['Common', 'Uncommon', 'Rare', 'Holo Rare', 'Reverse Holo',
 const EDITIONS = ['1st Edition', 'Unlimited', 'Shadowless', 'Limited', 'First Print']
 const LANGUAGES = ['English', 'Japanese', 'Korean', 'Chinese', 'German', 'French', 'Italian', 'Spanish', 'Portuguese']
 const CONDS = ['Mint', 'Near Mint', 'Excellent', 'Very Good', 'Good', 'Poor']
-const EMPTY = { sport: '', year: '', player: '', name: '', brand: '', num: '', cond: '', grade: '', qty: '1', date: '', buy: '', val: '', notes: '', sold: false, soldPrice: '', soldDate: '', rarity: '', edition: '', language: '' }
+const EMPTY = { sport: '', year: '', player: '', name: '', brand: '', num: '', cond: '', grade: '', qty: '1', date: '', buy: '', val: '', notes: '', sold: false, soldPrice: '', soldDate: '', rarity: '', edition: '', language: '', auto: false, gradingCo: '' }
 
 // ── Toast ──────────────────────────────────────────────────────────────────────
 var _toastFn = null
@@ -266,17 +266,33 @@ const SPORT_OPTIONS = [
   { label: 'Other', emoji: '🃏' },
 ]
 
+// ── Top 4 sports shown as big tap buttons, rest in dropdown ──────────────────
+const TOP_SPORTS = [
+  { label: 'Football', emoji: '🏈' },
+  { label: 'Basketball', emoji: '🏀' },
+  { label: 'Baseball', emoji: '⚾' },
+  { label: 'Soccer', emoji: '⚽' },
+]
+const MORE_SPORTS = [
+  'Hockey', 'F1', 'Golf', 'Tennis',
+  'Pokémon', 'Magic: The Gathering', 'Yu-Gi-Oh!', 'Lorcana',
+  'One Piece', 'Dragon Ball Super', 'Digimon', 'Other'
+]
+
 function CardModal({ card, onClose, onSave }) {
   const isEdit = !!card?.id
   const [form, setForm] = useState(card || EMPTY)
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
-  const [step, setStep] = useState(isEdit ? 'full' : 'quick') // 'quick' | 'step1' | 'step2' | 'full'
   const set = (k, v) => setForm(f => ({ ...f, [k]: v }))
   const isTCG = TCG_LIST.includes(form.sport)
 
+  // Is this sport one of the top 4?
+  const isTopSport = TOP_SPORTS.some(s => s.label === form.sport)
+  const isMoreSport = MORE_SPORTS.includes(form.sport)
+
   async function handleSave() {
-    if (!form.player) { setError('Player / Card name is required'); return }
+    if (!form.player) { setError('Name is required'); return }
     setSaving(true); setError('')
     try {
       const method = form.id ? 'PUT' : 'POST'
@@ -287,213 +303,156 @@ function CardModal({ card, onClose, onSave }) {
   }
 
   const inp = (key, placeholder, type = 'text', autoFocus = false) => (
-    <input
-      type={type}
-      placeholder={placeholder}
-      value={form[key]||''}
-      onChange={e => set(key, e.target.value)}
-      autoFocus={autoFocus}
-      style={{ width:'100%', padding:'12px 14px', borderRadius:12, background:'#1a1a1a', border:'1px solid #2a2a2a', color:'#f0f0f0', fontSize:15, outline:'none', fontFamily:"'Outfit',sans-serif", boxSizing:'border-box' }}
-    />
+    <input type={type} placeholder={placeholder} value={form[key]||''} onChange={e => set(key, e.target.value)} autoFocus={autoFocus}
+      style={{ width:'100%', padding:'11px 14px', borderRadius:10, background:'#1a1a1a', border:'1px solid #2a2a2a', color:'#f0f0f0', fontSize:15, outline:'none', fontFamily:"'Outfit',sans-serif", boxSizing:'border-box' }} />
   )
+  const lbl = t => <div style={{ fontSize:11, fontWeight:700, color:'#555', textTransform:'uppercase', letterSpacing:'0.08em', marginBottom:5, fontFamily:"'Outfit',sans-serif" }}>{t}</div>
 
-  const lbl = (text) => (
-    <div style={{ fontSize:11, fontWeight:700, color:'#555', textTransform:'uppercase', letterSpacing:'0.08em', marginBottom:6, fontFamily:"'Outfit',sans-serif" }}>{text}</div>
-  )
+  return (
+    <div style={{ position:'fixed', inset:0, background:'rgba(0,0,0,0.8)', zIndex:200, display:'flex', alignItems:'flex-end', justifyContent:'center' }}
+      onClick={e => { if(e.target === e.currentTarget) onClose() }}>
+      <div style={{ background:'#111', borderRadius:'20px 20px 0 0', width:'100%', maxWidth:560, maxHeight:'92vh', overflowY:'auto', padding:'20px 18px 44px' }}>
 
-  const sel = (key, opts, placeholder = 'Select...') => (
-    <select value={form[key]||''} onChange={e => set(key, e.target.value)}
-      style={{ width:'100%', padding:'12px 14px', borderRadius:12, background:'#1a1a1a', border:'1px solid #2a2a2a', color: form[key] ? '#f0f0f0' : '#555', fontSize:15, outline:'none', fontFamily:"'Outfit',sans-serif" }}>
-      <option value="">{placeholder}</option>
-      {opts.map(o => <option key={o} value={o}>{o}</option>)}
-    </select>
-  )
+        {/* Header */}
+        <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:18 }}>
+          <h2 style={{ fontFamily:"'Outfit',sans-serif", fontSize:20, fontWeight:800, color:'#f0f0f0', margin:0 }}>{isEdit ? 'Edit Card' : 'Add Card'}</h2>
+          <button onClick={onClose} style={{ background:'none', border:'none', color:'#555', cursor:'pointer', padding:4, fontSize:20, lineHeight:1 }}>×</button>
+        </div>
 
-  const header = (title, sub) => (
-    <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:20 }}>
-      <div>
-        <h2 style={{ fontFamily:"'Outfit',sans-serif", fontSize:18, fontWeight:800, color:'#f0f0f0', margin:0 }}>{title}</h2>
-        {sub && <p style={{ fontFamily:"'Outfit',sans-serif", fontSize:12, color:'#555', margin:'3px 0 0' }}>{sub}</p>}
-      </div>
-      <button onClick={onClose} style={{ background:'none', border:'none', color:'#555', cursor:'pointer', padding:4 }}><IconClose /></button>
-    </div>
-  )
+        {error && <div style={{ marginBottom:14, padding:'10px 14px', borderRadius:10, background:'rgba(229,57,53,0.08)', color:'#e53935', fontSize:13, border:'1px solid rgba(229,57,53,0.2)', fontFamily:"'Outfit',sans-serif" }}>{error}</div>}
 
-  const saveBtn = (label = 'Save Card') => (
-    <button onClick={handleSave} disabled={saving || !form.player} style={{ width:'100%', padding:'13px', borderRadius:12, background: (!form.player||saving) ? '#1a1a1a' : 'linear-gradient(135deg,#e53935,#ff5252)', border: (!form.player||saving) ? '1px solid #2a2a2a' : 'none', color: (!form.player||saving) ? '#444' : '#fff', fontFamily:"'Outfit',sans-serif", fontSize:15, fontWeight:700, cursor: (!form.player||saving) ? 'not-allowed' : 'pointer', marginTop:8 }}>
-      {saving ? 'Saving...' : label}
-    </button>
-  )
-
-  // ── EDIT MODE — show full form ─────────────────────────────────────────────
-  if (isEdit) return (
-    <div style={{ position:'fixed', inset:0, background:'rgba(0,0,0,0.75)', zIndex:200, display:'flex', alignItems:'center', justifyContent:'center', padding:16 }}>
-      <div style={{ background:'#111', border:'1px solid #2a2a2a', borderRadius:16, width:'100%', maxWidth:560, maxHeight:'90vh', overflowY:'auto', padding:24 }}>
-        {header('Edit Card')}
-        {error && <div style={{ marginBottom:16, padding:'10px 14px', borderRadius:10, background:'rgba(229,57,53,0.08)', color:'#e53935', fontSize:13, border:'1px solid rgba(229,57,53,0.2)' }}>{error}</div>}
         <div style={{ display:'flex', flexDirection:'column', gap:14 }}>
-          <div>{lbl(isTCG ? 'Card Name *' : 'Player / Card Name *')}{inp('player', 'e.g. LeBron James', 'text', true)}</div>
-          <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:12 }}>
-            <div>{lbl('Sport / Game')}{sel('sport', SPORTS)}</div>
+
+          {/* ── 1. Name ── */}
+          <div>
+            {lbl(isTCG ? 'Card Name *' : 'Player Name *')}
+            {inp('player', isEdit ? '' : (isTCG ? 'e.g. Charizard' : 'e.g. LeBron James'), 'text', !isEdit)}
+          </div>
+
+          {/* ── 2. Sport — top 4 as big buttons + more dropdown ── */}
+          <div>
+            {lbl('Sport / Game')}
+            <div style={{ display:'grid', gridTemplateColumns:'repeat(4,1fr)', gap:8, marginBottom: (!isTopSport && form.sport) ? 0 : 8 }}>
+              {TOP_SPORTS.map(s => (
+                <button key={s.label} onClick={() => set('sport', form.sport === s.label ? '' : s.label)}
+                  style={{ padding:'10px 4px', borderRadius:10, border: form.sport === s.label ? '2px solid rgba(229,57,53,0.6)' : '1px solid #2a2a2a', background: form.sport === s.label ? 'rgba(229,57,53,0.12)' : '#1a1a1a', cursor:'pointer', display:'flex', flexDirection:'column', alignItems:'center', gap:3 }}>
+                  <span style={{ fontSize:22 }}>{s.emoji}</span>
+                  <span style={{ fontFamily:"'Outfit',sans-serif", fontSize:11, fontWeight:700, color: form.sport === s.label ? '#e53935' : '#555' }}>{s.label}</span>
+                </button>
+              ))}
+            </div>
+            {/* More sports dropdown */}
+            <select value={isMoreSport ? form.sport : ''} onChange={e => set('sport', e.target.value)}
+              style={{ width:'100%', padding:'10px 14px', borderRadius:10, background: isMoreSport ? 'rgba(229,57,53,0.08)' : '#1a1a1a', border: isMoreSport ? '1px solid rgba(229,57,53,0.3)' : '1px solid #2a2a2a', color: isMoreSport ? '#e53935' : '#555', fontSize:14, outline:'none', fontFamily:"'Outfit',sans-serif" }}>
+              <option value="">More sports / TCG...</option>
+              {MORE_SPORTS.map(s => <option key={s} value={s}>{s}</option>)}
+            </select>
+          </div>
+
+          {/* ── 3. Year + Card Number/Numbering ── */}
+          <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:10 }}>
             <div>{lbl('Year')}{inp('year', 'e.g. 2023')}</div>
+            <div>{lbl('Numbering (e.g. 10/50)')}{inp('num', 'e.g. 10/50')}</div>
           </div>
-          <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:12 }}>
-            <div>{lbl(isTCG ? 'Set / Expansion' : 'Card Name / Set')}{inp('name', isTCG ? 'e.g. Base Set' : 'e.g. Topps Chrome')}</div>
-            <div>{lbl(isTCG ? 'Series / Publisher' : 'Brand')}{inp('brand', isTCG ? 'e.g. Wizards' : 'e.g. Topps')}</div>
+
+          {/* ── 4. Set + Brand ── */}
+          <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:10 }}>
+            <div>{lbl(isTCG ? 'Set / Expansion' : 'Set')}{inp('name', isTCG ? 'e.g. Base Set' : 'e.g. Topps Chrome')}</div>
+            <div>{lbl(isTCG ? 'Publisher' : 'Brand')}{inp('brand', isTCG ? 'e.g. Wizards' : 'e.g. Topps')}</div>
           </div>
-          <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:12 }}>
-            <div>{lbl('Card Number')}{inp('num', 'e.g. #100')}</div>
-            {isTCG
-              ? <div>{lbl('Rarity')}{sel('rarity', TCG_RARITIES)}</div>
-              : <div>{lbl('Condition')}{sel('cond', CONDS)}</div>
-            }
+
+          {/* ── 5. Graded toggle ── */}
+          <div>
+            {lbl('Condition')}
+            <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:8 }}>
+              {/* Raw / Ungraded */}
+              <button onClick={() => { set('grade', ''); set('cond', form.cond || 'Near Mint') }}
+                style={{ padding:'10px', borderRadius:10, border: !form.grade ? '2px solid rgba(229,57,53,0.5)' : '1px solid #2a2a2a', background: !form.grade ? 'rgba(229,57,53,0.08)' : '#1a1a1a', cursor:'pointer', display:'flex', alignItems:'center', gap:8 }}>
+                <span style={{ fontSize:18 }}>📦</span>
+                <div style={{ textAlign:'left' }}>
+                  <div style={{ fontFamily:"'Outfit',sans-serif", fontSize:13, fontWeight:700, color: !form.grade ? '#e53935' : '#666' }}>Raw</div>
+                  <div style={{ fontFamily:"'Outfit',sans-serif", fontSize:10, color:'#444' }}>Ungraded card</div>
+                </div>
+              </button>
+              {/* Graded */}
+              <button onClick={() => { set('cond', ''); if(!form.grade) set('grade', '') }}
+                style={{ padding:'10px', borderRadius:10, border: form.grade !== undefined && form.grade !== '' ? '2px solid rgba(229,57,53,0.5)' : '1px solid #2a2a2a', background: form.grade !== undefined && form.grade !== '' ? 'rgba(229,57,53,0.08)' : '#1a1a1a', cursor:'pointer', display:'flex', alignItems:'center', gap:8 }}
+                onClick={() => { if(!form.grade) { set('grade', ''); set('cond', '') } }}>
+                <span style={{ fontSize:18 }}>🏅</span>
+                <div style={{ textAlign:'left' }}>
+                  <div style={{ fontFamily:"'Outfit',sans-serif", fontSize:13, fontWeight:700, color: '#666' }}>Graded</div>
+                  <div style={{ fontFamily:"'Outfit',sans-serif", fontSize:10, color:'#444' }}>PSA, BGS, SGC...</div>
+                </div>
+              </button>
+            </div>
+
+            {/* If graded - show grade input */}
+            {(form.grade !== undefined) && (
+              <div style={{ marginTop:8, display:'grid', gridTemplateColumns:'1fr 1fr', gap:8 }}>
+                <div>{lbl('Grade')}{inp('grade', 'e.g. 9, 10, 9.5')}</div>
+                <div>
+                  {lbl('Grading Co.')}
+                  <select value={form.gradingCo||''} onChange={e => set('gradingCo', e.target.value)}
+                    style={{ width:'100%', padding:'11px 14px', borderRadius:10, background:'#1a1a1a', border:'1px solid #2a2a2a', color: form.gradingCo ? '#f0f0f0' : '#555', fontSize:14, outline:'none', fontFamily:"'Outfit',sans-serif" }}>
+                    <option value="">Select...</option>
+                    {['PSA','BGS','SGC','CGC','HGA','CSG','GAI','Other'].map(g => <option key={g} value={g}>{g}</option>)}
+                  </select>
+                </div>
+              </div>
+            )}
+
+            {/* If raw - show condition */}
+            {!form.grade && form.cond !== undefined && (
+              <div style={{ marginTop:8 }}>
+                <select value={form.cond||''} onChange={e => set('cond', e.target.value)}
+                  style={{ width:'100%', padding:'11px 14px', borderRadius:10, background:'#1a1a1a', border:'1px solid #2a2a2a', color: form.cond ? '#f0f0f0' : '#555', fontSize:14, outline:'none', fontFamily:"'Outfit',sans-serif" }}>
+                  <option value="">Condition...</option>
+                  {CONDS.map(c => <option key={c} value={c}>{c}</option>)}
+                </select>
+              </div>
+            )}
           </div>
-          <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:12 }}>
-            {isTCG
-              ? <><div>{lbl('Edition')}{sel('edition', EDITIONS)}</div><div>{lbl('Language')}{sel('language', LANGUAGES)}</div></>
-              : <><div>{lbl('Grade')}{inp('grade', 'e.g. 9.5')}</div><div>{lbl('Quantity')}{inp('qty', '1', 'number')}</div></>
-            }
-          </div>
-          <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:12 }}>
+
+          {/* ── 6. Auto checkbox ── */}
+          <label style={{ display:'flex', alignItems:'center', gap:12, padding:'11px 14px', borderRadius:10, background:'#1a1a1a', border: form.auto ? '1px solid rgba(229,57,53,0.3)' : '1px solid #2a2a2a', cursor:'pointer' }}>
+            <input type="checkbox" checked={!!form.auto} onChange={e => set('auto', e.target.checked)} style={{ accentColor:'#e53935', width:18, height:18, cursor:'pointer' }} />
+            <div>
+              <div style={{ fontFamily:"'Outfit',sans-serif", fontSize:14, fontWeight:700, color: form.auto ? '#e53935' : '#ccc' }}>Autograph ✍️</div>
+              <div style={{ fontFamily:"'Outfit',sans-serif", fontSize:11, color:'#555' }}>This card has an auto</div>
+            </div>
+          </label>
+
+          {/* ── 7. Buy Price + Value ── */}
+          <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:10 }}>
             <div>{lbl('Buy Price ($)')}{inp('buy', '0.00', 'number')}</div>
             <div>{lbl('Current Value ($)')}{inp('val', '0.00', 'number')}</div>
           </div>
-          <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:12 }}>
+
+          {/* ── 8. Qty (collapsed by default, small) ── */}
+          <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:10 }}>
+            <div>{lbl('Qty')}{inp('qty', '1', 'number')}</div>
             <div>{lbl('Purchase Date')}{inp('date', '', 'date')}</div>
-            <div>{lbl('Quantity')}{inp('qty', '1', 'number')}</div>
           </div>
-          <div>
-            <label style={{ display:'flex', alignItems:'center', gap:10, cursor:'pointer', padding:'12px 14px', borderRadius:10, background:'#1a1a1a', border:'1px solid #2a2a2a' }}>
-              <input type="checkbox" checked={!!form.sold} onChange={e => set('sold', e.target.checked)} style={{ accentColor:'#e53935', width:16, height:16 }} />
-              <span style={{ fontFamily:"'Outfit',sans-serif", fontSize:14, fontWeight:600, color:'#ccc' }}>Mark as Sold</span>
+
+          {/* ── Sold toggle ── */}
+          {isEdit && <>
+            <label style={{ display:'flex', alignItems:'center', gap:12, padding:'11px 14px', borderRadius:10, background:'#1a1a1a', border:'1px solid #2a2a2a', cursor:'pointer' }}>
+              <input type="checkbox" checked={!!form.sold} onChange={e => set('sold', e.target.checked)} style={{ accentColor:'#e53935', width:18, height:18 }} />
+              <div style={{ fontFamily:"'Outfit',sans-serif", fontSize:14, fontWeight:600, color:'#ccc' }}>Mark as Sold 💰</div>
             </label>
-          </div>
-          {form.sold && <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:12 }}>
-            <div>{lbl('Sold Price ($)')}{inp('soldPrice', '0.00', 'number')}</div>
-            <div>{lbl('Sold Date')}{inp('soldDate', '', 'date')}</div>
-          </div>}
-          <div>{lbl('Notes')}<textarea value={form.notes||''} onChange={e => set('notes', e.target.value)} rows={2} style={{ width:'100%', padding:'12px 14px', borderRadius:12, background:'#1a1a1a', border:'1px solid #2a2a2a', color:'#f0f0f0', fontSize:14, outline:'none', resize:'vertical', fontFamily:"'Outfit',sans-serif', boxSizing:'border-box" }} /></div>
-        </div>
-        <div style={{ display:'flex', gap:10, marginTop:20 }}>
-          <button onClick={onClose} style={{ flex:1, padding:12, borderRadius:12, background:'#1a1a1a', border:'1px solid #2a2a2a', color:'#666', fontFamily:"'Outfit',sans-serif", fontSize:14, fontWeight:600, cursor:'pointer' }}>Cancel</button>
-          <button onClick={handleSave} disabled={saving} style={{ flex:2, padding:12, borderRadius:12, background:'linear-gradient(135deg,#e53935,#ff5252)', border:'none', color:'#fff', fontFamily:"'Outfit',sans-serif", fontSize:14, fontWeight:700, cursor:'pointer', opacity:saving?0.6:1 }}>{saving?'Saving...':'Save Changes'}</button>
-        </div>
-      </div>
-    </div>
-  )
-
-  // ── ADD MODE ───────────────────────────────────────────────────────────────
-  return (
-    <div style={{ position:'fixed', inset:0, background:'rgba(0,0,0,0.75)', zIndex:200, display:'flex', alignItems:'flex-end', justifyContent:'center', padding:0 }}>
-      <div style={{ background:'#111', border:'1px solid #2a2a2a', borderRadius:'20px 20px 0 0', width:'100%', maxWidth:600, maxHeight:'92vh', overflowY:'auto', padding:'24px 20px 40px' }}>
-
-        {/* ── QUICK ADD ── */}
-        {step === 'quick' && <>
-          {header('Quick Add', 'Just the essentials — fill details later')}
-          {error && <div style={{ marginBottom:16, padding:'10px 14px', borderRadius:10, background:'rgba(229,57,53,0.08)', color:'#e53935', fontSize:13, border:'1px solid rgba(229,57,53,0.2)' }}>{error}</div>}
-          <div style={{ display:'flex', flexDirection:'column', gap:14 }}>
-            <div>
-              {lbl('Player / Card Name *')}
-              {inp('player', 'e.g. LeBron James, Charizard, Verstappen...', 'text', true)}
-            </div>
-            {/* Sport quick-pick grid */}
-            <div>
-              {lbl('Sport / Game')}
-              <div style={{ display:'grid', gridTemplateColumns:'repeat(4,1fr)', gap:8 }}>
-                {SPORT_OPTIONS.map(s => (
-                  <button key={s.label} onClick={() => set('sport', form.sport === s.label ? '' : s.label)}
-                    style={{ padding:'10px 6px', borderRadius:10, border: form.sport === s.label ? '1px solid rgba(229,57,53,0.5)' : '1px solid #2a2a2a', background: form.sport === s.label ? 'rgba(229,57,53,0.12)' : '#1a1a1a', cursor:'pointer', display:'flex', flexDirection:'column', alignItems:'center', gap:4 }}>
-                    <span style={{ fontSize:20 }}>{s.emoji}</span>
-                    <span style={{ fontFamily:"'Outfit',sans-serif", fontSize:10, fontWeight:600, color: form.sport === s.label ? '#e53935' : '#555', textAlign:'center', lineHeight:1.2 }}>{s.label.length > 8 ? s.label.split(' ')[0] : s.label}</span>
-                  </button>
-                ))}
-              </div>
-            </div>
-            <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:12 }}>
-              <div>{lbl('Buy Price ($)')}{inp('buy', '0.00', 'number')}</div>
-              <div>{lbl('Current Value ($)')}{inp('val', '0.00', 'number')}</div>
-            </div>
-          </div>
-          <div style={{ display:'flex', flexDirection:'column', gap:10, marginTop:20 }}>
-            {saveBtn('Add Card')}
-            <button onClick={() => setStep('full')} style={{ width:'100%', padding:'12px', borderRadius:12, background:'transparent', border:'1px solid #2a2a2a', color:'#555', fontFamily:"'Outfit',sans-serif", fontSize:14, fontWeight:600, cursor:'pointer' }}>
-              Add with full details ↓
-            </button>
-          </div>
-        </>}
-
-        {/* ── FULL ADD ── */}
-        {step === 'full' && <>
-          <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:20 }}>
-            <div style={{ display:'flex', alignItems:'center', gap:10 }}>
-              <button onClick={() => setStep('quick')} style={{ background:'none', border:'none', color:'#555', cursor:'pointer', fontSize:18, padding:0, lineHeight:1 }}>←</button>
-              <div>
-                <h2 style={{ fontFamily:"'Outfit',sans-serif", fontSize:18, fontWeight:800, color:'#f0f0f0', margin:0 }}>Full Details</h2>
-                <p style={{ fontFamily:"'Outfit',sans-serif", fontSize:12, color:'#555', margin:'3px 0 0' }}>Everything about this card</p>
-              </div>
-            </div>
-            <button onClick={onClose} style={{ background:'none', border:'none', color:'#555', cursor:'pointer', padding:4 }}><IconClose /></button>
-          </div>
-          {error && <div style={{ marginBottom:16, padding:'10px 14px', borderRadius:10, background:'rgba(229,57,53,0.08)', color:'#e53935', fontSize:13, border:'1px solid rgba(229,57,53,0.2)' }}>{error}</div>}
-          <div style={{ display:'flex', flexDirection:'column', gap:14 }}>
-            <div>{lbl(isTCG ? 'Card Name *' : 'Player / Card Name *')}{inp('player', 'e.g. LeBron James', 'text', true)}</div>
-            <div>
-              {lbl('Sport / Game')}
-              <div style={{ display:'grid', gridTemplateColumns:'repeat(4,1fr)', gap:8, marginBottom:8 }}>
-                {SPORT_OPTIONS.map(s => (
-                  <button key={s.label} onClick={() => set('sport', form.sport === s.label ? '' : s.label)}
-                    style={{ padding:'10px 6px', borderRadius:10, border: form.sport === s.label ? '1px solid rgba(229,57,53,0.5)' : '1px solid #2a2a2a', background: form.sport === s.label ? 'rgba(229,57,53,0.12)' : '#1a1a1a', cursor:'pointer', display:'flex', flexDirection:'column', alignItems:'center', gap:4 }}>
-                    <span style={{ fontSize:20 }}>{s.emoji}</span>
-                    <span style={{ fontFamily:"'Outfit',sans-serif", fontSize:10, fontWeight:600, color: form.sport === s.label ? '#e53935' : '#555', textAlign:'center', lineHeight:1.2 }}>{s.label.length > 8 ? s.label.split(' ')[0] : s.label}</span>
-                  </button>
-                ))}
-              </div>
-            </div>
-            <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:12 }}>
-              <div>{lbl('Year')}{inp('year', 'e.g. 2023')}</div>
-              <div>{lbl('Card Number')}{inp('num', 'e.g. #100')}</div>
-            </div>
-            <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:12 }}>
-              <div>{lbl(isTCG ? 'Set / Expansion' : 'Card Name / Set')}{inp('name', isTCG ? 'e.g. Base Set' : 'e.g. Topps Chrome')}</div>
-              <div>{lbl(isTCG ? 'Publisher' : 'Brand')}{inp('brand', isTCG ? 'e.g. Wizards' : 'e.g. Topps')}</div>
-            </div>
-            {isTCG ? (
-              <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:12 }}>
-                <div>{lbl('Rarity')}{sel('rarity', TCG_RARITIES)}</div>
-                <div>{lbl('Edition')}{sel('edition', EDITIONS)}</div>
-                <div>{lbl('Language')}{sel('language', LANGUAGES)}</div>
-              </div>
-            ) : (
-              <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:12 }}>
-                <div>{lbl('Condition')}{sel('cond', CONDS)}</div>
-                <div>{lbl('Grade')}{inp('grade', 'e.g. 9.5')}</div>
-              </div>
-            )}
-            <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:12 }}>
-              <div>{lbl('Buy Price ($)')}{inp('buy', '0.00', 'number')}</div>
-              <div>{lbl('Current Value ($)')}{inp('val', '0.00', 'number')}</div>
-            </div>
-            <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:12 }}>
-              <div>{lbl('Quantity')}{inp('qty', '1', 'number')}</div>
-              <div>{lbl('Purchase Date')}{inp('date', '', 'date')}</div>
-            </div>
-            <div>
-              <label style={{ display:'flex', alignItems:'center', gap:10, cursor:'pointer', padding:'12px 14px', borderRadius:10, background:'#1a1a1a', border:'1px solid #2a2a2a' }}>
-                <input type="checkbox" checked={!!form.sold} onChange={e => set('sold', e.target.checked)} style={{ accentColor:'#e53935', width:16, height:16 }} />
-                <span style={{ fontFamily:"'Outfit',sans-serif", fontSize:14, fontWeight:600, color:'#ccc' }}>Mark as Sold</span>
-              </label>
-            </div>
-            {form.sold && <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:12 }}>
+            {form.sold && <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:10 }}>
               <div>{lbl('Sold Price ($)')}{inp('soldPrice', '0.00', 'number')}</div>
               <div>{lbl('Sold Date')}{inp('soldDate', '', 'date')}</div>
             </div>}
-            <div>
-              {lbl('Notes')}
-              <textarea value={form.notes||''} onChange={e => set('notes', e.target.value)} rows={2} placeholder="Any extra details..." style={{ width:'100%', padding:'12px 14px', borderRadius:12, background:'#1a1a1a', border:'1px solid #2a2a2a', color:'#f0f0f0', fontSize:14, outline:'none', resize:'vertical', fontFamily:"'Outfit',sans-serif", boxSizing:'border-box' }} />
-            </div>
-          </div>
-          {saveBtn('Add Card')}
-        </>}
+          </>}
+
+        </div>
+
+        {/* ── Save ── */}
+        <button onClick={handleSave} disabled={saving || !form.player}
+          style={{ width:'100%', padding:'14px', borderRadius:12, marginTop:20, background: (!form.player||saving) ? '#1a1a1a' : 'linear-gradient(135deg,#e53935,#ff5252)', border: (!form.player||saving) ? '1px solid #2a2a2a' : 'none', color: (!form.player||saving) ? '#444' : '#fff', fontFamily:"'Outfit',sans-serif", fontSize:16, fontWeight:800, cursor: (!form.player||saving) ? 'not-allowed' : 'pointer', letterSpacing:'-0.3px' }}>
+          {saving ? 'Saving...' : (isEdit ? 'Save Changes' : '+ Add Card')}
+        </button>
 
       </div>
     </div>
@@ -1267,7 +1226,7 @@ function CollectionPage() {
                           <div style={{ minWidth: 0 }}>
                             <div style={{ fontFamily: "'Outfit',sans-serif", fontSize: 15, fontWeight: 700, color: '#f0f0f0' }}>{card.player}</div>
                             <div style={{ fontSize: 12, color: '#555', marginTop: 2 }}>
-                              {[card.year, card.sport, card.brand, card.grade ? `Grade ${card.grade}` : card.cond].filter(Boolean).join(' · ')}
+                              {[card.year, card.sport, card.brand, card.grade ? `${card.gradingCo||''} ${card.grade}`.trim() : card.cond, card.auto ? '✍️ Auto' : null, card.num ? card.num : null].filter(Boolean).join(' · ')}
                             </div>
                           </div>
                         </div>
