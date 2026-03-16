@@ -399,24 +399,8 @@ export default function PSALookupPage() {
                   </div>
                   <div className="psa-result-inner" style={{ display:'flex', gap:20, padding:'20px', flexWrap:'wrap' }}>
                     <div style={{ flexShrink:0, width:180 }} className="psa-img-wrap">
-                      <div style={{ width:'100%', maxWidth:180, height:220, background:'#1a1a1a', borderRadius:12, overflow:'hidden', border:'1px solid #2a2a2a', marginBottom:8, display:'flex', alignItems:'center', justifyContent:'center', position:'relative' }}>
-                        <img
-                          src={imgFront ? result.frontImage : result.backImage}
-                          alt={result.player}
-                          style={{ width:'100%', height:'100%', objectFit:'contain' }}
-                          onError={e => { e.target.style.display='none'; e.target.nextSibling.style.display='flex' }}
-                        />
-                        <div style={{ display:'none', flexDirection:'column', alignItems:'center', justifyContent:'center', gap:8, padding:16, textAlign:'center' }}>
-                          <div style={{ fontSize:28, opacity:0.15 }}>🃏</div>
-                          <div style={{ fontSize:10, color:'#444', fontWeight:700 }}>No image</div>
-                        </div>
-                      </div>
-                      <div style={{ display:'flex', gap:6, marginBottom:6 }}>
-                        <button onClick={() => setImgFront(true)} style={{ flex:1, padding:'6px', borderRadius:7, background: imgFront?'rgba(147,51,234,0.15)':'#1a1a1a', border: imgFront?'1px solid rgba(147,51,234,0.3)':'1px solid #2a2a2a', color: imgFront?'#a855f7':'#555', fontSize:11, fontWeight:700, cursor:'pointer' }}>Front</button>
-                        <button onClick={() => setImgFront(false)} style={{ flex:1, padding:'6px', borderRadius:7, background: !imgFront?'rgba(147,51,234,0.15)':'#1a1a1a', border: !imgFront?'1px solid rgba(147,51,234,0.3)':'1px solid #2a2a2a', color: !imgFront?'#a855f7':'#555', fontSize:11, fontWeight:700, cursor:'pointer' }}>Back</button>
-                      </div>
                       {result.certPageUrl && (
-                        <a href={result.certPageUrl} target="_blank" rel="noopener noreferrer" style={{ display:'block', width:'100%', padding:'7px', borderRadius:8, background:'rgba(147,51,234,0.08)', border:'1px solid rgba(147,51,234,0.2)', color:'#a855f7', fontSize:11, fontWeight:700, textAlign:'center', textDecoration:'none', cursor:'pointer' }}>
+                        <a href={result.certPageUrl} target="_blank" rel="noopener noreferrer" style={{ display:'block', width:'100%', padding:'11px', borderRadius:10, background:'rgba(147,51,234,0.08)', border:'1px solid rgba(147,51,234,0.2)', color:'#a855f7', fontSize:13, fontWeight:800, textAlign:'center', textDecoration:'none' }}>
                           View on PSA ↗
                         </a>
                       )}
