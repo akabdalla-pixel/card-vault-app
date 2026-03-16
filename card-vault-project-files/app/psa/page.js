@@ -355,6 +355,7 @@ export default function PSALookupPage() {
         @media(max-width:768px){.sidebar-el{display:none!important}.mobile-only{display:flex!important}.mob-topbar{display:flex}.main-wrap{margin-left:0!important;width:100%!important;padding:16px 16px 80px!important}}
         input:focus,select:focus,textarea:focus{border-color:#9333ea!important;outline:none}
         .hist-item:hover{background:#1a1a1a!important}
+        @media(max-width:768px){.psa-grid{grid-template-columns:1fr!important}.psa-result-inner{flex-direction:column!important}.psa-img-wrap{width:100%!important;display:flex;flex-direction:column;align-items:center}}
       `}</style>
 
       <div style={{ display:'flex', minHeight:'100vh', background:'#0a0a0a' }}>
@@ -372,7 +373,7 @@ export default function PSALookupPage() {
             <p style={{ fontSize:12, color:'#555', fontWeight:500 }}>Enter a PSA cert number to verify the grade, view card details and images</p>
           </div>
 
-          <div style={{ display:'grid', gridTemplateColumns:'1fr 340px', gap:24, alignItems:'start' }}>
+          <div className="psa-grid" style={{ display:'grid', gridTemplateColumns:'1fr 340px', gap:24, alignItems:'start' }}>
             <div>
               <div style={{ background:'#111', border:'1px solid #1e1e1e', borderRadius:14, padding:'18px 20px', marginBottom:20 }}>
                 <div style={{ fontSize:9, fontWeight:800, color:'#555', textTransform:'uppercase', letterSpacing:'0.1em', marginBottom:10 }}>Cert Number</div>
@@ -396,10 +397,10 @@ export default function PSALookupPage() {
                       {result.isCancelled ? 'CANCELLED — DO NOT BUY' : 'VERIFIED AUTHENTIC'}
                     </span>
                   </div>
-                  <div style={{ display:'flex', gap:24, padding:'24px', flexWrap:'wrap' }}>
+                  <div className="psa-result-inner" style={{ display:'flex', gap:20, padding:'20px', flexWrap:'wrap' }}>
                     {(result.frontImage || result.backImage) && (
-                      <div style={{ flexShrink:0 }}>
-                        <div style={{ width:180, height:250, background:'#1a1a1a', borderRadius:12, overflow:'hidden', border:'1px solid #2a2a2a', marginBottom:8 }}>
+                      <div style={{ flexShrink:0, width:180 }} className="psa-img-wrap">
+                        <div style={{ width:'100%', maxWidth:180, height:220, background:'#1a1a1a', borderRadius:12, overflow:'hidden', border:'1px solid #2a2a2a', marginBottom:8 }}>
                           <img src={imgFront ? result.frontImage : result.backImage} alt={result.player} style={{ width:'100%', height:'100%', objectFit:'contain' }} onError={e => e.target.style.display='none'} />
                         </div>
                         {result.frontImage && result.backImage && (
@@ -410,7 +411,7 @@ export default function PSALookupPage() {
                         )}
                       </div>
                     )}
-                    <div style={{ flex:1, minWidth:200 }}>
+                    <div style={{ flex:1, minWidth:0 }}>
                       <div style={{ display:'flex', alignItems:'center', gap:12, marginBottom:16 }}>
                         <div style={{ width:64, height:64, borderRadius:12, background:`${gradeColor}18`, border:`2px solid ${gradeColor}`, display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', flexShrink:0 }}>
                           <div style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:26, fontWeight:900, color:gradeColor, lineHeight:1 }}>{result.grade}</div>
