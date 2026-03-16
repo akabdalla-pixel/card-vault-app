@@ -3,6 +3,10 @@ import './globals.css'
 export const metadata = {
   title: '𝙏𝙤𝙥𝙇𝙤𝙖𝙙',
   description: 'Sports Card Investment Tracker',
+  icons: {
+    icon: '/favicon.ico',
+    apple: '/apple-touch-icon.png',
+  },
 }
 
 export const viewport = {
