@@ -66,7 +66,7 @@ function ToastContainer() {
     }
     return () => { _toastFn = null }
   }, [])
-  const colors = { success: '#22c55e', error: '#9333ea', info: '#888' }
+  const colors = { success: '#4ade80', error: '#9333ea', info: '#888' }
   const icons = { success: '✓', error: '✕', info: 'ℹ' }
   if (!toasts.length) return null
   return (
@@ -167,7 +167,7 @@ function usePullToRefresh(onRefresh) {
 function PullIndicator({pullY}) {
   if (!pullY) return null
   const ready = pullY >= 60
-  return <div style={{position:'fixed',top:0,left:'50%',transform:'translateX(-50%)',zIndex:999,padding:'8px 16px',borderRadius:'0 0 12px 12px',background:'#1a1a1a',border:'1px solid #2a2a2a',borderTop:'none',fontFamily:"'Outfit',sans-serif",fontSize:12,color:ready?'#22c55e':'#555',fontWeight:600,display:'flex',alignItems:'center',gap:6}}><span style={{display:'inline-block',animation:ready?'spin 0.5s linear infinite':'none'}}>↓</span>{ready?'Release to refresh':'Pull to refresh'}</div>
+  return <div style={{position:'fixed',top:0,left:'50%',transform:'translateX(-50%)',zIndex:999,padding:'8px 16px',borderRadius:'0 0 12px 12px',background:'#1a1a1a',border:'1px solid #2a2a2a',borderTop:'none',fontFamily:"'Outfit',sans-serif",fontSize:12,color:ready?'#4ade80':'#555',fontWeight:600,display:'flex',alignItems:'center',gap:6}}><span style={{display:'inline-block',animation:ready?'spin 0.5s linear infinite':'none'}}>↓</span>{ready?'Release to refresh':'Pull to refresh'}</div>
 }
 
 function getPriceLinks(card) {
@@ -213,7 +213,7 @@ function parseCSV(text) {
 
 function Sidebar({ user, onLogout, cardCount = 0, active = "" }) {
   return (
-    <aside style={{ width: 220, minHeight: '100vh', background: '#0d0d0d', borderRight: '1px solid #1e1e1e', display: 'flex', flexDirection: 'column', position: 'fixed', top: 0, left: 0, zIndex: 60 }}>
+    <aside style={{ width: 220, minHeight: '100vh', background: '#111', borderRight: '1px solid #1e1e1e', display: 'flex', flexDirection: 'column', position: 'fixed', top: 0, left: 0, zIndex: 60 }}>
       <div style={{ padding: '16px 16px 12px', display: 'flex', alignItems: 'center', justifyContent: 'center', borderBottom: '1px solid #1e1e1e' }}>
         <div style={{ fontFamily: "'Outfit',sans-serif", fontSize: 22, fontWeight: 800 }}><img src="/logo-transparent.png" alt="TopLoad" style={{ width: 120, height: 'auto', objectFit: 'contain', filter: 'drop-shadow(0 0 8px rgba(147,51,234,0.4))' }} /></div>
         
@@ -227,7 +227,7 @@ function Sidebar({ user, onLogout, cardCount = 0, active = "" }) {
         })}
       </nav>
       <div style={{ padding: '14px 10px', borderTop: '1px solid #1e1e1e' }}>
-        {user && <div style={{ padding: '10px 12px', marginBottom: 4, borderRadius: 10, background: 'rgba(255,255,255,0.02)', fontFamily: "'Outfit',sans-serif" }}><div style={{ fontSize: 12, fontWeight: 700, color: '#ccc' }}>@{user.username}</div><div style={{ fontSize: 11, color: '#444', marginTop: 1 }}>{user.email}</div></div>}
+        {user && <div style={{ padding: '10px 12px', marginBottom: 4, borderRadius: 10, background: '#181818', fontFamily: "'Outfit',sans-serif" }}><div style={{ fontSize: 12, fontWeight: 700, color: '#ccc' }}>@{user.username}</div><div style={{ fontSize: 11, color: '#444', marginTop: 1 }}>{user.email}</div></div>}
         <Link href="/settings" style={{ display: 'flex', alignItems: 'center', gap: 11, padding: '9px 12px', borderRadius: 10, marginBottom: 2, textDecoration: 'none', color: '#555', fontFamily: "'Outfit',sans-serif", fontSize: 14, fontWeight: 500 }}><IconSettings />Settings</Link>
         <button onClick={onLogout} style={{ display: 'flex', alignItems: 'center', gap: 11, padding: '9px 12px', borderRadius: 10, width: '100%', background: 'transparent', border: 'none', cursor: 'pointer', color: '#555', fontFamily: "'Outfit',sans-serif", fontSize: 14, fontWeight: 500 }}><IconLogout />Sign Out</button>
       </div>
@@ -676,7 +676,7 @@ function BreakEvenModal({ card, onClose }) {
               </div>
               <div>
                 <div style={{ fontSize: 10, color: '#444', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 4, fontFamily: "'Outfit',sans-serif" }}>Net Profit</div>
-                <div style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: 14, fontWeight: 700, color: isProfit ? '#22c55e' : '#9333ea' }}>
+                <div style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: 14, fontWeight: 700, color: isProfit ? '#4ade80' : '#9333ea' }}>
                   {isProfit ? '+' : ''}{fmt(netProfit)}
                 </div>
               </div>
@@ -685,7 +685,7 @@ function BreakEvenModal({ card, onClose }) {
               <span style={{ fontFamily: "'Outfit',sans-serif", fontSize: 13, color: '#666' }}>
                 {isProfit ? '✅ You make money at this price' : '❌ You lose money at this price'}
               </span>
-              <span style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: 14, fontWeight: 700, color: isProfit ? '#22c55e' : '#9333ea' }}>
+              <span style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: 14, fontWeight: 700, color: isProfit ? '#4ade80' : '#9333ea' }}>
                 {isProfit ? '+' : ''}{netProfitPct.toFixed(1)}%
               </span>
             </div>
@@ -810,7 +810,7 @@ function CollectionPage() {
 
   if (loading) return (
     <div style={{ display:'flex', minHeight:'100vh', background:'#0a0a0a' }}>
-      <div className="sidebar-el" style={{ width:220, minHeight:'100vh', background:'#0d0d0d', borderRight:'1px solid #1e1e1e', flexShrink:0 }} />
+      <div className="sidebar-el" style={{ width:220, minHeight:'100vh', background:'#111', borderRight:'1px solid #1e1e1e', flexShrink:0 }} />
       <div style={{ flex:1 }}><CollectionSkeleton /></div>
     </div>
   )
@@ -846,7 +846,7 @@ function CollectionPage() {
       `}</style>
       <div style={{ display: 'flex', minHeight: '100vh', background: '#0a0a0a' }}>
         <PullIndicator pullY={pullY} />
-        <div className="sidebar-el"><Sidebar user={user} onLogout={handleLogout} cardCount={activeCards.length} active="Collection" /></div>        <main className="main-wrap" style={{ padding: '28px 28px' }}>
+        <div className="sidebar-el"><Sidebar user={user} onLogout={handleLogout} cardCount={activeCards.length} active="Collection" /></div>        <main className="main-wrap" style={{ padding: '28px 28px', background: '#0a0a0a' }}>
           <div className="mob-topbar" style={{ alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
             <img src="/logo-transparent.png" alt="TopLoad" style={{ height: 30, width: 'auto', objectFit: 'contain', filter: 'drop-shadow(0 0 8px rgba(147,51,234,0.4))' }} />
             <button onClick={() => setModal('add')} className="press" style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '8px 14px', background: 'rgba(147,51,234,0.1)', border: '1px solid rgba(147,51,234,0.25)', borderRadius: 10, color: '#9333ea', fontFamily: "'Outfit',sans-serif", fontSize: 13, fontWeight: 700, cursor: 'pointer' }} className='press'>+ Add Card</button>
@@ -869,16 +869,16 @@ function CollectionPage() {
             {cards.length > 0 && (
               <div style={{ display:'grid', gridTemplateColumns:'repeat(5,1fr)', gap:12 }}>
                 {[
-                  { label:'Active Cards', value: statActive.length, mono: false },
-                  { label:'Total Invested', value: fmt(totalInvested), mono: true },
-                  { label:'Portfolio Value', value: fmt(totalValue), mono: true },
-                  { label:'Unrealized G/L', value: (totalValue-totalInvested>=0?'+':'')+fmt(totalValue-totalInvested), mono: true, color: totalValue>=totalInvested?'#22c55e':'#9333ea' },
-                  { label:'Realized P&L', value: (realizedPL>=0?'+':'')+fmt(realizedPL), mono: true, color: realizedPL>=0?'#22c55e':'#9333ea' },
+                  { label:'Active Cards', value: statActive.length, color:'#f0f0f0', accent:'#9333ea' },
+                  { label:'Total Invested', value: fmt(totalInvested), color:'#f0f0f0', accent:'#555' },
+                  { label:'Portfolio Value', value: fmt(totalValue), color:'#f0f0f0', accent:'#555' },
+                  { label:'Unrealized G/L', value: (totalValue-totalInvested>=0?'+':'')+fmt(totalValue-totalInvested), color: totalValue>=totalInvested?'#4ade80':'#f87171', accent: totalValue>=totalInvested?'#4ade80':'#f87171' },
+                  { label:'Realized P&L', value: (realizedPL>=0?'+':'')+fmt(realizedPL), color: realizedPL>=0?'#4ade80':'#f87171', accent: realizedPL>=0?'#4ade80':'#f87171' },
                 ].map((s,i) => (
-                  <div key={i} style={{ background:'linear-gradient(135deg,#141414,#0f0f0f)', border:'1px solid #1e1e1e', borderRadius:12, padding:'14px 16px', position:'relative', overflow:'hidden' }}>
-                    <div style={{ position:'absolute', top:0, left:0, right:0, height:2, background: i>=3 ? (s.color==='#22c55e'?'linear-gradient(90deg,#22c55e,#16a34a)':'linear-gradient(90deg,#9333ea,#a855f7)') : 'linear-gradient(90deg,#9333ea,rgba(147,51,234,0.2))', opacity:0.6 }} />
-                    <div style={{ fontSize:10, fontWeight:700, color:'#444', textTransform:'uppercase', letterSpacing:'0.1em', marginBottom:8, fontFamily:"'Outfit',sans-serif" }}>{s.label}</div>
-                    <div style={{ fontFamily: s.mono?"'JetBrains Mono',monospace":"'Outfit',sans-serif", fontSize:s.mono?18:22, fontWeight:700, color:s.color||'#f0f0f0', letterSpacing: s.mono?'-0.5px':'-1px' }}>{s.value}</div>
+                  <div key={i} style={{ background:'#111', border:'1px solid #1e1e1e', borderRadius:12, padding:'14px 16px', position:'relative', overflow:'hidden' }}>
+                    <div style={{ position:'absolute', top:0, left:0, right:0, height:2, background:`linear-gradient(90deg,${s.accent},transparent)` }} />
+                    <div style={{ fontSize:9, fontWeight:700, color:'#444', textTransform:'uppercase', letterSpacing:'0.1em', marginBottom:8, fontFamily:"'Outfit',sans-serif" }}>{s.label}</div>
+                    <div style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:18, fontWeight:800, color:s.color, letterSpacing:'-0.5px' }}>{s.value}</div>
                   </div>
                 ))}
               </div>
@@ -899,8 +899,8 @@ function CollectionPage() {
                 { label: 'Cards', value: statActive.length },
                 { label: 'Invested', value: fmt(totalInvested) },
                 { label: 'Value', value: fmt(totalValue) },
-                { label: 'G/L', value: (totalValue-totalInvested>=0?'+':'')+fmt(totalValue-totalInvested), color: totalValue>=totalInvested?'#22c55e':'#9333ea' },
-                { label: 'P&L', value: (realizedPL>=0?'+':'')+fmt(realizedPL), color: realizedPL>=0?'#22c55e':'#9333ea' },
+                { label: 'G/L', value: (totalValue-totalInvested>=0?'+':'')+fmt(totalValue-totalInvested), color: totalValue>=totalInvested?'#4ade80':'#9333ea' },
+                { label: 'P&L', value: (realizedPL>=0?'+':'')+fmt(realizedPL), color: realizedPL>=0?'#4ade80':'#9333ea' },
               ].map((s,i) => (
                 <div key={i} style={{ flexShrink:0, background:'#111', border:'1px solid #1e1e1e', borderRadius:10, padding:'10px 12px', minWidth:90, textAlign:'center' }}>
                   <div style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:13, fontWeight:700, color:s.color||'#f0f0f0' }}>{s.value}</div>
@@ -1131,7 +1131,7 @@ function CollectionPage() {
                           </div>
                           <div style={{ textAlign: 'right' }}>
                             <div style={{ fontSize: 9, color: '#444', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 2, fontFamily: "'Outfit',sans-serif" }}>G/L</div>
-                            <div style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: 13, fontWeight: 700, color: glPos ? '#22c55e' : '#9333ea' }}>{glPos?'+':''}{glPct.toFixed(1)}%</div>
+                            <div style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: 13, fontWeight: 700, color: glPos ? '#4ade80' : '#9333ea' }}>{glPos?'+':''}{glPct.toFixed(1)}%</div>
                           </div>
                         </div>
                         {/* Action buttons */}
@@ -1157,7 +1157,7 @@ function CollectionPage() {
                         <th style={{ padding: '11px 14px', width: 36 }}>
                           <input type="checkbox" checked={filtered.length > 0 && selected.size === filtered.length} onChange={() => { if (selected.size === filtered.length) setSelected(new Set()); else setSelected(new Set(filtered.map(c => c.id))) }} style={{ accentColor: '#9333ea', width: 15, height: 15, cursor: 'pointer' }} />
                         </th>
-                        {['Player','Sport','Year','Grade','Qty','Buy Price','Value','G/L','Status',''].map((h,i) => <th key={i} style={{ padding: '10px 16px', textAlign: i===0?'left':'right', fontFamily: "'Outfit',sans-serif", fontSize: 10, fontWeight: 700, color: '#2a2a2a', letterSpacing: '0.12em', textTransform: 'uppercase', whiteSpace: 'nowrap', background: '#0d0d0d', borderBottom: '1px solid #1e1e1e' }}>{h}</th>)}
+                        {['Player','Sport','Year','Grade','Qty','Buy Price','Value','G/L','Status',''].map((h,i) => <th key={i} style={{ padding: '10px 16px', textAlign: i===0?'left':'right', fontFamily: "'Outfit',sans-serif", fontSize: 10, fontWeight: 700, color: '#2a2a2a', letterSpacing: '0.12em', textTransform: 'uppercase', whiteSpace: 'nowrap', background: '#0a0a0a', borderBottom: '1px solid #141414' }}>{h}</th>)}
                       </tr>
                     </thead>
                     <tbody>
@@ -1183,7 +1183,7 @@ function CollectionPage() {
                             <td style={{ padding: '12px 14px', textAlign: 'right', fontFamily: "'JetBrains Mono',monospace", fontSize: 13, color: '#666' }}>{fmt(buy)}</td>
                             <td style={{ padding: '12px 14px', textAlign: 'right', fontFamily: "'JetBrains Mono',monospace", fontSize: 13, fontWeight: 700, color: '#f0f2ff' }}>{fmt(displayVal)}</td>
                             <td style={{ padding: '12px 14px', textAlign: 'right' }}>
-                              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 3, fontFamily: "'JetBrains Mono',monospace", fontSize: 12, fontWeight: 600, color: glPos ? '#22c55e' : '#9333ea' }}>{glPos ? <IconUp /> : <IconDown />}{glPos?'+':''}{fmt(gl)}</div>
+                              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 3, fontFamily: "'JetBrains Mono',monospace", fontSize: 12, fontWeight: 600, color: glPos ? '#4ade80' : '#9333ea' }}>{glPos ? <IconUp /> : <IconDown />}{glPos?'+':''}{fmt(gl)}</div>
                             </td>
                             <td style={{ padding: '12px 14px', textAlign: 'right' }}>{card.sold ? <span style={{ padding: '3px 8px', borderRadius: 6, background: 'rgba(255,190,46,0.1)', color: '#ffbe2e', fontSize: 11, fontWeight: 700 }}>SOLD</span> : <span style={{ padding: '3px 8px', borderRadius: 6, background: 'rgba(147,51,234,0.1)', color: '#9333ea', fontSize: 11, fontWeight: 700 }}>ACTIVE</span>}</td>
                             <td style={{ padding: '12px 14px', textAlign: 'right' }}>
@@ -1220,7 +1220,7 @@ function CollectionPage() {
                       <div style={{ fontSize:10, color:'#555', marginBottom:8 }}>{[card.year, card.sport].filter(Boolean).join(' · ')}</div>
                       {card.grade && <div style={{ display:'inline-block', padding:'1px 6px', borderRadius:6, background:'rgba(147,51,234,0.1)', color:'#9333ea', fontSize:10, fontWeight:700, marginBottom:6 }}>Grade {card.grade}</div>}
                       <div style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:14, fontWeight:700, color:'#f0f0f0', marginBottom:2 }}>{fmt(displayVal)}</div>
-                      <div style={{ fontSize:11, fontWeight:700, color: glPos ? '#22c55e' : '#9333ea' }}>{glPos?'+':''}{fmt(gl)} <span style={{fontWeight:500,color:'#444'}}>({glPos?'+':''}{glPct.toFixed(1)}%)</span></div>
+                      <div style={{ fontSize:11, fontWeight:700, color: glPos ? '#4ade80' : '#9333ea' }}>{glPos?'+':''}{fmt(gl)} <span style={{fontWeight:500,color:'#444'}}>({glPos?'+':''}{glPct.toFixed(1)}%)</span></div>
                       <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:4, marginTop:8 }}>
                         <button onClick={() => setPriceLookupCard(card)} style={{ padding:'6px 4px', borderRadius:7, background:'rgba(99,91,255,0.08)', border:'1px solid rgba(99,91,255,0.2)', color:'#635bff', fontSize:10, fontWeight:600, cursor:'pointer', fontFamily:"'Outfit',sans-serif" }}>🔍 Prices</button>
                         {!card.sold && <button onClick={() => setSoldCard(card)} style={{ padding:'6px 4px', borderRadius:7, background:'rgba(255,190,46,0.08)', border:'1px solid rgba(255,190,46,0.2)', color:'#ffbe2e', fontSize:10, fontWeight:600, cursor:'pointer', fontFamily:"'Outfit',sans-serif" }}>🏷 Sell</button>}
@@ -1252,7 +1252,7 @@ function CollectionPage() {
                       </div>
 
                       {/* Value row */}
-                      <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 12, padding: '10px 12px', borderRadius: 10, background: 'rgba(255,255,255,0.03)' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 12, padding: '10px 12px', borderRadius: 10, background: '#181818' }}>
                         <div style={{ flex: 1 }}>
                           <div style={{ fontSize: 10, color: '#444', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 3 }}>Buy Price</div>
                           <div style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: 14, color: '#666' }}>{fmt(buy)}</div>
@@ -1263,7 +1263,7 @@ function CollectionPage() {
                         </div>
                         <div style={{ flex: 1 }}>
                           <div style={{ fontSize: 10, color: '#444', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 3 }}>G/L</div>
-                          <div style={{ display: 'flex', alignItems: 'center', gap: 3, fontFamily: "'JetBrains Mono',monospace", fontSize: 14, fontWeight: 700, color: glPos ? '#22c55e' : '#9333ea' }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: 3, fontFamily: "'JetBrains Mono',monospace", fontSize: 14, fontWeight: 700, color: glPos ? '#4ade80' : '#9333ea' }}>
                             {glPos ? <IconUp /> : <IconDown />}{glPos?'+':''}{glPct.toFixed(1)}%
                           </div>
                         </div>

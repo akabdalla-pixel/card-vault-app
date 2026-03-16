@@ -36,7 +36,7 @@ function ToastContainer() {
     }
     return () => { _toastFn=null }
   },[])
-  const colors={success:'#22c55e',error:'#9333ea',info:'#888'}
+  const colors={success:'#4ade80',error:'#9333ea',info:'#888'}
   const icons={success:'✓',error:'✕',info:'ℹ'}
   if(!toasts.length) return null
   return (
@@ -64,7 +64,7 @@ const fmt = n => new Intl.NumberFormat('en-US', { style: 'currency', currency: '
 
 function Sidebar({ user, onLogout, cardCount = 0, active = "" }) {
   return (
-    <aside style={{ width: 220, minHeight: '100vh', background: '#0d0d0d', borderRight: '1px solid #1e1e1e', display: 'flex', flexDirection: 'column', position: 'fixed', top: 0, left: 0, zIndex: 60 }}>
+    <aside style={{ width: 220, minHeight: '100vh', background: '#111', borderRight: '1px solid #1e1e1e', display: 'flex', flexDirection: 'column', position: 'fixed', top: 0, left: 0, zIndex: 60 }}>
       <div style={{ padding: '16px 16px 12px', borderBottom: '1px solid #1e1e1e', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         <img src={LOGO} alt="TopLoad" style={{ width: 140, height: 'auto', objectFit: 'contain' }} />
       </div>
@@ -77,7 +77,7 @@ function Sidebar({ user, onLogout, cardCount = 0, active = "" }) {
         })}
       </nav>
       <div style={{ padding: '14px 10px', borderTop: '1px solid #1e1e1e' }}>
-        {user && <div style={{ padding: '10px 12px', marginBottom: 4, borderRadius: 10, background: 'rgba(255,255,255,0.03)', fontFamily: "'Outfit',sans-serif" }}><div style={{ fontSize: 12, fontWeight: 700, color: '#ccc' }}>@{user.username}</div><div style={{ fontSize: 11, color: '#444', marginTop: 1 }}>{user.email}</div></div>}
+        {user && <div style={{ padding: '10px 12px', marginBottom: 4, borderRadius: 10, background: '#181818', fontFamily: "'Outfit',sans-serif" }}><div style={{ fontSize: 12, fontWeight: 700, color: '#ccc' }}>@{user.username}</div><div style={{ fontSize: 11, color: '#444', marginTop: 1 }}>{user.email}</div></div>}
         <Link href="/settings" style={{ display: 'flex', alignItems: 'center', gap: 11, padding: '9px 12px', borderRadius: 10, marginBottom: 2, textDecoration: 'none', color: '#555', fontFamily: "'Outfit',sans-serif", fontSize: 14, fontWeight: 500 }}><IconSettings />Settings</Link>
         <button onClick={onLogout} style={{ display: 'flex', alignItems: 'center', gap: 11, padding: '9px 12px', borderRadius: 10, width: '100%', background: 'transparent', border: 'none', cursor: 'pointer', color: '#555', fontFamily: "'Outfit',sans-serif", fontSize: 14, fontWeight: 500 }}><IconLogout />Sign Out</button>
       </div>
@@ -124,7 +124,7 @@ export default function SoldHistoryPage() {
   const winRate = cards.length > 0 ? (winners / cards.length) * 100 : 0
   if (loading) return (
     <div style={{ display:'flex', minHeight:'100vh', background:'#0a0a0a' }}>
-      <div className="sidebar-el" style={{ width:220, minHeight:'100vh', background:'#0d0d0d', borderRight:'1px solid #1e1e1e', flexShrink:0 }} />
+      <div className="sidebar-el" style={{ width:220, minHeight:'100vh', background:'#111', borderRight:'1px solid #1e1e1e', flexShrink:0 }} />
       <div style={{ flex:1, padding:28 }}>
         <Sk h={28} r={8} style={{ marginBottom:8, maxWidth:200 }} />
         <Sk h={14} r={6} style={{ marginBottom:24, maxWidth:140 }} />
@@ -171,8 +171,8 @@ export default function SoldHistoryPage() {
                 ['Cards Sold', cards.length, '#f0f0f0'],
                 ['Total Revenue', fmt(totalRevenue), '#f0f0f0'],
                 ['Total Cost', fmt(totalCost), '#f0f0f0'],
-                ['Realized P&L', (totalPL>=0?'+':'')+fmt(totalPL), totalPL>=0?'#22c55e':'#9333ea'],
-                ['Avg Return', (avgReturn>=0?'+':'')+avgReturn.toFixed(1)+'%', avgReturn>=0?'#22c55e':'#9333ea'],
+                ['Realized P&L', (totalPL>=0?'+':'')+fmt(totalPL), totalPL>=0?'#4ade80':'#9333ea'],
+                ['Avg Return', (avgReturn>=0?'+':'')+avgReturn.toFixed(1)+'%', avgReturn>=0?'#4ade80':'#9333ea'],
                 ['Win Rate', winRate.toFixed(0)+'%', winRate>=50?'#9333ea':'#616161'],
               ].map(([label, value, color]) => (
                 <div key={label} style={{ padding: '12px 14px', borderRadius: 12, background: 'linear-gradient(135deg,#111,#0d0d0d)', border: '1px solid #1e1e1e' }}>
@@ -212,13 +212,13 @@ export default function SoldHistoryPage() {
                             {card.year && <div style={{ fontSize: 11, color: '#444' }}>{card.year}</div>}
                           </td>
                           <td style={{ padding: '12px 16px', textAlign: 'right', fontFamily: "'Outfit',sans-serif", fontSize: 12, color: '#666' }}>{card.sport||'—'}</td>
-                          <td style={{ padding: '12px 16px', textAlign: 'right' }}>{card.grade ? <span style={{ padding: '2px 8px', borderRadius: 6, background: 'rgba(147,51,234,0.1)', color: plPos ? '#22c55e' : '#9333ea', fontSize: 11, fontWeight: 700 }}>Grade {card.grade}</span> : <span style={{ color: '#444', fontSize: 12 }}>{card.cond||'Raw'}</span>}</td>
+                          <td style={{ padding: '12px 16px', textAlign: 'right' }}>{card.grade ? <span style={{ padding: '2px 8px', borderRadius: 6, background: 'rgba(147,51,234,0.1)', color: plPos ? '#4ade80' : '#9333ea', fontSize: 11, fontWeight: 700 }}>Grade {card.grade}</span> : <span style={{ color: '#444', fontSize: 12 }}>{card.cond||'Raw'}</span>}</td>
                           <td style={{ padding: '12px 16px', textAlign: 'right', fontFamily: "'JetBrains Mono',monospace", fontSize: 13, color: '#666' }}>{fmt(buy)}</td>
                           <td style={{ padding: '12px 16px', textAlign: 'right', fontFamily: "'JetBrains Mono',monospace", fontSize: 13, fontWeight: 700, color: '#f0f0f0' }}>{fmt(sold)}</td>
                           <td style={{ padding: '12px 16px', textAlign: 'right' }}>
-                            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 3, fontFamily: "'JetBrains Mono',monospace", fontSize: 13, fontWeight: 700, color: plPos?'#22c55e':'#9333ea' }}>{plPos?<IconUp />:<IconDown />}{plPos?'+':''}{fmt(pl)}</div>
+                            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 3, fontFamily: "'JetBrains Mono',monospace", fontSize: 13, fontWeight: 700, color: plPos?'#4ade80':'#f87171' }}>{plPos?<IconUp />:<IconDown />}{plPos?'+':''}{fmt(pl)}</div>
                           </td>
-                          <td style={{ padding: '12px 16px', textAlign: 'right', fontFamily: "'JetBrains Mono',monospace", fontSize: 12, fontWeight: 600, color: plPos?'#22c55e':'#9333ea' }}>{plPos?'+':''}{pct.toFixed(1)}%</td>
+                          <td style={{ padding: '12px 16px', textAlign: 'right', fontFamily: "'JetBrains Mono',monospace", fontSize: 12, fontWeight: 600, color: plPos?'#4ade80':'#f87171' }}>{plPos?'+':''}{pct.toFixed(1)}%</td>
                           <td style={{ padding: '12px 16px', textAlign: 'right', fontFamily: "'Outfit',sans-serif", fontSize: 12, color: '#555' }}>{card.soldDate ? new Date(card.soldDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : '—'}</td>
                         </tr>
                       )

@@ -39,7 +39,7 @@ function ToastContainer() {
     }
     return () => { _toastFn=null }
   },[])
-  const colors={success:'#22c55e',error:'#9333ea',info:'#888'}
+  const colors={success:'#4ade80',error:'#9333ea',info:'#888'}
   const icons={success:'✓',error:'✕',info:'ℹ'}
   if(!toasts.length) return null
   return (
@@ -69,7 +69,7 @@ const CHART_COLORS = ['#9333ea','#ff7043','#ffb300','#66bb6a','#42a5f5','#ab47bc
 
 function Sidebar({ user, onLogout, active, cardCount = 0 }) {
   return (
-    <aside style={{ width: 220, minHeight: '100vh', background: '#0d0d0d', borderRight: '1px solid #1e1e1e', display: 'flex', flexDirection: 'column', position: 'fixed', top: 0, left: 0, zIndex: 60 }}>
+    <aside style={{ width: 220, minHeight: '100vh', background: '#111', borderRight: '1px solid #1e1e1e', display: 'flex', flexDirection: 'column', position: 'fixed', top: 0, left: 0, zIndex: 60 }}>
       <div style={{ padding: '16px 16px 12px', borderBottom: '1px solid #1e1e1e', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         <img src={LOGO} alt="TopLoad" style={{ width: 130, height: 'auto', objectFit: 'contain', filter: 'drop-shadow(0 0 8px rgba(147,51,234,0.4))' }} />
       </div>
@@ -82,7 +82,7 @@ function Sidebar({ user, onLogout, active, cardCount = 0 }) {
         })}
       </nav>
       <div style={{ padding: '14px 10px', borderTop: '1px solid #1e1e1e' }}>
-        {user && <div style={{ padding: '10px 12px', marginBottom: 4, borderRadius: 10, background: 'rgba(255,255,255,0.03)' }}><div style={{ fontSize: 12, fontWeight: 700, color: '#ccc', fontFamily: "'Outfit',sans-serif" }}>@{user.username}</div><div style={{ fontSize: 11, color: '#444', marginTop: 1, fontFamily: "'Outfit',sans-serif" }}>{user.email}</div></div>}
+        {user && <div style={{ padding: '10px 12px', marginBottom: 4, borderRadius: 10, background: '#181818' }}><div style={{ fontSize: 12, fontWeight: 700, color: '#ccc', fontFamily: "'Outfit',sans-serif" }}>@{user.username}</div><div style={{ fontSize: 11, color: '#444', marginTop: 1, fontFamily: "'Outfit',sans-serif" }}>{user.email}</div></div>}
         <Link href="/settings" style={{ display: 'flex', alignItems: 'center', gap: 11, padding: '9px 12px', borderRadius: 10, marginBottom: 2, textDecoration: 'none', color: '#555', fontFamily: "'Outfit',sans-serif", fontSize: 14, fontWeight: 500 }}><IconSettings />Settings</Link>
         <button onClick={onLogout} style={{ display: 'flex', alignItems: 'center', gap: 11, padding: '9px 12px', borderRadius: 10, width: '100%', background: 'transparent', border: 'none', cursor: 'pointer', color: '#555', fontFamily: "'Outfit',sans-serif", fontSize: 14, fontWeight: 500 }}><IconLogout />Sign Out</button>
       </div>
@@ -193,7 +193,7 @@ function StatCard({ label, value, sub, icon, positive, accent, style = {} }) {
         {icon && <div style={{ fontSize: 16 }}>{icon}</div>}
       </div>
       <div style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: 20, fontWeight: 700, color: '#f0f0f0', letterSpacing: '-0.5px', lineHeight: 1 }}>{value}</div>
-      {sub && <div style={{ marginTop: 8, fontSize: 11, color: positive === true ? '#22c55e' : positive === false ? '#9333ea' : '#555', fontFamily: "'Outfit',sans-serif", fontWeight: 600, display: 'flex', alignItems: 'center', gap: 4 }}>
+      {sub && <div style={{ marginTop: 8, fontSize: 11, color: positive === true ? '#4ade80' : positive === false ? '#9333ea' : '#555', fontFamily: "'Outfit',sans-serif", fontWeight: 600, display: 'flex', alignItems: 'center', gap: 4 }}>
         {positive === true && <IconTrendUp />}{positive === false && <IconTrendDown />}{sub}
       </div>}
     </div>
@@ -225,7 +225,7 @@ function TopCardsRank({ cards }) {
               </div>
               <div style={{ textAlign: 'right', flexShrink: 0 }}>
                 <div style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: 14, fontWeight: 700, color: '#f0f0f0' }}>{fmt(val)}</div>
-                <div style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: 11, color: glPos ? '#22c55e' : '#9333ea', marginTop: 2 }}>{glPos ? '+' : ''}{fmt(gl)}</div>
+                <div style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: 11, color: glPos ? '#4ade80' : '#9333ea', marginTop: 2 }}>{glPos ? '+' : ''}{fmt(gl)}</div>
               </div>
             </div>
           )
@@ -273,13 +273,13 @@ function PersonalRecords({ cards, soldCards }) {
   })[0] : null
 
   const records = [
-    { icon: '👑', label: 'Most Valuable', value: byVal[0]?.player || '—', sub: byVal[0] ? fmt(parseFloat(byVal[0].val) || 0) : '', subColor: '#22c55e', card: byVal[0] },
+    { icon: '👑', label: 'Most Valuable', value: byVal[0]?.player || '—', sub: byVal[0] ? fmt(parseFloat(byVal[0].val) || 0) : '', subColor: '#4ade80', card: byVal[0] },
     { icon: '💸', label: 'Most Expensive Buy', value: byBuy[0]?.player || '—', sub: byBuy[0] ? fmt(parseFloat(byBuy[0].buy) || 0) : '', subColor: '#888', card: byBuy[0] },
     { icon: '🪙', label: 'Cheapest Card', value: cheapest?.player || '—', sub: cheapest ? fmt(parseFloat(cheapest.buy) || 0) : '', subColor: '#888', card: cheapest },
     { icon: '🏛️', label: 'Oldest Card', value: oldest?.player || '—', sub: oldest?.year || '', subColor: '#888', card: oldest },
     { icon: '🆕', label: 'Latest Addition', value: newest?.player || '—', sub: newest ? new Date(newest.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : '', subColor: '#888', card: newest },
     { icon: '🏅', label: 'Highest Grade', value: topGrade?.player || '—', sub: topGrade ? `Grade ${topGrade.grade}` : 'No graded cards', subColor: '#9333ea', card: topGrade },
-    ...(bestFlip ? [{ icon: '🔥', label: 'Best Flip Ever', value: bestFlip.player, sub: `+${fmt((parseFloat(bestFlip.soldPrice) || 0) - (parseFloat(bestFlip.buy) || 0))}`, subColor: '#22c55e', card: bestFlip }] : []),
+    ...(bestFlip ? [{ icon: '🔥', label: 'Best Flip Ever', value: bestFlip.player, sub: `+${fmt((parseFloat(bestFlip.soldPrice) || 0) - (parseFloat(bestFlip.buy) || 0))}`, subColor: '#4ade80', card: bestFlip }] : []),
   ]
 
   return (
@@ -455,7 +455,7 @@ export default function InsightsPage() {
                   <div style={{ fontSize: 11, color: '#555', fontFamily: "'Outfit',sans-serif", fontWeight: 600, marginBottom: 4 }}>Portfolio Value</div>
                   <div style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: 32, fontWeight: 800, color: '#f0f0f0', letterSpacing: '-1px', lineHeight: 1 }}>{fmt(currentValue)}</div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 6 }}>
-                    <div style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: 14, fontWeight: 700, color: unrealizedPL >= 0 ? '#22c55e' : '#9333ea' }}>
+                    <div style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: 14, fontWeight: 700, color: unrealizedPL >= 0 ? '#4ade80' : '#9333ea' }}>
                       {unrealizedPL >= 0 ? '▲' : '▼'} {unrealizedPL >= 0 ? '+' : ''}{fmt(unrealizedPL)}
                     </div>
                     <div style={{ fontSize: 12, color: '#555' }}>({totalROI >= 0 ? '+' : ''}{totalROI.toFixed(1)}%)</div>
@@ -464,7 +464,7 @@ export default function InsightsPage() {
                     <div><div style={{ fontSize: 9, color: '#444', fontFamily: "'Outfit',sans-serif", fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 3 }}>Invested</div><div style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: 13, color: '#888' }}>{fmt(totalInvested)}</div></div>
                     <div><div style={{ fontSize: 9, color: '#444', fontFamily: "'Outfit',sans-serif", fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 3 }}>Cards</div><div style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: 13, color: '#888' }}>{activeCards.length}</div></div>
                     <div><div style={{ fontSize: 9, color: '#444', fontFamily: "'Outfit',sans-serif", fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 3 }}>Graded</div><div style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: 13, color: '#888' }}>{gradedCards.length}</div></div>
-                    <div><div style={{ fontSize: 9, color: '#444', fontFamily: "'Outfit',sans-serif", fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 3 }}>P&L</div><div style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: 13, color: realizedPL >= 0 ? '#22c55e' : '#9333ea' }}>{realizedPL >= 0 ? '+' : ''}{fmt(realizedPL)}</div></div>
+                    <div><div style={{ fontSize: 9, color: '#444', fontFamily: "'Outfit',sans-serif", fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 3 }}>P&L</div><div style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: 13, color: realizedPL >= 0 ? '#4ade80' : '#9333ea' }}>{realizedPL >= 0 ? '+' : ''}{fmt(realizedPL)}</div></div>
                   </div>
                 </div>
               </div>

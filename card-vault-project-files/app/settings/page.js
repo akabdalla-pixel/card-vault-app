@@ -40,7 +40,7 @@ function ToastContainer() {
     }
     return () => { _toastFn = null }
   }, [])
-  const colors = { success: '#22c55e', error: '#9333ea', info: '#888' }
+  const colors = { success: '#4ade80', error: '#9333ea', info: '#888' }
   const icons = { success: '✓', error: '✕', info: 'ℹ' }
   if (!toasts.length) return null
   return (
@@ -56,7 +56,7 @@ function ToastContainer() {
 
 function Sidebar({ user, onLogout, cardCount = 0 }) {
   return (
-    <aside style={{ width:220, minHeight:'100vh', background:'#0d0d0d', borderRight:'1px solid #1e1e1e', display:'flex', flexDirection:'column', position:'fixed', top:0, left:0, zIndex:60 }}>
+    <aside style={{ width:220, minHeight:'100vh', background:'#111', borderRight:'1px solid #1e1e1e', display:'flex', flexDirection:'column', position:'fixed', top:0, left:0, zIndex:60 }}>
       <div style={{ padding:'16px 16px 12px', borderBottom:'1px solid #1e1e1e', display:'flex', alignItems:'center', justifyContent:'center' }}>
         <img src={LOGO} alt="TopLoad" style={{ width:130, height:'auto', objectFit:'contain', filter:'drop-shadow(0 0 8px rgba(147,51,234,0.4))' }} />
       </div>
@@ -219,7 +219,7 @@ export default function SettingsPage() {
 
   if (loading) return (
     <div style={{ display:'flex', minHeight:'100vh', background:'#0a0a0a' }}>
-      <div className="sidebar-el" style={{ width:220, minHeight:'100vh', background:'#0d0d0d', borderRight:'1px solid #1e1e1e', flexShrink:0 }} />
+      <div className="sidebar-el" style={{ width:220, minHeight:'100vh', background:'#111', borderRight:'1px solid #1e1e1e', flexShrink:0 }} />
       <div style={{ flex:1, display:'flex', alignItems:'center', justifyContent:'center' }}>
         <img src={LOGO} alt="TopLoad" style={{ width:100, opacity:0.3, filter:'drop-shadow(0 0 8px rgba(147,51,234,0.4))' }} />
       </div>
@@ -290,9 +290,9 @@ export default function SettingsPage() {
                     { label:'Active Cards', value: activeCards.length },
                     { label:'Total Invested', value: fmt(totalInvested) },
                     { label:'Current Value', value: fmt(totalValue) },
-                    { label:'Unrealized G/L', value: `${totalValue-totalInvested>=0?'+':''}${fmt(totalValue-totalInvested)}`, color: totalValue>=totalInvested?'#22c55e':'#9333ea' },
+                    { label:'Unrealized G/L', value: `${totalValue-totalInvested>=0?'+':''}${fmt(totalValue-totalInvested)}`, color: totalValue>=totalInvested?'#4ade80':'#f87171' },
                     { label:'Cards Sold', value: soldCards.length },
-                    { label:'Realized P&L', value: `${realizedPL>=0?'+':''}${fmt(realizedPL)}`, color: realizedPL>=0?'#22c55e':'#9333ea' },
+                    { label:'Realized P&L', value: `${realizedPL>=0?'+':''}${fmt(realizedPL)}`, color: realizedPL>=0?'#4ade80':'#f87171' },
                   ].map((s,i) => (
                     <div key={i} style={{ background:'#1a1a1a', borderRadius:10, padding:'12px 14px', animation:`fadeUp 0.3s ease ${i*0.06}s both` }}>
                       <div style={{ fontSize:9, color:'#444', fontWeight:700, textTransform:'uppercase', letterSpacing:'0.08em', marginBottom:4, fontFamily:"'Outfit',sans-serif" }}>{s.label}</div>
