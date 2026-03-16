@@ -141,17 +141,10 @@ export default function SoldHistoryPage() {
   const winners = cards.filter(c => (parseFloat(c.soldPrice) || 0) > (parseFloat(c.buy) || 0)).length
   const winRate = cards.length > 0 ? (winners / cards.length) * 100 : 0
   if (loading) return (
-    <div style={{ display:'flex', minHeight:'100vh', background:'#0a0a0a' }}>
-      <div className="sidebar-el" style={{ width:220, minHeight:'100vh', background:'linear-gradient(180deg,#0d0b18 0%,#0a0a12 100%)', borderRight:'1px solid rgba(147,51,234,0.12)', flexShrink:0 }} />
-      <div style={{ flex:1, padding:28 }}>
-        <Sk h={28} r={8} style={{ marginBottom:8, maxWidth:200 }} />
-        <Sk h={14} r={6} style={{ marginBottom:24, maxWidth:140 }} />
-        <div style={{ display:'grid', gridTemplateColumns:'repeat(3,1fr)', gap:14, marginBottom:22 }}>
-          <Sk h={85} r={14} /><Sk h={85} r={14} /><Sk h={85} r={14} />
-        </div>
-        <Sk h={350} r={14} />
-      </div>
-    </div>
+    <div style={{ minHeight:'100vh', display:'flex', alignItems:'center', justifyContent:'center', background:'#0a0a0a' }}>
+    <img src="/logo-transparent.png" alt="TopLoad" style={{ width:120, opacity:0.4, filter:'brightness(0) invert(1)', animation:'pulse 1.5s ease-in-out infinite' }} />
+    <style>{`@keyframes pulse{0%,100%{opacity:0.3}50%{opacity:0.6}}`}</style>
+  </div>
   )
 
   return (

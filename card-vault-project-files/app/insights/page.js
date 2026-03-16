@@ -342,10 +342,10 @@ export default function InsightsPage() {
   }
 
   if (loading) return (
-    <div style={{display:'flex',minHeight:'100vh',background:'#0a0a0a'}}>
-      <div className="sidebar-el" style={{width:220,minHeight:'100vh',background:'#0d0d0d',borderRight:'1px solid #1e1e1e',flexShrink:0}} />
-      <div style={{flex:1,padding:28}}><Sk h={28} r={8} style={{marginBottom:24,maxWidth:180}} /><Sk h={240} r={16} style={{marginBottom:14}} /><div style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:14,marginBottom:14}}><Sk h={85} r={14}/><Sk h={85} r={14}/><Sk h={85} r={14}/><Sk h={85} r={14}/></div><div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:20}}><Sk h={200} r={14}/><Sk h={200} r={14}/></div></div>
-    </div>
+    <div style={{ minHeight:'100vh', display:'flex', alignItems:'center', justifyContent:'center', background:'#0a0a0a' }}>
+    <img src="/logo-transparent.png" alt="TopLoad" style={{ width:120, opacity:0.4, filter:'brightness(0) invert(1)', animation:'pulse 1.5s ease-in-out infinite' }} />
+    <style>{`@keyframes pulse{0%,100%{opacity:0.3}50%{opacity:0.6}}`}</style>
+  </div>
   )
 
   const activeCards = cards.filter(c => !c.sold)
