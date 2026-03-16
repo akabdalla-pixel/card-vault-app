@@ -532,6 +532,41 @@ export default function DashboardPage() {
             )
           })()}
 
+          {/* ── Recent Activity ── */}
+          {cards.length > 0 && (
+            <div style={{ marginTop:20, background:'#111', border:'1px solid #1e1e1e', borderRadius:14, overflow:'hidden' }}>
+              <div style={{ padding:'14px 16px 10px', borderBottom:'1px solid #1a1a1a', display:'flex', alignItems:'center', justifyContent:'space-between' }}>
+                <div style={{ display:'flex', alignItems:'center', gap:6 }}>
+                  <div style={{ width:6, height:6, borderRadius:'50%', background:'#9333ea' }} />
+                  <span style={{ fontSize:9, fontWeight:800, color:'#a855f7', textTransform:'uppercase', letterSpacing:'0.12em' }}>Recent Activity</span>
+                </div>
+                <Link href="/collection" style={{ fontSize:11, color:'#555', textDecoration:'none', fontWeight:600 }}>See all →</Link>
+              </div>
+              {[...cards].sort((a,b) => new Date(b.createdAt||0) - new Date(a.createdAt||0)).slice(0,1).map((card, i) => {
+                const buy = (parseFloat(card.buy)||0)*(parseInt(card.qty)||1)
+                const val = card.sold ? (parseFloat(card.soldPrice)||0) : (parseFloat(card.val)||buy)
+                const gl = val - buy
+                const glPos = gl >= 0
+                const glPct = buy > 0 ? (gl/buy)*100 : 0
+                const sportEmoji = card.sport==='Basketball'?'🏀':card.sport==='Football'?'🏈':card.sport==='Baseball'?'⚾':card.sport==='Soccer'?'⚽':card.sport==='F1'?'🏎️':card.sport==='Hockey'?'🏒':card.sport==='Pokémon'?'🎴':'🃏'
+                const dateStr = card.createdAt ? new Date(card.createdAt).toLocaleDateString('en-US',{month:'short',day:'numeric'}) : ''
+                return (
+                  <div key={card.id} style={{ display:'flex', alignItems:'center', gap:12, padding:'11px 16px' }}>
+                    <div style={{ width:34, height:34, borderRadius:8, background:'#1a1a1a', border:'1px solid #222', display:'flex', alignItems:'center', justifyContent:'center', fontSize:16, flexShrink:0 }}>{sportEmoji}</div>
+                    <div style={{ flex:1, minWidth:0 }}>
+                      <div style={{ fontSize:13, fontWeight:800, color:'#f0f0f0', textTransform:'uppercase', letterSpacing:'-0.2px', overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>{card.player}</div>
+                      <div style={{ fontSize:10, color:'#444', marginTop:2 }}>{[card.year, card.sport, card.grade ? (card.gradingCo||'') + ' ' + card.grade : null].filter(Boolean).join(' · ')}{card.sold ? ' · SOLD' : ''}</div>
+                    </div>
+                    <div style={{ textAlign:'right', flexShrink:0 }}>
+                      <div style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:14, fontWeight:800, color:'#fff' }}>{new Intl.NumberFormat('en-US',{style:'currency',currency:'USD',minimumFractionDigits:0,maximumFractionDigits:0}).format(val)}</div>
+                      {buy > 0 && <div style={{ fontSize:10, fontWeight:700, color: glPos?'#22c55e':'#ef4444', marginTop:1 }}>{glPos?'+':''}{glPct.toFixed(0)}%</div>}
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
+          )}
+
         </main>
         <ToastContainer />
         <BottomNav active="Dashboard" />
