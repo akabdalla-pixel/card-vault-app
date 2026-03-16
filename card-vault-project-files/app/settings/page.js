@@ -313,7 +313,7 @@ export default function SettingsPage() {
 
             {/* ── Change Password ── */}
             <Section title="Change Password" subtitle="Update your login password" icon="🔒">
-              <form onSubmit={handleChangePassword} style={{ display:'flex', flexDirection:'column', gap:12 }}>
+              <div style={{ display:'flex', flexDirection:'column', gap:12 }}>
                 {pwError && <div style={{ padding:'10px 14px', borderRadius:10, background:'rgba(147,51,234,0.08)', border:'1px solid rgba(147,51,234,0.2)', color:'#9333ea', fontSize:13, fontFamily:"'Outfit',sans-serif" }}>{pwError}</div>}
                 <div>
                   <div style={{ fontSize:10, fontWeight:700, color:'#444', textTransform:'uppercase', letterSpacing:'0.08em', marginBottom:6, fontFamily:"'Outfit',sans-serif" }}>Current Password</div>
@@ -327,10 +327,10 @@ export default function SettingsPage() {
                   <div style={{ fontSize:10, fontWeight:700, color:'#444', textTransform:'uppercase', letterSpacing:'0.08em', marginBottom:6, fontFamily:"'Outfit',sans-serif" }}>Confirm New Password</div>
                   {pwInput('confirm', 'Repeat new password')}
                 </div>
-                <button type="submit" disabled={pwLoading || !pwForm.current || !pwForm.next || !pwForm.confirm} style={{ display:'flex', alignItems:'center', justifyContent:'center', gap:8, padding:'11px 20px', borderRadius:10, background:'rgba(147,51,234,0.1)', border:'1px solid rgba(147,51,234,0.3)', color:'#9333ea', fontFamily:"'Outfit',sans-serif", fontSize:14, fontWeight:700, cursor:'pointer', opacity: (!pwForm.current||!pwForm.next||!pwForm.confirm) ? 0.4 : 1 }}>
+                <button type="button" disabled={pwLoading || !pwForm.current || !pwForm.next || !pwForm.confirm} style={{ display:'flex', alignItems:'center', justifyContent:'center', gap:8, padding:'11px 20px', borderRadius:10, background:'rgba(147,51,234,0.1)', border:'1px solid rgba(147,51,234,0.3)', color:'#9333ea', fontFamily:"'Outfit',sans-serif", fontSize:14, fontWeight:700, cursor:'pointer', opacity: (!pwForm.current||!pwForm.next||!pwForm.confirm) ? 0.4 : 1 }}>
                   {pwLoading ? 'Updating...' : <><IconCheck />Update Password</>}
                 </button>
-              </form>
+              </div>
             </Section>
 
             {/* ── Export & Backup ── */}

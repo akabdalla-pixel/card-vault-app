@@ -1092,7 +1092,7 @@ function CollectionPage() {
                     </div>
                   ))}
                 </div>
-                <button className="press" onClick={() => setModal('add')} className="press" style={{ padding:'12px 28px', borderRadius:12, background:'rgba(147,51,234,0.1)', border:'1px solid rgba(147,51,234,0.3)', color:'#9333ea', fontFamily:"'Outfit',sans-serif", fontSize:15, fontWeight:700, cursor:'pointer' }}>
+                <button className="press" onClick={() => setModal('add')} style={{ padding:'12px 28px', borderRadius:12, background:'rgba(147,51,234,0.1)', border:'1px solid rgba(147,51,234,0.3)', color:'#9333ea', fontFamily:"'Outfit',sans-serif", fontSize:15, fontWeight:700, cursor:'pointer' }}>
                   + Add Your First Card
                 </button>
               </div>

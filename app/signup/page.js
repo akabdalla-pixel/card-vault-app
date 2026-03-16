@@ -56,7 +56,7 @@ export default function SignupPage() {
               </div>
             )}
 
-            <form onSubmit={handleSubmit} style={{ display:'flex', flexDirection:'column', gap:14 }}>
+            <div style={{ display:'flex', flexDirection:'column', gap:14 }}>
               <div>
                 <label style={{ display:'block', fontSize:10, fontWeight:700, color:'#555', textTransform:'uppercase', letterSpacing:'0.08em', marginBottom:6, fontFamily:"'Outfit',sans-serif" }}>Username</label>
                 <input type="text" value={form.username} onChange={e => set('username', e.target.value)} required placeholder="yourname" className="su-input" />
@@ -75,10 +75,10 @@ export default function SignupPage() {
                   <input type="password" value={form.confirm} onChange={e => set('confirm', e.target.value)} required placeholder="Repeat" className="su-input" />
                 </div>
               </div>
-              <button type="submit" disabled={loading} style={{ width:'100%', padding:'13px', borderRadius:12, background: loading ? '#1a1a1a' : '#9333ea', border:'none', color:'#fff', fontFamily:"'Outfit',sans-serif", fontSize:15, fontWeight:800, cursor: loading ? 'not-allowed' : 'pointer', marginTop:4, boxShadow: loading ? 'none' : '0 4px 20px rgba(147,51,234,0.3)', transition:'all 0.15s' }}>
+              <button type="button" onClick={handleSubmit} disabled={loading} style={{ width:'100%', padding:'13px', borderRadius:12, background: loading ? '#1a1a1a' : '#9333ea', border:'none', color:'#fff', fontFamily:"'Outfit',sans-serif", fontSize:15, fontWeight:800, cursor: loading ? 'not-allowed' : 'pointer', marginTop:4, boxShadow: loading ? 'none' : '0 4px 20px rgba(147,51,234,0.3)', transition:'all 0.15s' }}>
                 {loading ? 'Creating account...' : 'Create Account →'}
               </button>
-            </form>
+            </div>
 
             <p style={{ fontFamily:"'Outfit',sans-serif", fontSize:13, color:'#555', marginTop:20, textAlign:'center' }}>
               Already have an account? <Link href="/login" style={{ color:'#a855f7', fontWeight:700, textDecoration:'none' }}>Sign In</Link>

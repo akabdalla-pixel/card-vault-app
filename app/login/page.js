@@ -57,7 +57,7 @@ export default function LoginPage() {
               </div>
             )}
 
-            <form onSubmit={handleSubmit} style={{ display:'flex', flexDirection:'column', gap:14 }}>
+            <div style={{ display:'flex', flexDirection:'column', gap:14 }}>
               <div>
                 <label style={{ display:'block', fontSize:10, fontWeight:700, color:'#555', textTransform:'uppercase', letterSpacing:'0.08em', marginBottom:6, fontFamily:"'Outfit',sans-serif" }}>Email</label>
                 <input type="email" value={email} onChange={e => setEmail(e.target.value)} required placeholder="you@email.com" className="login-input" />
@@ -66,10 +66,10 @@ export default function LoginPage() {
                 <label style={{ display:'block', fontSize:10, fontWeight:700, color:'#555', textTransform:'uppercase', letterSpacing:'0.08em', marginBottom:6, fontFamily:"'Outfit',sans-serif" }}>Password</label>
                 <input type="password" value={password} onChange={e => setPassword(e.target.value)} required placeholder="Your password" className="login-input" />
               </div>
-              <button type="submit" disabled={loading} style={{ width:'100%', padding:'13px', borderRadius:12, background: loading ? '#1a1a1a' : '#9333ea', border:'none', color:'#fff', fontFamily:"'Outfit',sans-serif", fontSize:15, fontWeight:800, cursor: loading ? 'not-allowed' : 'pointer', marginTop:4, boxShadow: loading ? 'none' : '0 4px 20px rgba(147,51,234,0.3)', transition:'all 0.15s', letterSpacing:'-0.2px' }}>
+              <button type="button" onClick={handleSubmit} disabled={loading} style={{ width:'100%', padding:'13px', borderRadius:12, background: loading ? '#1a1a1a' : '#9333ea', border:'none', color:'#fff', fontFamily:"'Outfit',sans-serif", fontSize:15, fontWeight:800, cursor: loading ? 'not-allowed' : 'pointer', marginTop:4, boxShadow: loading ? 'none' : '0 4px 20px rgba(147,51,234,0.3)', transition:'all 0.15s', letterSpacing:'-0.2px' }}>
                 {loading ? 'Signing in...' : 'Sign In →'}
               </button>
-            </form>
+            </div>
 
             <div style={{ marginTop:20, display:'flex', alignItems:'center', justifyContent:'space-between' }}>
               <p style={{ fontFamily:"'Outfit',sans-serif", fontSize:13, color:'#555' }}>
