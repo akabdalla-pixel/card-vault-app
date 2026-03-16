@@ -26,7 +26,6 @@ export default function SignupPage() {
       router.push('/dashboard')
     } catch(e) { setError('Network error — please try again. ' + e.message); setLoading(false) }
   }
-  }
 
   return (
     <>
