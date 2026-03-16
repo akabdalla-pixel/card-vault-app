@@ -3,7 +3,6 @@ import { NextResponse } from 'next/server'
 const EBAY_APP_ID = process.env.EBAY_APP_ID
 const EBAY_CERT_ID = process.env.EBAY_CERT_ID
 
-// Get OAuth token using Client Credentials
 async function getEbayToken() {
   const credentials = Buffer.from(`${EBAY_APP_ID}:${EBAY_CERT_ID}`).toString('base64')
   const res = await fetch('https://api.ebay.com/identity/v1/oauth2/token', {
@@ -15,7 +14,7 @@ async function getEbayToken() {
     body: 'grant_type=client_credentials&scope=https%3A%2F%2Fapi.ebay.com%2Foauth%2Fapi_scope'
   })
   const data = await res.json()
-  if (!res.ok) throw new Error(data.error_description || 'Failed to get token')
+  if (!res.ok) throw new Error(data.error_description || 'Token failed')
   return data.access_token
 }
 
@@ -23,7 +22,6 @@ export async function POST(req) {
   const { query, source } = await req.json()
   if (!query) return NextResponse.json({ error: 'No query' }, { status: 400 })
 
-  // 130point source unchanged
   if (source === '130point') {
     try {
       const params = new URLSearchParams({ query, type: '2', subcat: '-1', tab_id: '1', sort: 'EndTimeSoonest' })
@@ -46,41 +44,62 @@ export async function POST(req) {
       while ((m = linkRegex.exec(html)) !== null) links.push(m[1])
       const count = Math.min(prices.length, 20)
       for (let i=0;i<count;i++) results.push({ price:prices[i], title:titles[i]||query, date:dates[i]||null, link:links[i]||`https://www.ebay.com/sch/i.html?_nkw=${encodeURIComponent(query)}&LH_Sold=1` })
-      if (results.length===0) return NextResponse.json({ results:[], avg:0, high:0, low:0, source:'130point' })
+      if (!results.length) return NextResponse.json({ results:[], avg:0, high:0, low:0, source:'130point' })
       const avg = results.reduce((s,r)=>s+r.price,0)/results.length
       return NextResponse.json({ results, avg, high:Math.max(...results.map(r=>r.price)), low:Math.min(...results.map(r=>r.price)), source:'130point' })
     } catch (e) { return NextResponse.json({ error: e.message }, { status:500 }) }
   }
 
-  // eBay official API
   if (source === 'ebay') {
     try {
       const token = await getEbayToken()
 
-      // Browse API - search completed sold listings
-      const searchRes = await fetch(
-        `https://api.ebay.com/buy/browse/v1/item_summary/search?q=${encodeURIComponent(query)}&filter=buyingOptions:{FIXED_PRICE},conditions:{USED|LIKE_NEW|VERY_GOOD|GOOD|ACCEPTABLE}&limit=20&sort=endingSoonest`,
-        {
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'X-EBAY-C-MARKETPLACE-ID': 'EBAY_US',
-            'Content-Type': 'application/json',
-          }
-        }
-      )
-      const searchData = await searchRes.json()
+      // Use Finding API — most reliable for sold listings
+      const url = new URL('https://svcs.ebay.com/services/search/FindingService/v1')
+      url.searchParams.set('OPERATION-NAME', 'findCompletedItems')
+      url.searchParams.set('SERVICE-VERSION', '1.0.0')
+      url.searchParams.set('SECURITY-APPNAME', EBAY_APP_ID)
+      url.searchParams.set('RESPONSE-DATA-FORMAT', 'JSON')
+      url.searchParams.set('REST-PAYLOAD', '')
+      url.searchParams.set('keywords', query)
+      url.searchParams.set('itemFilter(0).name', 'SoldItemsOnly')
+      url.searchParams.set('itemFilter(0).value', 'true')
+      url.searchParams.set('sortOrder', 'EndTimeSoonest')
+      url.searchParams.set('paginationInput.entriesPerPage', '20')
+      url.searchParams.set('categoryId', '261328') // Sports Trading Cards
 
-      // Also search sold/completed using Finding API
-      const findRes = await fetch(
-        `https://svcs.ebay.com/services/search/FindingService/v1?OPERATION-NAME=findCompletedItems&SERVICE-VERSION=1.0.0&SECURITY-APPNAME=${EBAY_APP_ID}&RESPONSE-DATA-FORMAT=JSON&REST-PAYLOAD&keywords=${encodeURIComponent(query)}&itemFilter(0).name=SoldItemsOnly&itemFilter(0).value=true&sortOrder=EndTimeSoonest&paginationInput.entriesPerPage=20`,
-        { headers: { 'Content-Type': 'application/json' } }
-      )
+      const findRes = await fetch(url.toString())
       const findData = await findRes.json()
 
-      const items = findData?.findCompletedItemsResponse?.[0]?.searchResult?.[0]?.item || []
+      // Debug: return raw response if no items
+      const searchResult = findData?.findCompletedItemsResponse?.[0]?.searchResult?.[0]
+      const items = searchResult?.item || []
 
       if (items.length === 0) {
-        return NextResponse.json({ results: [], avg: 0, high: 0, low: 0, source: 'ebay' })
+        // Try without category filter
+        url.searchParams.delete('categoryId')
+        const findRes2 = await fetch(url.toString())
+        const findData2 = await findRes2.json()
+        const items2 = findData2?.findCompletedItemsResponse?.[0]?.searchResult?.[0]?.item || []
+        
+        if (items2.length === 0) {
+          return NextResponse.json({ 
+            results: [], avg: 0, high: 0, low: 0, source: 'ebay',
+            debug: { searchResult: findData2?.findCompletedItemsResponse?.[0]?.searchResult?.[0], ack: findData2?.findCompletedItemsResponse?.[0]?.ack }
+          })
+        }
+
+        const results2 = items2.map(item => ({
+          price: parseFloat(item.sellingStatus?.[0]?.currentPrice?.[0]?.['__value__'] || 0),
+          title: item.title?.[0] || query,
+          date: item.listingInfo?.[0]?.endTime?.[0]?.split('T')[0] || null,
+          link: item.viewItemURL?.[0] || `https://www.ebay.com/sch/i.html?_nkw=${encodeURIComponent(query)}&LH_Sold=1`,
+          image: item.galleryURL?.[0] || null,
+        })).filter(r => r.price > 0)
+
+        if (!results2.length) return NextResponse.json({ results:[], avg:0, high:0, low:0, source:'ebay' })
+        const avg2 = results2.reduce((s,r)=>s+r.price,0)/results2.length
+        return NextResponse.json({ results:results2, avg:avg2, high:Math.max(...results2.map(r=>r.price)), low:Math.min(...results2.map(r=>r.price)), source:'ebay' })
       }
 
       const results = items.map(item => ({
@@ -91,21 +110,19 @@ export async function POST(req) {
         image: item.galleryURL?.[0] || null,
       })).filter(r => r.price > 0)
 
-      if (results.length === 0) return NextResponse.json({ results: [], avg: 0, high: 0, low: 0, source: 'ebay' })
-
-      const avg = results.reduce((s,r) => s+r.price, 0) / results.length
-      return NextResponse.json({ results, avg, high: Math.max(...results.map(r=>r.price)), low: Math.min(...results.map(r=>r.price)), source: 'ebay' })
+      if (!results.length) return NextResponse.json({ results:[], avg:0, high:0, low:0, source:'ebay' })
+      const avg = results.reduce((s,r)=>s+r.price,0)/results.length
+      return NextResponse.json({ results, avg, high:Math.max(...results.map(r=>r.price)), low:Math.min(...results.map(r=>r.price)), source:'ebay' })
 
     } catch (e) {
-      return NextResponse.json({ error: e.message }, { status: 500 })
+      return NextResponse.json({ error: e.message, stack: e.stack }, { status: 500 })
     }
   }
 
   if (source === 'both') {
-    // Call both and merge
     const [r1, r2] = await Promise.allSettled([
-      fetch('/api/market', { method:'POST', body: JSON.stringify({ query, source:'130point' }), headers:{'Content-Type':'application/json'} }).then(r=>r.json()),
-      fetch('/api/market', { method:'POST', body: JSON.stringify({ query, source:'ebay' }), headers:{'Content-Type':'application/json'} }).then(r=>r.json()),
+      fetch(`${process.env.NEXT_PUBLIC_URL || 'https://www.toploadcards.com'}/api/market`, { method:'POST', body:JSON.stringify({query,source:'130point'}), headers:{'Content-Type':'application/json'} }).then(r=>r.json()),
+      fetch(`${process.env.NEXT_PUBLIC_URL || 'https://www.toploadcards.com'}/api/market`, { method:'POST', body:JSON.stringify({query,source:'ebay'}), headers:{'Content-Type':'application/json'} }).then(r=>r.json()),
     ])
     const d1 = r1.status==='fulfilled' ? r1.value : { results:[] }
     const d2 = r2.status==='fulfilled' ? r2.value : { results:[] }
