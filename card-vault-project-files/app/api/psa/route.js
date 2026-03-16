@@ -30,33 +30,11 @@ export async function GET(req) {
 
     const cert_data = data.PSACert
 
-    // Try to get image by scraping the PSA cert page
-    let frontImage = null
-    let backImage = null
-    try {
-      const pageRes = await fetch(`https://www.psacard.com/cert/${cert}`, {
-        headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36' }
-      })
-      const html = await pageRes.text()
-
-      // PSA uses cloudfront URLs in their cert pages
-      const imgMatches = html.match(/https:\/\/[^"'\s]+(?:front|back|obverse|reverse)[^"'\s]*\.(?:jpg|jpeg|png|webp)/gi) || []
-      const cfMatches = html.match(/https:\/\/d1htnxwo4o0jhw\.cloudfront\.net\/[^"'\s]+/gi) || []
-      const allImgs = [...new Set([...imgMatches, ...cfMatches])]
-
-      frontImage = allImgs.find(u => /front|obverse/i.test(u)) || allImgs[0] || null
-      backImage = allImgs.find(u => /back|reverse/i.test(u)) || allImgs[1] || null
-
-      // Also try the standard cloudfront pattern with cert number
-      if (!frontImage) {
-        frontImage = `https://d1htnxwo4o0jhw.cloudfront.net/cert/${cert}/front.jpg`
-        backImage = `https://d1htnxwo4o0jhw.cloudfront.net/cert/${cert}/back.jpg`
-      }
-    } catch(e) {
-      // fallback to standard URLs
-      frontImage = `https://d1htnxwo4o0jhw.cloudfront.net/cert/${cert}/front.jpg`
-      backImage = `https://d1htnxwo4o0jhw.cloudfront.net/cert/${cert}/back.jpg`
-    }
+    // PSA blocks server-side image fetching - provide the cert page URL for users to view images
+    const certPageUrl = `https://www.psacard.com/cert/${cert}/psa`
+    // Try standard cloudfront URL pattern (works for some certs)
+    const frontImage = `https://d1htnxwo4o0jhw.cloudfront.net/cert/${cert}/front.jpg`
+    const backImage = `https://d1htnxwo4o0jhw.cloudfront.net/cert/${cert}/back.jpg`
 
     return NextResponse.json({
       valid: true,
@@ -76,8 +54,7 @@ export async function GET(req) {
       reverse: cert_data.ReverseBarCode || null,
       frontImage: frontImage,
       backImage: backImage,
-      isFrontAvailable: !!frontImage,
-      isBackAvailable: !!backImage,
+      certPageUrl: certPageUrl,
       raw: cert_data,
     })
 
