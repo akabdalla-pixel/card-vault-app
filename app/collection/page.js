@@ -223,11 +223,11 @@ function Sidebar({ user, onLogout, cardCount = 0, active = "" }) {
         {NAV.map(({ label, href }) => {
           const isActive = active === label
           const Icon = navIcons[label]
-          return <Link key={label} href={href} style={{ display: 'flex', alignItems: 'center', gap: 11, padding: '9px 12px', borderRadius: 10, marginBottom: 2, textDecoration: 'none', color: active ? '#e53935' : '#6a75a0', background: active ? 'rgba(229,57,53,0.08)' : 'transparent', fontFamily: "'Outfit',sans-serif", fontSize: 14, fontWeight: isActive ? 600 : 500, borderLeft: isActive ? '2px solid #e53935' : '2px solid transparent', transition: 'all 0.15s' }}><Icon /><span style={{ flex:1 }}>{label}</span>{label === 'Collection' && cardCount > 0 && <span style={{ fontSize:10, fontWeight:700, background:'rgba(229,57,53,0.15)', color:'#e53935', borderRadius:6, padding:'1px 6px', fontFamily:"'JetBrains Mono',monospace" }}>{cardCount}</span>}</Link>
+          return <Link key={label} href={href} style={{ display: 'flex', alignItems: 'center', gap: 11, padding: '9px 12px', borderRadius: 10, marginBottom: 2, textDecoration: 'none', color: isActive ? '#e53935' : '#666', background: isActive ? 'rgba(229,57,53,0.08)' : 'transparent', fontFamily: "'Outfit',sans-serif", fontSize: 14, fontWeight: isActive ? 600 : 500, borderLeft: isActive ? '2px solid #e53935' : '2px solid transparent', transition: 'all 0.15s' }}><Icon /><span style={{flex:1}}>{label}</span>{label === 'Collection' && cardCount > 0 && <span style={{fontSize:10,fontWeight:700,background:'rgba(229,57,53,0.15)',color:'#e53935',borderRadius:6,padding:'1px 6px',fontFamily:"'JetBrains Mono',monospace"}}>{cardCount}</span>}</Link>
         })}
       </nav>
       <div style={{ padding: '14px 10px', borderTop: '1px solid #1e1e1e' }}>
-        {user && <div style={{ padding: '10px 12px', marginBottom: 4, borderRadius: 10, background: 'rgba(255,255,255,0.03)', fontFamily: "'Outfit',sans-serif" }}><div style={{ fontSize: 12, fontWeight: 700, color: '#ccc' }}>@{user.username}</div><div style={{ fontSize: 11, color: '#444', marginTop: 1 }}>{user.email}</div></div>}
+        {user && <div style={{ padding: '10px 12px', marginBottom: 4, borderRadius: 10, background: 'rgba(255,255,255,0.02)', fontFamily: "'Outfit',sans-serif" }}><div style={{ fontSize: 12, fontWeight: 700, color: '#ccc' }}>@{user.username}</div><div style={{ fontSize: 11, color: '#444', marginTop: 1 }}>{user.email}</div></div>}
         <Link href="/settings" style={{ display: 'flex', alignItems: 'center', gap: 11, padding: '9px 12px', borderRadius: 10, marginBottom: 2, textDecoration: 'none', color: '#555', fontFamily: "'Outfit',sans-serif", fontSize: 14, fontWeight: 500 }}><IconSettings />Settings</Link>
         <button onClick={onLogout} style={{ display: 'flex', alignItems: 'center', gap: 11, padding: '9px 12px', borderRadius: 10, width: '100%', background: 'transparent', border: 'none', cursor: 'pointer', color: '#555', fontFamily: "'Outfit',sans-serif", fontSize: 14, fontWeight: 500 }}><IconLogout />Sign Out</button>
       </div>
@@ -241,7 +241,7 @@ function BottomNav({ active = "" }) {
       {NAV.map(({ label, href }) => {
         const isActive = active === label
         const Icon = navIcons[label]
-        return <Link key={label} href={href} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 4, textDecoration: 'none', color: active ? '#e53935' : '#4a5578', fontFamily: "'Outfit',sans-serif", fontSize: 10, fontWeight: isActive ? 700 : 500, letterSpacing: '0.05em', textTransform: 'uppercase', paddingBottom: 4 }}><Icon />{label}</Link>
+        return <Link key={label} href={href} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 4, textDecoration: 'none', color: isActive ? '#e53935' : '#555', fontFamily: "'Outfit',sans-serif", fontSize: 10, fontWeight: isActive ? 700 : 500, letterSpacing: '0.05em', textTransform: 'uppercase', paddingBottom: 4 }}><Icon />{label}</Link>
       })}
     </nav>
   )
@@ -846,7 +846,7 @@ function CollectionPage() {
       `}</style>
       <div style={{ display: 'flex', minHeight: '100vh', background: '#0a0a0a' }}>
         <PullIndicator pullY={pullY} />
-        <div className="sidebar-el"><Sidebar user={user} onLogout={handleLogout} cardCount={activeCards.length} active="Collection" /></div>        <main className="main-wrap" style={{ padding: '30px 28px' }}>
+        <div className="sidebar-el"><Sidebar user={user} onLogout={handleLogout} cardCount={activeCards.length} active="Collection" /></div>        <main className="main-wrap" style={{ padding: '28px 28px' }}>
           <div className="mob-topbar" style={{ alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
             <img src="/logo-transparent.png" alt="TopLoad" style={{ height: 30, width: 'auto', objectFit: 'contain', filter: 'drop-shadow(0 0 8px rgba(229,57,53,0.4))' }} />
             <button onClick={() => setModal('add')} className="press" style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '8px 14px', background: 'rgba(229,57,53,0.1)', border: '1px solid rgba(229,57,53,0.25)', borderRadius: 10, color: '#e53935', fontFamily: "'Outfit',sans-serif", fontSize: 13, fontWeight: 700, cursor: 'pointer' }} className='press'>+ Add Card</button>
