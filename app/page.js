@@ -36,15 +36,16 @@ export default function LandingPage() {
         </nav>
 
         {/* Hero */}
-        <div style={{ minHeight:'100vh', display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', textAlign:'center', padding:'120px 24px 80px', position:'relative', overflow:'hidden' }}>
+        <div style={{ minHeight:'100vh', display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', textAlign:'center', padding:'120px 24px 60px', position:'relative', overflow:'hidden' }}>
           {/* Purple glow bg */}
           <div style={{ position:'absolute', top:'30%', left:'50%', transform:'translate(-50%,-50%)', width:600, height:600, background:'radial-gradient(circle, rgba(147,51,234,0.12) 0%, transparent 70%)', pointerEvents:'none' }} />
 
           <img className="fade1" src="/logo-transparent.png" alt="TopLoad" style={{ height:80, filter:'brightness(0) invert(1)', marginBottom:36, animation:'float 4s ease-in-out infinite' }} />
 
           <h1 className="fade2" style={{ fontSize:'clamp(42px,8vw,80px)', fontWeight:900, lineHeight:1.05, letterSpacing:'-2.5px', marginBottom:20, maxWidth:800 }}>
-            Know what your<br />
-            <span style={{ color:'#9333ea' }}>cards are worth.</span>
+            Every card.<br />
+            <span style={{ color:'#9333ea' }}>Every dollar.</span><br />
+            One place.
           </h1>
 
           <p className="fade3" style={{ fontSize:'clamp(16px,2.5vw,20px)', color:'#555', maxWidth:520, lineHeight:1.6, marginBottom:40 }}>
@@ -58,63 +59,14 @@ export default function LandingPage() {
 
           {/* Feature pills */}
           <div className="fade5" style={{ display:'flex', gap:10, flexWrap:'wrap', justifyContent:'center' }}>
-            {['Portfolio Tracking','Gain & Loss','Grading Support','Price Lookup','Sales History','Mobile App'].map((f,i) => (
+            {['Portfolio Tracking','Gain & Loss','Grading Support','Price Lookup','Sales History'].map((f,i) => (
               <div key={i} style={{ padding:'7px 16px', background:'rgba(147,51,234,0.07)', border:'1px solid rgba(147,51,234,0.15)', borderRadius:100, fontSize:12, fontWeight:700, color:'#a855f7' }}>{f}</div>
             ))}
           </div>
         </div>
 
-        {/* Features */}
-        <div style={{ padding:'0 24px 100px', maxWidth:1000, margin:'0 auto' }}>
-          <div style={{ textAlign:'center', marginBottom:48 }}>
-            <div style={{ fontSize:9, fontWeight:800, color:'#a855f7', textTransform:'uppercase', letterSpacing:'0.15em', marginBottom:12 }}>Everything you need</div>
-            <h2 style={{ fontSize:'clamp(28px,4vw,42px)', fontWeight:900, letterSpacing:'-1px' }}>Built for collectors<br /><span style={{ color:'#9333ea' }}>who think like investors.</span></h2>
-          </div>
-
-          <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fit,minmax(280px,1fr))', gap:16 }}>
-            {[
-              {
-                icon:'📈',
-                title:'Real-Time Portfolio',
-                desc:'See your total portfolio value, unrealized gains, and realized P&L updated every time you log in.'
-              },
-              {
-                icon:'🃏',
-                title:'Card Collection',
-                desc:'Log every card with grade, purchase price, current value, sport, and more. Filter and sort instantly.'
-              },
-              {
-                icon:'📊',
-                title:'Insights & Stats',
-                desc:'Personal records, sport breakdown, top gainers and losers — understand your collection at a glance.'
-              },
-              {
-                icon:'🏷️',
-                title:'Track Sales',
-                desc:'Mark cards as sold, log the sale price, and track your realized profit over time.'
-              },
-              {
-                icon:'🔍',
-                title:'Price Lookup',
-                desc:'Search recent eBay sold listings directly from your collection to price any card in seconds.'
-              },
-              {
-                icon:'📱',
-                title:'Mobile First',
-                desc:'Install as a home screen app on iPhone or Android. Tracks your portfolio wherever you go.'
-              },
-            ].map((f,i) => (
-              <div key={i} className="feature-card">
-                <div style={{ fontSize:28, marginBottom:14 }}>{f.icon}</div>
-                <div style={{ fontSize:16, fontWeight:800, color:'#fff', marginBottom:8, letterSpacing:'-0.3px' }}>{f.title}</div>
-                <div style={{ fontSize:13, color:'#555', lineHeight:1.6 }}>{f.desc}</div>
-              </div>
-            ))}
-          </div>
-        </div>
-
         {/* CTA */}
-        <div style={{ padding:'60px 24px 100px', textAlign:'center', borderTop:'1px solid #111', position:'relative', overflow:'hidden' }}>
+        <div style={{ padding:'40px 24px 80px', textAlign:'center', borderTop:'1px solid #111', position:'relative', overflow:'hidden' }}>
           <div style={{ position:'absolute', top:'50%', left:'50%', transform:'translate(-50%,-50%)', width:500, height:300, background:'radial-gradient(circle, rgba(147,51,234,0.1) 0%, transparent 70%)', pointerEvents:'none' }} />
           <img src="/logo-transparent.png" alt="TopLoad" style={{ height:40, filter:'brightness(0) invert(1)', marginBottom:24, animation:'float 4s ease-in-out infinite' }} />
           <h2 style={{ fontSize:'clamp(28px,4vw,42px)', fontWeight:900, letterSpacing:'-1px', marginBottom:12 }}>Ready to start tracking?</h2>
