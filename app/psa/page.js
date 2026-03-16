@@ -462,7 +462,7 @@ export default function PSALookupPage() {
               <div style={{ background:'#111', border:'1px solid #1e1e1e', borderRadius:14, padding:'16px' }}>
                 <div style={{ fontSize:9, fontWeight:800, color:'#555', textTransform:'uppercase', letterSpacing:'0.1em', marginBottom:12 }}>How to find the cert #</div>
                 {[
-                  { icon:'🏷️', text:'Look at the bottom of the PSA slab label' },
+                  { icon:'🏷️', text:'Find it on the label inside the PSA slab' },
                   { icon:'📱', text:'Scan the QR code on the slab' },
                   { icon:'🔢', text:'Numbers only, usually 7-9 digits' },
                   { icon:'⚠️', text:'A cancelled cert means fraud or returned card' },
