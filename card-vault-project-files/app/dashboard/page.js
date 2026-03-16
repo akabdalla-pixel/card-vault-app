@@ -573,7 +573,7 @@ export default function DashboardPage() {
                     return days + 'd ago'
                   })()
                   return (
-                    <div key={a.id} style={{ display:'flex', alignItems:'center', gap:10, padding:'10px 16px', borderBottom: i < Math.min(feed.length,8)-1 ? '1px solid #141414' : 'none' }}>
+                    <div key={a.id} style={{ display:'flex', alignItems:'center', gap:10, padding:'10px 16px', borderBottom: i < Math.min(feed.length,3)-1 ? '1px solid #141414' : 'none' }}>
                       <div style={{ width:28, height:28, borderRadius:7, background:`${cfg.color}18`, border:`1px solid ${cfg.color}30`, display:'flex', alignItems:'center', justifyContent:'center', fontSize:11, fontWeight:900, color:cfg.color, flexShrink:0 }}>{sportEmoji}</div>
                       <div style={{ flex:1, minWidth:0 }}>
                         <div style={{ display:'flex', alignItems:'center', gap:6 }}>
