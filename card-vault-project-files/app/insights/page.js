@@ -67,39 +67,46 @@ const fmt = n => new Intl.NumberFormat('en-US', { style: 'currency', currency: '
 const RED = '#9333ea'
 const CHART_COLORS = ['#9333ea','#ff7043','#ffb300','#66bb6a','#42a5f5','#ab47bc','#26c6da','#a855f7','#ffa726','#9ccc65']
 
-function Sidebar({ user, onLogout, active, cardCount = 0 }) {
+function Sidebar({ user, onLogout, cardCount = 0, active = "" }) {
   return (
-    <aside style={{ width: 220, minHeight: '100vh', background: '#111111', borderRight: '1px solid #2a2a2a', display: 'flex', flexDirection: 'column', position: 'fixed', top: 0, left: 0, zIndex: 60 }}>
-      <div style={{ padding: '16px 16px 12px', borderBottom: '1px solid #1e1e1e', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <img src={LOGO} alt="TopLoad" style={{ width: 130, height: 'auto', objectFit: 'contain', filter: 'drop-shadow(0 0 8px rgba(147,51,234,0.4))' }} />
+    <aside style={{ width:64, minHeight:'100vh', background:'#000', borderRight:'1px solid #111', display:'flex', flexDirection:'column', alignItems:'center', position:'fixed', top:0, left:0, zIndex:60, padding:'16px 0' }}>
+      <div style={{ marginBottom:24, paddingBottom:16, borderBottom:'1px solid #111', width:'100%', display:'flex', justifyContent:'center' }}>
+        <img src="/logo-transparent.png" alt="TopLoad" style={{ width:32, height:32, objectFit:'contain', filter:'brightness(0) invert(1)' }} />
       </div>
-      <nav style={{ flex: 1, padding: '14px 10px' }}>
-        <div style={{ fontSize: 10, color: '#333', fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', padding: '0 12px', marginBottom: 8 }}>Menu</div>
+      <nav style={{ flex:1, display:'flex', flexDirection:'column', alignItems:'center', gap:4, width:'100%', padding:'0 8px' }}>
         {NAV.map(({ label, href }) => {
           const isActive = active === label
           const Icon = navIcons[label]
-          return <Link key={label} href={href} style={{ display: 'flex', alignItems: 'center', gap: 11, padding: '9px 12px', borderRadius: 10, marginBottom: 2, textDecoration: 'none', color: isActive ? '#9333ea' : '#666', background: isActive ? 'rgba(147,51,234,0.08)' : 'transparent', fontFamily: "'Outfit',sans-serif", fontSize: 13.5, fontWeight: isActive ? 700 : 500, borderLeft: isActive ? '2px solid #9333ea' : '2px solid transparent', transition: 'all 0.15s' }}><Icon /><span style={{flex:1}}>{label}</span>{label === 'Collection' && cardCount > 0 && <span style={{fontSize:10,fontWeight:700,background:'rgba(147,51,234,0.15)',color:'#9333ea',borderRadius:6,padding:'1px 6px',fontFamily:"'JetBrains Mono',monospace"}}>{cardCount}</span>}</Link>
+          return (
+            <Link key={label} href={href} title={label} style={{ width:44, height:44, borderRadius:12, display:'flex', alignItems:'center', justifyContent:'center', textDecoration:'none', background: isActive ? '#9333ea' : 'transparent', color: isActive ? '#fff' : '#444', transition:'all 0.15s', position:'relative' }}>
+              <Icon />
+              {label === 'Collection' && cardCount > 0 && <span style={{ position:'absolute', top:6, right:6, width:8, height:8, background:'#9333ea', borderRadius:'50%', border:'1.5px solid #000' }} />}
+            </Link>
+          )
         })}
       </nav>
-      <div style={{ padding: '14px 10px', borderTop: '1px solid #1e1e1e' }}>
-                {user && <div style={{ display:'flex', alignItems:'center', gap:8, padding:'8px 10px', marginBottom:4, borderRadius:10, background:'#181818', fontFamily:"'Outfit',sans-serif" }}>
-          <div style={{ width:28, height:28, borderRadius:8, background:'#9333ea', display:'flex', alignItems:'center', justifyContent:'center', fontSize:11, fontWeight:900, color:'#fff', flexShrink:0 }}>{user.username?.[0]?.toUpperCase()||'A'}</div>
-          <div><div style={{ fontSize:11, fontWeight:700, color:'#ccc' }}>@{user.username}</div><div style={{ fontSize:9, color:'#555', marginTop:1 }}>{user.email}</div></div>
-        </div>}
-        <Link href="/settings" style={{ display: 'flex', alignItems: 'center', gap: 11, padding: '9px 12px', borderRadius: 10, marginBottom: 2, textDecoration: 'none', color: '#555', fontFamily: "'Outfit',sans-serif", fontSize: 14, fontWeight: 500 }}><IconSettings />Settings</Link>
-        <button onClick={onLogout} style={{ display: 'flex', alignItems: 'center', gap: 11, padding: '9px 12px', borderRadius: 10, width: '100%', background: 'transparent', border: 'none', cursor: 'pointer', color: '#555', fontFamily: "'Outfit',sans-serif", fontSize: 14, fontWeight: 500 }}><IconLogout />Sign Out</button>
+      <div style={{ display:'flex', flexDirection:'column', alignItems:'center', gap:8, paddingTop:16, borderTop:'1px solid #111', width:'100%' }}>
+        <Link href="/settings" title="Settings" style={{ width:44, height:44, borderRadius:12, display:'flex', alignItems:'center', justifyContent:'center', textDecoration:'none', color:'#444' }}><IconSettings /></Link>
+        <button onClick={onLogout} title="Sign Out" style={{ width:44, height:44, borderRadius:12, display:'flex', alignItems:'center', justifyContent:'center', background:'transparent', border:'none', cursor:'pointer', color:'#444' }}><IconLogout /></button>
+        {user && <div style={{ width:32, height:32, borderRadius:8, background:'#9333ea', display:'flex', alignItems:'center', justifyContent:'center', fontSize:12, fontWeight:900, color:'#fff', cursor:'default' }}>{user.username?.[0]?.toUpperCase()||'A'}</div>}
       </div>
     </aside>
   )
 }
 
-function BottomNav({ active }) {
+function BottomNav({ active = "" }) {
+  const SHORT = { 'Dashboard':'Home', 'Collection':'Cards', 'Insights':'Stats', 'Sold History':'Sold', 'Market':'Market' }
   return (
-    <nav className="mobile-only" style={{ position: 'fixed', bottom: 0, left: 0, right: 0, height: 64, background: '#0d0d0d', borderTop: '1px solid #1e1e1e', display: 'flex', alignItems: 'center', zIndex: 100 }}>
+    <nav className="mobile-only" style={{ position:'fixed', bottom:0, left:0, right:0, height:64, background:'#000', borderTop:'1px solid #111', display:'flex', alignItems:'center', zIndex:100 }}>
       {NAV.map(({ label, href }) => {
         const isActive = active === label
         const Icon = navIcons[label]
-        return <Link key={label} href={href} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 4, textDecoration: 'none', color: isActive ? '#9333ea' : '#555', fontFamily: "'Outfit',sans-serif", fontSize: 9, fontWeight: isActive ? 700 : 500, letterSpacing: '0.04em', textTransform: 'uppercase', paddingBottom: 4 }}><Icon />{label === 'Sold History' ? 'Sold' : label}</Link>
+        return (
+          <Link key={label} href={href} style={{ flex:1, display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', gap:3, textDecoration:'none', paddingBottom:4 }}>
+            <div style={{ width:28, height:28, borderRadius:8, display:'flex', alignItems:'center', justifyContent:'center', background: isActive ? '#9333ea' : 'transparent', color: isActive ? '#fff' : '#444', transition:'all 0.15s' }}><Icon /></div>
+            <span style={{ fontSize:9, fontWeight:800, color: isActive ? '#9333ea' : '#444', letterSpacing:'0.08em', textTransform:'uppercase' }}>{SHORT[label]||label}</span>
+          </Link>
+        )
       })}
     </nav>
   )
@@ -124,7 +131,7 @@ function DonutChart({ data, title, size = 180 }) {
   })
   const [hovered, setHovered] = useState(null)
   return (
-    <div style={{ background: '#181818', border: '1px solid #222', borderRadius: 16, padding: '20px 22px' }}>
+    <div style={{ background: '#13131f', border: '1px solid rgba(147,51,234,0.15)', boxShadow: '0 4px 20px rgba(0,0,0,0.4)', borderRadius: 16, padding: '20px 22px' }}>
       <div style={{ fontFamily: "'Outfit',sans-serif", fontSize: 13, fontWeight: 700, color: '#ccc', marginBottom: 16 }}>{title}</div>
       <div style={{ display: 'flex', alignItems: 'center', gap: 24, flexWrap: 'wrap' }}>
         <div style={{ position: 'relative', flexShrink: 0 }}>
@@ -168,7 +175,7 @@ function BarChart({ data, title, valuePrefix = '', valueSuffix = '', color = RED
   const max = Math.max(...data.map(d => d.value), 1)
   const [hovered, setHovered] = useState(null)
   return (
-    <div style={{ background: '#181818', border: '1px solid #222', borderRadius: 16, padding: '20px 22px' }}>
+    <div style={{ background: '#13131f', border: '1px solid rgba(147,51,234,0.15)', boxShadow: '0 4px 20px rgba(0,0,0,0.4)', borderRadius: 16, padding: '20px 22px' }}>
       <div style={{ fontFamily: "'Outfit',sans-serif", fontSize: 13, fontWeight: 700, color: '#ccc', marginBottom: 18 }}>{title}</div>
       <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
         {data.map((d, i) => (
@@ -209,7 +216,7 @@ function TopCardsRank({ cards }) {
   const top = [...cards].filter(c => !c.sold).sort((a, b) => (parseFloat(b.val) || 0) - (parseFloat(a.val) || 0)).slice(0, 5)
   const max = parseFloat(top[0]?.val) || 1
   return (
-    <div style={{ background: '#181818', border: '1px solid #222', borderRadius: 16, padding: '20px 22px' }}>
+    <div style={{ background: '#13131f', border: '1px solid rgba(147,51,234,0.15)', boxShadow: '0 4px 20px rgba(0,0,0,0.4)', borderRadius: 16, padding: '20px 22px' }}>
       <div style={{ fontFamily: "'Outfit',sans-serif", fontSize: 13, fontWeight: 700, color: '#ccc', marginBottom: 18, display: 'flex', alignItems: 'center', gap: 8 }}><IconTrophy /><span>Top 5 Most Valuable</span></div>
       <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
         {top.map((card, i) => { // stagger
@@ -286,7 +293,7 @@ function PersonalRecords({ cards, soldCards }) {
   ]
 
   return (
-    <div style={{ background: '#181818', border: '1px solid #222', borderRadius: 16, padding: '20px 22px' }}>
+    <div style={{ background: '#13131f', border: '1px solid rgba(147,51,234,0.15)', boxShadow: '0 4px 20px rgba(0,0,0,0.4)', borderRadius: 16, padding: '20px 22px' }}>
       <div style={{ fontFamily: "'Outfit',sans-serif", fontSize: 13, fontWeight: 700, color: '#ccc', marginBottom: 16, display: 'flex', alignItems: 'center', gap: 8 }}><IconStar /><span>Personal Records</span></div>
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2,1fr)', gap: 10 }}>
         {records.map((r, i) => {
@@ -412,7 +419,10 @@ export default function InsightsPage() {
   a.press:active{transform:scale(0.94)!important;opacity:0.85!important}
   .press{transition:transform 0.1s ease,opacity 0.1s ease!important}
   .press:active{transform:scale(0.93)!important;opacity:0.8!important}
-        .sidebar-el{display:flex;flex-direction:column}.mobile-only{display:none!important}.mob-topbar{display:none}.main-wrap{margin-left:220px;min-height:100vh;width:calc(100% - 220px)}
+        @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800;900&display=swap');
+        *{font-family:'Space Grotesk',-apple-system,sans-serif!important}
+        [style*="JetBrains"],[style*="monospace"]{font-family:'JetBrains Mono',monospace!important}
+        .sidebar-el{display:flex;flex-direction:column}.mobile-only{display:none!important}.mob-topbar{display:none}.main-wrap{margin-left:64px;min-height:100vh;width:calc(100% - 64px)}
         .insights-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
         .insights-grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
         .insights-grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
@@ -441,7 +451,7 @@ export default function InsightsPage() {
 
           {/* Desktop header */}
           <div className="hide-mobile" style={{ marginBottom: 28 }}>
-            <h1 style={{ fontFamily: "'Outfit',sans-serif", fontSize: 30, fontWeight: 900, color: '#f5f5f5', letterSpacing: '-0.8px', margin: 0 }}>Insights</h1>
+            <h1 style={{ fontFamily: "'Outfit',sans-serif", fontSize: 40, fontWeight: 900, letterSpacing: '-2px', margin: 0, background: 'linear-gradient(135deg,#f5f5f5 40%,#a855f7)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>Insights</h1>
             <p style={{ fontSize: 13, color: '#555', marginTop: 4, fontWeight: 500 }}>A deep look at your collection — updates automatically with every new card</p>
           </div>
 

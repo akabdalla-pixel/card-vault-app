@@ -93,7 +93,7 @@ function CollectionSkeleton() {
       <Sk h={42} r={10} style={{ marginBottom:10 }} />
       <Sk h={36} r={10} style={{ marginBottom:16 }} />
       {[1,2,3,4].map(i => (
-        <div key={i} style={{ background:'#181818', border:'1px solid #222', borderRadius:14, padding:'14px 16px', marginBottom:10, animation:`fadeUp 0.45s ease ${i*0.12}s both` }}>
+        <div key={i} style={{ background:'#13131f', border:'1px solid rgba(147,51,234,0.15)', boxShadow:'0 4px 20px rgba(0,0,0,0.4)', borderRadius:14, padding:'14px 16px', marginBottom:10, animation:`fadeUp 0.45s ease ${i*0.12}s both` }}>
           <div style={{ display:'flex', justifyContent:'space-between', marginBottom:10 }}><Sk w={160} h={16} r={6} /><Sk w={50} h={22} r={6} /></div>
           <div style={{ display:'flex', gap:10, marginBottom:10 }}><Sk w={70} h={34} r={8} /><Sk w={70} h={34} r={8} /><Sk w={70} h={34} r={8} /></div>
           <div style={{ display:'flex', gap:6 }}><Sk h={32} r={8} style={{ flex:1 }} /><Sk h={32} r={8} style={{ flex:1 }} /><Sk h={32} r={8} style={{ flex:1 }} /></div>
@@ -213,38 +213,44 @@ function parseCSV(text) {
 
 function Sidebar({ user, onLogout, cardCount = 0, active = "" }) {
   return (
-    <aside style={{ width: 220, minHeight: '100vh', background: '#111', borderRight: '1px solid #1e1e1e', display: 'flex', flexDirection: 'column', position: 'fixed', top: 0, left: 0, zIndex: 60 }}>
-      <div style={{ padding: '16px 16px 12px', display: 'flex', alignItems: 'center', justifyContent: 'center', borderBottom: '1px solid #1e1e1e' }}>
-        <div style={{ fontFamily: "'Outfit',sans-serif", fontSize: 22, fontWeight: 800 }}><img src="/logo-transparent.png" alt="TopLoad" style={{ width: 120, height: 'auto', objectFit: 'contain', filter: 'drop-shadow(0 0 8px rgba(147,51,234,0.4))' }} /></div>
-        
+    <aside style={{ width:64, minHeight:'100vh', background:'#000', borderRight:'1px solid #111', display:'flex', flexDirection:'column', alignItems:'center', position:'fixed', top:0, left:0, zIndex:60, padding:'16px 0' }}>
+      <div style={{ marginBottom:24, paddingBottom:16, borderBottom:'1px solid #111', width:'100%', display:'flex', justifyContent:'center' }}>
+        <img src="/logo-transparent.png" alt="TopLoad" style={{ width:32, height:32, objectFit:'contain', filter:'brightness(0) invert(1)' }} />
       </div>
-      <nav style={{ flex: 1, padding: '14px 10px' }}>
-        <div style={{ fontSize: 10, color: '#333', fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', padding: '0 12px', marginBottom: 8 }}>Menu</div>
+      <nav style={{ flex:1, display:'flex', flexDirection:'column', alignItems:'center', gap:4, width:'100%', padding:'0 8px' }}>
         {NAV.map(({ label, href }) => {
           const isActive = active === label
           const Icon = navIcons[label]
-          return <Link key={label} href={href} style={{ display: 'flex', alignItems: 'center', gap: 11, padding: '9px 12px', borderRadius: 10, marginBottom: 2, textDecoration: 'none', color: isActive ? '#9333ea' : '#666', background: isActive ? 'rgba(147,51,234,0.08)' : 'transparent', fontFamily: "'Outfit',sans-serif", fontSize: 14, fontWeight: isActive ? 600 : 500, borderLeft: isActive ? '2px solid #9333ea' : '2px solid transparent', transition: 'all 0.15s' }}><Icon /><span style={{flex:1}}>{label}</span>{label === 'Collection' && cardCount > 0 && <span style={{fontSize:10,fontWeight:700,background:'rgba(147,51,234,0.15)',color:'#9333ea',borderRadius:6,padding:'1px 6px',fontFamily:"'JetBrains Mono',monospace"}}>{cardCount}</span>}</Link>
+          return (
+            <Link key={label} href={href} title={label} style={{ width:44, height:44, borderRadius:12, display:'flex', alignItems:'center', justifyContent:'center', textDecoration:'none', background: isActive ? '#9333ea' : 'transparent', color: isActive ? '#fff' : '#444', transition:'all 0.15s', position:'relative' }}>
+              <Icon />
+              {label === 'Collection' && cardCount > 0 && <span style={{ position:'absolute', top:6, right:6, width:8, height:8, background:'#9333ea', borderRadius:'50%', border:'1.5px solid #000' }} />}
+            </Link>
+          )
         })}
       </nav>
-      <div style={{ padding: '14px 10px', borderTop: '1px solid #1e1e1e' }}>
-        {user && <div style={{ display:'flex', alignItems:'center', gap:8, padding:'8px 10px', marginBottom:4, borderRadius:10, background:'#181818', fontFamily:"'Outfit',sans-serif" }}>
-          <div style={{ width:28, height:28, borderRadius:8, background:'#9333ea', display:'flex', alignItems:'center', justifyContent:'center', fontSize:11, fontWeight:900, color:'#fff', flexShrink:0 }}>{user.username?.[0]?.toUpperCase()||'A'}</div>
-          <div><div style={{ fontSize:11, fontWeight:700, color:'#ccc' }}>@{user.username}</div><div style={{ fontSize:9, color:'#555', marginTop:1 }}>{user.email}</div></div>
-        </div>}
-        <Link href="/settings" style={{ display: 'flex', alignItems: 'center', gap: 11, padding: '9px 12px', borderRadius: 10, marginBottom: 2, textDecoration: 'none', color: '#555', fontFamily: "'Outfit',sans-serif", fontSize: 14, fontWeight: 500 }}><IconSettings />Settings</Link>
-        <button onClick={onLogout} style={{ display: 'flex', alignItems: 'center', gap: 11, padding: '9px 12px', borderRadius: 10, width: '100%', background: 'transparent', border: 'none', cursor: 'pointer', color: '#555', fontFamily: "'Outfit',sans-serif", fontSize: 14, fontWeight: 500 }}><IconLogout />Sign Out</button>
+      <div style={{ display:'flex', flexDirection:'column', alignItems:'center', gap:8, paddingTop:16, borderTop:'1px solid #111', width:'100%' }}>
+        <Link href="/settings" title="Settings" style={{ width:44, height:44, borderRadius:12, display:'flex', alignItems:'center', justifyContent:'center', textDecoration:'none', color:'#444' }}><IconSettings /></Link>
+        <button onClick={onLogout} title="Sign Out" style={{ width:44, height:44, borderRadius:12, display:'flex', alignItems:'center', justifyContent:'center', background:'transparent', border:'none', cursor:'pointer', color:'#444' }}><IconLogout /></button>
+        {user && <div style={{ width:32, height:32, borderRadius:8, background:'#9333ea', display:'flex', alignItems:'center', justifyContent:'center', fontSize:12, fontWeight:900, color:'#fff', cursor:'default' }}>{user.username?.[0]?.toUpperCase()||'A'}</div>}
       </div>
     </aside>
   )
 }
 
 function BottomNav({ active = "" }) {
+  const SHORT = { 'Dashboard':'Home', 'Collection':'Cards', 'Insights':'Stats', 'Sold History':'Sold', 'Market':'Market' }
   return (
-    <nav className="mobile-only" style={{ position: 'fixed', bottom: 0, left: 0, right: 0, height: 64, background: '#0d0d0d', borderTop: '1px solid rgba(255,255,255,0.08)', display: 'flex', alignItems: 'center', zIndex: 100 }}>
+    <nav className="mobile-only" style={{ position:'fixed', bottom:0, left:0, right:0, height:64, background:'#000', borderTop:'1px solid #111', display:'flex', alignItems:'center', zIndex:100 }}>
       {NAV.map(({ label, href }) => {
         const isActive = active === label
         const Icon = navIcons[label]
-        return <Link key={label} href={href} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 4, textDecoration: 'none', color: isActive ? '#9333ea' : '#555', fontFamily: "'Outfit',sans-serif", fontSize: 10, fontWeight: isActive ? 700 : 500, letterSpacing: '0.05em', textTransform: 'uppercase', paddingBottom: 4 }}><Icon />{label}</Link>
+        return (
+          <Link key={label} href={href} style={{ flex:1, display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', gap:3, textDecoration:'none', paddingBottom:4 }}>
+            <div style={{ width:28, height:28, borderRadius:8, display:'flex', alignItems:'center', justifyContent:'center', background: isActive ? '#9333ea' : 'transparent', color: isActive ? '#fff' : '#444', transition:'all 0.15s' }}><Icon /></div>
+            <span style={{ fontSize:9, fontWeight:800, color: isActive ? '#9333ea' : '#444', letterSpacing:'0.08em', textTransform:'uppercase', fontFamily:"'Inter',sans-serif" }}>{SHORT[label]||label}</span>
+          </Link>
+        )
       })}
     </nav>
   )
@@ -821,7 +827,10 @@ function CollectionPage() {
   return (
     <>
       <style>{`
-        .sidebar-el{display:flex;flex-direction:column}.mobile-only{display:none!important}.mob-topbar{display:none}.main-wrap{margin-left:220px;min-height:100vh;width:calc(100% - 220px)}.card-row:hover{background:rgba(255,255,255,0.02)!important}
+        @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800;900&display=swap');
+        *{font-family:'Space Grotesk',-apple-system,sans-serif!important}
+        [style*="JetBrains"],[style*="monospace"]{font-family:'JetBrains Mono',monospace!important}
+        .sidebar-el{display:flex;flex-direction:column}.mobile-only{display:none!important}.mob-topbar{display:none}.main-wrap{margin-left:64px;min-height:100vh;width:calc(100% - 64px)}.card-row:hover{background:rgba(255,255,255,0.02)!important}
         .mobile-cards{display:none!important}
         .desktop-table{display:block!important}
         .card-grid{display:none!important}
@@ -847,42 +856,42 @@ function CollectionPage() {
           .hide-mob{display:none!important}
         }
       `}</style>
-      <div style={{ display: 'flex', minHeight: '100vh', background: '#0a0a0a' }}>
+      <div style={{ display:'flex', minHeight:'100vh', background:'#0a0a0a' }}>
         <PullIndicator pullY={pullY} />
-        <div className="sidebar-el"><Sidebar user={user} onLogout={handleLogout} cardCount={activeCards.length} active="Collection" /></div>        <main className="main-wrap" style={{ padding: '24px 32px', background: '#0a0a0a' }}>
+        <div className="sidebar-el"><Sidebar user={user} onLogout={handleLogout} cardCount={activeCards.length} active="Collection" /></div>
+        <main className="main-wrap" style={{ padding:'28px 32px', background:'#0a0a0a' }}>
           <div className="mob-topbar" style={{ alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
-            <img src="/logo-transparent.png" alt="TopLoad" style={{ height: 30, width: 'auto', objectFit: 'contain', filter: 'drop-shadow(0 0 8px rgba(147,51,234,0.4))' }} />
-            <button onClick={() => setModal('add')} className="press" style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '8px 14px', background: 'rgba(147,51,234,0.1)', border: '1px solid rgba(147,51,234,0.25)', borderRadius: 10, color: '#9333ea', fontFamily: "'Outfit',sans-serif", fontSize: 13, fontWeight: 700, cursor: 'pointer' }} className='press'>+ Add Card</button>
+            <img src="/logo-transparent.png" alt="TopLoad" style={{ height: 28, width: 'auto', objectFit: 'contain', filter: 'brightness(0) invert(1)' }} />
+            <button onClick={() => setModal('add')} className="press" style={{ display:'flex', alignItems:'center', gap:6, padding:'8px 16px', background:'#9333ea', border:'none', borderRadius:8, color:'#fff', fontSize:12, fontWeight:900, cursor:'pointer', letterSpacing:'0.05em', textTransform:'uppercase' }}>+ Add</button>
           </div>
           {/* ── Desktop header ── */}
-          <div className="hide-mob" style={{ marginBottom: 24 }}>
-            {/* Title row */}
-            <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom: 20 }}>
+          <div className="hide-mob" style={{ marginBottom:28 }}>
+            <div style={{ display:'flex', alignItems:'flex-end', justifyContent:'space-between', marginBottom:24 }}>
               <div>
-                <h1 style={{ fontFamily:"'Outfit',sans-serif", fontSize:26, fontWeight:900, color:'#f0f0f0', letterSpacing:'-0.5px', margin:0 }}>Collection</h1>
-                <p style={{ fontSize:12, color:'#444', marginTop:3, fontWeight:500, fontFamily:"'Outfit',sans-serif" }}>{cards.length} cards · {activeCards.length} active · {soldCards.length} sold</p>
+                <div style={{ fontSize:11, fontWeight:700, color:'#9333ea', textTransform:'uppercase', letterSpacing:'0.15em', marginBottom:6 }}>My Collection</div>
+                <h1 style={{ fontSize:38, fontWeight:900, color:'#fff', letterSpacing:'-1.5px', margin:0, textTransform:'uppercase', lineHeight:1 }}>COLLECTION</h1>
+                <p style={{ fontSize:12, color:'#555', marginTop:6, fontWeight:500 }}>{cards.length} cards · {activeCards.length} active · {soldCards.length} sold</p>
               </div>
               <div style={{ display:'flex', gap:8 }}>
-                <button onClick={() => setShowImport(true)} style={{ display:'flex', alignItems:'center', gap:6, padding:'8px 14px', background:'transparent', border:'1px solid #2a2a2a', borderRadius:9, color:'#555', fontFamily:"'Outfit',sans-serif", fontSize:13, fontWeight:600, cursor:'pointer' }}><IconUpload />Import</button>
-                <button onClick={() => exportCSV(cards)} disabled={!cards.length} style={{ display:'flex', alignItems:'center', gap:6, padding:'8px 14px', background:'transparent', border:'1px solid #2a2a2a', borderRadius:9, color:'#555', fontFamily:"'Outfit',sans-serif", fontSize:13, fontWeight:600, cursor:'pointer', opacity:cards.length?1:0.4 }}><IconDownload />Export</button>
-                <button onClick={() => setModal('add')} style={{ display:'flex', alignItems:'center', gap:6, padding:'8px 18px', background:'#9333ea', border:'none', borderRadius:9, color:'#fff', fontFamily:"'Outfit',sans-serif", fontSize:13, fontWeight:700, cursor:'pointer', boxShadow:'0 2px 12px rgba(147,51,234,0.35)' }}>+ Add Card</button>
+                <button onClick={() => setShowImport(true)} style={{ display:'flex', alignItems:'center', gap:6, padding:'9px 16px', background:'transparent', border:'1px solid #222', borderRadius:8, color:'#555', fontSize:12, fontWeight:700, cursor:'pointer', letterSpacing:'0.03em', textTransform:'uppercase' }}><IconUpload />Import</button>
+                <button onClick={() => exportCSV(cards)} disabled={!cards.length} style={{ display:'flex', alignItems:'center', gap:6, padding:'9px 16px', background:'transparent', border:'1px solid #222', borderRadius:8, color:'#555', fontSize:12, fontWeight:700, cursor:'pointer', opacity:cards.length?1:0.4, letterSpacing:'0.03em', textTransform:'uppercase' }}><IconDownload />Export</button>
+                <button onClick={() => setModal('add')} style={{ display:'flex', alignItems:'center', gap:6, padding:'9px 20px', background:'#9333ea', border:'none', borderRadius:8, color:'#fff', fontSize:12, fontWeight:900, cursor:'pointer', letterSpacing:'0.08em', textTransform:'uppercase' }}>+ Add Card</button>
               </div>
             </div>
-            {/* Stats row — inline horizontal */}
             {cards.length > 0 && (
-              <div style={{ display:'grid', gridTemplateColumns:'repeat(5,1fr)', gap:12 }}>
+              <div style={{ display:'grid', gridTemplateColumns:'repeat(5,1fr)', gap:10 }}>
                 {[
-                  { label:'Active Cards', value: statActive.length, sub:'in collection', color:'#f0f0f0', accent:'#9333ea' },
-                  { label:'Invested', value: fmt(totalInvested), sub:'cost basis', color:'#f0f0f0', accent:'#444' },
-                  { label:'Portfolio Value', value: fmt(totalValue), sub:'current', color:'#f0f0f0', accent:'#444' },
-                  { label:'Unrealized G/L', value: (totalValue-totalInvested>=0?'+':'')+fmt(totalValue-totalInvested), sub:(totalValue-totalInvested>=0?'+':'')+((totalInvested>0?(totalValue-totalInvested)/totalInvested*100:0).toFixed(1))+'%', color: totalValue>=totalInvested?'#4ade80':'#f87171', accent: totalValue>=totalInvested?'#4ade80':'#f87171' },
-                  { label:'Realized P&L', value: (realizedPL>=0?'+':'')+fmt(realizedPL), sub:'all time', color: realizedPL>=0?'#4ade80':'#f87171', accent: realizedPL>=0?'#4ade80':'#f87171' },
+                  { label:'Cards', value: statActive.length, sub:'active', accent:'#9333ea', valColor:'#fff', big:true },
+                  { label:'Invested', value: fmt(totalInvested), sub:'cost basis', accent:'#333', valColor:'#fff', big:false },
+                  { label:'Portfolio Value', value: fmt(totalValue), sub:'current', accent:'#333', valColor:'#fff', big:false },
+                  { label:'Gain / Loss', value: (totalValue-totalInvested>=0?'+':'')+fmt(totalValue-totalInvested), sub:(totalValue-totalInvested>=0?'+':'')+((totalInvested>0?(totalValue-totalInvested)/totalInvested*100:0).toFixed(1))+'%', accent: totalValue>=totalInvested?'#22c55e':'#ef4444', valColor: totalValue>=totalInvested?'#22c55e':'#ef4444', big:false },
+                  { label:'Realized', value: (realizedPL>=0?'+':'')+fmt(realizedPL), sub:'all time', accent:'#333', valColor: realizedPL>=0?'#22c55e':realizedPL<0?'#ef4444':'#fff', big:false },
                 ].map((s,i) => (
-                  <div key={i} style={{ background:'#181818', border:'1px solid #222', borderRadius:16, padding:'16px 18px', position:'relative', overflow:'hidden' }}>
-                    <div style={{ position:'absolute', top:0, left:0, right:0, height:2, background:`linear-gradient(90deg,${s.accent},transparent)` }} />
-                    <div style={{ fontSize:9, fontWeight:700, color:'#555', textTransform:'uppercase', letterSpacing:'0.1em', marginBottom:8, fontFamily:"'Outfit',sans-serif" }}>{s.label}</div>
-                    <div style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:18, fontWeight:800, color:s.color, letterSpacing:'-0.5px' }}>{s.value}</div>
-                    <div style={{ fontSize:10, color:'#444', marginTop:4, fontFamily:"'Outfit',sans-serif" }}>{s.sub}</div>
+                  <div key={i} style={{ background:'#111', border:'1px solid #1a1a1a', borderRadius:12, padding:'16px', position:'relative', overflow:'hidden' }}>
+                    <div style={{ position:'absolute', top:0, left:0, right:0, height:2, background:s.accent }} />
+                    <div style={{ fontSize:9, fontWeight:700, color:'#555', textTransform:'uppercase', letterSpacing:'0.12em', marginBottom:10 }}>{s.label}</div>
+                    <div style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:s.big?28:18, fontWeight:900, color:s.valColor, letterSpacing:'-0.5px', lineHeight:1 }}>{s.value}</div>
+                    <div style={{ fontSize:11, color:'#444', marginTop:5 }}>{s.sub}</div>
                   </div>
                 ))}
               </div>
@@ -906,7 +915,7 @@ function CollectionPage() {
                 { label: 'G/L', value: (totalValue-totalInvested>=0?'+':'')+fmt(totalValue-totalInvested), color: totalValue>=totalInvested?'#4ade80':'#9333ea' },
                 { label: 'P&L', value: (realizedPL>=0?'+':'')+fmt(realizedPL), color: realizedPL>=0?'#4ade80':'#9333ea' },
               ].map((s,i) => (
-                <div key={i} style={{ flexShrink:0, background:'#181818', border:'1px solid #222', borderRadius:10, padding:'10px 12px', minWidth:90, textAlign:'center' }}>
+                <div key={i} style={{ flexShrink:0, background:'#13131f', border:'1px solid rgba(147,51,234,0.15)', boxShadow:'0 4px 20px rgba(0,0,0,0.4)', borderRadius:10, padding:'10px 12px', minWidth:90, textAlign:'center' }}>
                   <div style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:13, fontWeight:700, color:s.color||'#f0f0f0' }}>{s.value}</div>
                   <div style={{ fontSize:9, color:'#444', fontWeight:700, textTransform:'uppercase', letterSpacing:'0.08em', marginTop:3, fontFamily:"'Outfit',sans-serif" }}>{s.label}</div>
                 </div>
@@ -933,7 +942,7 @@ function CollectionPage() {
             return (
               <div style={{ display:'flex', gap:6, marginBottom:14, overflowX:'auto', paddingBottom:2, WebkitOverflowScrolling:'touch' }}>
                 {tabs.map(t => (
-                  <button key={t.val} onClick={() => setSportTab(t.val)} style={{ display:'flex', alignItems:'center', gap:6, padding:'8px 16px', borderRadius:100, border: sportTab === t.val ? '1px solid #9333ea' : '1px solid #2a2a2a', background: sportTab === t.val ? 'rgba(147,51,234,0.08)' : '#181818', color: sportTab === t.val ? '#9333ea' : '#555', fontFamily:"'Outfit',sans-serif", fontSize:13, fontWeight: sportTab === t.val ? 800 : 500, cursor:'pointer', whiteSpace:'nowrap', flexShrink:0, transition:'all 0.15s' }}>
+                  <button key={t.val} onClick={() => setSportTab(t.val)} style={{ display:'flex', alignItems:'center', gap:6, padding:'8px 16px', borderRadius:100, border: sportTab === t.val ? '1px solid #9333ea' : '1px solid #1e1e1e', background: sportTab === t.val ? '#9333ea' : '#111', color: sportTab === t.val ? '#fff' : '#555', fontSize:12, fontWeight: sportTab === t.val ? 900 : 600, textTransform:'uppercase', letterSpacing:'0.05em', cursor:'pointer', whiteSpace:'nowrap', flexShrink:0, transition:'all 0.15s' }}>
                     <span>{t.emoji}</span>{t.label}
                     {sportTab === t.val && t.val !== 'all' && (
                       <span style={{ fontSize:10, background:'rgba(147,51,234,0.2)', borderRadius:10, padding:'1px 6px', fontFamily:"'JetBrains Mono',monospace" }}>
@@ -954,15 +963,15 @@ function CollectionPage() {
             </select>
             <div style={{ display: 'flex', borderRadius: 9, overflow: 'hidden', border: '1px solid #222' }}>
               {[['active','Active'],['sold','Sold'],['all','All']].map(([val, label]) => (
-                <button key={val} onClick={() => setFilterStatus(val)} style={{ padding: '8px 14px', background: filterStatus===val ? 'rgba(147,51,234,0.08)' : '#181818', border: 'none', color: filterStatus===val ? '#9333ea' : '#555', fontFamily: "'Outfit',sans-serif", fontSize: 13, fontWeight: filterStatus===val ? 700 : 500, cursor: 'pointer' }}>{label}</button>
+                <button key={val} onClick={() => setFilterStatus(val)} style={{ padding: '8px 14px', background: filterStatus===val ? '#9333ea' : '#111', border:'none', color: filterStatus===val ? '#fff' : '#555', fontSize:11, fontWeight:800, textTransform:'uppercase', letterSpacing:'0.06em', cursor: 'pointer' }}>{label}</button>
               ))}
             </div>
           </div>
           <div className="desk-filters" style={{ gap: 8, marginBottom: 14, flexWrap: 'wrap', alignItems: 'center' }}>
             {/* Graded filter */}
-            <div style={{ display: 'flex', borderRadius: 100, overflow: 'hidden', border: '1px solid #2a2a2a' }}>
+            <div style={{ display: 'flex', borderRadius: 8, overflow: 'hidden', border: '1px solid #1e1e1e' }}>
               {[['','All Cards'],['graded','Graded'],['raw','Raw']].map(([val, label]) => (
-                <button key={val} onClick={() => setFilterGraded(val)} style={{ padding: '8px 12px', background: filterGraded===val ? 'rgba(147,51,234,0.08)' : '#181818', border: 'none', color: filterGraded===val ? '#9333ea' : '#555', fontFamily: "'Outfit',sans-serif", fontSize: 12, fontWeight: filterGraded===val ? 700 : 500, cursor: 'pointer', whiteSpace: 'nowrap' }}>{label}</button>
+                <button key={val} onClick={() => setFilterGraded(val)} style={{ padding: '8px 12px', background: filterGraded===val ? '#9333ea' : '#111', border:'none', color: filterGraded===val ? '#fff' : '#555', fontSize:11, fontWeight:800, textTransform:'uppercase', letterSpacing:'0.06em', cursor: 'pointer', whiteSpace: 'nowrap' }}>{label}</button>
               ))}
             </div>
             <button onClick={() => setFilterAuto(v => !v)} style={{ padding: '8px 14px', borderRadius: 10, background: filterAuto ? 'rgba(255,190,46,0.1)' : '#181818', border: filterAuto ? '1px solid rgba(255,190,46,0.35)' : '1px solid #2a2a2a', color: filterAuto ? '#ffbe2e' : '#555', fontFamily: "'Outfit',sans-serif", fontSize: 12, fontWeight: filterAuto ? 700 : 500, cursor: 'pointer', whiteSpace: 'nowrap' }}>✍️ Autos Only</button>
@@ -1003,7 +1012,7 @@ function CollectionPage() {
               </button>
             )}
             {/* View toggle */}
-            <div style={{ marginLeft: 'auto', display: 'flex', borderRadius: 100, overflow: 'hidden', border: '1px solid #2a2a2a' }}>
+            <div style={{ marginLeft: 'auto', display: 'flex', borderRadius: 8, overflow: 'hidden', border: '1px solid #1e1e1e' }}>
               <button onClick={() => setViewMode('table')} title="Table view" style={{ padding: '8px 12px', background: viewMode === 'table' ? 'rgba(147,51,234,0.15)' : '#111', border: 'none', color: viewMode === 'table' ? '#9333ea' : '#555', cursor: 'pointer', display: 'flex', alignItems: 'center' }}><IconList /></button>
               <button onClick={() => setViewMode('grid')} title="Grid view" style={{ padding: '8px 12px', background: viewMode === 'grid' ? 'rgba(147,51,234,0.15)' : '#111', border: 'none', color: viewMode === 'grid' ? '#9333ea' : '#555', cursor: 'pointer', display: 'flex', alignItems: 'center' }}><IconGrid /></button>
             </div>
@@ -1012,9 +1021,9 @@ function CollectionPage() {
             {/* 1. Search */}
             <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search..." style={{ flex: 1, minWidth: 110, maxWidth: 150, padding: '8px 12px', borderRadius: 10, background: '#181818', border: '1px solid #2a2a2a', color: '#f0f0f0', fontSize: 13, outline: 'none', fontFamily: "'Outfit',sans-serif" }} />
             {/* 2. All / Graded / Raw */}
-            <div style={{ display: 'flex', borderRadius: 100, overflow: 'hidden', border: '1px solid #2a2a2a', flexShrink: 0 }}>
+            <div style={{ display: 'flex', borderRadius: 8, overflow: 'hidden', border: '1px solid #1e1e1e', flexShrink: 0 }}>
               {[['','All'],['graded','Graded'],['raw','Raw']].map(([val, label]) => (
-                <button key={val} onClick={() => setFilterGraded(val)} style={{ padding: '8px 10px', background: filterGraded===val ? 'rgba(147,51,234,0.08)' : '#181818', border: 'none', color: filterGraded===val ? '#9333ea' : '#555', fontFamily: "'Outfit',sans-serif", fontSize: 12, fontWeight: filterGraded===val ? 700 : 500, cursor: 'pointer', whiteSpace: 'nowrap' }}>{label}</button>
+                <button key={val} onClick={() => setFilterGraded(val)} style={{ padding: '8px 10px', background: filterGraded===val ? '#9333ea' : '#111', border:'none', color: filterGraded===val ? '#fff' : '#555', fontSize:11, fontWeight:800, textTransform:'uppercase', letterSpacing:'0.06em', cursor: 'pointer', whiteSpace: 'nowrap' }}>{label}</button>
               ))}
             </div>
             {/* 3. ✍️ Auto */}
@@ -1036,12 +1045,12 @@ function CollectionPage() {
               <input type="number" placeholder="Max" value={priceMax} onChange={e => setPriceMax(e.target.value)} style={{ width:44, padding:'8px 0', background:'transparent', border:'none', color:'#f0f0f0', fontSize:12, outline:'none', fontFamily:"'JetBrains Mono',monospace" }} />
             </div>
             {/* 6. Grid / List */}
-            <div style={{ display: 'flex', borderRadius: 100, overflow: 'hidden', border: '1px solid #2a2a2a', flexShrink: 0 }}>
+            <div style={{ display: 'flex', borderRadius: 8, overflow: 'hidden', border: '1px solid #1e1e1e', flexShrink: 0 }}>
               <button onClick={() => setViewMode('table')} style={{ padding: '8px 10px', background: viewMode==='table' ? 'rgba(147,51,234,0.08)' : '#181818', border: 'none', color: viewMode==='table' ? '#9333ea' : '#555', cursor: 'pointer', display: 'flex', alignItems: 'center' }}><IconList /></button>
               <button onClick={() => setViewMode('grid')} style={{ padding: '8px 10px', background: viewMode==='grid' ? 'rgba(147,51,234,0.08)' : '#181818', border: 'none', color: viewMode==='grid' ? '#9333ea' : '#555', cursor: 'pointer', display: 'flex', alignItems: 'center' }}><IconGrid /></button>
             </div>
             {/* 7. Active / Sold / All */}
-            <div style={{ display: 'flex', borderRadius: 100, overflow: 'hidden', border: '1px solid #2a2a2a', flexShrink: 0 }}>
+            <div style={{ display: 'flex', borderRadius: 8, overflow: 'hidden', border: '1px solid #1e1e1e', flexShrink: 0 }}>
               {[['active','Active'],['sold','Sold'],['all','All']].map(([val, label]) => (
                 <button key={val} onClick={() => setFilterStatus(val)} style={{ padding: '8px 10px', background: filterStatus===val ? 'rgba(147,51,234,0.08)' : '#181818', border: 'none', color: filterStatus===val ? '#9333ea' : '#555', fontFamily: "'Outfit',sans-serif", fontSize: 12, fontWeight: filterStatus===val ? 700 : 500, cursor: 'pointer', whiteSpace: 'nowrap' }}>{label}</button>
               ))}
@@ -1074,7 +1083,7 @@ function CollectionPage() {
                     { icon:'💰', label:'Track its value', sub:'Update current value anytime to see your P&L' },
                     { icon:'📊', label:'Watch your portfolio grow', sub:'Stats and insights update automatically' },
                   ].map((s,i) => (
-                    <div key={i} style={{ display:'flex', alignItems:'center', gap:12, padding:'11px 14px', background:'#181818', border:'1px solid #222', borderRadius:12, textAlign:'left', animation:`fadeUp 0.45s ease ${i*0.12}s both` }}>
+                    <div key={i} style={{ display:'flex', alignItems:'center', gap:12, padding:'11px 14px', background:'#13131f', border:'1px solid rgba(147,51,234,0.15)', boxShadow:'0 4px 20px rgba(0,0,0,0.4)', borderRadius:12, textAlign:'left', animation:`fadeUp 0.45s ease ${i*0.12}s both` }}>
                       <div style={{ fontSize:20, flexShrink:0 }}>{s.icon}</div>
                       <div>
                         <div style={{ fontFamily:"'Outfit',sans-serif", fontSize:13, fontWeight:700, color:'#ccc' }}>{s.label}</div>
@@ -1152,58 +1161,65 @@ function CollectionPage() {
                 </div>
               )}
 
-              {/* ── Desktop Table ── */}
-              {viewMode === 'table' && <div className="desktop-table" style={{ background: 'linear-gradient(135deg,#111,#0d0d0d)', border: '1px solid #1e1e1e', borderRadius: 14, overflow: 'hidden' }}>
-                <div style={{ overflowX: 'auto' }}>
-                  <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-                    <thead>
-                      <tr>
-                        <th style={{ padding: '11px 14px', width: 36 }}>
-                          <input type="checkbox" checked={filtered.length > 0 && selected.size === filtered.length} onChange={() => { if (selected.size === filtered.length) setSelected(new Set()); else setSelected(new Set(filtered.map(c => c.id))) }} style={{ accentColor: '#9333ea', width: 15, height: 15, cursor: 'pointer' }} />
-                        </th>
-                        {['Player','Sport','Year','Grade','Qty','Buy Price','Value','G/L','Status',''].map((h,i) => <th key={i} style={{ padding: '10px 16px', textAlign: i===0?'left':'right', fontFamily: "'Outfit',sans-serif", fontSize: 10, fontWeight: 700, color: '#2a2a2a', letterSpacing: '0.12em', textTransform: 'uppercase', whiteSpace: 'nowrap', background: '#0a0a0a', borderBottom: '1px solid #141414' }}>{h}</th>)}
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {filtered.map(card => {
-                        const qty = parseInt(card.qty)||1
-                        const buy = (parseFloat(card.buy)||0)*qty
-                        const displayVal = card.sold ? (parseFloat(card.soldPrice)||0) : (parseFloat(card.val)||parseFloat(card.buy)||0)*qty
-                        const gl = displayVal - buy
-                        const glPos = gl >= 0
-                        return (
-                          <tr key={card.id} className="card-row" style={{ borderTop: '1px solid #1e1e1e', transition: 'background 0.15s', opacity: card.sold ? 0.75 : 1, background: selected.has(card.id) ? 'rgba(147,51,234,0.05)' : 'transparent' }}>
-                            <td style={{ padding: '12px 14px', width: 36 }}>
-                              <input type="checkbox" checked={selected.has(card.id)} onChange={() => toggleSelect(card.id)} style={{ accentColor: '#9333ea', width: 15, height: 15, cursor: 'pointer' }} />
-                            </td>
-                            <td style={{ padding: '12px 14px' }}>
-                              <div style={{ fontFamily: "'Outfit',sans-serif", fontSize: 13, fontWeight: 700, color: '#ccc' }}>{card.player}</div>
-                              {card.name && <div style={{ fontSize: 11, color: '#444', marginTop: 1 }}>{card.name}</div>}
-                            </td>
-                            <td style={{ padding: '12px 14px', textAlign: 'right', fontFamily: "'Outfit',sans-serif", fontSize: 12, color: '#666' }}>{card.sport||'—'}</td>
-                            <td style={{ padding: '12px 14px', textAlign: 'right', fontFamily: "'JetBrains Mono',monospace", fontSize: 12, color: '#666' }}>{card.year||'—'}</td>
-                            <td style={{ padding: '12px 14px', textAlign: 'right' }}>{card.grade ? <span style={{ padding: '2px 8px', borderRadius: 6, background: 'rgba(147,51,234,0.12)', color: '#c084fc', fontSize: 9, fontWeight: 900, letterSpacing:'0.1em', border:'1px solid rgba(147,51,234,0.25)', borderRadius:100, padding:'3px 10px' }}>{card.grade ? card.grade : ''}</span> : <span style={{ color: '#444', fontSize: 12 }}>{card.cond||'—'}</span>}</td>
-                            <td style={{ padding: '12px 14px', textAlign: 'right', fontFamily: "'JetBrains Mono',monospace", fontSize: 12, color: '#666' }}>{qty}</td>
-                            <td style={{ padding: '12px 14px', textAlign: 'right', fontFamily: "'JetBrains Mono',monospace", fontSize: 13, color: '#666' }}>{fmt(buy)}</td>
-                            <td style={{ padding: '12px 14px', textAlign: 'right', fontFamily: "'JetBrains Mono',monospace", fontSize: 13, fontWeight: 700, color: '#f0f2ff' }}>{fmt(displayVal)}</td>
-                            <td style={{ padding: '12px 14px', textAlign: 'right' }}>
-                              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 3, fontFamily: "'JetBrains Mono',monospace", fontSize: 12, fontWeight: 600, color: glPos ? '#4ade80' : '#9333ea' }}>{glPos ? <IconUp /> : <IconDown />}{glPos?'+':''}{fmt(gl)}</div>
-                            </td>
-                            <td style={{ padding: '12px 14px', textAlign: 'right' }}>{card.sold ? <span style={{ padding: '3px 8px', borderRadius: 6, background: 'rgba(255,190,46,0.1)', color: '#ffbe2e', fontSize: 11, fontWeight: 700 }}>SOLD</span> : <span style={{ padding: '3px 8px', borderRadius: 6, background: 'rgba(147,51,234,0.12)', color: '#c084fc', fontSize: 9, fontWeight: 900, letterSpacing:'0.1em', border:'1px solid rgba(147,51,234,0.25)', borderRadius:100, padding:'3px 10px' }}>ACTIVE</span>}</td>
-                            <td style={{ padding: '12px 14px', textAlign: 'right' }}>
-                              <div style={{ display: 'flex', gap: 5, justifyContent: 'flex-end' }}>
-                                <button onClick={() => setPriceLookupCard(card)} title="Check prices" style={{ padding: '5px 8px', borderRadius: 7, background: 'rgba(124,92,252,0.08)', border: 'none', color: '#a78bfa', cursor: 'pointer' }}><IconSearch /></button>
-                                {!card.sold && <button onClick={() => setSoldCard(card)} title="Mark as sold" style={{ padding: '5px 8px', borderRadius: 7, background: 'rgba(255,190,46,0.08)', border: 'none', color: '#ffbe2e', cursor: 'pointer' }}><IconTag /></button>}
-                                <button onClick={() => setBreakEvenCard(card)} title="Break even calculator" style={{ padding: '5px 8px', borderRadius: 7, background: 'rgba(147,51,234,0.08)', border: 'none', color: '#9333ea', cursor: 'pointer' }}><IconCalc /></button>
-                                <button onClick={() => setModal(card)} style={{ padding: '5px 8px', borderRadius: 7, background: 'rgba(255,255,255,0.05)', border: 'none', color: '#666', cursor: 'pointer' }}><IconEdit /></button>
-                                <button onClick={() => setDeleteId(card.id)} style={{ padding: '5px 8px', borderRadius: 7, background: 'rgba(168,85,247,0.08)', border: 'none', color: '#616161', cursor: 'pointer' }}><IconTrash /></button>
-                              </div>
-                            </td>
-                          </tr>
-                        )
-                      })}
-                    </tbody>
-                  </table>
+              {/* ── Desktop Card Grid — TRUE TILES ── */}
+              {viewMode === 'table' && <div className="desktop-table">
+                <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fill,minmax(280px,1fr))', gap:12 }}>
+                  {filtered.map((card, idx) => {
+                    const qty = parseInt(card.qty)||1
+                    const buy = (parseFloat(card.buy)||0)*qty
+                    const displayVal = card.sold ? (parseFloat(card.soldPrice)||0) : (parseFloat(card.val)||parseFloat(card.buy)||0)*qty
+                    const gl = displayVal - buy
+                    const glPos = gl >= 0
+                    const glPct = buy > 0 ? (gl/buy)*100 : 0
+                    const sportEmoji = card.sport==='Basketball'?'🏀':card.sport==='Football'?'🏈':card.sport==='Baseball'?'⚾':card.sport==='Soccer'?'⚽':card.sport==='F1'?'🏎️':card.sport==='Hockey'?'🏒':card.sport==='Pokémon'?'🎴':card.sport==='Golf'?'⛳':card.sport==='Tennis'?'🎾':'🃏'
+                    const barColor = glPos ? '#22c55e' : '#ef4444'
+                    const isSelected = selected.has(card.id)
+                    return (
+                      <div key={card.id} style={{ background:'#111', border: isSelected ? '1px solid #9333ea' : '1px solid #1a1a1a', borderRadius:14, overflow:'hidden', position:'relative', opacity: card.sold ? 0.65 : 1, animation:`fadeUp 0.25s ease ${Math.min(idx*0.04,0.3)}s both`, transition:'border-color 0.12s, transform 0.12s' }}
+                        onMouseEnter={e => { e.currentTarget.style.borderColor = isSelected ? '#9333ea' : '#333'; e.currentTarget.style.transform='translateY(-2px)' }}
+                        onMouseLeave={e => { e.currentTarget.style.borderColor = isSelected ? '#9333ea' : '#1a1a1a'; e.currentTarget.style.transform='translateY(0)' }}>
+                        {/* Color bar top */}
+                        <div style={{ height:3, background: card.sold ? '#ffbe2e' : barColor, opacity: buy===0 ? 0.3 : 0.9 }} />
+                        <div style={{ padding:'14px 16px' }}>
+                          {/* Top row: sport icon + badges */}
+                          <div style={{ display:'flex', justifyContent:'space-between', alignItems:'flex-start', marginBottom:12 }}>
+                            <div style={{ display:'flex', alignItems:'center', gap:8 }}>
+                              <input type="checkbox" checked={isSelected} onChange={() => toggleSelect(card.id)} style={{ accentColor:'#9333ea', width:14, height:14, cursor:'pointer' }} />
+                              <div style={{ width:36, height:36, borderRadius:8, background:'#1a1a1a', border:'1px solid #222', display:'flex', alignItems:'center', justifyContent:'center', fontSize:18 }}>{sportEmoji}</div>
+                            </div>
+                            <div style={{ display:'flex', gap:5, flexWrap:'wrap', justifyContent:'flex-end' }}>
+                              {card.grade && <span style={{ background:'rgba(147,51,234,0.15)', border:'1px solid rgba(147,51,234,0.3)', color:'#a855f7', fontSize:9, fontWeight:900, padding:'3px 8px', borderRadius:5, letterSpacing:'0.08em' }}>{card.gradingCo?`${card.gradingCo} `:''}{card.grade}</span>}
+                              {card.auto && <span style={{ background:'rgba(255,190,46,0.1)', border:'1px solid rgba(255,190,46,0.25)', color:'#ffbe2e', fontSize:9, fontWeight:900, padding:'3px 8px', borderRadius:5, letterSpacing:'0.08em' }}>AUTO</span>}
+                              {card.sold && <span style={{ background:'rgba(255,190,46,0.1)', border:'1px solid rgba(255,190,46,0.25)', color:'#ffbe2e', fontSize:9, fontWeight:900, padding:'3px 8px', borderRadius:5 }}>SOLD</span>}
+                              {buy > 0 && <span style={{ background: glPos ? 'rgba(34,197,94,0.1)' : 'rgba(239,68,68,0.1)', border: `1px solid ${glPos?'rgba(34,197,94,0.25)':'rgba(239,68,68,0.25)'}`, color: glPos ? '#22c55e' : '#ef4444', fontSize:9, fontWeight:900, padding:'3px 8px', borderRadius:5 }}>{glPos?'+':''}{glPct.toFixed(0)}%</span>}
+                            </div>
+                          </div>
+                          {/* Player name */}
+                          <div style={{ fontSize:16, fontWeight:900, color:'#fff', letterSpacing:'-0.4px', textTransform:'uppercase', marginBottom:4, lineHeight:1.1, overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>{card.player}</div>
+                          <div style={{ fontSize:11, color:'#555', marginBottom:16 }}>{[card.year, card.sport, card.brand, card.name].filter(Boolean).join(' · ')}</div>
+                          {/* Price row */}
+                          <div style={{ display:'flex', justifyContent:'space-between', alignItems:'flex-end', paddingTop:12, borderTop:'1px solid #1a1a1a' }}>
+                            <div>
+                              <div style={{ fontSize:9, fontWeight:700, color:'#444', textTransform:'uppercase', letterSpacing:'0.1em', marginBottom:4 }}>PAID</div>
+                              <div style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:13, fontWeight:700, color:'#666' }}>{fmt(buy)}</div>
+                            </div>
+                            <div style={{ textAlign:'right' }}>
+                              <div style={{ fontSize:9, fontWeight:700, color:'#444', textTransform:'uppercase', letterSpacing:'0.1em', marginBottom:4 }}>VALUE</div>
+                              <div style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:20, fontWeight:900, color:'#fff', letterSpacing:'-0.5px' }}>{fmt(displayVal)}</div>
+                            </div>
+                          </div>
+                          {/* Action buttons */}
+                          <div style={{ display:'flex', gap:5, marginTop:12 }}>
+                            <button onClick={() => setPriceLookupCard(card)} title="Prices" style={{ flex:1, padding:'7px 0', borderRadius:7, background:'rgba(147,51,234,0.1)', border:'1px solid rgba(147,51,234,0.2)', color:'#a855f7', cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'center' }}><IconSearch /></button>
+                            {!card.sold && <button onClick={() => setSoldCard(card)} title="Sell" style={{ flex:1, padding:'7px 0', borderRadius:7, background:'rgba(255,190,46,0.08)', border:'1px solid rgba(255,190,46,0.15)', color:'#ffbe2e', cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'center' }}><IconTag /></button>}
+                            <button onClick={() => setBreakEvenCard(card)} title="Calc" style={{ flex:1, padding:'7px 0', borderRadius:7, background:'rgba(255,255,255,0.04)', border:'1px solid #1e1e1e', color:'#555', cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'center' }}><IconCalc /></button>
+                            <button onClick={() => setModal(card)} title="Edit" style={{ flex:1, padding:'7px 0', borderRadius:7, background:'rgba(255,255,255,0.04)', border:'1px solid #1e1e1e', color:'#555', cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'center' }}><IconEdit /></button>
+                            <button onClick={() => setDeleteId(card.id)} title="Delete" style={{ flex:1, padding:'7px 0', borderRadius:7, background:'rgba(239,68,68,0.06)', border:'1px solid rgba(239,68,68,0.12)', color:'#555', cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'center' }}><IconTrash /></button>
+                          </div>
+                        </div>
+                      </div>
+                    )
+                  })}
                 </div>
               </div>}
 

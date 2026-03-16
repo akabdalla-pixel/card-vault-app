@@ -54,26 +54,28 @@ function ToastContainer() {
   )
 }
 
-function Sidebar({ user, onLogout, cardCount = 0 }) {
+function Sidebar({ user, onLogout, cardCount = 0, active = "" }) {
   return (
-    <aside style={{ width:220, minHeight:'100vh', background:'#111111', borderRight:'1px solid #2a2a2a', display:'flex', flexDirection:'column', position:'fixed', top:0, left:0, zIndex:60 }}>
-      <div style={{ padding:'16px 16px 12px', borderBottom:'1px solid #1e1e1e', display:'flex', alignItems:'center', justifyContent:'center' }}>
-        <img src={LOGO} alt="TopLoad" style={{ width:130, height:'auto', objectFit:'contain', filter:'drop-shadow(0 0 8px rgba(147,51,234,0.4))' }} />
+    <aside style={{ width:64, minHeight:'100vh', background:'#000', borderRight:'1px solid #111', display:'flex', flexDirection:'column', alignItems:'center', position:'fixed', top:0, left:0, zIndex:60, padding:'16px 0' }}>
+      <div style={{ marginBottom:24, paddingBottom:16, borderBottom:'1px solid #111', width:'100%', display:'flex', justifyContent:'center' }}>
+        <img src="/logo-transparent.png" alt="TopLoad" style={{ width:32, height:32, objectFit:'contain', filter:'brightness(0) invert(1)' }} />
       </div>
-      <nav style={{ flex:1, padding:'14px 10px' }}>
-        <div style={{ fontSize:10, color:'#333', fontWeight:700, letterSpacing:'0.1em', textTransform:'uppercase', padding:'0 12px', marginBottom:8 }}>Menu</div>
+      <nav style={{ flex:1, display:'flex', flexDirection:'column', alignItems:'center', gap:4, width:'100%', padding:'0 8px' }}>
         {NAV.map(({ label, href }) => {
+          const isActive = active === label
           const Icon = navIcons[label]
-          return <Link key={label} href={href} style={{ display:'flex', alignItems:'center', gap:11, padding:'9px 12px', borderRadius:10, marginBottom:2, textDecoration:'none', color:'#666', background:'transparent', fontFamily:"'Outfit',sans-serif", fontSize:14, fontWeight:500, borderLeft:'2px solid transparent', transition:'all 0.15s' }}><Icon /><span style={{flex:1}}>{label}</span>{label==='Collection'&&cardCount>0&&<span style={{fontSize:10,fontWeight:700,background:'rgba(147,51,234,0.15)',color:'#9333ea',borderRadius:6,padding:'1px 6px',fontFamily:"'JetBrains Mono',monospace"}}>{cardCount}</span>}</Link>
+          return (
+            <Link key={label} href={href} title={label} style={{ width:44, height:44, borderRadius:12, display:'flex', alignItems:'center', justifyContent:'center', textDecoration:'none', background: isActive ? '#9333ea' : 'transparent', color: isActive ? '#fff' : '#444', transition:'all 0.15s', position:'relative' }}>
+              <Icon />
+              {label === 'Collection' && cardCount > 0 && <span style={{ position:'absolute', top:6, right:6, width:8, height:8, background:'#9333ea', borderRadius:'50%', border:'1.5px solid #000' }} />}
+            </Link>
+          )
         })}
       </nav>
-      <div style={{ padding:'14px 10px', borderTop:'1px solid #1e1e1e' }}>
-                {user && <div style={{ display:'flex', alignItems:'center', gap:8, padding:'8px 10px', marginBottom:4, borderRadius:10, background:'#181818', fontFamily:"'Outfit',sans-serif" }}>
-          <div style={{ width:28, height:28, borderRadius:8, background:'#9333ea', display:'flex', alignItems:'center', justifyContent:'center', fontSize:11, fontWeight:900, color:'#fff', flexShrink:0 }}>{user.username?.[0]?.toUpperCase()||'A'}</div>
-          <div><div style={{ fontSize:11, fontWeight:700, color:'#ccc' }}>@{user.username}</div><div style={{ fontSize:9, color:'#555', marginTop:1 }}>{user.email}</div></div>
-        </div>}
-        <Link href="/settings" style={{ display:'flex', alignItems:'center', gap:11, padding:'9px 12px', borderRadius:10, marginBottom:2, textDecoration:'none', color:'#9333ea', background:'rgba(147,51,234,0.08)', borderLeft:'2px solid #9333ea', fontFamily:"'Outfit',sans-serif", fontSize:14, fontWeight:600 }}><IconSettings />Settings</Link>
-        <button onClick={onLogout} style={{ display:'flex', alignItems:'center', gap:11, padding:'9px 12px', borderRadius:10, width:'100%', background:'transparent', border:'none', cursor:'pointer', color:'#555', fontFamily:"'Outfit',sans-serif", fontSize:14, fontWeight:500 }}><IconLogout />Sign Out</button>
+      <div style={{ display:'flex', flexDirection:'column', alignItems:'center', gap:8, paddingTop:16, borderTop:'1px solid #111', width:'100%' }}>
+        <Link href="/settings" title="Settings" style={{ width:44, height:44, borderRadius:12, display:'flex', alignItems:'center', justifyContent:'center', textDecoration:'none', color:'#444' }}><IconSettings /></Link>
+        <button onClick={onLogout} title="Sign Out" style={{ width:44, height:44, borderRadius:12, display:'flex', alignItems:'center', justifyContent:'center', background:'transparent', border:'none', cursor:'pointer', color:'#444' }}><IconLogout /></button>
+        {user && <div style={{ width:32, height:32, borderRadius:8, background:'#9333ea', display:'flex', alignItems:'center', justifyContent:'center', fontSize:12, fontWeight:900, color:'#fff', cursor:'default' }}>{user.username?.[0]?.toUpperCase()||'A'}</div>}
       </div>
     </aside>
   )
@@ -222,7 +224,7 @@ export default function SettingsPage() {
 
   if (loading) return (
     <div style={{ display:'flex', minHeight:'100vh', background:'#0a0a0a' }}>
-      <div className="sidebar-el" style={{ width:220, minHeight:'100vh', background:'#111111', borderRight:'1px solid #2a2a2a', flexShrink:0 }} />
+      <div className="sidebar-el" style={{ width:220, minHeight:'100vh', background:'linear-gradient(180deg,#0d0b18 0%,#0a0a12 100%)', borderRight:'1px solid rgba(147,51,234,0.12)', flexShrink:0 }} />
       <div style={{ flex:1, display:'flex', alignItems:'center', justifyContent:'center' }}>
         <img src={LOGO} alt="TopLoad" style={{ width:100, opacity:0.3, filter:'drop-shadow(0 0 8px rgba(147,51,234,0.4))' }} />
       </div>
@@ -249,7 +251,10 @@ export default function SettingsPage() {
       <style>{`
         @keyframes toastIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
         @keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
-        .sidebar-el{display:flex;flex-direction:column}.mobile-only{display:none!important}.mob-topbar{display:none}.main-wrap{margin-left:220px;min-height:100vh;width:calc(100% - 220px)}
+        @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800;900&display=swap');
+        *{font-family:'Space Grotesk',-apple-system,sans-serif!important}
+        [style*="JetBrains"],[style*="monospace"]{font-family:'JetBrains Mono',monospace!important}
+        .sidebar-el{display:flex;flex-direction:column}.mobile-only{display:none!important}.mob-topbar{display:none}.main-wrap{margin-left:64px;min-height:100vh;width:calc(100% - 64px)}
         button:not(:disabled):active{transform:scale(0.94)!important;opacity:0.85!important;transition:transform 0.1s ease,opacity 0.1s ease!important}
         @media(max-width:768px){.sidebar-el{display:none!important}.mobile-only{display:flex!important}.mob-topbar{display:flex}.main-wrap{margin-left:0!important;width:100%!important;padding-bottom:80px!important}}
       `}</style>
