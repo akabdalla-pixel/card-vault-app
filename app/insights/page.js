@@ -78,7 +78,7 @@ function Sidebar({ user, onLogout, active, cardCount = 0 }) {
         {NAV.map(({ label, href }) => {
           const isActive = active === label
           const Icon = navIcons[label]
-          return <Link key={label} href={href} style={{ display: 'flex', alignItems: 'center', gap: 11, padding: '9px 12px', borderRadius: 10, marginBottom: 2, textDecoration: 'none', color: isActive ? '#9333ea' : '#666', background: isActive ? 'rgba(147,51,234,0.08)' : 'transparent', fontFamily: "'Outfit',sans-serif", fontSize: 14, fontWeight: isActive ? 600 : 500, borderLeft: isActive ? '2px solid #9333ea' : '2px solid transparent', transition: 'all 0.15s' }}><Icon /><span style={{flex:1}}>{label}</span>{label === 'Collection' && cardCount > 0 && <span style={{fontSize:10,fontWeight:700,background:'rgba(147,51,234,0.15)',color:'#9333ea',borderRadius:6,padding:'1px 6px',fontFamily:"'JetBrains Mono',monospace"}}>{cardCount}</span>}</Link>
+          return <Link key={label} href={href} style={{ display: 'flex', alignItems: 'center', gap: 11, padding: '9px 12px', borderRadius: 10, marginBottom: 2, textDecoration: 'none', color: isActive ? '#9333ea' : '#666', background: isActive ? 'rgba(147,51,234,0.08)' : 'transparent', fontFamily: "'Outfit',sans-serif", fontSize: 13.5, fontWeight: isActive ? 700 : 500, borderLeft: isActive ? '2px solid #9333ea' : '2px solid transparent', transition: 'all 0.15s' }}><Icon /><span style={{flex:1}}>{label}</span>{label === 'Collection' && cardCount > 0 && <span style={{fontSize:10,fontWeight:700,background:'rgba(147,51,234,0.15)',color:'#9333ea',borderRadius:6,padding:'1px 6px',fontFamily:"'JetBrains Mono',monospace"}}>{cardCount}</span>}</Link>
         })}
       </nav>
       <div style={{ padding: '14px 10px', borderTop: '1px solid #1e1e1e' }}>
@@ -189,7 +189,7 @@ function BarChart({ data, title, valuePrefix = '', valueSuffix = '', color = RED
 // ── Stat Card ────────────────────────────────────────────────
 function StatCard({ label, value, sub, icon, positive, accent, style = {} }) {
   return (
-    <div style={{ background: '#111', border: `1px solid ${accent ? 'rgba(147,51,234,0.25)' : '#1e1e1e'}`, borderRadius: 14, padding: '16px 18px', position: 'relative', overflow: 'hidden', ...style }}>
+    <div style={{ background: '#111', border: `1px solid ${accent ? 'rgba(147,51,234,0.25)' : '#1e1e1e'}`, borderRadius: 16, padding: '16px 18px', position: 'relative', overflow: 'hidden', ...style }}>
       {accent && <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 2, background: 'linear-gradient(90deg,#9333ea,#a855f7)' }} />}
       <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 10 }}>
         <div style={{ fontSize: 10, fontWeight: 700, color: '#333', letterSpacing: '0.12em', textTransform: 'uppercase', fontFamily: "'Outfit',sans-serif" }}>{label}</div>
@@ -441,7 +441,7 @@ export default function InsightsPage() {
 
           {/* Desktop header */}
           <div className="hide-mobile" style={{ marginBottom: 28 }}>
-            <h1 style={{ fontFamily: "'Outfit',sans-serif", fontSize: 24, fontWeight: 800, color: '#f0f0f0', letterSpacing: '-0.5px', margin: 0 }}>Insights</h1>
+            <h1 style={{ fontFamily: "'Outfit',sans-serif", fontSize: 30, fontWeight: 900, color: '#f5f5f5', letterSpacing: '-0.8px', margin: 0 }}>Insights</h1>
             <p style={{ fontSize: 13, color: '#555', marginTop: 4, fontWeight: 500 }}>A deep look at your collection — updates automatically with every new card</p>
           </div>
 

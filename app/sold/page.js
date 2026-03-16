@@ -73,7 +73,7 @@ function Sidebar({ user, onLogout, cardCount = 0, active = "" }) {
         {NAV.map(({ label, href }) => {
           const isActive = active === label
           const Icon = navIcons[label]
-          return <Link key={label} href={href} style={{ display: 'flex', alignItems: 'center', gap: 11, padding: '9px 12px', borderRadius: 10, marginBottom: 2, textDecoration: 'none', color: isActive ? '#9333ea' : '#666', background: isActive ? 'rgba(147,51,234,0.08)' : 'transparent', fontFamily: "'Outfit',sans-serif", fontSize: 14, fontWeight: isActive ? 600 : 500, borderLeft: isActive ? '2px solid #9333ea' : '2px solid transparent', transition: 'all 0.15s' }}><Icon /><span style={{flex:1}}>{label}</span>{label === 'Collection' && cardCount > 0 && <span style={{fontSize:10,fontWeight:700,background:'rgba(147,51,234,0.15)',color:'#9333ea',borderRadius:6,padding:'1px 6px',fontFamily:"'JetBrains Mono',monospace"}}>{cardCount}</span>}</Link>
+          return <Link key={label} href={href} style={{ display: 'flex', alignItems: 'center', gap: 11, padding: '9px 12px', borderRadius: 10, marginBottom: 2, textDecoration: 'none', color: isActive ? '#9333ea' : '#666', background: isActive ? 'rgba(147,51,234,0.08)' : 'transparent', fontFamily: "'Outfit',sans-serif", fontSize: 13.5, fontWeight: isActive ? 700 : 500, borderLeft: isActive ? '2px solid #9333ea' : '2px solid transparent', transition: 'all 0.15s' }}><Icon /><span style={{flex:1}}>{label}</span>{label === 'Collection' && cardCount > 0 && <span style={{fontSize:10,fontWeight:700,background:'rgba(147,51,234,0.15)',color:'#9333ea',borderRadius:6,padding:'1px 6px',fontFamily:"'JetBrains Mono',monospace"}}>{cardCount}</span>}</Link>
         })}
       </nav>
       <div style={{ padding: '14px 10px', borderTop: '1px solid #1e1e1e' }}>
@@ -163,7 +163,7 @@ export default function SoldHistoryPage() {
           </div>
 
           <div style={{ marginBottom: 24 }}>
-            <h1 style={{ fontFamily: "'Outfit',sans-serif", fontSize: 24, fontWeight: 800, color: '#f0f0f0', letterSpacing: '-0.5px', margin: 0 }}>Sold History</h1>
+            <h1 style={{ fontFamily: "'Outfit',sans-serif", fontSize: 30, fontWeight: 900, color: '#f5f5f5', letterSpacing: '-0.8px', margin: 0 }}>Sold History</h1>
             <p style={{ fontSize: 13, color: '#555', marginTop: 4, fontWeight: 500 }}>{cards.length} card{cards.length !== 1 ? 's' : ''} sold · complete transaction history</p>
           </div>
 
@@ -194,7 +194,7 @@ export default function SoldHistoryPage() {
               <Link href="/collection" style={{ padding: '10px 20px', borderRadius: 10, background: 'rgba(147,51,234,0.08)', border: '1px solid rgba(147,51,234,0.25)', color: '#9333ea', fontFamily: "'Outfit',sans-serif", fontSize: 14, fontWeight: 600, textDecoration: 'none' }}>Go to Collection</Link>
             </div>
           ) : (
-            <div style={{ background: 'linear-gradient(135deg,#111,#0d0d0d)', border: '1px solid #1e1e1e', borderRadius: 14, overflow: 'hidden' }}>
+            <div style={{ background: 'linear-gradient(135deg,#111,#0d0d0d)', border: '1px solid #1e1e1e', borderRadius: 16, overflow: 'hidden' }}>
               <div style={{ overflowX: 'auto' }}>
                 <table style={{ width: '100%', borderCollapse: 'collapse' }}>
                   <thead>

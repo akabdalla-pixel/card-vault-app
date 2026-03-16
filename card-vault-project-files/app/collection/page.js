@@ -849,7 +849,7 @@ function CollectionPage() {
       `}</style>
       <div style={{ display: 'flex', minHeight: '100vh', background: '#0a0a0a' }}>
         <PullIndicator pullY={pullY} />
-        <div className="sidebar-el"><Sidebar user={user} onLogout={handleLogout} cardCount={activeCards.length} active="Collection" /></div>        <main className="main-wrap" style={{ padding: '28px 28px', background: '#0a0a0a' }}>
+        <div className="sidebar-el"><Sidebar user={user} onLogout={handleLogout} cardCount={activeCards.length} active="Collection" /></div>        <main className="main-wrap" style={{ padding: '24px 32px', background: '#0a0a0a' }}>
           <div className="mob-topbar" style={{ alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
             <img src="/logo-transparent.png" alt="TopLoad" style={{ height: 30, width: 'auto', objectFit: 'contain', filter: 'drop-shadow(0 0 8px rgba(147,51,234,0.4))' }} />
             <button onClick={() => setModal('add')} className="press" style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '8px 14px', background: 'rgba(147,51,234,0.1)', border: '1px solid rgba(147,51,234,0.25)', borderRadius: 10, color: '#9333ea', fontFamily: "'Outfit',sans-serif", fontSize: 13, fontWeight: 700, cursor: 'pointer' }} className='press'>+ Add Card</button>
@@ -878,7 +878,7 @@ function CollectionPage() {
                   { label:'Unrealized G/L', value: (totalValue-totalInvested>=0?'+':'')+fmt(totalValue-totalInvested), sub:(totalValue-totalInvested>=0?'+':'')+((totalInvested>0?(totalValue-totalInvested)/totalInvested*100:0).toFixed(1))+'%', color: totalValue>=totalInvested?'#4ade80':'#f87171', accent: totalValue>=totalInvested?'#4ade80':'#f87171' },
                   { label:'Realized P&L', value: (realizedPL>=0?'+':'')+fmt(realizedPL), sub:'all time', color: realizedPL>=0?'#4ade80':'#f87171', accent: realizedPL>=0?'#4ade80':'#f87171' },
                 ].map((s,i) => (
-                  <div key={i} style={{ background:'#181818', border:'1px solid #222', borderRadius:12, padding:'14px 16px', position:'relative', overflow:'hidden' }}>
+                  <div key={i} style={{ background:'#181818', border:'1px solid #222', borderRadius:16, padding:'16px 18px', position:'relative', overflow:'hidden' }}>
                     <div style={{ position:'absolute', top:0, left:0, right:0, height:2, background:`linear-gradient(90deg,${s.accent},transparent)` }} />
                     <div style={{ fontSize:9, fontWeight:700, color:'#555', textTransform:'uppercase', letterSpacing:'0.1em', marginBottom:8, fontFamily:"'Outfit',sans-serif" }}>{s.label}</div>
                     <div style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:18, fontWeight:800, color:s.color, letterSpacing:'-0.5px' }}>{s.value}</div>
@@ -933,7 +933,7 @@ function CollectionPage() {
             return (
               <div style={{ display:'flex', gap:6, marginBottom:14, overflowX:'auto', paddingBottom:2, WebkitOverflowScrolling:'touch' }}>
                 {tabs.map(t => (
-                  <button key={t.val} onClick={() => setSportTab(t.val)} style={{ display:'flex', alignItems:'center', gap:6, padding:'7px 14px', borderRadius:20, border: sportTab === t.val ? '1px solid #9333ea' : '1px solid #2a2a2a', background: sportTab === t.val ? 'rgba(147,51,234,0.08)' : '#181818', color: sportTab === t.val ? '#9333ea' : '#555', fontFamily:"'Outfit',sans-serif", fontSize:13, fontWeight: sportTab === t.val ? 700 : 500, cursor:'pointer', whiteSpace:'nowrap', flexShrink:0, transition:'all 0.15s' }}>
+                  <button key={t.val} onClick={() => setSportTab(t.val)} style={{ display:'flex', alignItems:'center', gap:6, padding:'8px 16px', borderRadius:100, border: sportTab === t.val ? '1px solid #9333ea' : '1px solid #2a2a2a', background: sportTab === t.val ? 'rgba(147,51,234,0.08)' : '#181818', color: sportTab === t.val ? '#9333ea' : '#555', fontFamily:"'Outfit',sans-serif", fontSize:13, fontWeight: sportTab === t.val ? 800 : 500, cursor:'pointer', whiteSpace:'nowrap', flexShrink:0, transition:'all 0.15s' }}>
                     <span>{t.emoji}</span>{t.label}
                     {sportTab === t.val && t.val !== 'all' && (
                       <span style={{ fontSize:10, background:'rgba(147,51,234,0.2)', borderRadius:10, padding:'1px 6px', fontFamily:"'JetBrains Mono',monospace" }}>
@@ -947,7 +947,7 @@ function CollectionPage() {
           })()}
 
           <div className="desk-filters" style={{ gap: 8, marginBottom: 8, flexWrap: 'wrap', alignItems: 'center' }}>
-            <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search player, brand, set..." style={{ flex: 1, minWidth: 220, padding: '8px 14px', borderRadius: 9, background: '#181818', border: '1px solid #2a2a2a', color: '#f0f0f0', fontSize: 13, outline: 'none', fontFamily: "'Outfit',sans-serif" }} />
+            <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search player, brand, set..." style={{ flex: 1, minWidth: 220, padding: '9px 16px', borderRadius: 100, background: '#181818', border: '1px solid #2a2a2a', color: '#f0f0f0', fontSize: 13, outline: 'none', fontFamily: "'Outfit',sans-serif" }} />
             <select value={filterSport} onChange={e => setFilterSport(e.target.value)} style={{ padding: '8px 12px', borderRadius: 9, background: '#111', border: '1px solid #222', color: filterSport ? '#f0f0f0' : '#555', fontSize: 13, outline: 'none', fontFamily: "'Outfit',sans-serif" }}>
               <option value="">All Sports</option>
               {SPORTS.map(s => <option key={s} value={s}>{s}</option>)}
@@ -960,7 +960,7 @@ function CollectionPage() {
           </div>
           <div className="desk-filters" style={{ gap: 8, marginBottom: 14, flexWrap: 'wrap', alignItems: 'center' }}>
             {/* Graded filter */}
-            <div style={{ display: 'flex', borderRadius: 10, overflow: 'hidden', border: '1px solid #2a2a2a' }}>
+            <div style={{ display: 'flex', borderRadius: 100, overflow: 'hidden', border: '1px solid #2a2a2a' }}>
               {[['','All Cards'],['graded','Graded'],['raw','Raw']].map(([val, label]) => (
                 <button key={val} onClick={() => setFilterGraded(val)} style={{ padding: '8px 12px', background: filterGraded===val ? 'rgba(147,51,234,0.08)' : '#181818', border: 'none', color: filterGraded===val ? '#9333ea' : '#555', fontFamily: "'Outfit',sans-serif", fontSize: 12, fontWeight: filterGraded===val ? 700 : 500, cursor: 'pointer', whiteSpace: 'nowrap' }}>{label}</button>
               ))}
@@ -1003,7 +1003,7 @@ function CollectionPage() {
               </button>
             )}
             {/* View toggle */}
-            <div style={{ marginLeft: 'auto', display: 'flex', borderRadius: 10, overflow: 'hidden', border: '1px solid #2a2a2a' }}>
+            <div style={{ marginLeft: 'auto', display: 'flex', borderRadius: 100, overflow: 'hidden', border: '1px solid #2a2a2a' }}>
               <button onClick={() => setViewMode('table')} title="Table view" style={{ padding: '8px 12px', background: viewMode === 'table' ? 'rgba(147,51,234,0.15)' : '#111', border: 'none', color: viewMode === 'table' ? '#9333ea' : '#555', cursor: 'pointer', display: 'flex', alignItems: 'center' }}><IconList /></button>
               <button onClick={() => setViewMode('grid')} title="Grid view" style={{ padding: '8px 12px', background: viewMode === 'grid' ? 'rgba(147,51,234,0.15)' : '#111', border: 'none', color: viewMode === 'grid' ? '#9333ea' : '#555', cursor: 'pointer', display: 'flex', alignItems: 'center' }}><IconGrid /></button>
             </div>
@@ -1012,7 +1012,7 @@ function CollectionPage() {
             {/* 1. Search */}
             <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search..." style={{ flex: 1, minWidth: 110, maxWidth: 150, padding: '8px 12px', borderRadius: 10, background: '#181818', border: '1px solid #2a2a2a', color: '#f0f0f0', fontSize: 13, outline: 'none', fontFamily: "'Outfit',sans-serif" }} />
             {/* 2. All / Graded / Raw */}
-            <div style={{ display: 'flex', borderRadius: 10, overflow: 'hidden', border: '1px solid #2a2a2a', flexShrink: 0 }}>
+            <div style={{ display: 'flex', borderRadius: 100, overflow: 'hidden', border: '1px solid #2a2a2a', flexShrink: 0 }}>
               {[['','All'],['graded','Graded'],['raw','Raw']].map(([val, label]) => (
                 <button key={val} onClick={() => setFilterGraded(val)} style={{ padding: '8px 10px', background: filterGraded===val ? 'rgba(147,51,234,0.08)' : '#181818', border: 'none', color: filterGraded===val ? '#9333ea' : '#555', fontFamily: "'Outfit',sans-serif", fontSize: 12, fontWeight: filterGraded===val ? 700 : 500, cursor: 'pointer', whiteSpace: 'nowrap' }}>{label}</button>
               ))}
@@ -1036,12 +1036,12 @@ function CollectionPage() {
               <input type="number" placeholder="Max" value={priceMax} onChange={e => setPriceMax(e.target.value)} style={{ width:44, padding:'8px 0', background:'transparent', border:'none', color:'#f0f0f0', fontSize:12, outline:'none', fontFamily:"'JetBrains Mono',monospace" }} />
             </div>
             {/* 6. Grid / List */}
-            <div style={{ display: 'flex', borderRadius: 10, overflow: 'hidden', border: '1px solid #2a2a2a', flexShrink: 0 }}>
+            <div style={{ display: 'flex', borderRadius: 100, overflow: 'hidden', border: '1px solid #2a2a2a', flexShrink: 0 }}>
               <button onClick={() => setViewMode('table')} style={{ padding: '8px 10px', background: viewMode==='table' ? 'rgba(147,51,234,0.08)' : '#181818', border: 'none', color: viewMode==='table' ? '#9333ea' : '#555', cursor: 'pointer', display: 'flex', alignItems: 'center' }}><IconList /></button>
               <button onClick={() => setViewMode('grid')} style={{ padding: '8px 10px', background: viewMode==='grid' ? 'rgba(147,51,234,0.08)' : '#181818', border: 'none', color: viewMode==='grid' ? '#9333ea' : '#555', cursor: 'pointer', display: 'flex', alignItems: 'center' }}><IconGrid /></button>
             </div>
             {/* 7. Active / Sold / All */}
-            <div style={{ display: 'flex', borderRadius: 10, overflow: 'hidden', border: '1px solid #2a2a2a', flexShrink: 0 }}>
+            <div style={{ display: 'flex', borderRadius: 100, overflow: 'hidden', border: '1px solid #2a2a2a', flexShrink: 0 }}>
               {[['active','Active'],['sold','Sold'],['all','All']].map(([val, label]) => (
                 <button key={val} onClick={() => setFilterStatus(val)} style={{ padding: '8px 10px', background: filterStatus===val ? 'rgba(147,51,234,0.08)' : '#181818', border: 'none', color: filterStatus===val ? '#9333ea' : '#555', fontFamily: "'Outfit',sans-serif", fontSize: 12, fontWeight: filterStatus===val ? 700 : 500, cursor: 'pointer', whiteSpace: 'nowrap' }}>{label}</button>
               ))}
@@ -1117,7 +1117,7 @@ function CollectionPage() {
                         {/* Status badge */}
                         <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
                           {card.grade
-                            ? <span style={{ padding: '2px 8px', borderRadius: 6, background: 'rgba(147,51,234,0.08)', color: '#a855f7', fontSize: 9, fontWeight: 800, letterSpacing:'0.05em', border:'1px solid rgba(147,51,234,0.15)' }}>{card.grade ? card.grade : ''}</span>
+                            ? <span style={{ padding: '2px 8px', borderRadius: 6, background: 'rgba(147,51,234,0.12)', color: '#c084fc', fontSize: 9, fontWeight: 900, letterSpacing:'0.1em', border:'1px solid rgba(147,51,234,0.25)', borderRadius:100, padding:'3px 10px' }}>{card.grade ? card.grade : ''}</span>
                             : <span style={{ padding: '2px 8px', borderRadius: 6, background: 'rgba(255,255,255,0.05)', color: '#555', fontSize: 11, fontWeight: 600 }}>{card.cond || 'Raw'}</span>
                           }
                           {card.sold && <span style={{ padding: '2px 8px', borderRadius: 6, background: 'rgba(255,190,46,0.1)', color: '#ffbe2e', fontSize: 11, fontWeight: 700 }}>SOLD</span>}
@@ -1182,14 +1182,14 @@ function CollectionPage() {
                             </td>
                             <td style={{ padding: '12px 14px', textAlign: 'right', fontFamily: "'Outfit',sans-serif", fontSize: 12, color: '#666' }}>{card.sport||'—'}</td>
                             <td style={{ padding: '12px 14px', textAlign: 'right', fontFamily: "'JetBrains Mono',monospace", fontSize: 12, color: '#666' }}>{card.year||'—'}</td>
-                            <td style={{ padding: '12px 14px', textAlign: 'right' }}>{card.grade ? <span style={{ padding: '2px 8px', borderRadius: 6, background: 'rgba(147,51,234,0.08)', color: '#a855f7', fontSize: 9, fontWeight: 800, letterSpacing:'0.05em', border:'1px solid rgba(147,51,234,0.15)' }}>{card.grade ? card.grade : ''}</span> : <span style={{ color: '#444', fontSize: 12 }}>{card.cond||'—'}</span>}</td>
+                            <td style={{ padding: '12px 14px', textAlign: 'right' }}>{card.grade ? <span style={{ padding: '2px 8px', borderRadius: 6, background: 'rgba(147,51,234,0.12)', color: '#c084fc', fontSize: 9, fontWeight: 900, letterSpacing:'0.1em', border:'1px solid rgba(147,51,234,0.25)', borderRadius:100, padding:'3px 10px' }}>{card.grade ? card.grade : ''}</span> : <span style={{ color: '#444', fontSize: 12 }}>{card.cond||'—'}</span>}</td>
                             <td style={{ padding: '12px 14px', textAlign: 'right', fontFamily: "'JetBrains Mono',monospace", fontSize: 12, color: '#666' }}>{qty}</td>
                             <td style={{ padding: '12px 14px', textAlign: 'right', fontFamily: "'JetBrains Mono',monospace", fontSize: 13, color: '#666' }}>{fmt(buy)}</td>
                             <td style={{ padding: '12px 14px', textAlign: 'right', fontFamily: "'JetBrains Mono',monospace", fontSize: 13, fontWeight: 700, color: '#f0f2ff' }}>{fmt(displayVal)}</td>
                             <td style={{ padding: '12px 14px', textAlign: 'right' }}>
                               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 3, fontFamily: "'JetBrains Mono',monospace", fontSize: 12, fontWeight: 600, color: glPos ? '#4ade80' : '#9333ea' }}>{glPos ? <IconUp /> : <IconDown />}{glPos?'+':''}{fmt(gl)}</div>
                             </td>
-                            <td style={{ padding: '12px 14px', textAlign: 'right' }}>{card.sold ? <span style={{ padding: '3px 8px', borderRadius: 6, background: 'rgba(255,190,46,0.1)', color: '#ffbe2e', fontSize: 11, fontWeight: 700 }}>SOLD</span> : <span style={{ padding: '3px 8px', borderRadius: 6, background: 'rgba(147,51,234,0.08)', color: '#a855f7', fontSize: 9, fontWeight: 800, letterSpacing:'0.05em', border:'1px solid rgba(147,51,234,0.15)' }}>ACTIVE</span>}</td>
+                            <td style={{ padding: '12px 14px', textAlign: 'right' }}>{card.sold ? <span style={{ padding: '3px 8px', borderRadius: 6, background: 'rgba(255,190,46,0.1)', color: '#ffbe2e', fontSize: 11, fontWeight: 700 }}>SOLD</span> : <span style={{ padding: '3px 8px', borderRadius: 6, background: 'rgba(147,51,234,0.12)', color: '#c084fc', fontSize: 9, fontWeight: 900, letterSpacing:'0.1em', border:'1px solid rgba(147,51,234,0.25)', borderRadius:100, padding:'3px 10px' }}>ACTIVE</span>}</td>
                             <td style={{ padding: '12px 14px', textAlign: 'right' }}>
                               <div style={{ display: 'flex', gap: 5, justifyContent: 'flex-end' }}>
                                 <button onClick={() => setPriceLookupCard(card)} title="Check prices" style={{ padding: '5px 8px', borderRadius: 7, background: 'rgba(124,92,252,0.08)', border: 'none', color: '#a78bfa', cursor: 'pointer' }}><IconSearch /></button>
@@ -1250,7 +1250,7 @@ function CollectionPage() {
                         <div style={{ marginLeft: 10, flexShrink: 0 }}>
                           {card.sold
                             ? <span style={{ padding: '3px 10px', borderRadius: 6, background: 'rgba(255,190,46,0.1)', color: '#ffbe2e', fontSize: 11, fontWeight: 700 }}>SOLD</span>
-                            : <span style={{ padding: '3px 10px', borderRadius: 6, background: 'rgba(147,51,234,0.08)', color: '#a855f7', fontSize: 9, fontWeight: 800, letterSpacing:'0.05em', border:'1px solid rgba(147,51,234,0.15)' }}>ACTIVE</span>
+                            : <span style={{ padding: '3px 10px', borderRadius: 6, background: 'rgba(147,51,234,0.12)', color: '#c084fc', fontSize: 9, fontWeight: 900, letterSpacing:'0.1em', border:'1px solid rgba(147,51,234,0.25)', borderRadius:100, padding:'3px 10px' }}>ACTIVE</span>
                           }
                         </div>
                       </div>

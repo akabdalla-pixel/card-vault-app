@@ -125,7 +125,7 @@ function Sidebar({ user, onLogout, active, cardCount = 0 }) {
         {_NAV.map(({ label, href }) => {
           const isActive = active === label
           const Icon = navIcons[label]
-          return <Link key={label} href={href} style={{ display: 'flex', alignItems: 'center', gap: 11, padding: '9px 12px', borderRadius: 10, marginBottom: 2, textDecoration: 'none', color: isActive ? '#9333ea' : '#666', background: isActive ? 'rgba(147,51,234,0.08)' : 'transparent', fontFamily: "'Outfit',sans-serif", fontSize: 14, fontWeight: isActive ? 600 : 500, borderLeft: isActive ? '2px solid #9333ea' : '2px solid transparent', transition: 'all 0.15s' }}><Icon /><span style={{flex:1}}>{label}</span>{label === 'Collection' && cardCount > 0 && <span style={{fontSize:10,fontWeight:700,background:'rgba(147,51,234,0.15)',color:'#9333ea',borderRadius:6,padding:'1px 6px',fontFamily:"'JetBrains Mono',monospace"}}>{cardCount}</span>}</Link>
+          return <Link key={label} href={href} style={{ display: 'flex', alignItems: 'center', gap: 11, padding: '9px 12px', borderRadius: 10, marginBottom: 2, textDecoration: 'none', color: isActive ? '#9333ea' : '#666', background: isActive ? 'rgba(147,51,234,0.08)' : 'transparent', fontFamily: "'Outfit',sans-serif", fontSize: 13.5, fontWeight: isActive ? 700 : 500, borderLeft: isActive ? '2px solid #9333ea' : '2px solid transparent', transition: 'all 0.15s' }}><Icon /><span style={{flex:1}}>{label}</span>{label === 'Collection' && cardCount > 0 && <span style={{fontSize:10,fontWeight:700,background:'rgba(147,51,234,0.15)',color:'#9333ea',borderRadius:6,padding:'1px 6px',fontFamily:"'JetBrains Mono',monospace"}}>{cardCount}</span>}</Link>
         })}
       </nav>
       <div style={{ padding: '14px 10px', borderTop: '1px solid #1e1e1e' }}>
@@ -176,7 +176,7 @@ function SparklineChart({ cards }) {
   const isUp = totalVal >= totalCost
   const lineColor = isUp ? '#4ade80' : '#9333ea'
   return (
-    <div style={{ background: '#181818', border: '1px solid #222', borderRadius: 14, padding: '18px 20px', marginBottom: 22 }}>
+    <div style={{ background: '#181818', border: '1px solid #222', borderRadius: 16, padding: '18px 20px', marginBottom: 22 }}>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 }}>
         <div>
           <div style={{ fontFamily: "'Outfit',sans-serif", fontSize: 13, fontWeight: 700, color: '#999' }}>Portfolio Value</div>
@@ -264,11 +264,11 @@ function TopMovers({ cards }) {
   )
   return (
     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 22 }}>
-      <div style={{ background: '#181818', border: '1px solid #222', borderRadius: 14, padding: '16px 18px' }}>
+      <div style={{ background: '#181818', border: '1px solid #222', borderRadius: 16, padding: '16px 18px' }}>
         <div style={{ fontFamily: "'Outfit',sans-serif", fontSize: 12, fontWeight: 700, color: '#9333ea', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 10 }}>🚀 Top Gainers</div>
         {gainers.length ? gainers.map(c=><MoverRow key={c.id} card={c} isGainer={true}/>) : <div style={{ color:'#333',fontSize:12 }}>No gainers yet</div>}
       </div>
-      <div style={{ background: '#181818', border: '1px solid #222', borderRadius: 14, padding: '16px 18px' }}>
+      <div style={{ background: '#181818', border: '1px solid #222', borderRadius: 16, padding: '16px 18px' }}>
         <div style={{ fontFamily: "'Outfit',sans-serif", fontSize: 12, fontWeight: 700, color: '#616161', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 10 }}>📉 Top Losers</div>
         {losers.length ? losers.map(c=><MoverRow key={c.id} card={c} isGainer={false}/>) : <div style={{ color:'#333',fontSize:12 }}>No losers yet</div>}
       </div>

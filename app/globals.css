@@ -65,3 +65,31 @@ button:not(:disabled):active {
   opacity: 0.85 !important;
   transition: transform 0.1s ease, opacity 0.1s ease !important;
 }
+
+/* ── Fun UI overrides ────────────────────────────────────────── */
+
+/* Bigger, rounder inputs */
+input[type="text"], input[type="email"], input[type="password"], input[type="number"], select, textarea {
+  font-size: 14px;
+}
+
+/* Pill-shaped focused inputs */
+input:focus, select:focus, textarea:focus {
+  outline: none;
+  border-color: #9333ea !important;
+  box-shadow: 0 0 0 3px rgba(147,51,234,0.12);
+}
+
+/* Stat card hover lift */
+.stat-hover:hover {
+  transform: translateY(-2px);
+  transition: transform 0.15s ease;
+}
+
+/* Scrollbar thin purple */
+::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar-thumb { background: rgba(147,51,234,0.3); border-radius: 100px; }
+::-webkit-scrollbar-track { background: transparent; }
+
+/* Table row hover */
+.trow-hover:hover { background: rgba(255,255,255,0.02); }
