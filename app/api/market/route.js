@@ -52,90 +52,83 @@ export async function POST(req) {
 
   if (source === 'ebay') {
     try {
-      const token = await getEbayToken()
-
-      // Try Browse API - search sold items via filter
-      const browseUrl = `https://api.ebay.com/buy/browse/v1/item_summary/search?` + new URLSearchParams({
-        q: query,
-        limit: '20',
-        filter: 'conditions:{USED|NEW|LIKE_NEW|VERY_GOOD|GOOD|ACCEPTABLE|FOR_PARTS_OR_NOT_WORKING}',
-      })
-
-      const browseRes = await fetch(browseUrl, {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'X-EBAY-C-MARKETPLACE-ID': 'EBAY_US',
-        }
-      })
-      const browseStatus = browseRes.status
-      const browseData = await browseRes.json()
-
-      // Also try Finding API findItemsByKeywords
-      const findUrl = `https://svcs.ebay.com/services/search/FindingService/v1?` + new URLSearchParams({
-        'OPERATION-NAME': 'findItemsByKeywords',
+      // Use Finding API findCompletedItems with proper headers
+      const findUrl = `https://svcs.ebay.com/services/search/FindingService/v1`
+      const params = new URLSearchParams({
+        'OPERATION-NAME': 'findCompletedItems',
         'SERVICE-VERSION': '1.0.0',
         'SECURITY-APPNAME': EBAY_APP_ID,
         'RESPONSE-DATA-FORMAT': 'JSON',
         'keywords': query,
-        'paginationInput.entriesPerPage': '5',
+        'itemFilter(0).name': 'SoldItemsOnly',
+        'itemFilter(0).value': 'true',
+        'itemFilter(1).name': 'ListingType',
+        'itemFilter(1).value': 'AuctionWithBIN',
+        'itemFilter(2).name': 'ListingType',
+        'itemFilter(2).value(0)': 'Auction',
+        'itemFilter(2).value(1)': 'FixedPrice',
+        'sortOrder': 'EndTimeSoonest',
+        'paginationInput.entriesPerPage': '20',
       })
-      const findRes = await fetch(findUrl)
-      const findStatus = findRes.status
-      const findText = await findRes.text()
+
+      const findRes = await fetch(`${findUrl}?${params}`, {
+        headers: {
+          'User-Agent': 'Mozilla/5.0 (compatible; TopLoad/1.0)',
+        }
+      })
+
+      const rawText = await findRes.text()
       let findData
-      try { findData = JSON.parse(findText) } catch(e) { findData = { parseError: findText.slice(0, 200) } }
-
-      const findItems = findData?.findItemsByKeywordsResponse?.[0]?.searchResult?.[0]?.item || []
-      const browseItems = browseData?.itemSummaries || []
-
-      // If browse works, use it
-      if (browseItems.length > 0) {
-        const results = browseItems.map(item => ({
-          price: parseFloat(item.price?.value || 0),
-          title: item.title || query,
-          date: null,
-          link: item.itemWebUrl || `https://www.ebay.com/sch/i.html?_nkw=${encodeURIComponent(query)}&LH_Sold=1`,
-          image: item.image?.imageUrl || null,
-          condition: item.condition || null,
-        })).filter(r => r.price > 0)
-
-        if (results.length) {
-          const avg = results.reduce((s,r)=>s+r.price,0)/results.length
-          return NextResponse.json({ results, avg, high:Math.max(...results.map(r=>r.price)), low:Math.min(...results.map(r=>r.price)), source:'ebay' })
-        }
+      try { findData = JSON.parse(rawText) } catch(e) {
+        // Try XML parse hint
+        return NextResponse.json({ error: 'Parse error', raw: rawText.slice(0, 300) }, { status: 500 })
       }
 
-      // If find works, use it
-      if (findItems.length > 0) {
-        const results = findItems.map(item => ({
-          price: parseFloat(item.sellingStatus?.[0]?.currentPrice?.[0]?.['__value__'] || 0),
-          title: item.title?.[0] || query,
-          date: null,
-          link: item.viewItemURL?.[0] || `https://www.ebay.com/sch/i.html?_nkw=${encodeURIComponent(query)}&LH_Sold=1`,
-          image: item.galleryURL?.[0] || null,
-        })).filter(r => r.price > 0)
+      const ack = findData?.findCompletedItemsResponse?.[0]?.ack?.[0]
+      const items = findData?.findCompletedItemsResponse?.[0]?.searchResult?.[0]?.item || []
+      const errorMsg = findData?.findCompletedItemsResponse?.[0]?.errorMessage?.[0]?.error?.[0]?.message?.[0]
 
-        if (results.length) {
-          const avg = results.reduce((s,r)=>s+r.price,0)/results.length
-          return NextResponse.json({ results, avg, high:Math.max(...results.map(r=>r.price)), low:Math.min(...results.map(r=>r.price)), source:'ebay' })
-        }
+      if (!items.length) {
+        // Fallback: try findItemsAdvanced without SoldItemsOnly
+        const params2 = new URLSearchParams({
+          'OPERATION-NAME': 'findItemsAdvanced',
+          'SERVICE-VERSION': '1.0.0',
+          'SECURITY-APPNAME': EBAY_APP_ID,
+          'RESPONSE-DATA-FORMAT': 'JSON',
+          'keywords': query,
+          'categoryId': '261328',
+          'sortOrder': 'EndTimeSoonest',
+          'paginationInput.entriesPerPage': '20',
+        })
+        const res2 = await fetch(`${findUrl}?${params2}`)
+        const data2 = await res2.json()
+        const items2 = data2?.findItemsAdvancedResponse?.[0]?.searchResult?.[0]?.item || []
+
+        return NextResponse.json({
+          results: [], avg: 0, high: 0, low: 0, source: 'ebay',
+          debug: {
+            ack, errorMsg,
+            completedCount: items.length,
+            advancedCount: items2.length,
+            advancedAck: data2?.findItemsAdvancedResponse?.[0]?.ack?.[0],
+            advancedError: data2?.findItemsAdvancedResponse?.[0]?.errorMessage?.[0]?.error?.[0]?.message?.[0],
+            advancedFirst: items2?.[0]?.title?.[0],
+            httpStatus: findRes.status,
+          }
+        })
       }
 
-      return NextResponse.json({
-        results: [], avg: 0, high: 0, low: 0, source: 'ebay',
-        debug: {
-          browseStatus,
-          browseItemCount: browseItems.length,
-          browseError: browseData.errors || browseData.message,
-          browseTotal: browseData.total,
-          findStatus,
-          findItemCount: findItems.length,
-          findAck: findData?.findItemsByKeywordsResponse?.[0]?.ack?.[0],
-          findError: findData?.findItemsByKeywordsResponse?.[0]?.errorMessage?.[0]?.error?.[0]?.message?.[0],
-          appIdLoaded: !!EBAY_APP_ID,
-          tokenLoaded: !!token,
-        }
-      })
+      const results = items.map(item => ({
+        price: parseFloat(item.sellingStatus?.[0]?.currentPrice?.[0]?.['__value__'] || 0),
+        title: item.title?.[0] || query,
+        date: item.listingInfo?.[0]?.endTime?.[0]?.split('T')[0] || null,
+        link: item.viewItemURL?.[0] || `https://www.ebay.com/sch/i.html?_nkw=${encodeURIComponent(query)}&LH_Sold=1`,
+        image: item.galleryURL?.[0] || null,
+      })).filter(r => r.price > 0)
+
+      if (!results.length) return NextResponse.json({ results:[], avg:0, high:0, low:0, source:'ebay' })
+      const avg = results.reduce((s,r)=>s+r.price,0)/results.length
+      return NextResponse.json({ results, avg, high:Math.max(...results.map(r=>r.price)), low:Math.min(...results.map(r=>r.price)), source:'ebay' })
 
     } catch (e) {
       return NextResponse.json({ error: e.message }, { status: 500 })
