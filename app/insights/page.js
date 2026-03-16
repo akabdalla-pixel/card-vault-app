@@ -164,7 +164,7 @@ function BarChart({ data, title, valuePrefix = '', valueSuffix = '', color = RED
   const max = Math.max(...data.map(d => d.value), 1)
   const [hovered, setHovered] = useState(null)
   return (
-    <div style={{ background: '#13131f', border: '1px solid rgba(147,51,234,0.15)', boxShadow: '0 4px 20px rgba(0,0,0,0.4)', borderRadius: 16, padding: '20px 22px' }}>
+    <div style={{ background: '#111', border: '1px solid #1e1e1e', borderRadius: 14, padding: '16px' }}>
       <div style={{ fontFamily: "'Outfit',sans-serif", fontSize: 13, fontWeight: 700, color: '#ccc', marginBottom: 18 }}>{title}</div>
       <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
         {data.map((d, i) => (
@@ -205,7 +205,7 @@ function TopCardsRank({ cards }) {
   const top = [...cards].filter(c => !c.sold).sort((a, b) => (parseFloat(b.val) || 0) - (parseFloat(a.val) || 0)).slice(0, 5)
   const max = parseFloat(top[0]?.val) || 1
   return (
-    <div style={{ background: '#13131f', border: '1px solid rgba(147,51,234,0.15)', boxShadow: '0 4px 20px rgba(0,0,0,0.4)', borderRadius: 16, padding: '20px 22px' }}>
+    <div style={{ background: '#111', border: '1px solid #1e1e1e', borderRadius: 14, padding: '16px' }}>
       <div style={{ fontFamily: "'Outfit',sans-serif", fontSize: 13, fontWeight: 700, color: '#ccc', marginBottom: 18, display: 'flex', alignItems: 'center', gap: 8 }}><IconTrophy /><span>Top 5 Most Valuable</span></div>
       <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
         {top.map((card, i) => { // stagger
@@ -282,15 +282,15 @@ function PersonalRecords({ cards, soldCards }) {
   ]
 
   return (
-    <div style={{ background: '#13131f', border: '1px solid rgba(147,51,234,0.15)', boxShadow: '0 4px 20px rgba(0,0,0,0.4)', borderRadius: 16, padding: '20px 22px' }}>
-      <div style={{ fontFamily: "'Outfit',sans-serif", fontSize: 13, fontWeight: 700, color: '#ccc', marginBottom: 16, display: 'flex', alignItems: 'center', gap: 8 }}><IconStar /><span>Personal Records</span></div>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2,1fr)', gap: 10 }}>
+    <div style={{ background: '#111', border: '1px solid #1e1e1e', borderRadius: 14, padding: '16px' }}>
+      <div style={{ fontSize: 9, fontWeight: 800, color: '#a855f7', textTransform: 'uppercase', letterSpacing: '0.12em', marginBottom: 12, display: 'flex', alignItems: 'center', gap: 6 }}><IconStar /><span>Personal Records</span></div>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2,1fr)', gap: 10, justifyItems: 'stretch' }}>
         {records.map((r, i) => {
           const href = r.card?.player ? `/collection?search=${encodeURIComponent(r.card.player)}` : null
           const inner = (
-            <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 12px', background: '#1a1a1a', borderRadius: 10, animation:`fadeUp 0.45s ease ${i*0.08}s both`, cursor: href ? 'pointer' : 'default', transition:'background 0.15s' }}
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 12px', background: '#181818', border: '1px solid #1e1e1e', borderRadius: 10, animation:`fadeUp 0.45s ease ${i*0.08}s both`, cursor: href ? 'pointer' : 'default', transition:'background 0.15s', width:'100%' }}
               onMouseEnter={e => { if(href) e.currentTarget.style.background='#222' }}
-              onMouseLeave={e => { if(href) e.currentTarget.style.background='#1a1a1a' }}>
+              onMouseLeave={e => { if(href) e.currentTarget.style.background='#181818' }}>
               <div style={{ fontSize: 20, flexShrink: 0 }}>{r.icon}</div>
               <div style={{ minWidth: 0, flex: 1 }}>
                 <div style={{ fontFamily: "'Outfit',sans-serif", fontSize: 10, color: '#444', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 2 }}>{r.label}</div>
@@ -452,24 +452,6 @@ export default function InsightsPage() {
           ) : (
             <>
               {/* ── Mobile Hero ── */}
-              <div className="mob-stat-scroll-wrap">
-                <div style={{ background: 'linear-gradient(135deg,#1a0505,#0d0d0d)', border: '1px solid rgba(147,51,234,0.15)', borderRadius: 16, padding: '18px 16px', marginBottom: 14 }}>
-                  <div style={{ fontSize: 11, color: '#555', fontFamily: "'Outfit',sans-serif", fontWeight: 600, marginBottom: 4 }}>Portfolio Value</div>
-                  <div style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: 32, fontWeight: 800, color: '#f0f0f0', letterSpacing: '-1px', lineHeight: 1 }}>{fmt(currentValue)}</div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 6 }}>
-                    <div style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: 14, fontWeight: 700, color: unrealizedPL >= 0 ? '#4ade80' : '#9333ea' }}>
-                      {unrealizedPL >= 0 ? '▲' : '▼'} {unrealizedPL >= 0 ? '+' : ''}{fmt(unrealizedPL)}
-                    </div>
-                    <div style={{ fontSize: 12, color: '#555' }}>({totalROI >= 0 ? '+' : ''}{totalROI.toFixed(1)}%)</div>
-                  </div>
-                  <div style={{ display: 'flex', gap: 20, marginTop: 14, paddingTop: 12, borderTop: '1px solid rgba(255,255,255,0.05)' }}>
-                    <div><div style={{ fontSize: 9, color: '#444', fontFamily: "'Outfit',sans-serif", fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 3 }}>Invested</div><div style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: 13, color: '#888' }}>{fmt(totalInvested)}</div></div>
-                    <div><div style={{ fontSize: 9, color: '#444', fontFamily: "'Outfit',sans-serif", fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 3 }}>Cards</div><div style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: 13, color: '#888' }}>{activeCards.length}</div></div>
-                    <div><div style={{ fontSize: 9, color: '#444', fontFamily: "'Outfit',sans-serif", fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 3 }}>Graded</div><div style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: 13, color: '#888' }}>{gradedCards.length}</div></div>
-                    <div><div style={{ fontSize: 9, color: '#444', fontFamily: "'Outfit',sans-serif", fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 3 }}>P&L</div><div style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: 13, color: realizedPL >= 0 ? '#4ade80' : '#9333ea' }}>{realizedPL >= 0 ? '+' : ''}{fmt(realizedPL)}</div></div>
-                  </div>
-                </div>
-              </div>
 
               {/* ── Personal Records — TOP ── */}
               <div style={{ marginBottom: 14 }}>
