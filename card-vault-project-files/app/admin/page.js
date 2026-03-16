@@ -1,0 +1,205 @@
+'use client'
+import { useState, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
+import Link from 'next/link'
+
+const fmt = n => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(n || 0)
+const fmtDate = d => new Date(d).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+const fmtTime = d => {
+  const diff = Date.now() - new Date(d)
+  const days = Math.floor(diff / 86400000)
+  if (days === 0) return 'Today'
+  if (days === 1) return 'Yesterday'
+  return `${days}d ago`
+}
+
+function SportEmoji({ sport }) {
+  const map = { Basketball:'🏀', Football:'🏈', Baseball:'⚾', Soccer:'⚽', F1:'🏎️', Hockey:'🏒', Golf:'⛳', Tennis:'🎾', 'Pokémon':'🎴' }
+  return map[sport] || '🃏'
+}
+
+export default function AdminPage() {
+  const [data, setData] = useState(null)
+  const [loading, setLoading] = useState(true)
+  const [expanded, setExpanded] = useState(null)
+  const [search, setSearch] = useState('')
+  const router = useRouter()
+
+  useEffect(() => {
+    fetch('/api/admin/users')
+      .then(r => {
+        if (r.status === 403 || r.status === 401) { router.push('/dashboard'); return null }
+        return r.json()
+      })
+      .then(d => { if (d) { setData(d); setLoading(false) } })
+      .catch(() => router.push('/dashboard'))
+  }, [router])
+
+  if (loading) return (
+    <div style={{ minHeight:'100vh', background:'#0a0a0a', display:'flex', alignItems:'center', justifyContent:'center' }}>
+      <div style={{ fontSize:13, color:'#555' }}>Loading...</div>
+    </div>
+  )
+
+  const { users, stats } = data
+  const filteredUsers = users.filter(u =>
+    u.username.toLowerCase().includes(search.toLowerCase()) ||
+    u.email.toLowerCase().includes(search.toLowerCase())
+  )
+
+  return (
+    <>
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800;900&display=swap');
+        *{ font-family:'Space Grotesk',-apple-system,sans-serif!important }
+        *[style*="JetBrains"],*[style*="monospace"]{ font-family:'JetBrains Mono',monospace!important }
+        ::-webkit-scrollbar{ width:4px } ::-webkit-scrollbar-thumb{ background:#333; border-radius:4px }
+        .user-row:hover{ background:rgba(255,255,255,0.02) }
+        .card-row:hover{ background:rgba(255,255,255,0.015) }
+      `}</style>
+
+      <div style={{ minHeight:'100vh', background:'#0a0a0a', padding:'32px' }}>
+        <div style={{ maxWidth:1100, margin:'0 auto' }}>
+
+          {/* Header */}
+          <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:32 }}>
+            <div style={{ display:'flex', alignItems:'center', gap:14 }}>
+              <img src="/logo-transparent.png" alt="TopLoad" style={{ height:36, filter:'brightness(0) invert(1)' }} />
+              <div style={{ padding:'3px 10px', background:'rgba(147,51,234,0.1)', border:'1px solid rgba(147,51,234,0.25)', borderRadius:6, fontSize:10, fontWeight:900, color:'#a855f7', letterSpacing:'0.12em' }}>ADMIN</div>
+            </div>
+            <Link href="/dashboard" style={{ padding:'8px 16px', borderRadius:8, background:'#111', border:'1px solid #1e1e1e', color:'#555', fontSize:12, fontWeight:700, textDecoration:'none' }}>← Dashboard</Link>
+          </div>
+
+          {/* Page title */}
+          <div style={{ marginBottom:28 }}>
+            <h1 style={{ fontSize:34, fontWeight:900, color:'#fff', letterSpacing:'-1px', textTransform:'uppercase', margin:0 }}>OVERVIEW</h1>
+            <p style={{ fontSize:12, color:'#555', marginTop:4 }}>Platform stats · {fmtDate(new Date())}</p>
+          </div>
+
+          {/* Stats grid */}
+          <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fit,minmax(160px,1fr))', gap:10, marginBottom:28 }}>
+            {[
+              { label:'Total Users',     value: stats.totalUsers,                           accent:'#9333ea' },
+              { label:'Total Cards',     value: stats.totalCards,                           accent:'#9333ea' },
+              { label:'Active Cards',    value: stats.totalActiveCards,                     accent:'#333' },
+              { label:'Sold Cards',      value: stats.totalSoldCards,                       accent:'#ffbe2e' },
+              { label:'Portfolio Value', value: fmt(stats.totalPortfolioValue),             accent:'#22c55e' },
+              { label:'Total Invested',  value: fmt(stats.totalInvested),                   accent:'#333' },
+              { label:'Cards This Week', value: stats.cardsThisWeek,                        accent:'#a855f7' },
+              { label:'Most Active',     value: '@'+stats.mostActiveUser,                   accent:'#9333ea', small:true },
+            ].map((s,i) => (
+              <div key={i} style={{ background:'#111', border:'1px solid #1a1a1a', borderRadius:12, padding:'14px 16px', position:'relative', overflow:'hidden' }}>
+                <div style={{ position:'absolute', top:0, left:0, right:0, height:2, background:s.accent }} />
+                <div style={{ fontSize:9, fontWeight:700, color:'#444', textTransform:'uppercase', letterSpacing:'0.1em', marginBottom:8 }}>{s.label}</div>
+                <div style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:s.small?14:20, fontWeight:900, color:'#fff', letterSpacing:'-0.5px', overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>{s.value}</div>
+              </div>
+            ))}
+          </div>
+
+          {/* Users section */}
+          <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:12 }}>
+            <h2 style={{ fontSize:14, fontWeight:900, color:'#fff', textTransform:'uppercase', letterSpacing:'0.05em', margin:0 }}>Users ({users.length})</h2>
+            <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search users..." style={{ padding:'7px 12px', borderRadius:8, background:'#111', border:'1px solid #1e1e1e', color:'#f0f0f0', fontSize:12, outline:'none', width:200 }} />
+          </div>
+
+          <div style={{ background:'#0d0d0d', border:'1px solid #1a1a1a', borderRadius:14, overflow:'hidden' }}>
+            {/* Table header */}
+            <div style={{ display:'grid', gridTemplateColumns:'1fr 1.5fr 60px 60px 80px 100px 100px 32px', gap:0, padding:'10px 16px', background:'#000', borderBottom:'1px solid #111' }}>
+              {['User','Email','Cards','Sold','Wishes','Value','Joined',''].map((h,i) => (
+                <div key={i} style={{ fontSize:9, fontWeight:700, color:'#333', textTransform:'uppercase', letterSpacing:'0.1em', textAlign: i>1?'right':'left' }}>{h}</div>
+              ))}
+            </div>
+
+            {filteredUsers.length === 0 && (
+              <div style={{ padding:'32px', textAlign:'center', fontSize:13, color:'#444' }}>No users found</div>
+            )}
+
+            {filteredUsers.map((user, ui) => (
+              <div key={user.id}>
+                {/* User row */}
+                <div className="user-row" style={{ display:'grid', gridTemplateColumns:'1fr 1.5fr 60px 60px 80px 100px 100px 32px', gap:0, padding:'13px 16px', borderTop: ui>0?'1px solid #111':'none', cursor:'pointer', transition:'background 0.1s' }}
+                  onClick={() => setExpanded(expanded===user.id ? null : user.id)}>
+                  <div>
+                    <div style={{ fontSize:13, fontWeight:800, color:'#f0f0f0' }}>@{user.username}</div>
+                    <div style={{ fontSize:10, color:'#444', marginTop:1 }}>{fmtTime(user.createdAt)}</div>
+                  </div>
+                  <div style={{ fontSize:12, color:'#666', textAlign:'left', alignSelf:'center', overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>{user.email}</div>
+                  <div style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:13, fontWeight:700, color:'#fff', textAlign:'right', alignSelf:'center' }}>{user.cardCount}</div>
+                  <div style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:13, color:'#555', textAlign:'right', alignSelf:'center' }}>{user.soldCount}</div>
+                  <div style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:13, color:'#555', textAlign:'right', alignSelf:'center' }}>{user.wishCount}</div>
+                  <div style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:13, fontWeight:700, color:'#22c55e', textAlign:'right', alignSelf:'center' }}>{fmt(user.portfolioValue)}</div>
+                  <div style={{ fontSize:11, color:'#444', textAlign:'right', alignSelf:'center' }}>{fmtDate(user.createdAt)}</div>
+                  <div style={{ textAlign:'right', alignSelf:'center', fontSize:12, color: expanded===user.id?'#9333ea':'#333', transition:'transform 0.15s', transform: expanded===user.id?'rotate(90deg)':'rotate(0deg)' }}>▶</div>
+                </div>
+
+                {/* Expanded card list */}
+                {expanded === user.id && (
+                  <div style={{ background:'#080808', borderTop:'1px solid #111', borderBottom:'1px solid #111' }}>
+                    {/* User summary bar */}
+                    <div style={{ display:'flex', gap:20, padding:'10px 16px 10px 32px', borderBottom:'1px solid #111' }}>
+                      {[
+                        { label:'Portfolio', value: fmt(user.portfolioValue), color:'#22c55e' },
+                        { label:'Invested', value: fmt(user.invested), color:'#fff' },
+                        { label:'G/L', value: (user.portfolioValue-user.invested>=0?'+':'')+fmt(user.portfolioValue-user.invested), color: user.portfolioValue>=user.invested?'#22c55e':'#ef4444' },
+                        { label:'Active', value: user.cardCount - user.soldCount, color:'#fff' },
+                        { label:'Sold', value: user.soldCount, color:'#ffbe2e' },
+                      ].map((s,i) => (
+                        <div key={i}>
+                          <div style={{ fontSize:8, fontWeight:700, color:'#444', textTransform:'uppercase', letterSpacing:'0.1em', marginBottom:2 }}>{s.label}</div>
+                          <div style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:13, fontWeight:800, color:s.color }}>{s.value}</div>
+                        </div>
+                      ))}
+                    </div>
+
+                    {/* Card table header */}
+                    {user.cards.length > 0 ? (
+                      <>
+                        <div style={{ display:'grid', gridTemplateColumns:'1.5fr 80px 60px 80px 80px 80px 70px', padding:'8px 16px 8px 32px', background:'#050505' }}>
+                          {['Player','Sport','Year','Grade','Paid','Value','G/L'].map((h,i) => (
+                            <div key={i} style={{ fontSize:8, fontWeight:700, color:'#2a2a2a', textTransform:'uppercase', letterSpacing:'0.1em', textAlign:i>1?'right':'left' }}>{h}</div>
+                          ))}
+                        </div>
+                        {user.cards.map((card, ci) => {
+                          const buy = parseFloat(card.buy)||0
+                          const val = card.sold ? (parseFloat(card.soldPrice)||0) : (parseFloat(card.val)||buy)
+                          const gl = val - buy
+                          const glPos = gl >= 0
+                          const glPct = buy > 0 ? (gl/buy)*100 : 0
+                          return (
+                            <div key={card.id} className="card-row" style={{ display:'grid', gridTemplateColumns:'1.5fr 80px 60px 80px 80px 80px 70px', padding:'9px 16px 9px 32px', borderTop:'1px solid #0d0d0d', transition:'background 0.1s' }}>
+                              <div>
+                                <div style={{ fontSize:12, fontWeight:700, color: card.sold?'#555':'#ccc', textTransform:'uppercase', letterSpacing:'-0.2px' }}>{card.player}</div>
+                                <div style={{ display:'flex', gap:4, marginTop:2 }}>
+                                  {card.sold && <span style={{ fontSize:8, fontWeight:800, color:'#ffbe2e', background:'rgba(255,190,46,0.1)', padding:'1px 5px', borderRadius:3 }}>SOLD</span>}
+                                  {card.auto && <span style={{ fontSize:8, fontWeight:800, color:'#a855f7', background:'rgba(147,51,234,0.1)', padding:'1px 5px', borderRadius:3 }}>AUTO</span>}
+                                  {card.brand && <span style={{ fontSize:9, color:'#333' }}>{card.brand}</span>}
+                                </div>
+                              </div>
+                              <div style={{ fontSize:11, color:'#555', alignSelf:'center' }}>{card.sport ? <SportEmoji sport={card.sport} /> : '—'} {card.sport||'—'}</div>
+                              <div style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:11, color:'#555', textAlign:'right', alignSelf:'center' }}>{card.year||'—'}</div>
+                              <div style={{ textAlign:'right', alignSelf:'center' }}>
+                                {card.grade
+                                  ? <span style={{ fontSize:10, fontWeight:800, color:'#a855f7', background:'rgba(147,51,234,0.1)', padding:'2px 6px', borderRadius:4 }}>{card.gradingCo?card.gradingCo+' ':''}{card.grade}</span>
+                                  : <span style={{ fontSize:10, color:'#333' }}>Raw</span>
+                                }
+                              </div>
+                              <div style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:12, color:'#555', textAlign:'right', alignSelf:'center' }}>{fmt(buy)}</div>
+                              <div style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:12, fontWeight:700, color:'#f0f0f0', textAlign:'right', alignSelf:'center' }}>{fmt(val)}</div>
+                              <div style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:11, fontWeight:800, color:glPos?'#22c55e':'#ef4444', textAlign:'right', alignSelf:'center' }}>{glPos?'+':''}{glPct.toFixed(0)}%</div>
+                            </div>
+                          )
+                        })}
+                      </>
+                    ) : (
+                      <div style={{ padding:'20px 32px', fontSize:12, color:'#333' }}>No cards yet</div>
+                    )}
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </>
+  )
+}
