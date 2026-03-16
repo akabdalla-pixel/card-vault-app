@@ -92,7 +92,7 @@ function AnimatedNumber({ value, prefix = '', suffix = '', duration = 800 }) {
 }
 
 
-const _NAV = [
+const NAV = [
   { label: 'Dashboard', href: '/dashboard' },
   { label: 'Collection', href: '/collection' },
   { label: 'Market', href: '/market' },
