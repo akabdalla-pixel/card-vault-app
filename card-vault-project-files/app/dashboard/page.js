@@ -310,6 +310,7 @@ export default function DashboardPage() {
   const [installPrompt, setInstallPrompt] = useState(null)
   const [installed, setInstalled] = useState(false)
   const [showInstallModal, setShowInstallModal] = useState(false)
+  const [activity, setActivity] = useState([])
   const router = useRouter()
 
   const loadData = useCallback(async () => {
@@ -318,6 +319,11 @@ export default function DashboardPage() {
       if (!meRes.ok) { router.push('/login'); return }
       setUser((await meRes.json()).user)
       if (cardsRes.ok) { const d=await cardsRes.json(); setCards(Array.isArray(d)?d:[]) }
+    // fetch activity
+    try {
+      const actRes = await fetch('/api/activity')
+      if (actRes.ok) setActivity(await actRes.json())
+    } catch(e) {}
     } catch(e) { console.error(e) }
     finally { setLoading(false) }
   }, [router])
@@ -533,39 +539,56 @@ export default function DashboardPage() {
           })()}
 
           {/* ── Recent Activity ── */}
-          {cards.length > 0 && (
-            <div style={{ marginTop:20, background:'#111', border:'1px solid #1e1e1e', borderRadius:14, overflow:'hidden' }}>
-              <div style={{ padding:'14px 16px 10px', borderBottom:'1px solid #1a1a1a', display:'flex', alignItems:'center', justifyContent:'space-between' }}>
-                <div style={{ display:'flex', alignItems:'center', gap:6 }}>
-                  <div style={{ width:6, height:6, borderRadius:'50%', background:'#9333ea' }} />
-                  <span style={{ fontSize:9, fontWeight:800, color:'#a855f7', textTransform:'uppercase', letterSpacing:'0.12em' }}>Recent Activity</span>
-                </div>
-                <Link href="/collection" style={{ fontSize:11, color:'#555', textDecoration:'none', fontWeight:600 }}>See all →</Link>
-              </div>
-              {[...cards].sort((a,b) => new Date(b.createdAt||0) - new Date(a.createdAt||0)).slice(0,1).map((card, i) => {
-                const buy = (parseFloat(card.buy)||0)*(parseInt(card.qty)||1)
-                const val = card.sold ? (parseFloat(card.soldPrice)||0) : (parseFloat(card.val)||buy)
-                const gl = val - buy
-                const glPos = gl >= 0
-                const glPct = buy > 0 ? (gl/buy)*100 : 0
-                const sportEmoji = card.sport==='Basketball'?'🏀':card.sport==='Football'?'🏈':card.sport==='Baseball'?'⚾':card.sport==='Soccer'?'⚽':card.sport==='F1'?'🏎️':card.sport==='Hockey'?'🏒':card.sport==='Pokémon'?'🎴':'🃏'
-                const dateStr = card.createdAt ? new Date(card.createdAt).toLocaleDateString('en-US',{month:'short',day:'numeric'}) : ''
-                return (
-                  <div key={card.id} style={{ display:'flex', alignItems:'center', gap:12, padding:'11px 16px' }}>
-                    <div style={{ width:34, height:34, borderRadius:8, background:'#1a1a1a', border:'1px solid #222', display:'flex', alignItems:'center', justifyContent:'center', fontSize:16, flexShrink:0 }}>{sportEmoji}</div>
-                    <div style={{ flex:1, minWidth:0 }}>
-                      <div style={{ fontSize:13, fontWeight:800, color:'#f0f0f0', textTransform:'uppercase', letterSpacing:'-0.2px', overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>{card.player}</div>
-                      <div style={{ fontSize:10, color:'#444', marginTop:2 }}>{[card.year, card.sport, card.grade ? (card.gradingCo||'') + ' ' + card.grade : null].filter(Boolean).join(' · ')}{card.sold ? ' · SOLD' : ''}</div>
-                    </div>
-                    <div style={{ textAlign:'right', flexShrink:0 }}>
-                      <div style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:14, fontWeight:800, color:'#fff' }}>{new Intl.NumberFormat('en-US',{style:'currency',currency:'USD',minimumFractionDigits:0,maximumFractionDigits:0}).format(val)}</div>
-                      {buy > 0 && <div style={{ fontSize:10, fontWeight:700, color: glPos?'#22c55e':'#ef4444', marginTop:1 }}>{glPos?'+':''}{glPct.toFixed(0)}%</div>}
-                    </div>
+          {(() => {
+            const TYPE_CONFIG = {
+              added:        { label:'Added',        color:'#22c55e',  icon:'＋' },
+              deleted:      { label:'Deleted',      color:'#ef4444',  icon:'✕' },
+              price_update: { label:'Price Update', color:'#a855f7',  icon:'↑' },
+              sold:         { label:'Sold',         color:'#ffbe2e',  icon:'$' },
+              edited:       { label:'Edited',       color:'#888',     icon:'✎' },
+            }
+            const feed = activity.length > 0 ? activity : []
+            if (feed.length === 0 && cards.length === 0) return null
+            return (
+              <div style={{ marginTop:20, background:'#111', border:'1px solid #1e1e1e', borderRadius:14, overflow:'hidden' }}>
+                <div style={{ padding:'14px 16px 10px', borderBottom:'1px solid #1a1a1a', display:'flex', alignItems:'center', justifyContent:'space-between' }}>
+                  <div style={{ display:'flex', alignItems:'center', gap:6 }}>
+                    <div style={{ width:6, height:6, borderRadius:'50%', background:'#9333ea' }} />
+                    <span style={{ fontSize:9, fontWeight:800, color:'#a855f7', textTransform:'uppercase', letterSpacing:'0.12em' }}>Recent Activity</span>
                   </div>
-                )
-              })}
-            </div>
-          )}
+                </div>
+                {feed.length === 0 ? (
+                  <div style={{ padding:'16px', fontSize:12, color:'#444', textAlign:'center' }}>No activity yet — add a card to get started</div>
+                ) : feed.slice(0,8).map((a, i) => {
+                  const cfg = TYPE_CONFIG[a.type] || TYPE_CONFIG.edited
+                  const sportEmoji = a.sport==='Basketball'?'🏀':a.sport==='Football'?'🏈':a.sport==='Baseball'?'⚾':a.sport==='Soccer'?'⚽':a.sport==='F1'?'🏎️':a.sport==='Hockey'?'🏒':a.sport==='Pokémon'?'🎴':'🃏'
+                  const timeAgo = (() => {
+                    const diff = Date.now() - new Date(a.createdAt)
+                    const mins = Math.floor(diff/60000)
+                    const hrs = Math.floor(diff/3600000)
+                    const days = Math.floor(diff/86400000)
+                    if (mins < 1) return 'just now'
+                    if (mins < 60) return mins + 'm ago'
+                    if (hrs < 24) return hrs + 'h ago'
+                    return days + 'd ago'
+                  })()
+                  return (
+                    <div key={a.id} style={{ display:'flex', alignItems:'center', gap:10, padding:'10px 16px', borderBottom: i < Math.min(feed.length,8)-1 ? '1px solid #141414' : 'none' }}>
+                      <div style={{ width:28, height:28, borderRadius:7, background:`${cfg.color}18`, border:`1px solid ${cfg.color}30`, display:'flex', alignItems:'center', justifyContent:'center', fontSize:11, fontWeight:900, color:cfg.color, flexShrink:0 }}>{sportEmoji}</div>
+                      <div style={{ flex:1, minWidth:0 }}>
+                        <div style={{ display:'flex', alignItems:'center', gap:6 }}>
+                          <span style={{ fontSize:9, fontWeight:800, color:cfg.color, textTransform:'uppercase', letterSpacing:'0.08em', flexShrink:0 }}>{cfg.label}</span>
+                          <span style={{ fontSize:12, fontWeight:700, color:'#ccc', overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>{a.player}</span>
+                        </div>
+                        {a.detail && <div style={{ fontSize:10, color:'#555', marginTop:1 }}>{a.detail}</div>}
+                      </div>
+                      <div style={{ fontSize:10, color:'#444', flexShrink:0 }}>{timeAgo}</div>
+                    </div>
+                  )
+                })}
+              </div>
+            )
+          })()}
 
         </main>
         <ToastContainer />

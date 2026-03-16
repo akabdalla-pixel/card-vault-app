@@ -1,21 +1,3 @@
-// This is your Prisma schema file
-// Add these fields to your Card model in prisma/schema.prisma
-
-// Find your Card model and add these 3 fields:
-//
-// model Card {
-//   id        String   @id @default(cuid())
-//   ...existing fields...
-//   sold      Boolean  @default(false)
-//   soldPrice Float?
-//   soldDate  String?
-//   ...
-// }
-//
-// Then run: npx prisma migrate dev --name add_sold_fields
-// Or for production: npx prisma migrate deploy
-
-// FULL SCHEMA FOR REFERENCE:
 generator client {
   provider = "prisma-client-js"
 }
@@ -26,14 +8,15 @@ datasource db {
 }
 
 model User {
-  id        String   @id @default(cuid())
-  email     String   @unique
-  username  String   @unique
-  password  String
-  cards     Card[]
-  wishes    Wish[]
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id         String     @id @default(cuid())
+  email      String     @unique
+  username   String     @unique
+  password   String
+  cards      Card[]
+  wishes     Wish[]
+  activities Activity[]
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
 }
 
 model Card {
@@ -54,10 +37,27 @@ model Card {
   sold      Boolean  @default(false)
   soldPrice Float?
   soldDate  String?
+  rarity    String?
+  edition   String?
+  language  String?
+  auto      Boolean  @default(false)
+  gradingCo String?
+  autoGrade String?
   userId    String
   user      User     @relation(fields: [userId], references: [id])
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model Activity {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  type      String
+  player    String
+  sport     String?
+  detail    String?
+  createdAt DateTime @default(now())
 }
 
 model Wish {

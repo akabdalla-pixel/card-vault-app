@@ -33,12 +33,30 @@ export async function POST(req) {
       buy: parseFloat(data.buy) || 0,
       val: parseFloat(data.val) || 0,
       notes: data.notes || null,
-      sold: data.sold ? true : false,
-      soldPrice: data.soldPrice ? parseFloat(data.soldPrice) : null,
-      soldDate: data.soldDate || null,
+      sold: false,
+      rarity: data.rarity || null,
+      edition: data.edition || null,
+      language: data.language || null,
+      auto: data.auto || false,
+      gradingCo: data.gradingCo || null,
+      autoGrade: data.autoGrade || null,
       userId
     }
   })
+
+  // Log activity
+  try {
+    await prisma.activity.create({
+      data: {
+        userId,
+        type: 'added',
+        player: data.player,
+        sport: data.sport || null,
+        detail: data.buy ? `Paid $${parseFloat(data.buy).toFixed(2)}` : null
+      }
+    })
+  } catch(e) {}
+
   return NextResponse.json(card)
 }
 
@@ -66,11 +84,58 @@ export async function PUT(req) {
       buy: parseFloat(data.buy) || 0,
       val: parseFloat(data.val) || 0,
       notes: data.notes || null,
-      sold: data.sold ? true : false,
+      sold: data.sold || false,
       soldPrice: data.soldPrice ? parseFloat(data.soldPrice) : null,
       soldDate: data.soldDate || null,
+      rarity: data.rarity || null,
+      edition: data.edition || null,
+      language: data.language || null,
+      auto: data.auto || false,
+      gradingCo: data.gradingCo || null,
+      autoGrade: data.autoGrade || null,
     }
   })
+
+  // Log activity - detect what changed
+  try {
+    const oldVal = existing.val
+    const newVal = parseFloat(data.val) || 0
+    const wasSold = existing.sold
+    const nowSold = data.sold || false
+
+    if (!wasSold && nowSold) {
+      await prisma.activity.create({
+        data: {
+          userId,
+          type: 'sold',
+          player: data.player,
+          sport: data.sport || null,
+          detail: data.soldPrice ? `Sold for $${parseFloat(data.soldPrice).toFixed(2)}` : null
+        }
+      })
+    } else if (Math.abs(oldVal - newVal) > 0.01) {
+      await prisma.activity.create({
+        data: {
+          userId,
+          type: 'price_update',
+          player: data.player,
+          sport: data.sport || null,
+          detail: `$${oldVal.toFixed(2)} → $${newVal.toFixed(2)}`
+        }
+      })
+    } else {
+      await prisma.activity.create({
+        data: {
+          userId,
+          type: 'edited',
+          player: data.player,
+          sport: data.sport || null,
+          detail: null
+        }
+      })
+    }
+  } catch(e) {}
+
   return NextResponse.json(card)
 }
 
@@ -81,6 +146,19 @@ export async function DELETE(req) {
   const { id } = await req.json()
   const existing = await prisma.card.findFirst({ where: { id, userId } })
   if (!existing) return NextResponse.json({ error: 'Not found' }, { status: 404 })
+
+  // Log before deleting
+  try {
+    await prisma.activity.create({
+      data: {
+        userId,
+        type: 'deleted',
+        player: existing.player,
+        sport: existing.sport || null,
+        detail: existing.val ? `Was valued at $${existing.val.toFixed(2)}` : null
+      }
+    })
+  } catch(e) {}
 
   await prisma.card.delete({ where: { id } })
   return NextResponse.json({ ok: true })
