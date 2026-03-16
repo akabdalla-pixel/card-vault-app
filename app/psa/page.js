@@ -10,6 +10,7 @@ const NAV = [
   { label: 'Insights', href: '/insights' },
   { label: 'Sold History', href: '/sold' },
   { label: 'Market', href: '/market' },
+  { label: 'PSA Lookup', href: '/psa' },
 ]
 
 function IconDashboard() { return <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg> }
@@ -22,10 +23,209 @@ function IconLogout() { return <svg width="16" height="16" viewBox="0 0 24 24" f
 function IconShield() { return <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg> }
 function IconCheck() { return <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg> }
 function IconX() { return <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg> }
-function IconPlus() { return <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> }
 
-const navIcons = { 'Dashboard': IconDashboard, 'Collection': IconCollection, 'Insights': IconInsights, 'Sold History': IconSold, 'Market': IconMarket }
+const navIcons = { 'Dashboard': IconDashboard, 'Collection': IconCollection, 'Insights': IconInsights, 'Sold History': IconSold, 'Market': IconMarket, 'PSA Lookup': IconShield }
 const fmt = n => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 2 }).format(n || 0)
+
+const EMPTY = { sport: '', year: '', player: '', name: '', brand: '', num: '', cond: '', grade: '', qty: '1', date: '', buy: '', val: '', notes: '', sold: false, soldPrice: '', soldDate: '', rarity: '', edition: '', language: '', auto: false, gradingCo: '', autoGrade: '' }
+
+// ── Toast ──────────────────────────────────────────────────────────────────────
+var _toastFn = null
+
+const TOP_SPORTS = [
+  { label: 'Football', emoji: '🏈' },
+  { label: 'Basketball', emoji: '🏀' },
+  { label: 'Baseball', emoji: '⚾' },
+  { label: 'Soccer', emoji: '⚽' },
+]
+
+const MORE_SPORTS = [
+  'Hockey', 'F1', 'Golf', 'Tennis',
+  'Pokémon', 'Magic: The Gathering', 'Yu-Gi-Oh!', 'Lorcana',
+  'One Piece', 'Dragon Ball Super', 'Digimon', 'Other'
+]
+
+const TCG_LIST = ['Pokémon', 'Magic: The Gathering', 'Yu-Gi-Oh!', 'Lorcana', 'One Piece', 'Dragon Ball Super', 'Digimon']
+
+// TCG-specific rarities
+
+const TCG_RARITIES = ['Common', 'Uncommon', 'Rare', 'Holo Rare', 'Reverse Holo', 'Ultra Rare', 'Secret Rare', 'Full Art', 'Rainbow Rare', 'Alt Art', 'Gold Rare', 'Promo']
+
+const EDITIONS = ['1st Edition', 'Unlimited', 'Shadowless', 'Limited', 'First Print']
+
+const CONDS = ['Mint', 'Near Mint', 'Excellent', 'Very Good', 'Good', 'Poor']
+
+function CardModal({ card, onClose, onSave }) {
+  const isEdit = !!card?.id
+  const [form, setForm] = useState(card || EMPTY)
+  const [saving, setSaving] = useState(false)
+  const [error, setError] = useState('')
+  const [showDetails, setShowDetails] = useState(isEdit)
+  const set = (k, v) => setForm(f => ({ ...f, [k]: v }))
+  const isTCG = TCG_LIST.includes(form.sport)
+  const isTopSport = TOP_SPORTS.some(s => s.label === form.sport)
+  const isMoreSport = MORE_SPORTS.includes(form.sport)
+
+  async function handleSave() {
+    if (!form.player) { setError('Name is required'); return }
+    setSaving(true); setError('')
+    try {
+      const method = form.id ? 'PUT' : 'POST'
+      const res = await fetch('/api/cards', { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(form) })
+      if (!res.ok) { const d = await res.json(); setError(d.error || 'Failed to save'); setSaving(false); return }
+      onSave()
+    } catch { setError('Something went wrong'); setSaving(false) }
+  }
+
+  const inp = (key, placeholder, type = 'text', autoFocus = false) => (
+    <input type={type} placeholder={placeholder} value={form[key]||''} onChange={e => set(key, e.target.value)} autoFocus={autoFocus}
+      style={{ width:'100%', padding:'8px 12px', borderRadius:9, background:'#202020', border:'1px solid #2a2a2a', color:'#f0f0f0', fontSize:14, outline:'none', fontFamily:"'Outfit',sans-serif", boxSizing:'border-box' }} />
+  )
+  const lbl = t => <div style={{ fontSize:10, fontWeight:700, color:'#555', textTransform:'uppercase', letterSpacing:'0.08em', marginBottom:4, fontFamily:"'Outfit',sans-serif" }}>{t}</div>
+
+  return (
+    <div style={{ position:'fixed', inset:0, background:'rgba(0,0,0,0.8)', zIndex:200, display:'flex', alignItems:'flex-end', justifyContent:'center' }}
+      onClick={e => { if(e.target === e.currentTarget) onClose() }}>
+      <div style={{ background:'#111', borderRadius:'20px 20px 0 0', width:'100%', maxWidth:560, maxHeight:'92vh', overflowY:'auto', padding:'16px 16px 36px' }}>
+
+        {/* Header */}
+        <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:18 }}>
+          <h2 style={{ fontFamily:"'Outfit',sans-serif", fontSize:20, fontWeight:800, color:'#f0f0f0', margin:0 }}>
+            {isEdit ? 'Edit Card' : 'Quick Add'}
+          </h2>
+          <button onClick={onClose} style={{ background:'none', border:'none', color:'#555', cursor:'pointer', padding:4, fontSize:22, lineHeight:1 }}>×</button>
+        </div>
+
+        {error && <div style={{ marginBottom:14, padding:'10px 14px', borderRadius:10, background:'rgba(147,51,234,0.08)', color:'#9333ea', fontSize:13, border:'1px solid rgba(147,51,234,0.2)', fontFamily:"'Outfit',sans-serif" }}>{error}</div>}
+
+        <div style={{ display:'flex', flexDirection:'column', gap:11 }}>
+
+          {/* ── 1. Name ── */}
+          <div>
+            {lbl(isTCG ? 'Card Name *' : 'Player Name *')}
+            {inp('player', isTCG ? 'e.g. Charizard' : 'e.g. LeBron James', 'text', true)}
+          </div>
+
+          {/* ── 2. Sport — top 4 big buttons + more dropdown ── */}
+          <div>
+            {lbl('Sport / Game')}
+            <div style={{ display:'grid', gridTemplateColumns:'repeat(4,1fr)', gap:8, marginBottom:8 }}>
+              {TOP_SPORTS.map(s => (
+                <button key={s.label} onClick={() => set('sport', form.sport === s.label ? '' : s.label)}
+                  style={{ padding:'8px 4px', borderRadius:9, border: form.sport === s.label ? '2px solid rgba(147,51,234,0.6)' : '1px solid #2a2a2a', background: form.sport === s.label ? 'rgba(147,51,234,0.12)' : '#1a1a1a', cursor:'pointer', display:'flex', flexDirection:'column', alignItems:'center', gap:3 }}>
+                  <span style={{ fontSize:20 }}>{s.emoji}</span>
+                  <span style={{ fontFamily:"'Outfit',sans-serif", fontSize:10, fontWeight:700, color: form.sport === s.label ? '#9333ea' : '#555' }}>{s.label}</span>
+                </button>
+              ))}
+            </div>
+            <select value={isMoreSport ? form.sport : ''} onChange={e => set('sport', e.target.value)}
+              style={{ width:'100%', padding:'8px 12px', borderRadius:9, background: isMoreSport ? 'rgba(147,51,234,0.08)' : '#1a1a1a', border: isMoreSport ? '1px solid rgba(147,51,234,0.3)' : '1px solid #2a2a2a', color: isMoreSport ? '#9333ea' : '#555', fontSize:14, outline:'none', fontFamily:"'Outfit',sans-serif" }}>
+              <option value="">More sports / TCG...</option>
+              {MORE_SPORTS.map(s => <option key={s} value={s}>{s}</option>)}
+            </select>
+          </div>
+
+          {/* ── 3. Grade + Grade Company (two dropdowns side by side) ── */}
+          <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:10 }}>
+            <div>
+              {lbl('Grade')}
+              <select value={form.grade||''} onChange={e => set('grade', e.target.value)}
+                style={{ width:'100%', padding:'8px 12px', borderRadius:9, background:'#202020', border:'1px solid #2a2a2a', color: form.grade ? '#f0f0f0' : '#555', fontSize:14, outline:'none', fontFamily:"'Outfit',sans-serif" }}>
+                <option value="">Raw / No grade</option>
+                {['10','9.5','9','8.5','8','7.5','7','6.5','6','5','4','3','2','1'].map(g => <option key={g} value={g}>{g}</option>)}
+              </select>
+            </div>
+            <div>
+              {lbl('Grading Co.')}
+              <select value={form.gradingCo||''} onChange={e => set('gradingCo', e.target.value)}
+                style={{ width:'100%', padding:'8px 12px', borderRadius:9, background:'#202020', border:'1px solid #2a2a2a', color: form.gradingCo ? '#f0f0f0' : '#555', fontSize:14, outline:'none', fontFamily:"'Outfit',sans-serif" }}>
+                <option value="">No grading co.</option>
+                {['PSA','BGS','SGC','CGC','HGA','CSG','GAI','Other'].map(g => <option key={g} value={g}>{g}</option>)}
+              </select>
+            </div>
+          </div>
+
+          {/* ── 4. Auto checkbox ── */}
+          <label style={{ display:'flex', alignItems:'center', gap:12, padding:'8px 12px', borderRadius:9, background:'#1a1a1a', border: form.auto ? '1px solid rgba(255,190,46,0.3)' : '1px solid #2a2a2a', cursor:'pointer' }}>
+            <input type="checkbox" checked={!!form.auto} onChange={e => set('auto', e.target.checked)} style={{ accentColor:'#ffbe2e', width:18, height:18, cursor:'pointer' }} />
+            <div>
+              <div style={{ fontFamily:"'Outfit',sans-serif", fontSize:13, fontWeight:700, color: form.auto ? '#ffbe2e' : '#ccc' }}>Autograph ✍️</div>
+              <div style={{ fontFamily:"'Outfit',sans-serif", fontSize:10, color:'#555' }}>This card has an auto</div>
+            </div>
+          </label>
+
+          {/* ── 5. Buy Price + Value ── */}
+          <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:10 }}>
+            <div>{lbl('Buy Price ($)')}{inp('buy', '0.00', 'number')}</div>
+            <div>{lbl('Current Value ($)')}{inp('val', '0.00', 'number')}</div>
+          </div>
+
+          {/* ── 6. More Details toggle ── */}
+          {!isEdit && (
+            <button onClick={() => setShowDetails(v => !v)}
+              style={{ width:'100%', padding:'10px', borderRadius:10, background:'transparent', border:'1px solid #2a2a2a', color:'#555', fontFamily:"'Outfit',sans-serif", fontSize:13, fontWeight:600, cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'center', gap:6 }}>
+              {showDetails ? '↑ Hide details' : '↓ More details (year, set, brand, numbering...)'}
+            </button>
+          )}
+
+          {/* ── 7. Extra Details (collapsed by default on add) ── */}
+          {showDetails && <>
+            <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:10 }}>
+              <div>{lbl('Year')}{inp('year', 'e.g. 2023')}</div>
+              <div>{lbl('Numbering (e.g. 10/50)')}{inp('num', 'e.g. 10/50')}</div>
+            </div>
+            <div>
+              {lbl('Auto Grade')}
+              <select value={form.autoGrade||''} onChange={e => set('autoGrade', e.target.value)}
+                style={{ width:'100%', padding:'8px 12px', borderRadius:9, background:'#202020', border:'1px solid #2a2a2a', color: form.autoGrade?'#f0f0f0':'#555', fontSize:14, outline:'none', fontFamily:"'Outfit',sans-serif" }}>
+                <option value="">No auto grade</option>
+                {['10','9.5','9','8.5','8','7','6','5'].map(g => <option key={g} value={g}>{g}</option>)}
+              </select>
+            </div>
+            <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:10 }}>
+              <div>{lbl(isTCG ? 'Set / Expansion' : 'Set')}{inp('name', isTCG ? 'e.g. Base Set' : 'e.g. Topps Chrome')}</div>
+              <div>{lbl(isTCG ? 'Publisher' : 'Brand')}{inp('brand', isTCG ? 'e.g. Wizards' : 'e.g. Topps')}</div>
+            </div>
+            {isTCG ? (
+              <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:10 }}>
+                <div>{lbl('Rarity')}<select value={form.rarity||''} onChange={e => set('rarity', e.target.value)} style={{ width:'100%', padding:'11px 14px', borderRadius:10, background:'#202020', border:'1px solid #2a2a2a', color: form.rarity?'#f0f0f0':'#555', fontSize:14, outline:'none', fontFamily:"'Outfit',sans-serif" }}><option value="">Select...</option>{TCG_RARITIES.map(r=><option key={r} value={r}>{r}</option>)}</select></div>
+                <div>{lbl('Edition')}<select value={form.edition||''} onChange={e => set('edition', e.target.value)} style={{ width:'100%', padding:'11px 14px', borderRadius:10, background:'#202020', border:'1px solid #2a2a2a', color: form.edition?'#f0f0f0':'#555', fontSize:14, outline:'none', fontFamily:"'Outfit',sans-serif" }}><option value="">Select...</option>{EDITIONS.map(e=><option key={e} value={e}>{e}</option>)}</select></div>
+              </div>
+            ) : (
+              <div>{lbl('Condition')}<select value={form.cond||''} onChange={e => set('cond', e.target.value)} style={{ width:'100%', padding:'11px 14px', borderRadius:10, background:'#202020', border:'1px solid #2a2a2a', color: form.cond?'#f0f0f0':'#555', fontSize:14, outline:'none', fontFamily:"'Outfit',sans-serif" }}><option value="">Select...</option>{CONDS.map(c=><option key={c} value={c}>{c}</option>)}</select></div>
+            )}
+            <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:10 }}>
+              <div>{lbl('Quantity')}{inp('qty', '1', 'number')}</div>
+              <div>{lbl('Purchase Date')}{inp('date', '', 'date')}</div>
+            </div>
+            <div>{lbl('Notes')}<textarea value={form.notes||''} onChange={e => set('notes', e.target.value)} rows={2} placeholder="Any extra details..." style={{ width:'100%', padding:'11px 14px', borderRadius:10, background:'#202020', border:'1px solid #2a2a2a', color:'#f0f0f0', fontSize:14, outline:'none', resize:'none', fontFamily:"'Outfit',sans-serif", boxSizing:'border-box' }} /></div>
+          </>}
+
+          {/* Sold toggle (edit only) */}
+          {isEdit && <>
+            <label style={{ display:'flex', alignItems:'center', gap:12, padding:'11px 14px', borderRadius:10, background:'#202020', border:'1px solid #2a2a2a', cursor:'pointer' }}>
+              <input type="checkbox" checked={!!form.sold} onChange={e => set('sold', e.target.checked)} style={{ accentColor:'#9333ea', width:18, height:18 }} />
+              <div style={{ fontFamily:"'Outfit',sans-serif", fontSize:14, fontWeight:600, color:'#ccc' }}>Mark as Sold 💰</div>
+            </label>
+            {form.sold && <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:10 }}>
+              <div>{lbl('Sold Price ($)')}{inp('soldPrice', '0.00', 'number')}</div>
+              <div>{lbl('Sold Date')}{inp('soldDate', '', 'date')}</div>
+            </div>}
+          </>}
+
+        </div>
+
+        {/* Save button */}
+        <button onClick={handleSave} disabled={saving || !form.player}
+          style={{ width:'100%', padding:'12px', borderRadius:11, marginTop:14, background: (!form.player||saving) ? '#1a1a1a' : 'linear-gradient(135deg,#9333ea,#a855f7)', border: (!form.player||saving) ? '1px solid #2a2a2a' : 'none', color: (!form.player||saving) ? '#444' : '#fff', fontFamily:"'Outfit',sans-serif", fontSize:15, fontWeight:800, cursor: (!form.player||saving) ? 'not-allowed' : 'pointer', letterSpacing:'-0.3px' }}>
+          {saving ? 'Saving...' : (isEdit ? 'Save Changes' : '+ Add Card')}
+        </button>
+
+      </div>
+    </div>
+  )
+}
+
 
 function Sidebar({ user, onLogout, active = '' }) {
   return (
@@ -44,9 +244,6 @@ function Sidebar({ user, onLogout, active = '' }) {
             </Link>
           )
         })}
-        <Link href="/psa" style={{ display:'flex', alignItems:'center', gap:10, padding:'9px 12px', borderRadius:10, marginBottom:2, textDecoration:'none', color: active==='PSA' ? '#fff' : '#555', background: active==='PSA' ? '#9333ea' : 'transparent', fontSize:13, fontWeight: active==='PSA' ? 700 : 500, transition:'all 0.15s' }}>
-          <IconShield /><span style={{flex:1}}>PSA Lookup</span>
-        </Link>
       </nav>
       <div style={{ padding:'12px 8px', borderTop:'1px solid #111' }}>
         <Link href="/settings" style={{ display:'flex', alignItems:'center', gap:10, padding:'9px 12px', borderRadius:10, textDecoration:'none', color:'#555', fontSize:13, fontWeight:500 }}><IconSettings /><span>Settings</span></Link>
@@ -61,15 +258,16 @@ function Sidebar({ user, onLogout, active = '' }) {
 }
 
 function BottomNav({ active = '' }) {
-  const SHORT = { 'Dashboard':'Home', 'Collection':'Cards', 'Insights':'Stats', 'Sold History':'Sold', 'Market':'Market' }
+  const SHORT = { 'Dashboard':'Home', 'Collection':'Cards', 'Insights':'Stats', 'Sold History':'Sold', 'Market':'Market', 'PSA Lookup':'PSA' }
   return (
     <nav className="mobile-only" style={{ position:'fixed', bottom:0, left:0, right:0, height:64, background:'#000', borderTop:'1px solid #111', display:'flex', alignItems:'center', zIndex:100 }}>
-      {[...NAV, { label:'PSA', href:'/psa' }].map(({ label, href }) => {
+      {NAV.map(({ label, href }) => {
         const isActive = active === label
-        const Icon = navIcons[label] || IconShield
+        const Icon = navIcons[label]
+        if (!Icon) return null
         return (
           <Link key={label} href={href} style={{ flex:1, display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', gap:3, textDecoration:'none', paddingBottom:4 }}>
-            <div style={{ width:28, height:28, borderRadius:8, display:'flex', alignItems:'center', justifyContent:'center', background: isActive ? '#9333ea' : 'transparent', color: isActive ? '#fff' : '#444' }}><Icon /></div>
+            <div style={{ width:28, height:28, borderRadius:8, display:'flex', alignItems:'center', justifyContent:'center', background: isActive ? '#9333ea' : 'transparent', color: isActive ? '#fff' : '#444', transition:'all 0.15s' }}><Icon /></div>
             <span style={{ fontSize:9, fontWeight:800, color: isActive ? '#9333ea' : '#444', letterSpacing:'0.08em', textTransform:'uppercase' }}>{SHORT[label]||label}</span>
           </Link>
         )
@@ -86,9 +284,8 @@ export default function PSALookupPage() {
   const [searching, setSearching] = useState(false)
   const [error, setError] = useState('')
   const [addSuccess, setAddSuccess] = useState(false)
-  const [adding, setAdding] = useState(false)
   const [showAddModal, setShowAddModal] = useState(false)
-  const [addForm, setAddForm] = useState({})
+  const [addForm, setAddForm] = useState(null)
   const [imgFront, setImgFront] = useState(true)
   const [history, setHistory] = useState([])
   const router = useRouter()
@@ -136,28 +333,13 @@ export default function PSALookupPage() {
       gradingCo: 'PSA',
       autoGrade: result.autoGrade || '',
       cond: 'Graded',
-      qty: '1',
-      buy: '',
-      val: '',
+      qty: 1,
+      buy: 0,
+      val: 0,
       num: result.cardNumber || '',
       notes: `PSA Cert #${result.cert}${result.variety ? ' · ' + result.variety : ''}`,
     })
     setShowAddModal(true)
-  }
-
-  async function handleConfirmAdd() {
-    setAdding(true)
-    try {
-      await fetch('/api/cards', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...addForm, qty: parseInt(addForm.qty)||1, buy: parseFloat(addForm.buy)||0, val: parseFloat(addForm.val)||0 })
-      })
-      setShowAddModal(false)
-      setAddSuccess(true)
-      setTimeout(() => setAddSuccess(false), 3000)
-    } catch(e) {}
-    setAdding(false)
   }
 
   if (loading) return <div style={{ minHeight:'100vh', display:'flex', alignItems:'center', justifyContent:'center', background:'#0a0a0a' }}><img src={LOGO} alt="TopLoad" style={{ width:120, opacity:0.4, filter:'brightness(0) invert(1)' }} /></div>
@@ -171,21 +353,19 @@ export default function PSALookupPage() {
         *{font-family:'Space Grotesk',-apple-system,sans-serif!important}
         .sidebar-el{display:flex;flex-direction:column}.mobile-only{display:none!important}.mob-topbar{display:none}.main-wrap{margin-left:200px;min-height:100vh;width:calc(100% - 200px)}
         @media(max-width:768px){.sidebar-el{display:none!important}.mobile-only{display:flex!important}.mob-topbar{display:flex}.main-wrap{margin-left:0!important;width:100%!important;padding:16px 16px 80px!important}}
-        input:focus{border-color:#9333ea!important;outline:none}
+        input:focus,select:focus,textarea:focus{border-color:#9333ea!important;outline:none}
         .hist-item:hover{background:#1a1a1a!important}
       `}</style>
 
       <div style={{ display:'flex', minHeight:'100vh', background:'#0a0a0a' }}>
-        <div className="sidebar-el"><Sidebar user={user} onLogout={handleLogout} active="PSA" /></div>
+        <div className="sidebar-el"><Sidebar user={user} onLogout={handleLogout} active="PSA Lookup" /></div>
 
         <main className="main-wrap" style={{ padding:'28px 28px 40px' }}>
 
-          {/* Mobile topbar */}
           <div className="mob-topbar" style={{ alignItems:'center', justifyContent:'center', marginBottom:20 }}>
             <img src={LOGO} alt="TopLoad" style={{ height:32, filter:'brightness(0) invert(1)' }} />
           </div>
 
-          {/* Header */}
           <div style={{ marginBottom:28 }}>
             <div style={{ fontSize:9, fontWeight:800, color:'#a855f7', textTransform:'uppercase', letterSpacing:'0.15em', marginBottom:6 }}>Grade Verification</div>
             <h1 style={{ fontSize:36, fontWeight:900, color:'#fff', letterSpacing:'-1.5px', textTransform:'uppercase', margin:'0 0 6px' }}>PSA LOOKUP</h1>
@@ -193,61 +373,34 @@ export default function PSALookupPage() {
           </div>
 
           <div style={{ display:'grid', gridTemplateColumns:'1fr 340px', gap:24, alignItems:'start' }}>
-            {/* Left — search + result */}
             <div>
-              {/* Search */}
               <div style={{ background:'#111', border:'1px solid #1e1e1e', borderRadius:14, padding:'18px 20px', marginBottom:20 }}>
                 <div style={{ fontSize:9, fontWeight:800, color:'#555', textTransform:'uppercase', letterSpacing:'0.1em', marginBottom:10 }}>Cert Number</div>
                 <div style={{ display:'flex', gap:10 }}>
-                  <input
-                    value={cert}
-                    onChange={e => setCert(e.target.value)}
-                    onKeyDown={e => e.key==='Enter' && handleLookup()}
-                    placeholder="e.g. 12345678"
-                    style={{ flex:1, padding:'11px 14px', borderRadius:10, background:'#1a1a1a', border:'1px solid #2a2a2a', color:'#f0f0f0', fontSize:16, fontFamily:"'JetBrains Mono',monospace", letterSpacing:'0.05em', transition:'border-color 0.15s', boxSizing:'border-box' }}
-                  />
-                  <button onClick={handleLookup} disabled={searching || !cert.trim()} style={{ padding:'11px 28px', borderRadius:10, background: searching||!cert.trim() ? '#1a1a1a' : '#9333ea', border:'none', color: searching||!cert.trim() ? '#555' : '#fff', fontSize:14, fontWeight:800, cursor: searching||!cert.trim() ? 'not-allowed' : 'pointer', whiteSpace:'nowrap', transition:'all 0.15s' }}>
+                  <input value={cert} onChange={e => setCert(e.target.value)} onKeyDown={e => e.key==='Enter' && handleLookup()} placeholder="e.g. 12345678"
+                    style={{ flex:1, padding:'11px 14px', borderRadius:10, background:'#1a1a1a', border:'1px solid #2a2a2a', color:'#f0f0f0', fontSize:16, fontFamily:"'JetBrains Mono',monospace", letterSpacing:'0.05em', transition:'border-color 0.15s', boxSizing:'border-box' }} />
+                  <button onClick={handleLookup} disabled={searching || !cert.trim()} style={{ padding:'11px 28px', borderRadius:10, background: searching||!cert.trim() ? '#1a1a1a' : '#9333ea', border:'none', color: searching||!cert.trim() ? '#555' : '#fff', fontSize:14, fontWeight:800, cursor: searching||!cert.trim() ? 'not-allowed' : 'pointer', whiteSpace:'nowrap' }}>
                     {searching ? 'Looking up...' : 'Verify'}
                   </button>
                 </div>
               </div>
 
-              {/* Error */}
-              {error && (
-                <div style={{ marginBottom:16, padding:'14px 16px', borderRadius:10, background:'rgba(239,68,68,0.07)', border:'1px solid rgba(239,68,68,0.2)', color:'#ef4444', fontSize:13, fontWeight:600, display:'flex', alignItems:'center', gap:8 }}>
-                  <IconX /> {error}
-                </div>
-              )}
+              {error && <div style={{ marginBottom:16, padding:'14px 16px', borderRadius:10, background:'rgba(239,68,68,0.07)', border:'1px solid rgba(239,68,68,0.2)', color:'#ef4444', fontSize:13, fontWeight:600, display:'flex', alignItems:'center', gap:8 }}><IconX /> {error}</div>}
+              {addSuccess && <div style={{ marginBottom:16, padding:'14px 16px', borderRadius:10, background:'rgba(34,197,94,0.07)', border:'1px solid rgba(34,197,94,0.2)', color:'#22c55e', fontSize:13, fontWeight:600, display:'flex', alignItems:'center', gap:8 }}><IconCheck /> Card added to your collection</div>}
 
-              {/* Success toast */}
-              {addSuccess && (
-                <div style={{ marginBottom:16, padding:'14px 16px', borderRadius:10, background:'rgba(34,197,94,0.07)', border:'1px solid rgba(34,197,94,0.2)', color:'#22c55e', fontSize:13, fontWeight:600, display:'flex', alignItems:'center', gap:8 }}>
-                  <IconCheck /> Card added to your collection
-                </div>
-              )}
-
-              {/* Result */}
               {result && (
-                <div style={{ background:'#111', border:'1px solid #1e1e1e', borderRadius:16, overflow:'hidden', animation:'fadeIn 0.3s ease' }}>
-                  {/* Status banner */}
+                <div style={{ background:'#111', border:'1px solid #1e1e1e', borderRadius:16, overflow:'hidden' }}>
                   <div style={{ padding:'12px 20px', background: result.isCancelled ? 'rgba(239,68,68,0.08)' : 'rgba(34,197,94,0.06)', borderBottom:'1px solid #1a1a1a', display:'flex', alignItems:'center', gap:8 }}>
                     <div style={{ width:8, height:8, borderRadius:'50%', background: result.isCancelled ? '#ef4444' : '#22c55e', boxShadow: `0 0 8px ${result.isCancelled ? '#ef4444' : '#22c55e'}` }} />
                     <span style={{ fontSize:11, fontWeight:800, color: result.isCancelled ? '#ef4444' : '#22c55e', textTransform:'uppercase', letterSpacing:'0.1em' }}>
                       {result.isCancelled ? 'CANCELLED — DO NOT BUY' : 'VERIFIED AUTHENTIC'}
                     </span>
                   </div>
-
                   <div style={{ display:'flex', gap:24, padding:'24px', flexWrap:'wrap' }}>
-                    {/* Images */}
                     {(result.frontImage || result.backImage) && (
                       <div style={{ flexShrink:0 }}>
                         <div style={{ width:180, height:250, background:'#1a1a1a', borderRadius:12, overflow:'hidden', border:'1px solid #2a2a2a', marginBottom:8 }}>
-                          <img
-                            src={imgFront ? result.frontImage : result.backImage}
-                            alt={result.player}
-                            style={{ width:'100%', height:'100%', objectFit:'contain' }}
-                            onError={e => e.target.style.display='none'}
-                          />
+                          <img src={imgFront ? result.frontImage : result.backImage} alt={result.player} style={{ width:'100%', height:'100%', objectFit:'contain' }} onError={e => e.target.style.display='none'} />
                         </div>
                         {result.frontImage && result.backImage && (
                           <div style={{ display:'flex', gap:6 }}>
@@ -257,10 +410,7 @@ export default function PSALookupPage() {
                         )}
                       </div>
                     )}
-
-                    {/* Card details */}
                     <div style={{ flex:1, minWidth:200 }}>
-                      {/* Grade */}
                       <div style={{ display:'flex', alignItems:'center', gap:12, marginBottom:16 }}>
                         <div style={{ width:64, height:64, borderRadius:12, background:`${gradeColor}18`, border:`2px solid ${gradeColor}`, display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', flexShrink:0 }}>
                           <div style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:26, fontWeight:900, color:gradeColor, lineHeight:1 }}>{result.grade}</div>
@@ -271,8 +421,6 @@ export default function PSALookupPage() {
                           {result.gradeDescription && <div style={{ fontSize:12, color:'#555', marginTop:3 }}>{result.gradeDescription}</div>}
                         </div>
                       </div>
-
-                      {/* Details grid */}
                       <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:10, marginBottom:16 }}>
                         {[
                           { label:'Cert #', value: result.cert },
@@ -290,11 +438,9 @@ export default function PSALookupPage() {
                           </div>
                         ))}
                       </div>
-
-                      {/* Add to collection */}
                       {!result.isCancelled && (
-                        <button onClick={handleAddToCollection} disabled={adding} style={{ width:'100%', padding:'12px', borderRadius:10, background: adding ? '#1a1a1a' : '#9333ea', border:'none', color: adding ? '#555' : '#fff', fontSize:14, fontWeight:800, cursor: adding ? 'not-allowed' : 'pointer', display:'flex', alignItems:'center', justifyContent:'center', gap:6, transition:'all 0.15s' }}>
-                          <IconPlus /> {adding ? 'Adding...' : 'Add to Collection'}
+                        <button onClick={handleAddToCollection} style={{ width:'100%', padding:'12px', borderRadius:10, background:'#9333ea', border:'none', color:'#fff', fontSize:14, fontWeight:800, cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'center', gap:6 }}>
+                          + Add to Collection
                         </button>
                       )}
                     </div>
@@ -303,14 +449,12 @@ export default function PSALookupPage() {
               )}
             </div>
 
-            {/* Right — history + tips */}
             <div style={{ display:'flex', flexDirection:'column', gap:16 }}>
-              {/* Recent lookups */}
               {history.length > 0 && (
                 <div style={{ background:'#111', border:'1px solid #1e1e1e', borderRadius:14, padding:'16px' }}>
                   <div style={{ fontSize:9, fontWeight:800, color:'#555', textTransform:'uppercase', letterSpacing:'0.1em', marginBottom:12 }}>Recent Lookups</div>
                   {history.map((h, i) => (
-                    <div key={i} className="hist-item" onClick={() => { setCert(h.cert); }} style={{ display:'flex', alignItems:'center', gap:10, padding:'9px 10px', borderRadius:8, cursor:'pointer', background:'transparent', transition:'background 0.1s', marginBottom: i<history.length-1?4:0 }}>
+                    <div key={i} className="hist-item" onClick={() => setCert(h.cert)} style={{ display:'flex', alignItems:'center', gap:10, padding:'9px 10px', borderRadius:8, cursor:'pointer', background:'transparent', transition:'background 0.1s', marginBottom: i<history.length-1?4:0 }}>
                       <div style={{ width:32, height:32, borderRadius:7, background:'rgba(147,51,234,0.1)', border:'1px solid rgba(147,51,234,0.2)', display:'flex', alignItems:'center', justifyContent:'center', fontFamily:"'JetBrains Mono',monospace", fontSize:13, fontWeight:900, color:'#a855f7', flexShrink:0 }}>{h.grade}</div>
                       <div style={{ minWidth:0 }}>
                         <div style={{ fontSize:12, fontWeight:700, color:'#ccc', overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>{h.player}</div>
@@ -320,15 +464,13 @@ export default function PSALookupPage() {
                   ))}
                 </div>
               )}
-
-              {/* Tips */}
               <div style={{ background:'#111', border:'1px solid #1e1e1e', borderRadius:14, padding:'16px' }}>
                 <div style={{ fontSize:9, fontWeight:800, color:'#555', textTransform:'uppercase', letterSpacing:'0.1em', marginBottom:12 }}>How to find the cert #</div>
                 {[
                   { icon:'🏷️', text:'Look at the bottom of the PSA slab label' },
-                  { icon:'📱', text:'Scan the QR code on the slab — it contains the cert #' },
+                  { icon:'📱', text:'Scan the QR code on the slab' },
                   { icon:'🔢', text:'Numbers only, usually 7-9 digits' },
-                  { icon:'⚠️', text:'A cancelled cert means the card was returned or fraudulent' },
+                  { icon:'⚠️', text:'A cancelled cert means fraud or returned card' },
                 ].map((t,i) => (
                   <div key={i} style={{ display:'flex', gap:10, marginBottom: i<3?10:0 }}>
                     <span style={{ fontSize:14, flexShrink:0 }}>{t.icon}</span>
@@ -336,8 +478,6 @@ export default function PSALookupPage() {
                   </div>
                 ))}
               </div>
-
-              {/* Grade guide */}
               <div style={{ background:'#111', border:'1px solid #1e1e1e', borderRadius:14, padding:'16px' }}>
                 <div style={{ fontSize:9, fontWeight:800, color:'#555', textTransform:'uppercase', letterSpacing:'0.1em', marginBottom:12 }}>Grade Guide</div>
                 {[
@@ -356,83 +496,11 @@ export default function PSALookupPage() {
               </div>
             </div>
           </div>
-
-          {/* Mobile: stack vertically */}
-          <style>{`@media(max-width:768px){.psa-grid{grid-template-columns:1fr!important}}`}</style>
-
         </main>
-        <BottomNav active="PSA" />
+        <BottomNav active="PSA Lookup" />
       </div>
-    
-      {/* Add to Collection Modal */}
-      {showAddModal && (
-        <div style={{ position:'fixed', inset:0, background:'rgba(0,0,0,0.88)', zIndex:200, display:'flex', alignItems:'center', justifyContent:'center', padding:16 }}>
-          <div style={{ background:'#111', border:'1px solid #1e1e1e', borderRadius:20, padding:28, maxWidth:480, width:'100%', maxHeight:'90vh', overflowY:'auto' }}>
-            <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:20 }}>
-              <div>
-                <div style={{ fontSize:9, fontWeight:800, color:'#a855f7', textTransform:'uppercase', letterSpacing:'0.12em', marginBottom:4 }}>Add to Collection</div>
-                <h3 style={{ fontSize:18, fontWeight:900, color:'#fff', margin:0 }}>Review & Edit</h3>
-              </div>
-              <button onClick={() => setShowAddModal(false)} style={{ width:32, height:32, borderRadius:8, background:'#1a1a1a', border:'1px solid #2a2a2a', color:'#555', cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'center' }}><IconX /></button>
-            </div>
 
-            {/* PSA cert badge */}
-            <div style={{ display:'flex', alignItems:'center', gap:10, padding:'10px 14px', background:'rgba(147,51,234,0.07)', border:'1px solid rgba(147,51,234,0.15)', borderRadius:10, marginBottom:20 }}>
-              <IconShield />
-              <span style={{ fontSize:12, color:'#a855f7', fontWeight:700 }}>PSA Cert #{result?.cert} · Grade {result?.grade}</span>
-            </div>
-
-            <div style={{ display:'flex', flexDirection:'column', gap:12 }}>
-              {[
-                { label:'Player / Card Name', key:'player', placeholder:'e.g. LeBron James' },
-                { label:'Year', key:'year', placeholder:'e.g. 2003' },
-                { label:'Sport', key:'sport', placeholder:'e.g. Basketball' },
-                { label:'Brand', key:'brand', placeholder:'e.g. Topps' },
-                { label:'Set / Name', key:'name', placeholder:'e.g. Chrome Refractor' },
-                { label:'Card Number', key:'num', placeholder:'e.g. 123' },
-              ].map(f => (
-                <div key={f.key}>
-                  <label style={{ display:'block', fontSize:9, fontWeight:700, color:'#555', textTransform:'uppercase', letterSpacing:'0.1em', marginBottom:5 }}>{f.label}</label>
-                  <input value={addForm[f.key]||''} onChange={e => setAddForm(p=>({...p,[f.key]:e.target.value}))} placeholder={f.placeholder}
-                    style={{ width:'100%', padding:'10px 12px', borderRadius:8, background:'#1a1a1a', border:'1px solid #2a2a2a', color:'#f0f0f0', fontSize:13, boxSizing:'border-box', outline:'none', transition:'border-color 0.15s' }} />
-                </div>
-              ))}
-
-              <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr 1fr', gap:10 }}>
-                <div>
-                  <label style={{ display:'block', fontSize:9, fontWeight:700, color:'#555', textTransform:'uppercase', letterSpacing:'0.1em', marginBottom:5 }}>Grade</label>
-                  <input value={addForm.grade||''} onChange={e => setAddForm(p=>({...p,grade:e.target.value}))} placeholder="10"
-                    style={{ width:'100%', padding:'10px 12px', borderRadius:8, background:'rgba(147,51,234,0.07)', border:'1px solid rgba(147,51,234,0.2)', color:'#a855f7', fontSize:13, fontWeight:800, boxSizing:'border-box', outline:'none' }} />
-                </div>
-                <div>
-                  <label style={{ display:'block', fontSize:9, fontWeight:700, color:'#555', textTransform:'uppercase', letterSpacing:'0.1em', marginBottom:5 }}>Buy Price</label>
-                  <input type="number" value={addForm.buy||''} onChange={e => setAddForm(p=>({...p,buy:e.target.value}))} placeholder="0.00"
-                    style={{ width:'100%', padding:'10px 12px', borderRadius:8, background:'#1a1a1a', border:'1px solid #2a2a2a', color:'#f0f0f0', fontSize:13, boxSizing:'border-box', outline:'none' }} />
-                </div>
-                <div>
-                  <label style={{ display:'block', fontSize:9, fontWeight:700, color:'#555', textTransform:'uppercase', letterSpacing:'0.1em', marginBottom:5 }}>Qty</label>
-                  <input type="number" value={addForm.qty||'1'} onChange={e => setAddForm(p=>({...p,qty:e.target.value}))} placeholder="1"
-                    style={{ width:'100%', padding:'10px 12px', borderRadius:8, background:'#1a1a1a', border:'1px solid #2a2a2a', color:'#f0f0f0', fontSize:13, boxSizing:'border-box', outline:'none' }} />
-                </div>
-              </div>
-
-              <div>
-                <label style={{ display:'block', fontSize:9, fontWeight:700, color:'#555', textTransform:'uppercase', letterSpacing:'0.1em', marginBottom:5 }}>Notes</label>
-                <input value={addForm.notes||''} onChange={e => setAddForm(p=>({...p,notes:e.target.value}))}
-                  style={{ width:'100%', padding:'10px 12px', borderRadius:8, background:'#1a1a1a', border:'1px solid #2a2a2a', color:'#f0f0f0', fontSize:13, boxSizing:'border-box', outline:'none' }} />
-              </div>
-            </div>
-
-            <div style={{ display:'flex', gap:10, marginTop:20 }}>
-              <button onClick={() => setShowAddModal(false)} style={{ flex:1, padding:'12px', borderRadius:10, background:'#1a1a1a', border:'1px solid #2a2a2a', color:'#666', fontSize:14, fontWeight:600, cursor:'pointer' }}>Cancel</button>
-              <button onClick={handleConfirmAdd} disabled={adding || !addForm.player} style={{ flex:2, padding:'12px', borderRadius:10, background: adding||!addForm.player?'#1a1a1a':'#9333ea', border:'none', color: adding||!addForm.player?'#555':'#fff', fontSize:14, fontWeight:800, cursor: adding||!addForm.player?'not-allowed':'pointer' }}>
-                {adding ? 'Adding...' : '+ Add to Collection'}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
+      {showAddModal && addForm && <CardModal card={addForm} onClose={() => setShowAddModal(false)} onSave={() => { setShowAddModal(false); setAddSuccess(true); setTimeout(() => setAddSuccess(false), 3000) }} />}
     </>
   )
 }
