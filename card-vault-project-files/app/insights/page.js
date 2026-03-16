@@ -298,7 +298,7 @@ function PersonalRecords({ cards, soldCards }) {
                 <div style={{ fontFamily: "'Outfit',sans-serif", fontSize: 12, fontWeight: 700, color: '#ccc', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{r.value}</div>
                 {r.sub && <div style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: 11, color: r.subColor || '#888', marginTop: 1 }}>{r.sub}</div>}
               </div>
-              {href && <span style={{ fontSize:10, color:'#e53935', fontFamily:"'Outfit',sans-serif", fontWeight:700, flexShrink:0 }}>→</span>}
+              {href && <span style={{ fontSize:10, color:'#e53935', fontFamily:"'Outfit',sans-serif", fontWeight:700, flexShrink:0 }}></span>}
             </div>
           )
           return href
