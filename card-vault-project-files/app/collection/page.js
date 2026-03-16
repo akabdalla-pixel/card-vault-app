@@ -1123,42 +1123,41 @@ function CollectionPage() {
                     const glPct = buy > 0 ? (gl/buy)*100 : 0
                     const isSelected = selected.has(card.id)
                     return (
-                      <div key={card.id} style={{ background: isSelected ? 'rgba(147,51,234,0.06)' : 'linear-gradient(135deg,#111,#0d0d0d)', border: isSelected ? '1px solid rgba(147,51,234,0.3)' : '1px solid #1e1e1e', borderRadius: 14, padding: '16px', display: 'flex', flexDirection: 'column', gap: 10, position: 'relative', transition: 'border-color 0.15s, background 0.15s', opacity: card.sold ? 0.75 : 1, animation:`fadeUp 0.45s ease ${idx*0.1}s both` }}
-                        onMouseEnter={e => { if (!isSelected) e.currentTarget.style.borderColor = '#2a2a2a' }}
-                        onMouseLeave={e => { if (!isSelected) e.currentTarget.style.borderColor = '#1e1e1e' }}>
-                        {/* Checkbox */}
-                        <input type="checkbox" checked={isSelected} onChange={() => toggleSelect(card.id)} style={{ position: 'absolute', top: 12, right: 12, accentColor: '#9333ea', width: 15, height: 15, cursor: 'pointer' }} />
-                        {/* Status badge */}
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                          {card.grade
-                            ? <span style={{ padding: '2px 8px', borderRadius: 6, background: 'rgba(147,51,234,0.12)', color: '#c084fc', fontSize: 9, fontWeight: 900, letterSpacing:'0.1em', border:'1px solid rgba(147,51,234,0.25)', borderRadius:100, padding:'3px 10px' }}>{card.grade ? card.grade : ''}</span>
-                            : <span style={{ padding: '2px 8px', borderRadius: 6, background: 'rgba(255,255,255,0.05)', color: '#555', fontSize: 11, fontWeight: 600 }}>{card.cond || 'Raw'}</span>
-                          }
-                          {card.sold && <span style={{ padding: '2px 8px', borderRadius: 6, background: 'rgba(255,190,46,0.1)', color: '#ffbe2e', fontSize: 11, fontWeight: 700 }}>SOLD</span>}
-                        </div>
-                        {/* Player name */}
-                        <div>
-                          <div style={{ fontFamily: "'Outfit',sans-serif", fontSize: 15, fontWeight: 800, color: '#f0f0f0', lineHeight: 1.2 }}>{card.player}</div>
-                          <div style={{ fontSize: 11, color: '#555', marginTop: 4 }}>{[card.year, card.sport, card.brand].filter(Boolean).join(' · ')}</div>
-                        </div>
-                        {/* Values */}
-                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', paddingTop: 8, borderTop: '1px solid #1e1e1e' }}>
-                          <div>
-                            <div style={{ fontSize: 9, color: '#444', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 2, fontFamily: "'Outfit',sans-serif" }}>Value</div>
-                            <div style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: 16, fontWeight: 700, color: '#f0f0f0' }}>{fmt(val)}</div>
+                      <div key={card.id} style={{ background:'#111', border: isSelected ? '1px solid #9333ea' : '1px solid #1a1a1a', borderRadius:14, overflow:'hidden', position:'relative', opacity: card.sold ? 0.65 : 1, animation:`fadeUp 0.25s ease ${Math.min(idx*0.04,0.3)}s both`, transition:'border-color 0.12s, transform 0.12s' }}
+                        onMouseEnter={e => { e.currentTarget.style.borderColor = isSelected ? '#9333ea' : '#333'; e.currentTarget.style.transform='translateY(-2px)' }}
+                        onMouseLeave={e => { e.currentTarget.style.borderColor = isSelected ? '#9333ea' : '#1a1a1a'; e.currentTarget.style.transform='translateY(0)' }}>
+                        <div style={{ height:3, background: glPos ? '#22c55e' : '#ef4444', opacity: buy===0?0.2:0.9 }} />
+                        <div style={{ padding:'12px 14px' }}>
+                          <div style={{ display:'flex', justifyContent:'space-between', alignItems:'flex-start', marginBottom:8 }}>
+                            <input type="checkbox" checked={isSelected} onChange={() => toggleSelect(card.id)} style={{ accentColor:'#9333ea', width:13, height:13, cursor:'pointer', marginTop:2 }} />
+                            <div style={{ position:'relative' }}>
+                              <button onClick={e => { e.stopPropagation(); const m = e.currentTarget.nextSibling; m.style.display = m.style.display==='block'?'none':'block' }} style={{ width:22, height:22, borderRadius:6, background:'#1a1a1a', border:'1px solid #222', color:'#555', cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'center', fontSize:14, fontWeight:700 }}>⋯</button>
+                              <div style={{ display:'none', position:'absolute', right:0, top:26, background:'#1a1a1a', border:'1px solid #2a2a2a', borderRadius:10, padding:'4px', zIndex:50, minWidth:140, boxShadow:'0 8px 24px rgba(0,0,0,0.6)' }}
+                                onMouseLeave={e => e.currentTarget.style.display='none'}>
+                                {[
+                                  { label:'🔍 Check Prices', action:() => setPriceLookupCard(card), color:'#a855f7' },
+                                  ...(!card.sold ? [{ label:'🏷 Mark Sold', action:() => setSoldCard(card), color:'#ffbe2e' }] : []),
+                                  { label:'📊 Break Even', action:() => setBreakEvenCard(card), color:'#888' },
+                                  { label:'✏️ Edit', action:() => setModal(card), color:'#888' },
+                                  { label:'🗑 Delete', action:() => setDeleteId(card.id), color:'#ef4444' },
+                                ].map((item,i) => (
+                                  <button key={i} onClick={item.action} style={{ display:'block', width:'100%', padding:'7px 10px', background:'transparent', border:'none', color:item.color, fontSize:12, fontWeight:600, cursor:'pointer', textAlign:'left', borderRadius:7 }}>{item.label}</button>
+                                ))}
+                              </div>
+                            </div>
                           </div>
-                          <div style={{ textAlign: 'right' }}>
-                            <div style={{ fontSize: 9, color: '#444', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 2, fontFamily: "'Outfit',sans-serif" }}>G/L</div>
-                            <div style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: 13, fontWeight: 700, color: glPos ? '#4ade80' : '#9333ea' }}>{glPos?'+':''}{glPct.toFixed(1)}%</div>
+                          <div style={{ fontSize:15, fontWeight:900, color:'#fff', textTransform:'uppercase', letterSpacing:'-0.3px', lineHeight:1.1, marginBottom:3, overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>{card.player}</div>
+                          <div style={{ fontSize:10, color:'#555', marginBottom:12 }}>{[card.year, card.sport, card.grade ? `${card.gradingCo||''} ${card.grade}`.trim() : null].filter(Boolean).join(' · ')}</div>
+                          <div style={{ display:'flex', justifyContent:'space-between', alignItems:'flex-end', paddingTop:10, borderTop:'1px solid #1a1a1a' }}>
+                            <div>
+                              <div style={{ fontSize:9, color:'#444', fontWeight:700, textTransform:'uppercase', letterSpacing:'0.1em', marginBottom:3 }}>VALUE</div>
+                              <div style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:18, fontWeight:900, color:'#fff', letterSpacing:'-0.5px' }}>{fmt(val)}</div>
+                            </div>
+                            <div style={{ textAlign:'right' }}>
+                              <div style={{ fontSize:9, color:'#444', fontWeight:700, textTransform:'uppercase', letterSpacing:'0.1em', marginBottom:3 }}>G/L</div>
+                              <div style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:13, fontWeight:800, color: glPos?'#22c55e':'#ef4444' }}>{glPos?'+':''}{glPct.toFixed(1)}%</div>
+                            </div>
                           </div>
-                        </div>
-                        {/* Action buttons */}
-                        <div style={{ display: 'flex', gap: 6 }}>
-                          <button onClick={() => setPriceLookupCard(card)} title="Check prices" style={{ flex: 1, padding: '6px 0', borderRadius: 7, background: 'rgba(124,92,252,0.08)', border: 'none', color: '#a78bfa', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><IconSearch /></button>
-                          {!card.sold && <button onClick={() => setSoldCard(card)} title="Mark sold" style={{ flex: 1, padding: '6px 0', borderRadius: 7, background: 'rgba(255,190,46,0.08)', border: 'none', color: '#ffbe2e', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><IconTag /></button>}
-                          <button onClick={() => setBreakEvenCard(card)} title="Break even" style={{ flex: 1, padding: '6px 0', borderRadius: 7, background: 'rgba(147,51,234,0.08)', border: 'none', color: '#9333ea', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><IconCalc /></button>
-                          <button onClick={() => setModal(card)} title="Edit" style={{ flex: 1, padding: '6px 0', borderRadius: 7, background: 'rgba(255,255,255,0.05)', border: 'none', color: '#666', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><IconEdit /></button>
-                          <button onClick={() => setDeleteId(card.id)} title="Delete" style={{ flex: 1, padding: '6px 0', borderRadius: 7, background: 'rgba(147,51,234,0.08)', border: 'none', color: '#9333ea', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><IconTrash /></button>
                         </div>
                       </div>
                     )
@@ -1238,20 +1237,40 @@ function CollectionPage() {
                   const glPos = gl >= 0
                   const glPct = buy > 0 ? (gl / buy) * 100 : 0
                   const cardContent = viewMode === 'grid' ? (
-                    // ── Grid tile (compact) ──────────────────────────────────
-                    <div style={{ background: selected.has(card.id) ? 'rgba(147,51,234,0.06)' : 'linear-gradient(135deg,#111,#0d0d0d)', border: selected.has(card.id) ? '1px solid rgba(147,51,234,0.3)' : '1px solid #1e1e1e', borderRadius: 12, padding: '12px', opacity: card.sold ? 0.8 : 1, animation:`fadeUp 0.45s ease ${idx*0.1}s both`, position:'relative' }}>
-                      <input type="checkbox" checked={selected.has(card.id)} onChange={() => toggleSelect(card.id)} style={{ position:'absolute', top:8, right:8, accentColor:'#9333ea', width:14, height:14, cursor:'pointer' }} />
-                      <div style={{ fontFamily:"'Outfit',sans-serif", fontSize:12, fontWeight:700, color:'#f0f0f0', marginBottom:4, paddingRight:18, lineHeight:1.3 }}>{card.player}</div>
-                      <div style={{ fontSize:10, color:'#555', marginBottom:8 }}>{[card.year, card.sport].filter(Boolean).join(' · ')}</div>
-                      {card.grade && <div style={{ display:'inline-block', padding:'1px 6px', borderRadius:6, background:'rgba(147,51,234,0.1)', color:'#9333ea', fontSize:10, fontWeight:700, marginBottom:6 }}>Grade {card.grade}</div>}
-                      <div style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:14, fontWeight:700, color:'#f0f0f0', marginBottom:2 }}>{fmt(displayVal)}</div>
-                      <div style={{ fontSize:11, fontWeight:700, color: glPos ? '#4ade80' : '#9333ea' }}>{glPos?'+':''}{fmt(gl)} <span style={{fontWeight:500,color:'#444'}}>({glPos?'+':''}{glPct.toFixed(1)}%)</span></div>
-                      <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:4, marginTop:8 }}>
-                        <button onClick={() => setPriceLookupCard(card)} style={{ padding:'6px 4px', borderRadius:7, background:'rgba(99,91,255,0.08)', border:'1px solid rgba(99,91,255,0.2)', color:'#635bff', fontSize:10, fontWeight:600, cursor:'pointer', fontFamily:"'Outfit',sans-serif" }}>🔍 Prices</button>
-                        {!card.sold && <button onClick={() => setSoldCard(card)} style={{ padding:'6px 4px', borderRadius:7, background:'rgba(255,190,46,0.08)', border:'1px solid rgba(255,190,46,0.2)', color:'#ffbe2e', fontSize:10, fontWeight:600, cursor:'pointer', fontFamily:"'Outfit',sans-serif" }}>🏷 Sell</button>}
-                        <button onClick={() => setBreakEvenCard(card)} style={{ padding:'6px 4px', borderRadius:7, background:'rgba(147,51,234,0.08)', border:'1px solid rgba(147,51,234,0.2)', color:'#9333ea', fontSize:10, fontWeight:600, cursor:'pointer', fontFamily:"'Outfit',sans-serif" }}>📊 Calc</button>
-                        <button onClick={() => setModal(card)} style={{ padding:'6px 4px', borderRadius:7, background:'rgba(255,255,255,0.05)', border:'1px solid #2a2a2a', color:'#666', fontSize:10, fontWeight:600, cursor:'pointer', fontFamily:"'Outfit',sans-serif" }}>✏️ Edit</button>
-                        <button onClick={() => setDeleteId(card.id)} style={{ gridColumn:'1/-1', padding:'5px 4px', borderRadius:7, background:'rgba(168,85,247,0.06)', border:'1px solid rgba(168,85,247,0.15)', color:'#555', fontSize:10, fontWeight:600, cursor:'pointer', fontFamily:"'Outfit',sans-serif" }}>🗑 Delete</button>
+                    // ── Grid tile — clean with dropdown ─────────────────────
+                    <div style={{ background:'#111', border: selected.has(card.id) ? '1px solid #9333ea' : '1px solid #1a1a1a', borderRadius:12, overflow:'hidden', opacity: card.sold ? 0.65 : 1, animation:`fadeUp 0.25s ease ${Math.min(idx*0.04,0.3)}s both` }}>
+                      <div style={{ height:3, background: glPos?'#22c55e':'#ef4444', opacity: buy===0?0.2:0.9 }} />
+                      <div style={{ padding:'11px 12px' }}>
+                        <div style={{ display:'flex', justifyContent:'space-between', alignItems:'flex-start', marginBottom:6 }}>
+                          <input type="checkbox" checked={selected.has(card.id)} onChange={() => toggleSelect(card.id)} style={{ accentColor:'#9333ea', width:13, height:13, cursor:'pointer', marginTop:2 }} />
+                          <div style={{ position:'relative' }}>
+                            <button onClick={e => { e.stopPropagation(); const m = e.currentTarget.nextSibling; m.style.display = m.style.display==='block'?'none':'block' }} style={{ width:22, height:22, borderRadius:6, background:'#1a1a1a', border:'1px solid #222', color:'#555', cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'center', fontSize:14, fontWeight:700 }}>⋯</button>
+                            <div style={{ display:'none', position:'absolute', right:0, top:26, background:'#1a1a1a', border:'1px solid #2a2a2a', borderRadius:10, padding:'4px', zIndex:50, minWidth:140, boxShadow:'0 8px 24px rgba(0,0,0,0.8)' }}
+                              onMouseLeave={e => e.currentTarget.style.display='none'}>
+                              {[
+                                { label:'🔍 Check Prices', action:() => setPriceLookupCard(card), color:'#a855f7' },
+                                ...(!card.sold ? [{ label:'🏷 Mark Sold', action:() => setSoldCard(card), color:'#ffbe2e' }] : []),
+                                { label:'📊 Break Even', action:() => setBreakEvenCard(card), color:'#888' },
+                                { label:'✏️ Edit', action:() => setModal(card), color:'#888' },
+                                { label:'🗑 Delete', action:() => setDeleteId(card.id), color:'#ef4444' },
+                              ].map((item,i) => (
+                                <button key={i} onClick={item.action} style={{ display:'block', width:'100%', padding:'8px 10px', background:'transparent', border:'none', color:item.color, fontSize:12, fontWeight:600, cursor:'pointer', textAlign:'left', borderRadius:7 }}>{item.label}</button>
+                              ))}
+                            </div>
+                          </div>
+                        </div>
+                        <div style={{ fontSize:13, fontWeight:900, color:'#fff', textTransform:'uppercase', letterSpacing:'-0.2px', lineHeight:1.2, marginBottom:3, overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>{card.player}</div>
+                        <div style={{ fontSize:10, color:'#555', marginBottom:10 }}>{[card.year, card.sport].filter(Boolean).join(' · ')}</div>
+                        <div style={{ display:'flex', justifyContent:'space-between', alignItems:'flex-end', paddingTop:8, borderTop:'1px solid #1a1a1a' }}>
+                          <div>
+                            <div style={{ fontSize:8, color:'#444', fontWeight:700, textTransform:'uppercase', letterSpacing:'0.1em', marginBottom:2 }}>VALUE</div>
+                            <div style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:16, fontWeight:900, color:'#fff' }}>{fmt(displayVal)}</div>
+                          </div>
+                          <div style={{ textAlign:'right' }}>
+                            <div style={{ fontSize:8, color:'#444', fontWeight:700, textTransform:'uppercase', letterSpacing:'0.1em', marginBottom:2 }}>G/L</div>
+                            <div style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:12, fontWeight:800, color: glPos?'#22c55e':'#ef4444' }}>{glPos?'+':''}{glPct.toFixed(1)}%</div>
+                          </div>
+                        </div>
                       </div>
                     </div>
                   ) : (
