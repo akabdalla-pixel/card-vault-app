@@ -1194,7 +1194,7 @@ function CollectionPage() {
                               <div style={{ display:'none', position:'absolute', right:0, top:26, background:'#1a1a1a', border:'1px solid #2a2a2a', borderRadius:10, padding:'4px', zIndex:50, minWidth:140, boxShadow:'0 8px 24px rgba(0,0,0,0.6)' }}
                                 onMouseLeave={e => e.currentTarget.style.display='none'}>
                                 {[
-                                  { label:'🔍 Check Prices', action:() => setPriceLookupCard(card), color:'#a855f7' },
+    
                                   ...(!card.sold ? [{ label:'🏷 Mark Sold', action:() => setSoldCard(card), color:'#ffbe2e' }] : []),
                                   { label:'📊 Break Even', action:() => setBreakEvenCard(card), color:'#888' },
                                   { label:'✏️ Edit', action:() => setModal(card), color:'#888' },
@@ -1273,7 +1273,7 @@ function CollectionPage() {
                           </div>
                           {/* Action buttons */}
                           <div style={{ display:'flex', gap:5, marginTop:12 }}>
-                            <button onClick={() => setPriceLookupCard(card)} title="Prices" style={{ flex:1, padding:'7px 0', borderRadius:7, background:'rgba(147,51,234,0.1)', border:'1px solid rgba(147,51,234,0.2)', color:'#a855f7', cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'center' }}><IconSearch /></button>
+                            <button onClick={() => window.open('https://www.ebay.com/sch/i.html?_nkw='+encodeURIComponent([card.year,card.player,card.brand,card.grade?'PSA '+card.grade:null].filter(Boolean).join(' ')), '_blank')} title="Prices" style={{ flex:1, padding:'7px 0', borderRadius:7, background:'rgba(147,51,234,0.1)', border:'1px solid rgba(147,51,234,0.2)', color:'#a855f7', cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'center' }}><IconSearch /></button>
                             {!card.sold && <button onClick={() => setSoldCard(card)} title="Sell" style={{ flex:1, padding:'7px 0', borderRadius:7, background:'rgba(255,190,46,0.08)', border:'1px solid rgba(255,190,46,0.15)', color:'#ffbe2e', cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'center' }}><IconTag /></button>}
                             <button onClick={() => setBreakEvenCard(card)} title="Calc" style={{ flex:1, padding:'7px 0', borderRadius:7, background:'rgba(255,255,255,0.04)', border:'1px solid #1e1e1e', color:'#555', cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'center' }}><IconCalc /></button>
                             <button onClick={() => setModal(card)} title="Edit" style={{ flex:1, padding:'7px 0', borderRadius:7, background:'rgba(255,255,255,0.04)', border:'1px solid #1e1e1e', color:'#555', cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'center' }}><IconEdit /></button>
@@ -1307,7 +1307,7 @@ function CollectionPage() {
                             <div style={{ display:'none', position:'absolute', right:0, top:26, background:'#1a1a1a', border:'1px solid #2a2a2a', borderRadius:10, padding:'4px', zIndex:50, minWidth:140, boxShadow:'0 8px 24px rgba(0,0,0,0.8)' }}
                               onMouseLeave={e => e.currentTarget.style.display='none'}>
                               {[
-                                { label:'🔍 Check Prices', action:() => setPriceLookupCard(card), color:'#a855f7' },
+  
                                 ...(!card.sold ? [{ label:'🏷 Mark Sold', action:() => setSoldCard(card), color:'#ffbe2e' }] : []),
                                 { label:'📊 Break Even', action:() => setBreakEvenCard(card), color:'#888' },
                                 { label:'✏️ Edit', action:() => setModal(card), color:'#888' },
@@ -1374,7 +1374,7 @@ function CollectionPage() {
 
                       {/* Action buttons */}
                       <div style={{ display: 'flex', gap: 8 }}>
-                        <button onClick={() => setPriceLookupCard(card)} style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, padding: '9px 0', borderRadius: 9, background: 'rgba(124,92,252,0.1)', border: '1px solid rgba(124,92,252,0.2)', color: '#a78bfa', fontFamily: "'Outfit',sans-serif", fontSize: 12, fontWeight: 600, cursor: 'pointer' }}>
+                        <button onClick={() => window.open('https://www.ebay.com/sch/i.html?_nkw='+encodeURIComponent([card.year,card.player,card.brand,card.grade?'PSA '+card.grade:null].filter(Boolean).join(' ')), '_blank')} style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, padding: '9px 0', borderRadius: 9, background: 'rgba(124,92,252,0.1)', border: '1px solid rgba(124,92,252,0.2)', color: '#a78bfa', fontFamily: "'Outfit',sans-serif", fontSize: 12, fontWeight: 600, cursor: 'pointer' }}>
                           <IconSearch />Prices
                         </button>
                         {!card.sold && (
