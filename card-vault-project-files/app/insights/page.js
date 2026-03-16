@@ -273,29 +273,38 @@ function PersonalRecords({ cards, soldCards }) {
   })[0] : null
 
   const records = [
-    { icon: '👑', label: 'Most Valuable', value: byVal[0]?.player || '—', sub: byVal[0] ? fmt(parseFloat(byVal[0].val) || 0) : '', subColor: '#22c55e' },
-    { icon: '💸', label: 'Most Expensive Buy', value: byBuy[0]?.player || '—', sub: byBuy[0] ? fmt(parseFloat(byBuy[0].buy) || 0) : '', subColor: '#888' },
-    { icon: '🪙', label: 'Cheapest Card', value: cheapest?.player || '—', sub: cheapest ? fmt(parseFloat(cheapest.buy) || 0) : '', subColor: '#888' },
-    { icon: '🏛️', label: 'Oldest Card', value: oldest?.player || '—', sub: oldest?.year || '', subColor: '#888' },
-    { icon: '🆕', label: 'Latest Addition', value: newest?.player || '—', sub: newest ? new Date(newest.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : '', subColor: '#888' },
-    { icon: '🏅', label: 'Highest Grade', value: topGrade?.player || '—', sub: topGrade ? `Grade ${topGrade.grade}` : 'No graded cards', subColor: '#e53935' },
-    ...(bestFlip ? [{ icon: '🔥', label: 'Best Flip Ever', value: bestFlip.player, sub: `+${fmt((parseFloat(bestFlip.soldPrice) || 0) - (parseFloat(bestFlip.buy) || 0))}`, subColor: '#22c55e' }] : []),
+    { icon: '👑', label: 'Most Valuable', value: byVal[0]?.player || '—', sub: byVal[0] ? fmt(parseFloat(byVal[0].val) || 0) : '', subColor: '#22c55e', card: byVal[0] },
+    { icon: '💸', label: 'Most Expensive Buy', value: byBuy[0]?.player || '—', sub: byBuy[0] ? fmt(parseFloat(byBuy[0].buy) || 0) : '', subColor: '#888', card: byBuy[0] },
+    { icon: '🪙', label: 'Cheapest Card', value: cheapest?.player || '—', sub: cheapest ? fmt(parseFloat(cheapest.buy) || 0) : '', subColor: '#888', card: cheapest },
+    { icon: '🏛️', label: 'Oldest Card', value: oldest?.player || '—', sub: oldest?.year || '', subColor: '#888', card: oldest },
+    { icon: '🆕', label: 'Latest Addition', value: newest?.player || '—', sub: newest ? new Date(newest.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : '', subColor: '#888', card: newest },
+    { icon: '🏅', label: 'Highest Grade', value: topGrade?.player || '—', sub: topGrade ? `Grade ${topGrade.grade}` : 'No graded cards', subColor: '#e53935', card: topGrade },
+    ...(bestFlip ? [{ icon: '🔥', label: 'Best Flip Ever', value: bestFlip.player, sub: `+${fmt((parseFloat(bestFlip.soldPrice) || 0) - (parseFloat(bestFlip.buy) || 0))}`, subColor: '#22c55e', card: bestFlip }] : []),
   ]
 
   return (
     <div style={{ background: '#111', border: '1px solid #1e1e1e', borderRadius: 16, padding: '20px 22px' }}>
       <div style={{ fontFamily: "'Outfit',sans-serif", fontSize: 13, fontWeight: 700, color: '#ccc', marginBottom: 16, display: 'flex', alignItems: 'center', gap: 8 }}><IconStar /><span>Personal Records</span></div>
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2,1fr)', gap: 10 }}>
-        {records.map((r, i) => (
-          <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 12px', background: '#1a1a1a', borderRadius: 10, animation:`fadeUp 0.45s ease ${i*0.08}s both` }}>
-            <div style={{ fontSize: 20, flexShrink: 0 }}>{r.icon}</div>
-            <div style={{ minWidth: 0 }}>
-              <div style={{ fontFamily: "'Outfit',sans-serif", fontSize: 10, color: '#444', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 2 }}>{r.label}</div>
-              <div style={{ fontFamily: "'Outfit',sans-serif", fontSize: 12, fontWeight: 700, color: '#ccc', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{r.value}</div>
-              {r.sub && <div style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: 11, color: r.subColor || '#888', marginTop: 1 }}>{r.sub}</div>}
+        {records.map((r, i) => {
+          const href = r.card?.player ? `/collection?search=${encodeURIComponent(r.card.player)}` : null
+          const inner = (
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 12px', background: '#1a1a1a', borderRadius: 10, animation:`fadeUp 0.45s ease ${i*0.08}s both`, cursor: href ? 'pointer' : 'default', transition:'background 0.15s' }}
+              onMouseEnter={e => { if(href) e.currentTarget.style.background='#222' }}
+              onMouseLeave={e => { if(href) e.currentTarget.style.background='#1a1a1a' }}>
+              <div style={{ fontSize: 20, flexShrink: 0 }}>{r.icon}</div>
+              <div style={{ minWidth: 0, flex: 1 }}>
+                <div style={{ fontFamily: "'Outfit',sans-serif", fontSize: 10, color: '#444', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 2 }}>{r.label}</div>
+                <div style={{ fontFamily: "'Outfit',sans-serif", fontSize: 12, fontWeight: 700, color: '#ccc', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{r.value}</div>
+                {r.sub && <div style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: 11, color: r.subColor || '#888', marginTop: 1 }}>{r.sub}</div>}
+              </div>
+              {href && <span style={{ fontSize:10, color:'#e53935', fontFamily:"'Outfit',sans-serif", fontWeight:700, flexShrink:0 }}>→</span>}
             </div>
-          </div>
-        ))}
+          )
+          return href
+            ? <Link key={i} href={href} style={{ textDecoration:'none' }}>{inner}</Link>
+            : <div key={i}>{inner}</div>
+        })}
       </div>
     </div>
   )

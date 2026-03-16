@@ -1,6 +1,6 @@
 'use client'
-import { useState, useEffect, useCallback, useRef } from 'react'
-import { useRouter } from 'next/navigation'
+import { useState, useEffect, useCallback, useRef, Suspense } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 
 const NAV = [
@@ -568,7 +568,7 @@ function BreakEvenModal({ card, onClose }) {
   )
 }
 
-export default function CollectionPage() {
+function CollectionPage() {
   const [cards, setCards] = useState([])
   const [user, setUser] = useState(null)
   const [loading, setLoading] = useState(true)
@@ -576,7 +576,8 @@ export default function CollectionPage() {
   const [priceLookupCard, setPriceLookupCard] = useState(null)
   const [soldCard, setSoldCard] = useState(null)
   const [showImport, setShowImport] = useState(false)
-  const [search, setSearch] = useState('')
+  const searchParams = useSearchParams()
+  const [search, setSearch] = useState(() => searchParams.get('search') || '')
   const [filterSport, setFilterSport] = useState('')
   const [sportTab, setSportTab] = useState('all') // 'all' | 'sports' | 'tcg' | specific sport
   const [filterStatus, setFilterStatus] = useState('active')
@@ -1170,4 +1171,8 @@ export default function CollectionPage() {
       )}
     </>
   )
+}
+
+export default function CollectionPageWrapper() {
+  return <Suspense fallback={null}><CollectionPage /></Suspense>
 }

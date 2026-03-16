@@ -463,7 +463,10 @@ export default function DashboardPage() {
             const glPct = buy > 0 ? (gl / buy) * 100 : 0
             const today = new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })
             return (
-              <div style={{ marginTop:22, animation:'scaleIn 0.3s ease', background:'linear-gradient(135deg,#1a0a0a,#0d0d0d)', border:'1px solid rgba(229,57,53,0.2)', borderRadius:14, padding:'18px 22px', position:'relative', overflow:'hidden' }}>
+              <Link href={`/collection?search=${encodeURIComponent(cardOfTheDay.player)}`} style={{ textDecoration:'none', display:'block' }}>
+              <div style={{ marginTop:22, animation:'scaleIn 0.3s ease', background:'linear-gradient(135deg,#1a0a0a,#0d0d0d)', border:'1px solid rgba(229,57,53,0.2)', borderRadius:14, padding:'18px 22px', position:'relative', overflow:'hidden', cursor:'pointer', transition:'border-color 0.15s' }}
+                onMouseEnter={e=>e.currentTarget.style.borderColor='rgba(229,57,53,0.5)'}
+                onMouseLeave={e=>e.currentTarget.style.borderColor='rgba(229,57,53,0.2)'}>
                 <div style={{ position:'absolute', top:0, left:0, right:0, height:2, background:'linear-gradient(90deg,#e53935,#ff5252,#e53935)' }} />
               <div style={{ display:'flex', alignItems:'flex-start', justifyContent:'space-between', flexWrap:'wrap', gap:12 }}>
                   <div style={{ flex:1, minWidth:0 }}>
@@ -478,6 +481,7 @@ export default function DashboardPage() {
                     <div style={{ fontSize:12, color:'#555', marginTop:4, fontFamily:"'Outfit',sans-serif" }}>
                       {[cardOfTheDay.year, cardOfTheDay.sport, cardOfTheDay.brand, cardOfTheDay.grade ? `Grade ${cardOfTheDay.grade}` : cardOfTheDay.cond].filter(Boolean).join(' · ')}
                     </div>
+                    <div style={{ fontSize:10, color:'#e53935', marginTop:6, fontFamily:"'Outfit',sans-serif", fontWeight:600, opacity:0.7 }}>View in Collection →</div>
                   </div>
                   <div style={{ display:'flex', gap:14, flexShrink:0, flexWrap:'wrap' }}>
                     <div style={{ textAlign:'right' }}>
@@ -495,6 +499,7 @@ export default function DashboardPage() {
                   </div>
                 </div>
               </div>
+              </Link>
             )
           })()}
 
