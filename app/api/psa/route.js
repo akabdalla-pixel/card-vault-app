@@ -48,6 +48,8 @@ export async function GET(req) {
       reverse: cert_data.ReverseBarCode || null,
       frontImage: cert_data.IsFrontImageAvailable ? `https://d1htnxwo4o0jhw.cloudfront.net/cert/${cert}/front.jpg` : null,
       backImage: cert_data.IsBackImageAvailable ? `https://d1htnxwo4o0jhw.cloudfront.net/cert/${cert}/back.jpg` : null,
+      isFrontAvailable: cert_data.IsFrontImageAvailable,
+      isBackAvailable: cert_data.IsBackImageAvailable,
       raw: cert_data,
     })
 
