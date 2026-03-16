@@ -734,6 +734,7 @@ function CollectionPage() {
   const [importSuccess, setImportSuccess] = useState(null)
   const [selected, setSelected] = useState(new Set())
   const [bulkDeleting, setBulkDeleting] = useState(false)
+  const [filterSheetOpen, setFilterSheetOpen] = useState(false)
   const [breakEvenCard, setBreakEvenCard] = useState(null)
   const router = useRouter()
 
@@ -857,7 +858,7 @@ function CollectionPage() {
           .main-wrap{margin-left:0!important;width:100%!important;padding-bottom:80px!important;padding:12px 12px 80px!important}
           .mobile-cards{display:flex!important}.desktop-table{display:none!important}.card-grid{grid-template-columns:repeat(2,1fr)!important;gap:10px!important}.desktop-grid{display:none!important}
           .card-grid{display:none!important}
-          .mob-stats{display:flex!important}.desk-stats{display:none!important}
+          .mob-stats{display:grid!important}.desk-stats{display:none!important}
           .mob-filters{display:flex!important}.desk-filters{display:none!important}
           .hide-mob{display:none!important}
         }
@@ -910,19 +911,19 @@ function CollectionPage() {
             </div>
           )}
 
-          {/* ── Mobile: compact stats strip ── */}
+          {/* ── Mobile: 2x2 stats grid ── */}
           {cards.length > 0 && (
-            <div className="mob-stats" style={{ gap: 8, overflowX: 'auto', marginBottom: 12, paddingBottom: 2, WebkitOverflowScrolling: 'touch' }}>
+            <div className="mob-stats" style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:8, marginBottom:12 }}>
               {[
-                { label: 'Cards', value: statActive.length },
-                { label: 'Invested', value: fmt(totalInvested) },
-                { label: 'Value', value: fmt(totalValue) },
-                { label: 'G/L', value: (totalValue-totalInvested>=0?'+':'')+fmt(totalValue-totalInvested), color: totalValue>=totalInvested?'#4ade80':'#9333ea' },
-                { label: 'P&L', value: (realizedPL>=0?'+':'')+fmt(realizedPL), color: realizedPL>=0?'#4ade80':'#9333ea' },
+                { label:'Value', value: fmt(totalValue), accent:'#9333ea', color:'#fff' },
+                { label:'Gain / Loss', value: (totalValue-totalInvested>=0?'+':'')+fmt(totalValue-totalInvested), accent: totalValue>=totalInvested?'#22c55e':'#ef4444', color: totalValue>=totalInvested?'#22c55e':'#ef4444' },
+                { label:'Invested', value: fmt(totalInvested), accent:'#333', color:'#fff' },
+                { label:'Cards', value: statActive.length, accent:'#333', color:'#fff' },
               ].map((s,i) => (
-                <div key={i} style={{ flexShrink:0, background:'#13131f', border:'1px solid rgba(147,51,234,0.15)', boxShadow:'0 4px 20px rgba(0,0,0,0.4)', borderRadius:10, padding:'10px 12px', minWidth:90, textAlign:'center' }}>
-                  <div style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:13, fontWeight:700, color:s.color||'#f0f0f0' }}>{s.value}</div>
-                  <div style={{ fontSize:9, color:'#444', fontWeight:700, textTransform:'uppercase', letterSpacing:'0.08em', marginTop:3, fontFamily:"'Outfit',sans-serif" }}>{s.label}</div>
+                <div key={i} style={{ background:'#111', border:'1px solid #1a1a1a', borderRadius:10, padding:'12px 14px', position:'relative', overflow:'hidden' }}>
+                  <div style={{ position:'absolute', top:0, left:0, right:0, height:2, background:s.accent }} />
+                  <div style={{ fontSize:9, fontWeight:700, color:'#444', textTransform:'uppercase', letterSpacing:'0.1em', marginBottom:6 }}>{s.label}</div>
+                  <div style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:16, fontWeight:900, color:s.color, letterSpacing:'-0.5px' }}>{s.value}</div>
                 </div>
               ))}
             </div>
@@ -945,7 +946,7 @@ function CollectionPage() {
               ...uniqueSports.map(s => ({ val: s, label: s, emoji: TCG_LIST.includes(s) ? '🎴' : '🏅' }))
             ]
             return (
-              <div style={{ display:'flex', gap:6, marginBottom:14, overflowX:'auto', paddingBottom:2, WebkitOverflowScrolling:'touch' }}>
+              <div className="hide-mob" style={{ display:'flex', gap:6, marginBottom:14, overflowX:'auto', paddingBottom:2, WebkitOverflowScrolling:'touch' }}>
                 {tabs.map(t => (
                   <button key={t.val} onClick={() => setSportTab(t.val)} style={{ display:'flex', alignItems:'center', gap:6, padding:'8px 16px', borderRadius:100, border: sportTab === t.val ? '1px solid #9333ea' : '1px solid #1e1e1e', background: sportTab === t.val ? '#9333ea' : '#111', color: sportTab === t.val ? '#fff' : '#555', fontSize:12, fontWeight: sportTab === t.val ? 900 : 600, textTransform:'uppercase', letterSpacing:'0.05em', cursor:'pointer', whiteSpace:'nowrap', flexShrink:0, transition:'all 0.15s' }}>
                     <span>{t.emoji}</span>{t.label}
@@ -1022,45 +1023,90 @@ function CollectionPage() {
               <button onClick={() => setViewMode('grid')} title="Grid view" style={{ padding: '8px 12px', background: viewMode === 'grid' ? 'rgba(147,51,234,0.15)' : '#111', border: 'none', color: viewMode === 'grid' ? '#9333ea' : '#555', cursor: 'pointer', display: 'flex', alignItems: 'center' }}><IconGrid /></button>
             </div>
           </div>
-          <div className="mob-filters" style={{ gap: 8, marginBottom: 10, flexWrap: 'nowrap', overflowX: 'auto', WebkitOverflowScrolling: 'touch', paddingBottom: 2 }}>
-            {/* 1. Search */}
-            <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search..." style={{ flex: 1, minWidth: 110, maxWidth: 150, padding: '8px 12px', borderRadius: 10, background: '#181818', border: '1px solid #2a2a2a', color: '#f0f0f0', fontSize: 13, outline: 'none', fontFamily: "'Outfit',sans-serif" }} />
-            {/* 2. All / Graded / Raw */}
-            <div style={{ display: 'flex', borderRadius: 8, overflow: 'hidden', border: '1px solid #1e1e1e', flexShrink: 0 }}>
-              {[['','All'],['graded','Graded'],['raw','Raw']].map(([val, label]) => (
-                <button key={val} onClick={() => setFilterGraded(val)} style={{ padding: '8px 10px', background: filterGraded===val ? '#9333ea' : '#111', border:'none', color: filterGraded===val ? '#fff' : '#555', fontSize:11, fontWeight:800, textTransform:'uppercase', letterSpacing:'0.06em', cursor: 'pointer', whiteSpace: 'nowrap' }}>{label}</button>
-              ))}
+          {/* ── Mobile: search row + sport chips ── */}
+          <div className="mob-filters" style={{ marginBottom: 10 }}>
+            {/* Search + filter icon */}
+            <div style={{ display:'flex', gap:8, marginBottom:8 }}>
+              <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search cards..." style={{ flex:1, padding:'9px 14px', borderRadius:10, background:'#111', border:'1px solid #1e1e1e', color:'#f0f0f0', fontSize:14, outline:'none' }} />
+              <button onClick={() => setFilterSheetOpen(true)} style={{ width:40, height:40, borderRadius:10, background: (filterGraded||filterStatus!=='active'||filterAuto||priceMin||priceMax) ? '#9333ea' : '#111', border:'1px solid #1e1e1e', color: (filterGraded||filterStatus!=='active'||filterAuto||priceMin||priceMax) ? '#fff' : '#555', cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0 }}>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><line x1="4" y1="6" x2="20" y2="6"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="11" y1="18" x2="13" y2="18"/></svg>
+              </button>
+              <div style={{ display:'flex', borderRadius:10, overflow:'hidden', border:'1px solid #1e1e1e', flexShrink:0 }}>
+                <button onClick={() => setViewMode('table')} style={{ padding:'0 10px', height:40, background: viewMode==='table' ? 'rgba(147,51,234,0.1)' : '#111', border:'none', color: viewMode==='table' ? '#9333ea' : '#555', cursor:'pointer', display:'flex', alignItems:'center' }}><IconList /></button>
+                <button onClick={() => setViewMode('grid')} style={{ padding:'0 10px', height:40, background: viewMode==='grid' ? 'rgba(147,51,234,0.1)' : '#111', border:'none', color: viewMode==='grid' ? '#9333ea' : '#555', cursor:'pointer', display:'flex', alignItems:'center' }}><IconGrid /></button>
+              </div>
             </div>
-            {/* 3. ✍️ Auto */}
-            <button onClick={() => setFilterAuto(v => !v)} style={{ padding: '8px 10px', borderRadius: 10, background: filterAuto ? 'rgba(255,190,46,0.1)' : '#181818', border: filterAuto ? '1px solid rgba(255,190,46,0.35)' : '1px solid #2a2a2a', color: filterAuto ? '#ffbe2e' : '#555', fontFamily: "'Outfit',sans-serif", fontSize: 12, fontWeight: filterAuto ? 700 : 500, cursor: 'pointer', flexShrink:0, whiteSpace:'nowrap' }}>✍️ Auto</button>
-            {/* 4. Sort */}
-            <select value={sortBy} onChange={e => setSortBy(e.target.value)} style={{ flexShrink: 0, padding: '8px 10px', borderRadius: 10, background: '#181818', border: '1px solid #2a2a2a', color: '#f0f0f0', fontSize: 12, outline: 'none', fontFamily: "'Outfit',sans-serif" }}>
-              <option value="date_desc">Newest</option>
-              <option value="date_asc">Oldest</option>
-              <option value="price_desc">Value ↓</option>
-              <option value="price_asc">Value ↑</option>
-              <option value="name_asc">A→Z</option>
-              <option value="name_desc">Z→A</option>
-            </select>
-            {/* 5. Price range */}
-            <div style={{ display:'flex', alignItems:'center', gap:4, background:'#181818', border:'1px solid #2a2a2a', borderRadius:10, padding:'0 8px', flexShrink:0 }}>
-              <span style={{ fontSize:10, color:'#444', fontWeight:700 }}>$</span>
-              <input type="number" placeholder="Min" value={priceMin} onChange={e => setPriceMin(e.target.value)} style={{ width:44, padding:'8px 0', background:'transparent', border:'none', color:'#f0f0f0', fontSize:12, outline:'none', fontFamily:"'JetBrains Mono',monospace" }} />
-              <span style={{ fontSize:10, color:'#333' }}>—</span>
-              <input type="number" placeholder="Max" value={priceMax} onChange={e => setPriceMax(e.target.value)} style={{ width:44, padding:'8px 0', background:'transparent', border:'none', color:'#f0f0f0', fontSize:12, outline:'none', fontFamily:"'JetBrains Mono',monospace" }} />
-            </div>
-            {/* 6. Grid / List */}
-            <div style={{ display: 'flex', borderRadius: 8, overflow: 'hidden', border: '1px solid #1e1e1e', flexShrink: 0 }}>
-              <button onClick={() => setViewMode('table')} style={{ padding: '8px 10px', background: viewMode==='table' ? 'rgba(147,51,234,0.08)' : '#181818', border: 'none', color: viewMode==='table' ? '#9333ea' : '#555', cursor: 'pointer', display: 'flex', alignItems: 'center' }}><IconList /></button>
-              <button onClick={() => setViewMode('grid')} style={{ padding: '8px 10px', background: viewMode==='grid' ? 'rgba(147,51,234,0.08)' : '#181818', border: 'none', color: viewMode==='grid' ? '#9333ea' : '#555', cursor: 'pointer', display: 'flex', alignItems: 'center' }}><IconGrid /></button>
-            </div>
-            {/* 7. Active / Sold / All */}
-            <div style={{ display: 'flex', borderRadius: 8, overflow: 'hidden', border: '1px solid #1e1e1e', flexShrink: 0 }}>
-              {[['active','Active'],['sold','Sold'],['all','All']].map(([val, label]) => (
-                <button key={val} onClick={() => setFilterStatus(val)} style={{ padding: '8px 10px', background: filterStatus===val ? 'rgba(147,51,234,0.08)' : '#181818', border: 'none', color: filterStatus===val ? '#9333ea' : '#555', fontFamily: "'Outfit',sans-serif", fontSize: 12, fontWeight: filterStatus===val ? 700 : 500, cursor: 'pointer', whiteSpace: 'nowrap' }}>{label}</button>
-              ))}
-            </div>
+            {/* Sport chips — wrap naturally */}
+            {cards.length > 0 && (() => {
+              const uniqueSports = [...new Set(cards.map(c => c.sport).filter(Boolean))]
+              if (uniqueSports.length < 2) return null
+              const tabs = [{ val:'all', label:'All' }, ...uniqueSports.map(s => ({ val:s, label:s }))]
+              return (
+                <div style={{ display:'flex', gap:6, flexWrap:'wrap' }}>
+                  {tabs.map(t => (
+                    <button key={t.val} onClick={() => setSportTab(t.val)} style={{ padding:'5px 12px', borderRadius:20, border: sportTab===t.val ? '1px solid #9333ea' : '1px solid #1e1e1e', background: sportTab===t.val ? '#9333ea' : '#111', color: sportTab===t.val ? '#fff' : '#555', fontSize:11, fontWeight: sportTab===t.val ? 800 : 600, textTransform:'uppercase', letterSpacing:'0.05em', cursor:'pointer' }}>{t.label}</button>
+                  ))}
+                </div>
+              )
+            })()}
           </div>
+
+          {/* ── Mobile: Filter bottom sheet ── */}
+          {filterSheetOpen && (
+            <div style={{ position:'fixed', inset:0, zIndex:200, display:'flex', flexDirection:'column', justifyContent:'flex-end' }}>
+              <div style={{ position:'absolute', inset:0, background:'rgba(0,0,0,0.7)' }} onClick={() => setFilterSheetOpen(false)} />
+              <div style={{ position:'relative', background:'#111', borderRadius:'20px 20px 0 0', border:'1px solid #1e1e1e', padding:'20px 20px 40px', zIndex:1 }}>
+                {/* Handle */}
+                <div style={{ width:40, height:4, borderRadius:2, background:'#333', margin:'0 auto 20px' }} />
+                <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:20 }}>
+                  <span style={{ fontSize:16, fontWeight:900, color:'#fff', textTransform:'uppercase', letterSpacing:'-0.3px' }}>Filters</span>
+                  <button onClick={() => { setFilterGraded(''); setFilterStatus('active'); setFilterAuto(false); setPriceMin(''); setPriceMax(''); setSortBy('date_desc') }} style={{ fontSize:11, color:'#9333ea', fontWeight:700, background:'none', border:'none', cursor:'pointer' }}>Reset all</button>
+                </div>
+                {/* Status */}
+                <div style={{ marginBottom:18 }}>
+                  <div style={{ fontSize:9, fontWeight:700, color:'#555', textTransform:'uppercase', letterSpacing:'0.1em', marginBottom:8 }}>Status</div>
+                  <div style={{ display:'flex', gap:6 }}>
+                    {[['active','Active'],['sold','Sold'],['all','All']].map(([val,label]) => (
+                      <button key={val} onClick={() => setFilterStatus(val)} style={{ padding:'8px 16px', borderRadius:8, border:'1px solid #1e1e1e', background: filterStatus===val ? '#9333ea' : '#1a1a1a', color: filterStatus===val ? '#fff' : '#555', fontSize:12, fontWeight:700, cursor:'pointer' }}>{label}</button>
+                    ))}
+                  </div>
+                </div>
+                {/* Grade */}
+                <div style={{ marginBottom:18 }}>
+                  <div style={{ fontSize:9, fontWeight:700, color:'#555', textTransform:'uppercase', letterSpacing:'0.1em', marginBottom:8 }}>Grade</div>
+                  <div style={{ display:'flex', gap:6 }}>
+                    {[['','All'],['graded','Graded'],['raw','Raw']].map(([val,label]) => (
+                      <button key={val} onClick={() => setFilterGraded(val)} style={{ padding:'8px 16px', borderRadius:8, border:'1px solid #1e1e1e', background: filterGraded===val ? '#9333ea' : '#1a1a1a', color: filterGraded===val ? '#fff' : '#555', fontSize:12, fontWeight:700, cursor:'pointer' }}>{label}</button>
+                    ))}
+                  </div>
+                </div>
+                {/* Auto */}
+                <div style={{ marginBottom:18 }}>
+                  <div style={{ fontSize:9, fontWeight:700, color:'#555', textTransform:'uppercase', letterSpacing:'0.1em', marginBottom:8 }}>Autograph</div>
+                  <button onClick={() => setFilterAuto(v => !v)} style={{ padding:'8px 16px', borderRadius:8, border:`1px solid ${filterAuto?'rgba(255,190,46,0.4)':'#1e1e1e'}`, background: filterAuto?'rgba(255,190,46,0.1)':'#1a1a1a', color: filterAuto?'#ffbe2e':'#555', fontSize:12, fontWeight:700, cursor:'pointer' }}>✍️ Autos Only</button>
+                </div>
+                {/* Sort */}
+                <div style={{ marginBottom:18 }}>
+                  <div style={{ fontSize:9, fontWeight:700, color:'#555', textTransform:'uppercase', letterSpacing:'0.1em', marginBottom:8 }}>Sort By</div>
+                  <div style={{ display:'flex', gap:6, flexWrap:'wrap' }}>
+                    {[['date_desc','Newest'],['date_asc','Oldest'],['price_desc','Value ↓'],['price_asc','Value ↑'],['name_asc','A→Z']].map(([val,label]) => (
+                      <button key={val} onClick={() => setSortBy(val)} style={{ padding:'8px 14px', borderRadius:8, border:'1px solid #1e1e1e', background: sortBy===val ? '#9333ea' : '#1a1a1a', color: sortBy===val ? '#fff' : '#555', fontSize:12, fontWeight:700, cursor:'pointer' }}>{label}</button>
+                    ))}
+                  </div>
+                </div>
+                {/* Price */}
+                <div style={{ marginBottom:20 }}>
+                  <div style={{ fontSize:9, fontWeight:700, color:'#555', textTransform:'uppercase', letterSpacing:'0.1em', marginBottom:8 }}>Price Range</div>
+                  <div style={{ display:'flex', alignItems:'center', gap:10 }}>
+                    <input type="number" placeholder="Min" value={priceMin} onChange={e => setPriceMin(e.target.value)} style={{ flex:1, padding:'10px 12px', borderRadius:8, background:'#1a1a1a', border:'1px solid #1e1e1e', color:'#f0f0f0', fontSize:14, outline:'none' }} />
+                    <span style={{ color:'#444', fontSize:14 }}>—</span>
+                    <input type="number" placeholder="Max" value={priceMax} onChange={e => setPriceMax(e.target.value)} style={{ flex:1, padding:'10px 12px', borderRadius:8, background:'#1a1a1a', border:'1px solid #1e1e1e', color:'#f0f0f0', fontSize:14, outline:'none' }} />
+                  </div>
+                </div>
+                <button onClick={() => setFilterSheetOpen(false)} style={{ width:'100%', padding:'14px', borderRadius:12, background:'#9333ea', border:'none', color:'#fff', fontSize:14, fontWeight:900, cursor:'pointer', textTransform:'uppercase', letterSpacing:'0.05em' }}>Apply Filters</button>
+              </div>
+            </div>
+          )}
 
           {/* Bulk delete bar */}
           {selected.size > 0 && (
