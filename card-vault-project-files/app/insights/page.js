@@ -118,59 +118,42 @@ function BottomNav({ active = "" }) {
   )
 }
 
-// ── Donut Chart ────────────────────────────────────────────────
-function DonutChart({ data, title, size = 180 }) {
+// ── Compact Pill Breakdown (replaces DonutChart) ───────────────
+function DonutChart({ data, title }) {
   if (!data.length) return null
   const total = data.reduce((s, d) => s + d.value, 0)
   if (!total) return null
-  const cx = size / 2, cy = size / 2, r = size * 0.38, inner = size * 0.24
-  let angle = -Math.PI / 2
-  const slices = data.map((d, i) => {
-    const sweep = (d.value / total) * Math.PI * 2
-    const x1 = cx + r * Math.cos(angle), y1 = cy + r * Math.sin(angle)
-    angle += sweep
-    const x2 = cx + r * Math.cos(angle), y2 = cy + r * Math.sin(angle)
-    const xi1 = cx + inner * Math.cos(angle - sweep), yi1 = cy + inner * Math.sin(angle - sweep)
-    const xi2 = cx + inner * Math.cos(angle), yi2 = cy + inner * Math.sin(angle)
-    const large = sweep > Math.PI ? 1 : 0
-    return { path: `M ${x1} ${y1} A ${r} ${r} 0 ${large} 1 ${x2} ${y2} L ${xi2} ${yi2} A ${inner} ${inner} 0 ${large} 0 ${xi1} ${yi1} Z`, color: CHART_COLORS[i % CHART_COLORS.length], label: d.label, value: d.value, pct: Math.round((d.value / total) * 100) }
-  })
-  const [hovered, setHovered] = useState(null)
+  const isGraded = title.includes('Graded') || title.includes('Raw')
   return (
-    <div style={{ background: '#13131f', border: '1px solid rgba(147,51,234,0.15)', boxShadow: '0 4px 20px rgba(0,0,0,0.4)', borderRadius: 16, padding: '20px 22px' }}>
-      <div style={{ fontFamily: "'Outfit',sans-serif", fontSize: 13, fontWeight: 700, color: '#ccc', marginBottom: 16 }}>{title}</div>
-      <div style={{ display: 'flex', alignItems: 'center', gap: 24, flexWrap: 'wrap' }}>
-        <div style={{ position: 'relative', flexShrink: 0 }}>
-          <svg width={size} height={size}>
-            {slices.map((s, i) => (
-              <path key={i} d={s.path} fill={s.color} opacity={hovered === null || hovered === i ? 1 : 0.3} style={{ cursor: 'pointer', transition: 'opacity 0.2s' }}
-                onMouseEnter={() => setHovered(i)} onMouseLeave={() => setHovered(null)} />
-            ))}
-            <circle cx={cx} cy={cy} r={inner} fill="#111" />
-            {hovered !== null ? (
-              <>
-                <text x={cx} y={cy - 8} textAnchor="middle" fill="#f0f0f0" fontSize="16" fontWeight="700" fontFamily="JetBrains Mono">{slices[hovered].pct}%</text>
-                <text x={cx} y={cy + 10} textAnchor="middle" fill="#666" fontSize="10" fontFamily="Outfit">{slices[hovered].label}</text>
-              </>
-            ) : (
-              <>
-                <text x={cx} y={cy - 6} textAnchor="middle" fill="#f0f0f0" fontSize="14" fontWeight="700" fontFamily="JetBrains Mono">{total}</text>
-                <text x={cx} y={cy + 10} textAnchor="middle" fill="#555" fontSize="10" fontFamily="Outfit">total</text>
-              </>
-            )}
-          </svg>
-        </div>
-        <div style={{ flex: 1, minWidth: 120, display: 'flex', flexDirection: 'column', gap: 8 }}>
-          {slices.map((s, i) => (
-            <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 8, opacity: hovered === null || hovered === i ? 1 : 0.4, transition: 'opacity 0.2s', cursor: 'pointer' }}
-              onMouseEnter={() => setHovered(i)} onMouseLeave={() => setHovered(null)}>
-              <div style={{ width: 10, height: 10, borderRadius: 3, background: s.color, flexShrink: 0 }} />
-              <div style={{ flex: 1, fontFamily: "'Outfit',sans-serif", fontSize: 12, color: '#888', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{s.label}</div>
-              <div style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: 12, fontWeight: 700, color: '#ccc' }}>{s.pct}%</div>
+    <div style={{ background:'#111', border:'1px solid #1e1e1e', borderRadius:12, padding:'14px 16px' }}>
+      <div style={{ fontSize:9, fontWeight:800, color:'#555', textTransform:'uppercase', letterSpacing:'0.12em', marginBottom:12 }}>{title.replace(/^[^ ]+ /,'')}</div>
+      {isGraded ? (
+        <div style={{ display:'flex', gap:8 }}>
+          {data.map((d,i) => (
+            <div key={i} style={{ flex:1, background: i===0?'rgba(147,51,234,0.1)':'rgba(255,255,255,0.04)', border: i===0?'1px solid rgba(147,51,234,0.2)':'1px solid #1e1e1e', borderRadius:9, padding:'10px 12px', textAlign:'center' }}>
+              <div style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:22, fontWeight:900, color: i===0?'#a855f7':'#888' }}>{d.value}</div>
+              <div style={{ fontSize:9, fontWeight:700, color:'#555', textTransform:'uppercase', letterSpacing:'0.1em', marginTop:3 }}>{d.label}</div>
             </div>
           ))}
         </div>
-      </div>
+      ) : (
+        <div style={{ display:'flex', flexDirection:'column', gap:7 }}>
+          {data.map((d,i) => {
+            const pct = Math.round((d.value/total)*100)
+            return (
+              <div key={i}>
+                <div style={{ display:'flex', justifyContent:'space-between', marginBottom:4 }}>
+                  <span style={{ fontSize:11, fontWeight:700, color:'#ccc' }}>{d.label}</span>
+                  <span style={{ fontSize:11, fontWeight:800, color:'#a855f7', fontFamily:"'JetBrains Mono',monospace" }}>{pct}%</span>
+                </div>
+                <div style={{ height:4, borderRadius:100, background:'#1a1a1a', overflow:'hidden' }}>
+                  <div style={{ height:'100%', width:pct+'%', borderRadius:100, background: CHART_COLORS[i % CHART_COLORS.length] }} />
+                </div>
+              </div>
+            )
+          })}
+        </div>
+      )}
     </div>
   )
 }
@@ -513,7 +496,7 @@ export default function InsightsPage() {
                 <TopCardsRank cards={cards} />
               </div>
 
-              {/* ── Charts — hide on mobile to reduce scrolling ── */}
+              {/* ── Charts ── */}
               <div className="hide-mobile">
                 <div className="insights-grid" style={{ marginBottom: 14 }}>
                   {sportData.length > 1 && <DonutChart data={sportData} title="🏀 Sport Breakdown" />}
