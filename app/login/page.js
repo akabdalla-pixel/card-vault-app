@@ -28,7 +28,7 @@ export default function LoginPage() {
     <>
       <style>{`
         @keyframes fadeUp { from { opacity:0; transform:translateY(16px) } to { opacity:1; transform:translateY(0) } }
-        @keyframes glow { 0%,100% { filter:drop-shadow(0 0 12px rgba(147,51,234,0.4)) } 50% { filter:drop-shadow(0 0 22px rgba(147,51,234,0.7)) } }
+        @keyframes float { 0%,100% { transform:translateY(0px) } 50% { transform:translateY(-8px) } }
         .login-input { width:100%; padding:11px 14px; border-radius:10px; background:#1a1a1a; border:1px solid #2a2a2a; color:#f0f0f0; font-size:15px; outline:none; transition:border-color 0.15s; box-sizing:border-box; font-family:inherit; }
         .login-input:focus { border-color:#9333ea; box-shadow:0 0 0 3px rgba(147,51,234,0.12); }
         .login-input::placeholder { color:#444; }
@@ -41,15 +41,14 @@ export default function LoginPage() {
         <div style={{ position:'relative', zIndex:1, width:'100%', maxWidth:380, animation:'fadeUp 0.4s ease' }}>
 
           {/* Logo */}
-          <div style={{ textAlign:'center', marginBottom:32 }}>
-            <img src={LOGO} alt="TopLoad" style={{ width:150, height:'auto', animation:'glow 3s ease infinite' }} />
-            <p style={{ fontFamily:"'Outfit',sans-serif", fontSize:13, color:'#555', marginTop:8 }}>Track your sports card investments</p>
+          <div style={{ textAlign:'center', marginBottom:28 }}>
+            <img src={LOGO} alt="TopLoad" style={{ width:200, height:'auto', filter:'brightness(0) invert(1)', animation:'float 4s ease-in-out infinite' }} />
           </div>
 
           {/* Card */}
           <div style={{ background:'#111', border:'1px solid #1e1e1e', borderRadius:20, padding:32 }}>
             <h2 style={{ fontFamily:"'Outfit',sans-serif", fontSize:22, fontWeight:900, color:'#f0f0f0', letterSpacing:'-0.5px', margin:'0 0 6px' }}>Welcome back</h2>
-            <p style={{ fontFamily:"'Outfit',sans-serif", fontSize:13, color:'#555', marginBottom:24 }}>Sign in to your account</p>
+            
 
             {error && (
               <div style={{ marginBottom:16, padding:'10px 14px', borderRadius:10, background:'rgba(248,113,113,0.08)', color:'#f87171', fontSize:13, border:'1px solid rgba(248,113,113,0.2)', fontFamily:"'Outfit',sans-serif" }}>
@@ -71,11 +70,10 @@ export default function LoginPage() {
               </button>
             </div>
 
-            <div style={{ marginTop:20, display:'flex', alignItems:'center', justifyContent:'space-between' }}>
+            <div style={{ marginTop:20, display:'flex', alignItems:'center', justifyContent:'center' }}>
               <p style={{ fontFamily:"'Outfit',sans-serif", fontSize:13, color:'#555' }}>
                 No account? <Link href="/signup" style={{ color:'#a855f7', fontWeight:700, textDecoration:'none' }}>Sign Up</Link>
               </p>
-              <Link href="/forgot" style={{ fontFamily:"'Outfit',sans-serif", fontSize:13, color:'#555', textDecoration:'none' }}>Forgot password?</Link>
             </div>
           </div>
         </div>
