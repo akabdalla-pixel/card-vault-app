@@ -40,9 +40,7 @@ export default function LandingPage() {
           {/* Purple glow bg */}
           <div style={{ position:'absolute', top:'30%', left:'50%', transform:'translate(-50%,-50%)', width:600, height:600, background:'radial-gradient(circle, rgba(147,51,234,0.12) 0%, transparent 70%)', pointerEvents:'none' }} />
 
-          <div className="fade1" style={{ display:'inline-flex', alignItems:'center', gap:8, padding:'6px 16px', background:'rgba(147,51,234,0.1)', border:'1px solid rgba(147,51,234,0.25)', borderRadius:100, fontSize:12, fontWeight:700, color:'#a855f7', letterSpacing:'0.08em', marginBottom:28, textTransform:'uppercase' }}>
-            🃏 Sports Card Investment Tracker
-          </div>
+          <img className="fade1" src="/logo-transparent.png" alt="TopLoad" style={{ height:80, filter:'brightness(0) invert(1)', marginBottom:36, animation:'float 4s ease-in-out infinite' }} />
 
           <h1 className="fade2" style={{ fontSize:'clamp(42px,8vw,80px)', fontWeight:900, lineHeight:1.05, letterSpacing:'-2.5px', marginBottom:20, maxWidth:800 }}>
             Know what your<br />
@@ -58,17 +56,10 @@ export default function LandingPage() {
             <Link href="/login" className="btn-secondary" style={{ fontSize:16, padding:'16px 40px' }}>Sign In</Link>
           </div>
 
-          {/* Mock stats */}
-          <div className="fade5" style={{ display:'flex', gap:32, flexWrap:'wrap', justifyContent:'center' }}>
-            {[
-              { label:'Portfolio Value', value:'$4,280', color:'#fff' },
-              { label:'Total Gain', value:'+$920', color:'#22c55e' },
-              { label:'Cards Tracked', value:'47', color:'#fff' },
-            ].map((s,i) => (
-              <div key={i} style={{ textAlign:'center' }}>
-                <div className="stat-num" style={{ color:s.color }}>{s.value}</div>
-                <div style={{ fontSize:11, fontWeight:700, color:'#444', textTransform:'uppercase', letterSpacing:'0.1em', marginTop:4 }}>{s.label}</div>
-              </div>
+          {/* Feature pills */}
+          <div className="fade5" style={{ display:'flex', gap:10, flexWrap:'wrap', justifyContent:'center' }}>
+            {['Portfolio Tracking','Gain & Loss','Grading Support','Price Lookup','Sales History','Mobile App'].map((f,i) => (
+              <div key={i} style={{ padding:'7px 16px', background:'rgba(147,51,234,0.07)', border:'1px solid rgba(147,51,234,0.15)', borderRadius:100, fontSize:12, fontWeight:700, color:'#a855f7' }}>{f}</div>
             ))}
           </div>
         </div>
