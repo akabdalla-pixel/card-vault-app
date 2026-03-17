@@ -23,7 +23,7 @@ export default function LandingPage() {
         .ticker-inner { display:flex; gap:0; white-space:nowrap; animation:ticker 20s linear infinite; width:max-content; }
         .ticker-item { display:inline-flex; align-items:center; gap:8px; padding:0 32px; font-size:13px; font-weight:700; color:#444; }
         .ticker-item span { font-size:18px; }
-        .step-card { background:#111; border:1px solid #1a1a1a; border-radius:16px; padding:28px 24px; flex:1; min-width:220px; position:relative; }
+        .step-card { background:#111; border:1px solid #1a1a1a; border-radius:16px; padding:20px 18px; flex:1; min-width:220px; position:relative; }
         .mock-screen { background:#111; border:1px solid #1e1e1e; border-radius:14px; overflow:hidden; max-width:720px; margin:0 auto; box-shadow:0 40px 80px rgba(0,0,0,0.6); }
         .mock-topbar { background:#000; border-bottom:1px solid #111; padding:10px 16px; display:flex; align-items:center; gap:8px; }
         .mock-dot { width:8px; height:8px; border-radius:50%; }
@@ -41,10 +41,10 @@ export default function LandingPage() {
         </nav>
 
         {/* Hero */}
-        <div style={{ minHeight:'100vh', display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', textAlign:'center', padding:'120px 24px 60px', position:'relative', overflow:'hidden' }}>
+        <div style={{ minHeight:'100vh', display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', textAlign:'center', padding:'100px 24px 40px', position:'relative', overflow:'hidden' }}>
           <div style={{ position:'absolute', top:'30%', left:'50%', transform:'translate(-50%,-50%)', width:700, height:700, background:'radial-gradient(circle, rgba(147,51,234,0.1) 0%, transparent 70%)', pointerEvents:'none' }} />
-          <img className="fade1" src="/logo-transparent.png" alt="TopLoad" style={{ height:80, filter:'brightness(0) invert(1)', marginBottom:36, animation:'float 4s ease-in-out infinite' }} />
-          <h1 className="fade2" style={{ fontSize:'clamp(42px,8vw,80px)', fontWeight:900, lineHeight:1.05, letterSpacing:'-2.5px', marginBottom:20, maxWidth:800 }}>
+          <img className="fade1" src="/logo-transparent.png" alt="TopLoad" style={{ height:60, filter:'brightness(0) invert(1)', marginBottom:16, animation:'float 4s ease-in-out infinite' }} />
+          <h1 className="fade2" style={{ fontSize:'clamp(36px,6vw,64px)', fontWeight:900, lineHeight:1.05, letterSpacing:'-2.5px', marginBottom:20, maxWidth:800 }}>
             Every card.<br /><span style={{ color:'#9333ea' }}>Every dollar.</span><br />One place.
           </h1>
           <p className="fade3" style={{ fontSize:'clamp(16px,2.5vw,20px)', color:'#555', maxWidth:520, lineHeight:1.6, marginBottom:40 }}>
@@ -69,7 +69,7 @@ export default function LandingPage() {
         </div>
 
         {/* Dashboard mockup */}
-        <div style={{ padding:'80px 24px', maxWidth:800, margin:'0 auto' }}>
+        <div style={{ padding:'48px 24px', maxWidth:800, margin:'0 auto' }}>
           <div style={{ textAlign:'center', marginBottom:40 }}>
             <div style={{ fontSize:9, fontWeight:800, color:'#a855f7', textTransform:'uppercase', letterSpacing:'0.15em', marginBottom:10 }}>What it looks like</div>
             <h2 style={{ fontSize:'clamp(26px,4vw,38px)', fontWeight:900, letterSpacing:'-1px' }}>Built for the serious collector</h2>
@@ -120,8 +120,8 @@ export default function LandingPage() {
         </div>
 
         {/* How it works */}
-        <div style={{ padding:'0 24px 80px', maxWidth:900, margin:'0 auto' }}>
-          <div style={{ textAlign:'center', marginBottom:48 }}>
+        <div style={{ padding:'0 24px 48px', maxWidth:900, margin:'0 auto' }}>
+          <div style={{ textAlign:'center', marginBottom:28 }}>
             <div style={{ fontSize:9, fontWeight:800, color:'#a855f7', textTransform:'uppercase', letterSpacing:'0.15em', marginBottom:10 }}>Simple by design</div>
             <h2 style={{ fontSize:'clamp(26px,4vw,38px)', fontWeight:900, letterSpacing:'-1px' }}>How it works</h2>
           </div>
@@ -133,15 +133,15 @@ export default function LandingPage() {
             ].map((s,i) => (
               <div key={i} className="step-card">
                 <div style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:11, fontWeight:900, color:'rgba(147,51,234,0.4)', marginBottom:14, letterSpacing:'0.1em' }}>{s.step}</div>
-                <div style={{ fontSize:18, fontWeight:900, color:'#fff', marginBottom:10, letterSpacing:'-0.3px' }}>{s.title}</div>
-                <div style={{ fontSize:13, color:'#555', lineHeight:1.6 }}>{s.desc}</div>
+                <div style={{ fontSize:15, fontWeight:900, color:'#fff', marginBottom:8, letterSpacing:'-0.3px' }}>{s.title}</div>
+                <div style={{ fontSize:12, color:'#555', lineHeight:1.5 }}>{s.desc}</div>
               </div>
             ))}
           </div>
         </div>
 
         {/* Trust badges */}
-        <div style={{ padding:'0 24px 80px', display:'flex', gap:16, justifyContent:'center', flexWrap:'wrap' }}>
+        <div style={{ padding:'0 24px 40px', display:'flex', gap:16, justifyContent:'center', flexWrap:'wrap' }}>
           {[
             { icon:'🔒', label:'PSA Verified', desc:'Look up any PSA cert number directly in the app' },
             { icon:'💳', label:'No Credit Card', desc:'Free to use, no payment ever required' },
@@ -158,12 +158,12 @@ export default function LandingPage() {
         </div>
 
         {/* CTA */}
-        <div style={{ padding:'60px 24px 80px', textAlign:'center', borderTop:'1px solid #111', position:'relative', overflow:'hidden' }}>
+        <div style={{ padding:'40px 24px 56px', textAlign:'center', borderTop:'1px solid #111', position:'relative', overflow:'hidden' }}>
           <div style={{ position:'absolute', top:'50%', left:'50%', transform:'translate(-50%,-50%)', width:500, height:300, background:'radial-gradient(circle, rgba(147,51,234,0.1) 0%, transparent 70%)', pointerEvents:'none' }} />
-          <img src="/logo-transparent.png" alt="TopLoad" style={{ height:40, filter:'brightness(0) invert(1)', marginBottom:24, animation:'float 4s ease-in-out infinite' }} />
-          <h2 style={{ fontSize:'clamp(28px,4vw,42px)', fontWeight:900, letterSpacing:'-1px', marginBottom:12 }}>Ready to start tracking?</h2>
-          <p style={{ fontSize:15, color:'#555', marginBottom:8 }}>Free to use. No credit card required.</p>
-          <p style={{ fontSize:13, color:'#333', marginBottom:32 }}>Join collectors already tracking their cards on TopLoad</p>
+          <img src="/logo-transparent.png" alt="TopLoad" style={{ height:40, filter:'brightness(0) invert(1)', marginBottom:16, animation:'float 4s ease-in-out infinite' }} />
+          <h2 style={{ fontSize:'clamp(28px,4vw,42px)', fontWeight:900, letterSpacing:'-1px', marginBottom:8 }}>Ready to start tracking?</h2>
+          <p style={{ fontSize:15, color:'#555', marginBottom:4 }}>Free to use. No credit card required.</p>
+          <p style={{ fontSize:13, color:'#333', marginBottom:24 }}>Join collectors already tracking their cards on TopLoad</p>
           <div style={{ display:'flex', gap:12, justifyContent:'center', flexWrap:'wrap' }}>
             <Link href="/signup" className="btn-primary" style={{ fontSize:15, padding:'14px 36px' }}>Create Free Account</Link>
             <Link href="/login" className="btn-secondary" style={{ fontSize:15, padding:'14px 36px' }}>Sign In</Link>
