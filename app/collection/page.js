@@ -7,7 +7,6 @@ const NAV = [
   { label: 'Dashboard', href: '/dashboard' },
   { label: 'Collection', href: '/collection' },
   { label: 'Insights', href: '/insights' },
-  { label: 'Sold History', href: '/sold' },
   { label: 'Market', href: '/market' },
   { label: 'PSA Lookup', href: '/psa' },
 ]
@@ -35,7 +34,7 @@ function IconList() { return <svg width="15" height="15" viewBox="0 0 24 24" fil
 function IconSold() { return <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg> }
 function IconMarket() { return <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg> }
 function IconInsights() { return <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg> }
-const navIcons = { 'Dashboard': IconDashboard, 'Collection': IconCollection, 'Insights': IconInsights, 'Sold History': IconSold, 'Market': IconMarket, 'PSA Lookup': IconShield }
+const navIcons = { 'Dashboard': IconDashboard, 'Collection': IconCollection, 'Insights': IconInsights, 'Market': IconMarket, 'PSA Lookup': IconShield }
 const fmt = n => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 2 }).format(n || 0)
 const SPORTS = [
   // Sports Cards
@@ -246,7 +245,7 @@ function Sidebar({ user, onLogout, cardCount = 0, active = "" }) {
 }
 
 function BottomNav({ active = "" }) {
-  const SHORT = { 'Dashboard':'Home', 'Collection':'Cards', 'Insights':'Stats', 'Sold History':'Sold', 'Market':'Market', 'PSA Lookup':'PSA' }
+  const SHORT = { 'Dashboard':'Home', 'Collection':'Cards', 'Insights':'Stats', 'Market':'Market', 'PSA Lookup':'PSA' }
   return (
     <nav className="mobile-only" style={{ position:'fixed', bottom:0, left:0, right:0, height:76, background:'#000', borderTop:'1px solid #111', display:'flex', alignItems:'center', zIndex:100 }}>
       {NAV.map(({ label, href }) => {

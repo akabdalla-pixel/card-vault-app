@@ -96,7 +96,6 @@ const NAV = [
   { label: 'Dashboard', href: '/dashboard' },
   { label: 'Collection', href: '/collection' },
   { label: 'Insights', href: '/insights' },
-  { label: 'Sold History', href: '/sold' },
   { label: 'Market', href: '/market' },
   { label: 'PSA Lookup', href: '/psa' },
 ]
@@ -113,7 +112,7 @@ function IconTrendUp() { return <svg width="12" height="12" viewBox="0 0 24 24" 
 function IconTrendDown() { return <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="23 18 13.5 8.5 8.5 13.5 1 6"/><polyline points="17 18 23 18 23 12"/></svg> }
 function IconCheck() { return <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg> }
 
-const navIcons = { 'Dashboard': IconDashboard, 'Collection': IconCollection, 'Market': IconMarket, 'Insights': IconInsights, 'Sold History': IconSold, 'PSA Lookup': IconShield }
+const navIcons = { 'Dashboard': IconDashboard, 'Collection': IconCollection, 'Market': IconMarket, 'Insights': IconInsights, 'PSA Lookup': IconShield }
 const fmt = n => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 2 }).format(n || 0)
 
 function Sidebar({ user, onLogout, cardCount = 0, active = "" }) {
@@ -149,7 +148,7 @@ function Sidebar({ user, onLogout, cardCount = 0, active = "" }) {
 }
 
 function BottomNav({ active = "" }) {
-  const SHORT = { 'Dashboard':'Home', 'Collection':'Cards', 'Insights':'Stats', 'Sold History':'Sold', 'Market':'Market', 'PSA Lookup':'PSA' }
+  const SHORT = { 'Dashboard':'Home', 'Collection':'Cards', 'Insights':'Stats', 'Market':'Market', 'PSA Lookup':'PSA' }
   return (
     <nav className="mobile-only" style={{ position:'fixed', bottom:0, left:0, right:0, height:76, background:'#000', borderTop:'1px solid #111', display:'flex', alignItems:'center', zIndex:100 }}>
       {NAV.map(({ label, href }) => {
@@ -169,40 +168,29 @@ function BottomNav({ active = "" }) {
 
 function SparklineChart({ cards, snapshots }) {
   if (!cards.length) return null
-
   const activeCards = cards.filter(c => !c.sold)
-  const totalVal = activeCards.reduce((s,c) => s+(parseFloat(c.val)||parseFloat(c.buy)||0)*(parseInt(c.qty)||1), 0)
-  const totalCost = activeCards.reduce((s,c) => s+(parseFloat(c.buy)||0)*(parseInt(c.qty)||1), 0)
+  const totalVal = activeCards.reduce((s,c) => s+(parseFloat(c.val)||parseFloat(c.buy)||0)*(parseInt(c.qty)||1),0)
+  const totalCost = activeCards.reduce((s,c) => s+(parseFloat(c.buy)||0)*(parseInt(c.qty)||1),0)
+
+  const sorted = [...activeCards].sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt))
+  let points = []
+  let cumValue = 0, cumCost = 0
+  sorted.forEach(c => {
+    cumCost += (parseFloat(c.buy)||0)*(parseInt(c.qty)||1)
+    cumValue += (parseFloat(c.val)||parseFloat(c.buy)||0)*(parseInt(c.qty)||1)
+    points.push({ value: cumValue, cost: cumCost })
+  })
+  if (points.length < 2) points.unshift({ value: 0, cost: 0 })
+  points.push({ value: totalVal, cost: totalCost })
+  const W=600, H=100
+  const maxV = Math.max(...points.map(p=>p.value))*1.1||100
+  const toX = i => (i/(points.length-1))*W
+  const toY = v => H-((v)/(maxV))*H
+  const valuePath = points.map((p,i) => `${i===0?'M':'L'} ${toX(i)} ${toY(p.value)}`).join(' ')
+  const costPath = points.map((p,i) => `${i===0?'M':'L'} ${toX(i)} ${toY(p.cost)}`).join(' ')
+  const areaPath = `${valuePath} L ${W} ${H} L 0 ${H} Z`
   const isUp = totalVal >= totalCost
   const lineColor = isUp ? '#22c55e' : '#ef4444'
-  const W = 600, H = 100
-
-  // Build point values array — use real snapshots if available (captured on every add/edit/delete)
-  // Always append current live totalVal as the rightmost point so chart is always fresh
-  let ptValues
-  if (snapshots && snapshots.length >= 2) {
-    ptValues = [...snapshots.map(s => parseFloat(s.value)), totalVal]
-  } else {
-    // Fallback: build from cards sorted by createdAt
-    const sorted = [...activeCards].sort((a,b) => new Date(a.createdAt)-new Date(b.createdAt))
-    let cum = 0
-    ptValues = sorted.map(c => { cum += (parseFloat(c.val)||parseFloat(c.buy)||0)*(parseInt(c.qty)||1); return cum })
-    if (ptValues.length < 2) ptValues.unshift(0)
-    ptValues.push(totalVal)
-  }
-
-  const minV = Math.min(0, ...ptValues, totalCost) * 0.98
-  const maxV = Math.max(...ptValues, totalCost) * 1.08 || 100
-  const range = maxV - minV || 1
-  const toX = i => (i / (ptValues.length - 1)) * W
-  const toY = v => H - ((v - minV) / range) * H * 0.88 - H * 0.06
-
-  const valuePath = ptValues.map((v,i) => `${i===0?'M':'L'} ${toX(i).toFixed(1)} ${toY(v).toFixed(1)}`).join(' ')
-  const areaPath = `${valuePath} L ${W} ${H} L 0 ${H} Z`
-  const costPath = `M 0 ${toY(totalCost).toFixed(1)} L ${W} ${toY(totalCost).toFixed(1)}`
-  const dotX = toX(ptValues.length - 1)
-  const dotY = toY(ptValues[ptValues.length - 1])
-
   return (
     <div style={{ background: '#13131f', border: '1px solid rgba(147,51,234,0.15)', boxShadow: '0 4px 20px rgba(0,0,0,0.4)', borderRadius: 16, padding: '18px 20px', marginBottom: 22 }}>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 }}>
@@ -211,31 +199,22 @@ function SparklineChart({ cards, snapshots }) {
           <div style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: 26, fontWeight: 700, color: '#f0f0f0', marginTop: 2 }}>{fmt(totalVal)}</div>
         </div>
         <div style={{ textAlign: 'right' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 4, justifyContent: 'flex-end', fontFamily: "'JetBrains Mono',monospace", fontSize: 14, fontWeight: 700, color: lineColor }}>
-            {isUp ? <IconTrendUp /> : <IconTrendDown />}{isUp?'+':''}{fmt(totalVal - totalCost)}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 4, justifyContent: 'flex-end', fontFamily: "'JetBrains Mono',monospace", fontSize: 14, fontWeight: 700, color: isUp ? '#22c55e' : '#ef4444' }}>
+            {isUp ? <IconTrendUp /> : <IconTrendDown />}{isUp?'+':''}{fmt(totalVal-totalCost)}
           </div>
           <div style={{ fontSize: 11, color: '#444', marginTop: 2 }}>vs cost basis</div>
         </div>
       </div>
       <svg viewBox={`0 0 ${W} ${H}`} style={{ width: '100%', height: 70, overflow: 'visible' }}>
-        <defs>
-          <linearGradient id="ag" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor={lineColor} stopOpacity="0.2"/>
-            <stop offset="100%" stopColor={lineColor} stopOpacity="0.02"/>
-          </linearGradient>
-        </defs>
+        <defs><linearGradient id="ag" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stopColor={lineColor} stopOpacity="0.2"/><stop offset="100%" stopColor={lineColor} stopOpacity="0.02"/></linearGradient></defs>
         <path d={areaPath} fill="url(#ag)" />
         <path d={costPath} stroke="#333" strokeWidth="1.5" fill="none" strokeDasharray="4 4" />
         <path d={valuePath} stroke={lineColor} strokeWidth="2.5" fill="none" strokeLinecap="round" strokeLinejoin="round" />
-        <circle cx={dotX} cy={dotY} r="4" fill={lineColor} />
+        <circle cx={toX(points.length-1)} cy={toY(points[points.length-1].value)} r="4" fill={lineColor} />
       </svg>
       <div style={{ display: 'flex', gap: 16, marginTop: 8 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 11, color: '#555' }}>
-          <div style={{ width: 20, height: 2, background: lineColor, borderRadius: 1 }} />Portfolio Value
-        </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 11, color: '#555' }}>
-          <div style={{ width: 20, height: 2, background: '#333', borderRadius: 1 }} />Cost Basis
-        </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 11, color: '#555' }}><div style={{ width: 20, height: 2, background: lineColor, borderRadius: 1 }} />Portfolio Value</div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 11, color: '#555' }}><div style={{ width: 20, height: 2, background: '#333', borderRadius: 1 }} />Cost Basis</div>
       </div>
     </div>
   )
@@ -328,49 +307,46 @@ function StatCard({ label, value, sub, positive, style = {} }) {
 }
 
 
-function MobileSparkline({ snapshots, cards, color }) {
-  const activeCards = (cards || []).filter(c => !c.sold)
-  const totalVal = activeCards.reduce((s,c) => s+(parseFloat(c.val)||parseFloat(c.buy)||0)*(parseInt(c.qty)||1), 0)
-  const totalCost = activeCards.reduce((s,c) => s+(parseFloat(c.buy)||0)*(parseInt(c.qty)||1), 0)
-
-  let ptValues
-  if (snapshots && snapshots.length >= 2) {
-    ptValues = [...snapshots.map(s => parseFloat(s.value)), totalVal]
-  } else if (activeCards.length > 0) {
-    const sorted = [...activeCards].sort((a,b) => new Date(a.createdAt)-new Date(b.createdAt))
-    let cum = 0
-    ptValues = sorted.map(c => { cum += (parseFloat(c.val)||parseFloat(c.buy)||0)*(parseInt(c.qty)||1); return cum })
-    if (ptValues.length < 2) ptValues.unshift(0)
-    ptValues.push(totalVal)
-  } else {
-    return null
+function MobileSparkline({ snapshots, color }) {
+  if (!snapshots || snapshots.length === 0) return (
+    <div style={{ marginBottom:8, fontSize:11, color:'#333', paddingTop:8 }}>
+      📈 Graph builds as you use the app — check back tomorrow
+    </div>
+  )
+  // If only 1 point, duplicate it so chart renders immediately
+  if (snapshots.length < 2) {
+    const s = snapshots[0]
+    snapshots = [{ ...s, createdAt: new Date(new Date(s.createdAt).getTime() - 86400000).toISOString() }, s]
   }
-
-  const w = 320, h = 56
-  const minV = Math.min(0, ...ptValues, totalCost) * 0.98
-  const maxV = Math.max(...ptValues, totalCost) * 1.08 || 100
-  const range = maxV - minV || 1
-  const toX = i => ((i / (ptValues.length - 1)) * w).toFixed(1)
-  const toY = v => (h - ((v - minV) / range) * h * 0.88 - h * 0.06).toFixed(1)
-  const linePts = ptValues.map((v,i) => `${toX(i)},${toY(v)}`).join(' ')
-  const costY = toY(totalCost)
-  const lastX = toX(ptValues.length - 1)
-  const lastY = toY(ptValues[ptValues.length - 1])
-
+  const vals = snapshots.map(s => s.value)
+  const min = Math.min(...vals)
+  const max = Math.max(...vals)
+  const range = max - min || 1
+  const w = 280, h = 48
+  const pts = vals.map((v, i) => {
+    const x = (i / (vals.length - 1)) * w
+    const y = h - ((v - min) / range) * (h - 8) - 4
+    return `${x},${y}`
+  }).join(' ')
+  const first = vals[0], last = vals[vals.length - 1]
+  const pct = first > 0 ? ((last - first) / first * 100).toFixed(1) : null
   return (
     <div style={{ marginBottom:16 }}>
       <svg width="100%" viewBox={`0 0 ${w} ${h}`} style={{ display:'block', overflow:'visible' }}>
         <defs>
-          <linearGradient id="mob-grad" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor={color} stopOpacity="0.25" />
+          <linearGradient id="spark-grad" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor={color} stopOpacity="0.3" />
             <stop offset="100%" stopColor={color} stopOpacity="0" />
           </linearGradient>
         </defs>
-        <polygon points={`${linePts} ${w},${h} 0,${h}`} fill="url(#mob-grad)" />
-        <line x1="0" y1={costY} x2={w} y2={costY} stroke="#2a2a2a" strokeWidth="1.5" strokeDasharray="4 3" />
-        <polyline fill="none" stroke={color} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" points={linePts} />
-        <circle cx={lastX} cy={lastY} r="4" fill={color} />
+        <polyline fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" points={pts} />
+        <circle cx={pts.split(' ').pop().split(',')[0]} cy={pts.split(' ').pop().split(',')[1]} r="3" fill={color} />
       </svg>
+      {pct && (
+        <div style={{ fontSize:10, color:'#555', marginTop:2 }}>
+          <span style={{ color, fontWeight:700 }}>{parseFloat(pct)>=0?'+':''}{pct}%</span> since first tracked
+        </div>
+      )}
     </div>
   )
 }
@@ -510,7 +486,7 @@ export default function DashboardPage() {
               <span style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:16, fontWeight:800, color: gainPos?'#22c55e':'#ef4444' }}>{gainPos?'▲':'▼'} {gainPos?'+':''}{fmt(gainLoss)}</span>
               <span style={{ fontSize:13, color:'#555' }}>{gainPos?'+':''}{portfolioReturn.toFixed(1)}%</span>
             </div>
-            <MobileSparkline snapshots={snapshots} cards={cards} color={gainPos ? '#22c55e' : '#ef4444'} />
+            <MobileSparkline snapshots={snapshots} color={gainPos ? '#22c55e' : '#ef4444'} />
             <div style={{ display:'flex', gap:0, paddingTop:16, borderTop:'1px solid #1a1a1a' }}>
               <div style={{ flex:1 }}>
                 <div style={{ fontSize:9, color:'#444', fontWeight:700, textTransform:'uppercase', letterSpacing:'0.1em', marginBottom:4 }}>Invested</div>
