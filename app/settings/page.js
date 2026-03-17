@@ -36,27 +36,6 @@ function showToast(msg, type = 'success') { if (_toastFn) _toastFn(msg, type) }
 function ToastContainer() {
   const [toasts, setToasts] = useState([])
   useEffect(() => {
-    const saved = localStorage.getItem('topload-theme') || 'dark'
-    setTheme(saved)
-    document.documentElement.setAttribute('data-theme', saved)
-  }, [])
-
-  function toggleTheme() {
-    const next = theme === 'dark' ? 'light' : 'dark'
-    setTheme(next)
-    localStorage.setItem('topload-theme', next)
-    document.documentElement.setAttribute('data-theme', next)
-  }
-
-  function handleShare() {
-    const url = `https://www.toploadcards.com/share/${user?.username}`
-    navigator.clipboard.writeText(url).then(() => {
-      setShareCopied(true)
-      setTimeout(() => setShareCopied(false), 2500)
-    })
-  }
-
-  useEffect(() => {
     _toastFn = (msg, type) => {
       const id = Date.now()
       setToasts(prev => [...prev.slice(-2), { id, msg, type }])
@@ -143,6 +122,30 @@ export default function SettingsPage() {
   const [user, setUser] = useState(null)
   const [cards, setCards] = useState([])
   const [loading, setLoading] = useState(true)
+  const [theme, setTheme] = useState('dark')
+  const [shareCopied, setShareCopied] = useState(false)
+
+  useEffect(() => {
+    const saved = localStorage.getItem('topload-theme') || 'dark'
+    setTheme(saved)
+  }, [])
+
+  function toggleTheme() {
+    const next = theme === 'dark' ? 'light' : 'dark'
+    setTheme(next)
+    localStorage.setItem('topload-theme', next)
+    document.documentElement.setAttribute('data-theme', next)
+  }
+
+  function handleShare() {
+    const url = `https://www.toploadcards.com/share/${user?.username}`
+    navigator.clipboard.writeText(url).then(() => {
+      setShareCopied(true)
+      setTimeout(() => setShareCopied(false), 2500)
+    }).catch(() => {
+      prompt('Copy this link:', `https://www.toploadcards.com/share/${user?.username}`)
+    })
+  }
   const [theme, setTheme] = useState('dark')
   const [shareCopied, setShareCopied] = useState(false)
   const router = useRouter()
