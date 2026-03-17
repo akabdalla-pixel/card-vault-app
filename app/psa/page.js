@@ -1,5 +1,5 @@
 'use client'
-import { useState, useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 
@@ -276,6 +276,135 @@ function BottomNav({ active = '' }) {
   )
 }
 
+
+function QRScannerModal({ onScan, onClose }) {
+  const videoRef = React.useRef(null)
+  const canvasRef = React.useRef(null)
+  const [status, setStatus] = React.useState('starting')
+  const [error, setError] = React.useState('')
+  const streamRef = React.useRef(null)
+  const rafRef = React.useRef(null)
+  const workerRef = React.useRef(null)
+
+  React.useEffect(() => {
+    let stopped = false
+
+    // Dynamically load jsQR — works on iOS Safari + Android Chrome
+    const script = document.createElement('script')
+    script.src = 'https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js'
+    script.onload = () => startCamera()
+    script.onerror = () => setError('Failed to load QR library. Check your connection.')
+    document.head.appendChild(script)
+
+    function startCamera() {
+      if (stopped) return
+      navigator.mediaDevices?.getUserMedia({ video: { facingMode: 'environment', width: { ideal: 1280 }, height: { ideal: 720 } } })
+        .then(stream => {
+          if (stopped) { stream.getTracks().forEach(t => t.stop()); return }
+          streamRef.current = stream
+          if (videoRef.current) {
+            videoRef.current.srcObject = stream
+            videoRef.current.onloadedmetadata = () => {
+              videoRef.current.play()
+              setStatus('scanning')
+              rafRef.current = requestAnimationFrame(tick)
+            }
+          }
+        })
+        .catch(e => {
+          if (e.name === 'NotAllowedError') setError('Camera access denied. Go to Settings → Safari → Camera and allow access, then try again.')
+          else setError('Could not access camera: ' + e.message)
+          setStatus('error')
+        })
+    }
+
+    function tick() {
+      if (stopped) return
+      const video = videoRef.current
+      const canvas = canvasRef.current
+      if (!video || !canvas || video.readyState < 2) {
+        rafRef.current = requestAnimationFrame(tick)
+        return
+      }
+      canvas.width = video.videoWidth
+      canvas.height = video.videoHeight
+      const ctx = canvas.getContext('2d')
+      ctx.drawImage(video, 0, 0)
+      const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height)
+      if (window.jsQR) {
+        const code = window.jsQR(imageData.data, imageData.width, imageData.height, { inversionAttempts: 'dontInvert' })
+        if (code?.data) {
+          const text = code.data
+          // PSA QR codes: URL like psacard.com/cert/12345678 or just the number
+          const m = text.match(/(\d{6,12})/)
+          if (m) { stop(); onScan(m[1]); return }
+        }
+      }
+      rafRef.current = requestAnimationFrame(tick)
+    }
+
+    function stop() {
+      stopped = true
+      if (rafRef.current) cancelAnimationFrame(rafRef.current)
+      if (streamRef.current) streamRef.current.getTracks().forEach(t => t.stop())
+    }
+
+    return () => { stop(); document.head.removeChild(script) }
+  }, [])
+
+  return (
+    <div style={{ position:'fixed', inset:0, background:'rgba(0,0,0,0.97)', zIndex:300, display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', padding:24 }}>
+      <div style={{ width:'100%', maxWidth:380, background:'#111', border:'1px solid #1e1e1e', borderRadius:20, overflow:'hidden' }}>
+        <div style={{ padding:'16px 20px', borderBottom:'1px solid #1a1a1a', display:'flex', alignItems:'center', justifyContent:'space-between' }}>
+          <div>
+            <div style={{ fontSize:9, fontWeight:800, color:'#a855f7', textTransform:'uppercase', letterSpacing:'0.12em' }}>PSA QR Scanner</div>
+            <div style={{ fontSize:15, fontWeight:900, color:'#fff', marginTop:2 }}>Scan the slab label</div>
+          </div>
+          <button onClick={onClose} style={{ width:32, height:32, borderRadius:8, background:'#1a1a1a', border:'1px solid #2a2a2a', color:'#555', cursor:'pointer', fontSize:16, display:'flex', alignItems:'center', justifyContent:'center' }}>✕</button>
+        </div>
+
+        {/* Video preview */}
+        <div style={{ position:'relative', background:'#000', aspectRatio:'1', overflow:'hidden' }}>
+          <video ref={videoRef} style={{ width:'100%', height:'100%', objectFit:'cover' }} playsInline muted />
+          <canvas ref={canvasRef} style={{ display:'none' }} />
+
+          {/* Corner viewfinder */}
+          <div style={{ position:'absolute', inset:0, display:'flex', alignItems:'center', justifyContent:'center', pointerEvents:'none' }}>
+            <div style={{ width:200, height:200, position:'relative' }}>
+              {[['top','left'],['top','right'],['bottom','left'],['bottom','right']].map(([v,h],i) => (
+                <div key={i} style={{ position:'absolute', [v]:0, [h]:0, width:28, height:28,
+                  borderTop: v==='top' ? '3px solid #9333ea' : 'none',
+                  borderBottom: v==='bottom' ? '3px solid #9333ea' : 'none',
+                  borderLeft: h==='left' ? '3px solid #9333ea' : 'none',
+                  borderRight: h==='right' ? '3px solid #9333ea' : 'none',
+                  borderRadius: v==='top'&&h==='left'?'4px 0 0 0':v==='top'&&h==='right'?'0 4px 0 0':v==='bottom'&&h==='left'?'0 0 0 4px':'0 0 4px 0'
+                }} />
+              ))}
+            </div>
+          </div>
+
+          {status === 'starting' && (
+            <div style={{ position:'absolute', inset:0, display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', gap:8 }}>
+              <div style={{ fontSize:28 }}>📷</div>
+              <div style={{ fontSize:12, color:'#555' }}>Starting camera...</div>
+            </div>
+          )}
+        </div>
+
+        <div style={{ padding:'14px 20px' }}>
+          {error
+            ? <div style={{ fontSize:12, color:'#ef4444', lineHeight:1.6, marginBottom:12 }}>{error}</div>
+            : <p style={{ fontSize:12, color:'#555', marginBottom:12, lineHeight:1.5 }}>
+                {status === 'scanning' ? 'Point at the QR code on the PSA label and hold steady.' : 'Loading...'}
+              </p>
+          }
+          <button onClick={onClose} style={{ width:'100%', padding:'11px', borderRadius:10, background:'#1a1a1a', border:'1px solid #2a2a2a', color:'#666', fontSize:14, fontWeight:700, cursor:'pointer' }}>Cancel</button>
+        </div>
+      </div>
+    </div>
+  )
+}
+
 export default function PSALookupPage() {
   const [user, setUser] = useState(null)
   const [loading, setLoading] = useState(true)
@@ -521,42 +650,7 @@ export default function PSALookupPage() {
 
 
       {/* QR Scanner Modal */}
-      {scanning && (
-        <div style={{ position:'fixed', inset:0, background:'rgba(0,0,0,0.95)', zIndex:300, display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', padding:24 }}>
-          <div style={{ width:'100%', maxWidth:400, background:'#111', border:'1px solid #1e1e1e', borderRadius:20, padding:28, textAlign:'center' }}>
-            <div style={{ fontSize:9, fontWeight:800, color:'#a855f7', textTransform:'uppercase', letterSpacing:'0.12em', marginBottom:8 }}>QR Scanner</div>
-            <h3 style={{ fontSize:20, fontWeight:900, color:'#fff', marginBottom:8 }}>Scan PSA Slab</h3>
-            <p style={{ fontSize:13, color:'#555', marginBottom:24, lineHeight:1.5 }}>Point your camera at the QR code on the PSA slab label. The cert number will be entered automatically.</p>
-            <div style={{ background:'#1a1a1a', border:'1px solid #2a2a2a', borderRadius:12, padding:'40px 20px', marginBottom:20 }}>
-              <div style={{ fontSize:48, marginBottom:12 }}>📷</div>
-              <div style={{ fontSize:13, color:'#555', marginBottom:16 }}>Camera access required</div>
-              <p style={{ fontSize:11, color:'#444', lineHeight:1.6 }}>Your browser will ask for camera permission. Once granted, hold the QR code steady in view and the cert number will auto-populate.</p>
-            </div>
-            <div id="qr-reader" style={{ width:'100%', marginBottom:16, borderRadius:10, overflow:'hidden' }}></div>
-            <div style={{ display:'flex', gap:10 }}>
-              <button onClick={() => setScanning(false)} style={{ flex:1, padding:'12px', borderRadius:10, background:'#1a1a1a', border:'1px solid #2a2a2a', color:'#666', fontSize:14, fontWeight:700, cursor:'pointer' }}>Cancel</button>
-              <button onClick={() => {
-                if (typeof window === 'undefined') return
-                import('https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js').then(() => {
-                  const scanner = new window.Html5Qrcode('qr-reader')
-                  scanner.start({ facingMode: 'environment' }, { fps:10, qrbox:250 }, (text) => {
-                    // PSA QR codes contain the cert number or a URL with it
-                    const certMatch = text.match(/(\d{7,12})/) || text.match(/cert\/(\d+)/)
-                    if (certMatch) {
-                      setCert(certMatch[1])
-                      scanner.stop()
-                      setScanning(false)
-                      setTimeout(() => handleLookup(), 100)
-                    }
-                  }).catch(e => console.log(e))
-                })
-              }} style={{ flex:2, padding:'12px', borderRadius:10, background:'#9333ea', border:'none', color:'#fff', fontSize:14, fontWeight:800, cursor:'pointer' }}>
-                Open Camera
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      {scanning && <QRScannerModal onScan={(certNum) => { setCert(certNum); setScanning(false); setTimeout(handleLookup, 150) }} onClose={() => setScanning(false)} />}
 
       {showAddModal && addForm && <CardModal card={addForm} onClose={() => setShowAddModal(false)} onSave={() => { setShowAddModal(false); setAddSuccess(true); setTimeout(() => setAddSuccess(false), 3000) }} />}
     </>
