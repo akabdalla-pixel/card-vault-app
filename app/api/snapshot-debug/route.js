@@ -13,6 +13,6 @@ export async function GET() {
     })
     return NextResponse.json({ count: snapshots.length, snapshots })
   } catch(e) {
-    return NextResponse.json({ error: e.message }, { status: 500 })
+    return NextResponse.json({ error: e.message, stack: e.stack }, { status: 500 })
   }
 }
