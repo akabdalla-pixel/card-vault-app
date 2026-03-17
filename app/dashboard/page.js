@@ -167,20 +167,27 @@ function BottomNav({ active = "" }) {
   )
 }
 
-function SparklineChart({ cards }) {
+function SparklineChart({ cards, snapshots }) {
   if (!cards.length) return null
-  const sorted = [...cards].filter(c => !c.sold).sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt))
-  const points = []
-  let cumValue = 0, cumCost = 0
-  sorted.forEach(c => {
-    cumCost += (parseFloat(c.buy)||0)*(parseInt(c.qty)||1)
-    cumValue += (parseFloat(c.val)||parseFloat(c.buy)||0)*(parseInt(c.qty)||1)
-    points.push({ value: cumValue, cost: cumCost })
-  })
-  if (points.length < 2) points.unshift({ value: 0, cost: 0 })
-  const totalVal = sorted.reduce((s,c) => s+(parseFloat(c.val)||parseFloat(c.buy)||0)*(parseInt(c.qty)||1),0)
-  const totalCost = sorted.reduce((s,c) => s+(parseFloat(c.buy)||0)*(parseInt(c.qty)||1),0)
-  points.push({ value: totalVal, cost: totalCost })
+  const activeCards = cards.filter(c => !c.sold)
+  const totalVal = activeCards.reduce((s,c) => s+(parseFloat(c.val)||parseFloat(c.buy)||0)*(parseInt(c.qty)||1),0)
+  const totalCost = activeCards.reduce((s,c) => s+(parseFloat(c.buy)||0)*(parseInt(c.qty)||1),0)
+
+  // Use real snapshots if we have at least 2, otherwise fall back to card-order estimate
+  let points = []
+  if (snapshots && snapshots.length >= 2) {
+    points = snapshots.map(s => ({ value: s.value, cost: totalCost }))
+  } else {
+    const sorted = [...activeCards].sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt))
+    let cumValue = 0, cumCost = 0
+    sorted.forEach(c => {
+      cumCost += (parseFloat(c.buy)||0)*(parseInt(c.qty)||1)
+      cumValue += (parseFloat(c.val)||parseFloat(c.buy)||0)*(parseInt(c.qty)||1)
+      points.push({ value: cumValue, cost: cumCost })
+    })
+    if (points.length < 2) points.unshift({ value: 0, cost: 0 })
+    points.push({ value: totalVal, cost: totalCost })
+  }
   const W=600, H=100
   const maxV = Math.max(...points.map(p=>p.value))*1.1||100
   const toX = i => (i/(points.length-1))*W
@@ -211,9 +218,16 @@ function SparklineChart({ cards }) {
         <path d={valuePath} stroke={lineColor} strokeWidth="2.5" fill="none" strokeLinecap="round" strokeLinejoin="round" />
         <circle cx={toX(points.length-1)} cy={toY(points[points.length-1].value)} r="4" fill={lineColor} />
       </svg>
-      <div style={{ display: 'flex', gap: 16, marginTop: 8 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 11, color: '#555' }}><div style={{ width: 20, height: 2, background: lineColor, borderRadius: 1 }} />Portfolio Value</div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 11, color: '#555' }}><div style={{ width: 20, height: 2, background: '#333', borderRadius: 1 }} />Cost Basis</div>
+      <div style={{ display: 'flex', alignItems:'center', justifyContent:'space-between', marginTop: 8 }}>
+        <div style={{ display:'flex', gap: 16 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 11, color: '#555' }}><div style={{ width: 20, height: 2, background: lineColor, borderRadius: 1 }} />Portfolio Value</div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 11, color: '#555' }}><div style={{ width: 20, height: 2, background: '#333', borderRadius: 1 }} />Cost Basis</div>
+        </div>
+        {snapshots && snapshots.length >= 2 && (
+          <div style={{ fontSize:10, color:'#333' }}>
+            {new Date(snapshots[0].createdAt).toLocaleDateString('en-US',{month:'short',day:'numeric'})} → {new Date(snapshots[snapshots.length-1].createdAt).toLocaleDateString('en-US',{month:'short',day:'numeric'})}
+          </div>
+        )}
       </div>
     </div>
   )
@@ -305,6 +319,42 @@ function StatCard({ label, value, sub, positive, style = {} }) {
   )
 }
 
+
+function MobileSparkline({ snapshots, color }) {
+  if (!snapshots || snapshots.length < 2) return null
+  const vals = snapshots.map(s => s.value)
+  const min = Math.min(...vals)
+  const max = Math.max(...vals)
+  const range = max - min || 1
+  const w = 280, h = 48
+  const pts = vals.map((v, i) => {
+    const x = (i / (vals.length - 1)) * w
+    const y = h - ((v - min) / range) * (h - 8) - 4
+    return `${x},${y}`
+  }).join(' ')
+  const first = vals[0], last = vals[vals.length - 1]
+  const pct = first > 0 ? ((last - first) / first * 100).toFixed(1) : null
+  return (
+    <div style={{ marginBottom:16 }}>
+      <svg width="100%" viewBox={`0 0 ${w} ${h}`} style={{ display:'block', overflow:'visible' }}>
+        <defs>
+          <linearGradient id="spark-grad" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor={color} stopOpacity="0.3" />
+            <stop offset="100%" stopColor={color} stopOpacity="0" />
+          </linearGradient>
+        </defs>
+        <polyline fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" points={pts} />
+        <circle cx={pts.split(' ').pop().split(',')[0]} cy={pts.split(' ').pop().split(',')[1]} r="3" fill={color} />
+      </svg>
+      {pct && (
+        <div style={{ fontSize:10, color:'#555', marginTop:2 }}>
+          <span style={{ color, fontWeight:700 }}>{parseFloat(pct)>=0?'+':''}{pct}%</span> since first tracked
+        </div>
+      )}
+    </div>
+  )
+}
+
 export default function DashboardPage() {
   const [cards, setCards] = useState([])
   const [user, setUser] = useState(null)
@@ -313,6 +363,7 @@ export default function DashboardPage() {
   const [installed, setInstalled] = useState(false)
   const [showInstallModal, setShowInstallModal] = useState(false)
   const [activity, setActivity] = useState([])
+  const [snapshots, setSnapshots] = useState([])
   const router = useRouter()
 
   const loadData = useCallback(async () => {
@@ -320,11 +371,17 @@ export default function DashboardPage() {
       const [meRes, cardsRes] = await Promise.all([fetch('/api/auth/me',{cache:'no-store'}),fetch('/api/cards',{cache:'no-store'})])
       if (!meRes.ok) { router.push('/login'); return }
       setUser((await meRes.json()).user)
-      if (cardsRes.ok) { const d=await cardsRes.json(); setCards(Array.isArray(d)?d:[]) }
-    // fetch activity
+      let loadedCards = []
+      if (cardsRes.ok) { const d=await cardsRes.json(); loadedCards=Array.isArray(d)?d:[]; setCards(loadedCards) }
+    // fetch activity + snapshots, then save today's snapshot
     try {
-      const actRes = await fetch('/api/activity')
+      const [actRes, snapRes] = await Promise.all([fetch('/api/activity'), fetch('/api/snapshot')])
       if (actRes.ok) setActivity(await actRes.json())
+      if (snapRes.ok) setSnapshots(await snapRes.json())
+      // save today's portfolio value snapshot
+      const activeNow = loadedCards.filter(c=>!c.sold)
+      const val = activeNow.reduce((s,c)=>s+(parseFloat(c.val)||parseFloat(c.buy)||0)*(parseInt(c.qty)||1),0)
+      if (val > 0) fetch('/api/snapshot', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({ value: val }) }).catch(()=>{})
     } catch(e) {}
     } catch(e) { console.error(e) }
     finally { setLoading(false) }
@@ -429,10 +486,11 @@ export default function DashboardPage() {
             <div style={{ position:'absolute', top:0, left:0, right:0, height:3, background: gainPos ? '#22c55e' : '#ef4444' }} />
             <div style={{ fontSize:10, color:'#555', fontWeight:700, textTransform:'uppercase', letterSpacing:'0.12em', marginBottom:8 }}>Portfolio Value</div>
             <div style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:42, fontWeight:900, color:'#fff', letterSpacing:'-2px', lineHeight:1, marginBottom:10 }}>{fmt(currentValue)}</div>
-            <div style={{ display:'flex', alignItems:'center', gap:8, marginBottom:20 }}>
+            <div style={{ display:'flex', alignItems:'center', gap:8, marginBottom:16 }}>
               <span style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:16, fontWeight:800, color: gainPos?'#22c55e':'#ef4444' }}>{gainPos?'▲':'▼'} {gainPos?'+':''}{fmt(gainLoss)}</span>
               <span style={{ fontSize:13, color:'#555' }}>{gainPos?'+':''}{portfolioReturn.toFixed(1)}%</span>
             </div>
+            <MobileSparkline snapshots={snapshots} color={gainPos ? '#22c55e' : '#ef4444'} />
             <div style={{ display:'flex', gap:0, paddingTop:16, borderTop:'1px solid #1a1a1a' }}>
               <div style={{ flex:1 }}>
                 <div style={{ fontSize:9, color:'#444', fontWeight:700, textTransform:'uppercase', letterSpacing:'0.1em', marginBottom:4 }}>Invested</div>
@@ -475,7 +533,7 @@ export default function DashboardPage() {
               <Link href="/collection" style={{ display:'flex',alignItems:'center',gap:7,padding:'9px 14px',background:'rgba(147,51,234,0.08)',border:'1px solid rgba(147,51,234,0.25)',borderRadius:10,color:'#9333ea',fontFamily:"'Outfit',sans-serif",fontSize:13,fontWeight:600,textDecoration:'none' }}>+ Add Card</Link>
             </div>
           </div>
-          {cards.length>0&&<div className="desk-chart"><SparklineChart cards={cards} /></div>}
+          {cards.length>0&&<div className="desk-chart"><SparklineChart cards={cards} snapshots={snapshots} /></div>}
           <div className="desk-stats">
           <div className="stat-grid">
             <StatCard style={{animation:"fadeUp 0.45s ease 0s both"}} label="Active Cards" value={activeCards.length} />
