@@ -91,7 +91,7 @@ function Sidebar({ user, onLogout, cardCount = 0, active = "" }) {
 
 function BottomNav() {
   return (
-    <nav style={{ position:'fixed', bottom:0, left:0, right:0, height:64, background:'#0d0d0d', borderTop:'1px solid #1e1e1e', display:'flex', alignItems:'center', zIndex:100 }} className="mobile-only">
+    <nav style={{ position:'fixed', bottom:0, left:0, right:0, height:76, background:'#0d0d0d', borderTop:'1px solid #1e1e1e', display:'flex', alignItems:'center', zIndex:100 }} className="mobile-only">
       {[...NAV, { label:'Settings', href:'/settings' }].slice(0,4).map(({ label, href }) => {
         const Icon = navIcons[label] || IconSettings
         const isActive = label === 'Settings'
@@ -262,7 +262,7 @@ export default function SettingsPage() {
         [style*="JetBrains"],[style*="monospace"]{font-family:'JetBrains Mono',monospace!important}
         .sidebar-el{display:flex;flex-direction:column}.mobile-only{display:none!important}.mob-topbar{display:none}.main-wrap{margin-left:200px;min-height:100vh;width:calc(100% - 200px)}
         button:not(:disabled):active{transform:scale(0.94)!important;opacity:0.85!important;transition:transform 0.1s ease,opacity 0.1s ease!important}
-        @media(max-width:768px){.sidebar-el{display:none!important}.mobile-only{display:flex!important}.mob-topbar{display:flex}.main-wrap{margin-left:0!important;width:100%!important;padding-bottom:80px!important}}
+        @media(max-width:768px){.sidebar-el{display:none!important}.mobile-only{display:flex!important}.mob-topbar{display:flex}.main-wrap{margin-left:0!important;width:100%!important;padding-bottom:90px!important}}
       `}</style>
 
       <div style={{ display:'flex', minHeight:'100vh', background:'#0a0a0a' }}>

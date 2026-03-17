@@ -248,15 +248,15 @@ function Sidebar({ user, onLogout, cardCount = 0, active = "" }) {
 function BottomNav({ active = "" }) {
   const SHORT = { 'Dashboard':'Home', 'Collection':'Cards', 'Insights':'Stats', 'Sold History':'Sold', 'Market':'Market', 'PSA Lookup':'PSA' }
   return (
-    <nav className="mobile-only" style={{ position:'fixed', bottom:0, left:0, right:0, height:64, background:'#000', borderTop:'1px solid #111', display:'flex', alignItems:'center', zIndex:100 }}>
+    <nav className="mobile-only" style={{ position:'fixed', bottom:0, left:0, right:0, height:76, background:'#000', borderTop:'1px solid #111', display:'flex', alignItems:'center', zIndex:100 }}>
       {NAV.map(({ label, href }) => {
         const isActive = active === label
         const Icon = navIcons[label]
         if (!Icon) return null
         return (
           <Link key={label} href={href} style={{ flex:1, display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', gap:3, textDecoration:'none', paddingBottom:4 }}>
-            <div style={{ width:28, height:28, borderRadius:8, display:'flex', alignItems:'center', justifyContent:'center', background: isActive ? '#9333ea' : 'transparent', color: isActive ? '#fff' : '#444', transition:'all 0.15s' }}><Icon /></div>
-            <span style={{ fontSize:9, fontWeight:800, color: isActive ? '#9333ea' : '#444', letterSpacing:'0.08em', textTransform:'uppercase' }}>{SHORT[label]||label}</span>
+            <div style={{ width:32, height:32, borderRadius:9, display:'flex', alignItems:'center', justifyContent:'center', background: isActive ? '#9333ea' : 'transparent', color: isActive ? '#fff' : '#444', transition:'all 0.15s' }}><Icon /></div>
+            <span style={{ fontSize:10, fontWeight:800, color: isActive ? '#9333ea' : '#444', letterSpacing:'0.06em', textTransform:'uppercase' }}>{SHORT[label]||label}</span>
           </Link>
         )
       })}
@@ -857,7 +857,7 @@ function CollectionPage() {
         @keyframes scaleIn{from{opacity:0;transform:scale(0.96)}to{opacity:1;transform:scale(1)}}
         @media(max-width:768px){
           .sidebar-el{display:none!important}.mobile-only{display:flex!important}.mob-topbar{display:flex}
-          .main-wrap{margin-left:0!important;width:100%!important;padding-bottom:80px!important;padding:12px 12px 80px!important}
+          .main-wrap{margin-left:0!important;width:100%!important;padding-bottom:90px!important;padding:12px 12px 90px!important}
           .mobile-cards{display:flex!important}.desktop-table{display:none!important}.card-grid{grid-template-columns:repeat(2,1fr)!important;gap:10px!important}.desktop-grid{display:none!important}
           .card-grid{display:none!important}
           .mob-stats{display:grid!important}.desk-stats{display:none!important}
