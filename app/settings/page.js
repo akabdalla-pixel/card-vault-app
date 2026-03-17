@@ -122,38 +122,7 @@ export default function SettingsPage() {
   const [user, setUser] = useState(null)
   const [cards, setCards] = useState([])
   const [loading, setLoading] = useState(true)
-  const [theme, setTheme] = useState('dark')
   const [shareCopied, setShareCopied] = useState(false)
-
-  useEffect(() => {
-    const saved = localStorage.getItem('topload-theme') || 'dark'
-    setTheme(saved)
-    document.documentElement.setAttribute('data-theme', saved)
-    document.body.setAttribute('data-theme', saved)
-    if (saved === 'light') {
-      document.body.style.background = '#f4f4f5'
-      document.body.style.color = '#111'
-    } else {
-      document.body.style.background = '#0a0a0a'
-      document.body.style.color = '#fff'
-    }
-  }, [])
-
-  function toggleTheme() {
-    const next = theme === 'dark' ? 'light' : 'dark'
-    setTheme(next)
-    localStorage.setItem('topload-theme', next)
-    document.documentElement.setAttribute('data-theme', next)
-    document.body.setAttribute('data-theme', next)
-    // Apply light/dark bg + text directly since inline styles override CSS vars
-    if (next === 'light') {
-      document.body.style.background = '#f4f4f5'
-      document.body.style.color = '#111'
-    } else {
-      document.body.style.background = '#0a0a0a'
-      document.body.style.color = '#fff'
-    }
-  }
 
   function handleShare() {
     const url = `https://www.toploadcards.com/share/${user?.username}`
@@ -349,21 +318,7 @@ export default function SettingsPage() {
                 </div>
               </div>
 
-              {/* Theme */}
-              <div className="settings-card" style={{ background:'#111', border:'1px solid #1e1e1e', borderRadius:14, padding:'20px', marginBottom:16 }}>
-                <div style={{ fontSize:9, fontWeight:800, color:'#a855f7', textTransform:'uppercase', letterSpacing:'0.12em', marginBottom:14 }}>Appearance</div>
-                <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between' }}>
-                  <div>
-                    <div style={{ fontSize:14, fontWeight:700, color:'#ccc', marginBottom:3 }}>{theme === 'dark' ? '🌙 Dark Mode' : '☀️ Light Mode'}</div>
-                    <div style={{ fontSize:12, color:'#555' }}>{theme === 'dark' ? 'Easy on the eyes' : 'Bright and clean'}</div>
-                  </div>
-                  <button onClick={toggleTheme} style={{ width:52, height:28, borderRadius:14, background: theme==='dark'?'#9333ea':'#e5e7eb', border:'none', cursor:'pointer', position:'relative', transition:'background 0.2s', flexShrink:0 }}>
-                    <div style={{ width:22, height:22, borderRadius:'50%', background:'#fff', position:'absolute', top:3, left: theme==='dark'?26:3, transition:'left 0.2s', boxShadow:'0 1px 3px rgba(0,0,0,0.3)' }} />
-                  </button>
-                </div>
-              </div>
-
-<Section title="Account" subtitle="Your account details" icon="👤">
+              <Section title="Account" subtitle="Your account details" icon="👤">
               <div style={{ display:'flex', flexDirection:'column', gap:10 }}>
                 {[['Username', `@${user?.username}`], ['Email', user?.email]].map(([label, val]) => (
                   <div key={label}>

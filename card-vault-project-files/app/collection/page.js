@@ -721,6 +721,7 @@ function CollectionPage() {
   const [priceLookupCard, setPriceLookupCard] = useState(null)
   const [soldCard, setSoldCard] = useState(null)
   const [showImport, setShowImport] = useState(false)
+  const [shareCopied, setShareCopied] = useState(false)
   const searchParams = useSearchParams()
   const [search, setSearch] = useState(() => searchParams.get('search') || '')
   const [filterSport, setFilterSport] = useState('')
@@ -753,6 +754,18 @@ function CollectionPage() {
   useEffect(() => { load() }, [load])
 
   const pullY = usePullToRefresh(load)
+
+  function handleShareCollection() {
+    const url = `https://www.toploadcards.com/share/${user?.username}`
+    if (navigator.share) {
+      navigator.share({ title: `${user?.username}'s Card Collection`, url })
+    } else {
+      navigator.clipboard.writeText(url).then(() => {
+        setShareCopied(true)
+        setTimeout(() => setShareCopied(false), 2500)
+      }).catch(() => prompt('Copy your share link:', url))
+    }
+  }
 
   async function handleLogout() { await fetch('/api/auth/logout', { method: 'POST' }); router.push('/login') }
   async function handleDelete(id) {
@@ -871,7 +884,12 @@ function CollectionPage() {
         <main className="main-wrap" style={{ padding:'28px 32px', background:'#0a0a0a' }}>
           <div className="mob-topbar" style={{ alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
             <img src="/logo-transparent.png" alt="TopLoad" style={{ height: 28, width: 'auto', objectFit: 'contain', filter: 'brightness(0) invert(1)' }} />
-            <button onClick={() => setModal('add')} className="press" style={{ display:'flex', alignItems:'center', gap:6, padding:'8px 16px', background:'#9333ea', border:'none', borderRadius:8, color:'#fff', fontSize:12, fontWeight:900, cursor:'pointer', letterSpacing:'0.05em', textTransform:'uppercase' }}>+ Add</button>
+            <div style={{ display:'flex', gap:6 }}>
+              <button onClick={handleShareCollection} style={{ display:'flex', alignItems:'center', gap:4, padding:'8px 12px', background: shareCopied?'rgba(34,197,94,0.1)':'rgba(147,51,234,0.08)', border: shareCopied?'1px solid rgba(34,197,94,0.3)':'1px solid rgba(147,51,234,0.25)', borderRadius:8, color: shareCopied?'#22c55e':'#9333ea', fontSize:12, fontWeight:700, cursor:'pointer' }}>
+                {shareCopied ? '✓' : '🔗'}
+              </button>
+              <button onClick={() => setModal('add')} className="press" style={{ display:'flex', alignItems:'center', gap:6, padding:'8px 16px', background:'#9333ea', border:'none', borderRadius:8, color:'#fff', fontSize:12, fontWeight:900, cursor:'pointer', letterSpacing:'0.05em', textTransform:'uppercase' }}>+ Add</button>
+            </div>
           </div>
           {/* ── Desktop header ── */}
           <div className="hide-mob" style={{ marginBottom:28 }}>
@@ -883,6 +901,9 @@ function CollectionPage() {
               <div style={{ display:'flex', gap:8 }}>
                 <button onClick={() => setShowImport(true)} style={{ display:'flex', alignItems:'center', gap:6, padding:'9px 16px', background:'transparent', border:'1px solid #222', borderRadius:8, color:'#555', fontSize:12, fontWeight:700, cursor:'pointer', letterSpacing:'0.03em', textTransform:'uppercase' }}><IconUpload />Import</button>
                 <button onClick={() => exportCSV(cards)} disabled={!cards.length} style={{ display:'flex', alignItems:'center', gap:6, padding:'9px 16px', background:'transparent', border:'1px solid #222', borderRadius:8, color:'#555', fontSize:12, fontWeight:700, cursor:'pointer', opacity:cards.length?1:0.4, letterSpacing:'0.03em', textTransform:'uppercase' }}><IconDownload />Export</button>
+                <button onClick={handleShareCollection} style={{ display:'flex', alignItems:'center', gap:6, padding:'9px 16px', background: shareCopied?'rgba(34,197,94,0.1)':'rgba(147,51,234,0.08)', border: shareCopied?'1px solid rgba(34,197,94,0.3)':'1px solid rgba(147,51,234,0.25)', borderRadius:8, color: shareCopied?'#22c55e':'#9333ea', fontSize:12, fontWeight:700, cursor:'pointer', letterSpacing:'0.03em', textTransform:'uppercase' }}>
+                  {shareCopied ? '✓ Copied' : '🔗 Share'}
+                </button>
                 <button onClick={() => setModal('add')} style={{ display:'flex', alignItems:'center', gap:6, padding:'9px 20px', background:'#9333ea', border:'none', borderRadius:8, color:'#fff', fontSize:12, fontWeight:900, cursor:'pointer', letterSpacing:'0.08em', textTransform:'uppercase' }}>+ Add Card</button>
               </div>
             </div>
