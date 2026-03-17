@@ -374,7 +374,7 @@ export default function DashboardPage() {
     try {
       const [actRes, snapRes] = await Promise.all([
         fetch('/api/activity'),
-        fetch('/api/snapshot')
+        fetch('/api/cards?snapshots=1')
       ])
       if (actRes.ok) setActivity(await actRes.json())
       if (snapRes.ok) setSnapshots(await snapRes.json())

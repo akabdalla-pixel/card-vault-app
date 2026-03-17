@@ -14,9 +14,19 @@ async function saveSnapshot(userId) {
   } catch(e) {}
 }
 
-export async function GET() {
+export async function GET(req) {
   const userId = await getUser()
   if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  const { searchParams } = new URL(req.url)
+  // If ?snapshots=1, return snapshot data instead of cards
+  if (searchParams.get('snapshots') === '1') {
+    const snapshots = await prisma.portfolioSnapshot.findMany({
+      where: { userId },
+      orderBy: { createdAt: 'asc' },
+      take: 60,
+    })
+    return NextResponse.json(snapshots)
+  }
   const cards = await prisma.card.findMany({ where: { userId }, orderBy: { createdAt: 'desc' } })
   return NextResponse.json(cards)
 }
