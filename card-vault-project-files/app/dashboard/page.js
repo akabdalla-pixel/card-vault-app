@@ -328,46 +328,49 @@ function StatCard({ label, value, sub, positive, style = {} }) {
 }
 
 
-function MobileSparkline({ snapshots, color }) {
-  if (!snapshots || snapshots.length === 0) return (
-    <div style={{ marginBottom:8, fontSize:11, color:'#333', paddingTop:8 }}>
-      📈 Graph builds as you use the app — check back tomorrow
-    </div>
-  )
-  // If only 1 point, duplicate it so chart renders immediately
-  if (snapshots.length < 2) {
-    const s = snapshots[0]
-    snapshots = [{ ...s, createdAt: new Date(new Date(s.createdAt).getTime() - 86400000).toISOString() }, s]
+function MobileSparkline({ snapshots, cards, color }) {
+  const activeCards = (cards || []).filter(c => !c.sold)
+  const totalVal = activeCards.reduce((s,c) => s+(parseFloat(c.val)||parseFloat(c.buy)||0)*(parseInt(c.qty)||1), 0)
+  const totalCost = activeCards.reduce((s,c) => s+(parseFloat(c.buy)||0)*(parseInt(c.qty)||1), 0)
+
+  let ptValues
+  if (snapshots && snapshots.length >= 2) {
+    ptValues = [...snapshots.map(s => parseFloat(s.value)), totalVal]
+  } else if (activeCards.length > 0) {
+    const sorted = [...activeCards].sort((a,b) => new Date(a.createdAt)-new Date(b.createdAt))
+    let cum = 0
+    ptValues = sorted.map(c => { cum += (parseFloat(c.val)||parseFloat(c.buy)||0)*(parseInt(c.qty)||1); return cum })
+    if (ptValues.length < 2) ptValues.unshift(0)
+    ptValues.push(totalVal)
+  } else {
+    return null
   }
-  const vals = snapshots.map(s => s.value)
-  const min = Math.min(...vals)
-  const max = Math.max(...vals)
-  const range = max - min || 1
-  const w = 280, h = 48
-  const pts = vals.map((v, i) => {
-    const x = (i / (vals.length - 1)) * w
-    const y = h - ((v - min) / range) * (h - 8) - 4
-    return `${x},${y}`
-  }).join(' ')
-  const first = vals[0], last = vals[vals.length - 1]
-  const pct = first > 0 ? ((last - first) / first * 100).toFixed(1) : null
+
+  const w = 320, h = 56
+  const minV = Math.min(0, ...ptValues, totalCost) * 0.98
+  const maxV = Math.max(...ptValues, totalCost) * 1.08 || 100
+  const range = maxV - minV || 1
+  const toX = i => ((i / (ptValues.length - 1)) * w).toFixed(1)
+  const toY = v => (h - ((v - minV) / range) * h * 0.88 - h * 0.06).toFixed(1)
+  const linePts = ptValues.map((v,i) => `${toX(i)},${toY(v)}`).join(' ')
+  const costY = toY(totalCost)
+  const lastX = toX(ptValues.length - 1)
+  const lastY = toY(ptValues[ptValues.length - 1])
+
   return (
     <div style={{ marginBottom:16 }}>
       <svg width="100%" viewBox={`0 0 ${w} ${h}`} style={{ display:'block', overflow:'visible' }}>
         <defs>
-          <linearGradient id="spark-grad" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor={color} stopOpacity="0.3" />
+          <linearGradient id="mob-grad" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor={color} stopOpacity="0.25" />
             <stop offset="100%" stopColor={color} stopOpacity="0" />
           </linearGradient>
         </defs>
-        <polyline fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" points={pts} />
-        <circle cx={pts.split(' ').pop().split(',')[0]} cy={pts.split(' ').pop().split(',')[1]} r="3" fill={color} />
+        <polygon points={`${linePts} ${w},${h} 0,${h}`} fill="url(#mob-grad)" />
+        <line x1="0" y1={costY} x2={w} y2={costY} stroke="#2a2a2a" strokeWidth="1.5" strokeDasharray="4 3" />
+        <polyline fill="none" stroke={color} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" points={linePts} />
+        <circle cx={lastX} cy={lastY} r="4" fill={color} />
       </svg>
-      {pct && (
-        <div style={{ fontSize:10, color:'#555', marginTop:2 }}>
-          <span style={{ color, fontWeight:700 }}>{parseFloat(pct)>=0?'+':''}{pct}%</span> since first tracked
-        </div>
-      )}
     </div>
   )
 }
@@ -507,7 +510,7 @@ export default function DashboardPage() {
               <span style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:16, fontWeight:800, color: gainPos?'#22c55e':'#ef4444' }}>{gainPos?'▲':'▼'} {gainPos?'+':''}{fmt(gainLoss)}</span>
               <span style={{ fontSize:13, color:'#555' }}>{gainPos?'+':''}{portfolioReturn.toFixed(1)}%</span>
             </div>
-            <MobileSparkline snapshots={snapshots} color={gainPos ? '#22c55e' : '#ef4444'} />
+            <MobileSparkline snapshots={snapshots} cards={cards} color={gainPos ? '#22c55e' : '#ef4444'} />
             <div style={{ display:'flex', gap:0, paddingTop:16, borderTop:'1px solid #1a1a1a' }}>
               <div style={{ flex:1 }}>
                 <div style={{ fontSize:9, color:'#444', fontWeight:700, textTransform:'uppercase', letterSpacing:'0.1em', marginBottom:4 }}>Invested</div>
