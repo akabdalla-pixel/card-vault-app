@@ -485,7 +485,7 @@ export default function PSALookupPage() {
         @media(max-width:768px){.sidebar-el{display:none!important}.mobile-only{display:flex!important}.mob-topbar{display:flex}.main-wrap{margin-left:0!important;width:100%!important;padding:16px 16px 80px!important}}
         input:focus,select:focus,textarea:focus{border-color:#9333ea!important;outline:none}
         .hist-item:hover{background:#1a1a1a!important}
-        @media(max-width:768px){.psa-grid{grid-template-columns:1fr!important}.psa-result-inner{flex-direction:column!important}.psa-img-wrap{width:100%!important;display:flex;flex-direction:column;align-items:center}}
+        @media(max-width:768px){.psa-grid{grid-template-columns:1fr!important}.psa-result-inner{flex-direction:column!important}.psa-img-wrap{width:100%!important;display:flex;flex-direction:column;align-items:center}.psa-details-grid{grid-template-columns:1fr 1fr!important}.psa-pop-grid{grid-template-columns:repeat(3,1fr)!important}.main-wrap{padding:12px 12px 80px!important}}
       `}</style>
 
       <div style={{ display:'flex', minHeight:'100vh', background:'#0a0a0a' }}>
@@ -509,11 +509,11 @@ export default function PSALookupPage() {
                 <div style={{ fontSize:9, fontWeight:800, color:'#555', textTransform:'uppercase', letterSpacing:'0.1em', marginBottom:10 }}>Cert Number</div>
                 <div style={{ display:'flex', gap:10 }}>
                   <input value={cert} onChange={e => setCert(e.target.value)} onKeyDown={e => e.key==='Enter' && handleLookup()} placeholder="e.g. 12345678"
-                    style={{ flex:1, padding:'11px 14px', borderRadius:10, background:'#1a1a1a', border:'1px solid #2a2a2a', color:'#f0f0f0', fontSize:16, fontFamily:"'JetBrains Mono',monospace", letterSpacing:'0.05em', transition:'border-color 0.15s', boxSizing:'border-box' }} />
+                    style={{ flex:1, minWidth:0, padding:'11px 14px', borderRadius:10, background:'#1a1a1a', border:'1px solid #2a2a2a', color:'#f0f0f0', fontSize:16, fontFamily:"'JetBrains Mono',monospace", letterSpacing:'0.05em', transition:'border-color 0.15s', boxSizing:'border-box' }} />
                   <button onClick={handleLookup} disabled={searching || !cert.trim()} style={{ padding:'11px 28px', borderRadius:10, background: searching||!cert.trim() ? '#1a1a1a' : '#9333ea', border:'none', color: searching||!cert.trim() ? '#555' : '#fff', fontSize:14, fontWeight:800, cursor: searching||!cert.trim() ? 'not-allowed' : 'pointer', whiteSpace:'nowrap' }}>
                     {searching ? 'Looking up...' : 'Verify'}
                   </button>
-                  <button onClick={() => setScanning(true)} style={{ padding:'11px 14px', borderRadius:10, background:'#111', border:'1px solid #1e1e1e', color:'#a855f7', cursor:'pointer', fontSize:13, fontWeight:700, whiteSpace:'nowrap', display:'flex', alignItems:'center', gap:6 }}>
+                  <button onClick={() => setScanning(true)} style={{ padding:'11px 12px', borderRadius:10, background:'#111', border:'1px solid #1e1e1e', color:'#a855f7', cursor:'pointer', fontSize:13, fontWeight:700, whiteSpace:'nowrap', display:'flex', alignItems:'center', gap:4 }}>
                     📷 Scan
                   </button>
                 </div>
@@ -540,16 +540,16 @@ export default function PSALookupPage() {
                     </div>
                     <div style={{ flex:1, minWidth:0 }}>
                       <div style={{ display:'flex', alignItems:'center', gap:12, marginBottom:16 }}>
-                        <div style={{ width:64, height:64, borderRadius:12, background:`${gradeColor}18`, border:`2px solid ${gradeColor}`, display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', flexShrink:0 }}>
+                        <div style={{ width:56, height:56, borderRadius:10, background:`${gradeColor}18`, border:`2px solid ${gradeColor}`, display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', flexShrink:0 }}>
                           <div style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:26, fontWeight:900, color:gradeColor, lineHeight:1 }}>{result.grade}</div>
                           {result.autoGrade && <div style={{ fontSize:9, fontWeight:700, color:'#ffbe2e', marginTop:2 }}>A{result.autoGrade}</div>}
                         </div>
                         <div>
-                          <div style={{ fontSize:22, fontWeight:900, color:'#fff', letterSpacing:'-0.5px', lineHeight:1.1 }}>{result.player || '—'}</div>
+                          <div style={{ fontSize:18, fontWeight:900, color:'#fff', letterSpacing:'-0.5px', lineHeight:1.1 }}>{result.player || '—'}</div>
                           {result.gradeDescription && <div style={{ fontSize:12, color:'#555', marginTop:3 }}>{result.gradeDescription}</div>}
                         </div>
                       </div>
-                      <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:10, marginBottom:16 }}>
+                      <div className="psa-details-grid" style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:10, marginBottom:16 }}>
                         {[
                           { label:'Cert #', value: result.cert },
                           { label:'Year', value: result.year || '—' },
@@ -570,7 +570,7 @@ export default function PSALookupPage() {
                       {(result.totalPop > 0 || result.popHigher >= 0) && (
                         <div style={{ marginBottom:14, background:'#0d0d0d', border:'1px solid #1a1a1a', borderRadius:10, padding:'12px 14px' }}>
                           <div style={{ fontSize:9, fontWeight:800, color:'#555', textTransform:'uppercase', letterSpacing:'0.12em', marginBottom:10 }}>PSA Pop Report</div>
-                          <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr 1fr', gap:8 }}>
+                          <div className="psa-pop-grid" style={{ display:'grid', gridTemplateColumns:'1fr 1fr 1fr', gap:8 }}>
                             {[
                               { label:'This Grade', value: (result.totalPop - result.popHigher - result.totalPopWithQualifier) || result.totalPop, color:'#a855f7' },
                               { label:'Graded Higher', value: result.popHigher, color:'#22c55e' },
