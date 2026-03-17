@@ -194,7 +194,7 @@ function StatCard({ label, value, sub, icon, positive, accent, style = {} }) {
         {icon && <div style={{ fontSize: 16 }}>{icon}</div>}
       </div>
       <div style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: 20, fontWeight: 700, color: '#f0f0f0', letterSpacing: '-0.5px', lineHeight: 1 }}>{value}</div>
-      {sub && <div style={{ marginTop: 8, fontSize: 11, color: positive === true ? '#4ade80' : positive === false ? '#9333ea' : '#555', fontFamily: "'Outfit',sans-serif", fontWeight: 600, display: 'flex', alignItems: 'center', gap: 4 }}>
+      {sub && <div style={{ marginTop: 8, fontSize: 11, color: positive === true ? '#22c55e' : positive === false ? '#ef4444' : '#555', fontFamily: "'Outfit',sans-serif", fontWeight: 600, display: 'flex', alignItems: 'center', gap: 4 }}>
         {positive === true && <IconTrendUp />}{positive === false && <IconTrendDown />}{sub}
       </div>}
     </div>
@@ -226,7 +226,7 @@ function TopCardsRank({ cards }) {
               </div>
               <div style={{ textAlign: 'right', flexShrink: 0 }}>
                 <div style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: 14, fontWeight: 700, color: '#f0f0f0' }}>{fmt(val)}</div>
-                <div style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: 11, color: glPos ? '#4ade80' : '#9333ea', marginTop: 2 }}>{glPos ? '+' : ''}{fmt(gl)}</div>
+                <div style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: 11, color: glPos ? '#22c55e' : '#ef4444', marginTop: 2 }}>{glPos ? '+' : ''}{fmt(gl)}</div>
               </div>
             </div>
           )
