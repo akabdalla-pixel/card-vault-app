@@ -397,12 +397,19 @@ export default function DashboardPage() {
     finally { setLoading(false) }
   }, [router])
 
+  const refreshSnapshots = async () => {
+    try {
+      const res = await fetch('/api/snapshot')
+      if (res.ok) setSnapshots(await res.json())
+    } catch(e) {}
+  }
+
   useEffect(() => {
     loadData()
     const onBeforeInstall = e => { e.preventDefault(); setInstallPrompt(e) }
     window.addEventListener('beforeinstallprompt', onBeforeInstall)
     if (window.matchMedia('(display-mode: standalone)').matches) setInstalled(true)
-    const onVisible = () => { if(document.visibilityState==='visible') loadData() }
+    const onVisible = () => { if(document.visibilityState==='visible') { loadData(); refreshSnapshots() } }
     document.addEventListener('visibilitychange', onVisible)
     return () => { window.removeEventListener('beforeinstallprompt',onBeforeInstall); document.removeEventListener('visibilitychange',onVisible) }
   }, [loadData])

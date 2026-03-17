@@ -10,9 +10,6 @@ async function saveSnapshot(userId) {
     })
     const value = cards.reduce((sum, c) => sum + ((c.val || c.buy || 0) * (c.qty || 1)), 0)
     if (value <= 0) return
-    // Debounce: delete snapshots from last 10 mins, then save fresh one
-    const tenMinsAgo = new Date(Date.now() - 10 * 60 * 1000)
-    await prisma.portfolioSnapshot.deleteMany({ where: { userId, createdAt: { gte: tenMinsAgo } } })
     await prisma.portfolioSnapshot.create({ data: { userId, value } })
   } catch(e) {}
 }

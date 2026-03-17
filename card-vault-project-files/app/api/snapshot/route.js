@@ -35,13 +35,6 @@ export async function POST(req) {
   const { value } = await req.json()
   if (typeof value !== 'number' || value <= 0) return NextResponse.json({ error: 'Invalid value' }, { status: 400 })
 
-  // Always create a new point — but delete any from the last 10 minutes
-  // to avoid spam if someone edits many cards rapidly
-  const tenMinutesAgo = new Date(Date.now() - 10 * 60 * 1000)
-  await prisma.portfolioSnapshot.deleteMany({
-    where: { userId, createdAt: { gte: tenMinutesAgo } }
-  })
-
   await prisma.portfolioSnapshot.create({ data: { userId, value } })
 
   return NextResponse.json({ ok: true })
