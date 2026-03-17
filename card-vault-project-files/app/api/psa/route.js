@@ -55,6 +55,9 @@ export async function GET(req) {
       frontImage: frontImage,
       backImage: backImage,
       certPageUrl: certPageUrl,
+      totalPop: cert_data.TotalPopulation || 0,
+      totalPopWithQualifier: cert_data.TotalPopulationWithQualifier || 0,
+      popHigher: cert_data.PopulationHigher || 0,
       raw: cert_data,
     })
 

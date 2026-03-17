@@ -287,6 +287,7 @@ export default function PSALookupPage() {
   const [showAddModal, setShowAddModal] = useState(false)
   const [addForm, setAddForm] = useState(null)
   const [imgFront, setImgFront] = useState(true)
+  const [scanning, setScanning] = useState(false)
   const [history, setHistory] = useState([])
   const router = useRouter()
 
@@ -383,6 +384,9 @@ export default function PSALookupPage() {
                   <button onClick={handleLookup} disabled={searching || !cert.trim()} style={{ padding:'11px 28px', borderRadius:10, background: searching||!cert.trim() ? '#1a1a1a' : '#9333ea', border:'none', color: searching||!cert.trim() ? '#555' : '#fff', fontSize:14, fontWeight:800, cursor: searching||!cert.trim() ? 'not-allowed' : 'pointer', whiteSpace:'nowrap' }}>
                     {searching ? 'Looking up...' : 'Verify'}
                   </button>
+                  <button onClick={() => setScanning(true)} style={{ padding:'11px 14px', borderRadius:10, background:'#111', border:'1px solid #1e1e1e', color:'#a855f7', cursor:'pointer', fontSize:13, fontWeight:700, whiteSpace:'nowrap', display:'flex', alignItems:'center', gap:6 }}>
+                    📷 Scan
+                  </button>
                 </div>
               </div>
 
@@ -433,6 +437,26 @@ export default function PSALookupPage() {
                           </div>
                         ))}
                       </div>
+                      {/* Pop Report */}
+                      {(result.totalPop > 0 || result.popHigher >= 0) && (
+                        <div style={{ marginBottom:14, background:'#0d0d0d', border:'1px solid #1a1a1a', borderRadius:10, padding:'12px 14px' }}>
+                          <div style={{ fontSize:9, fontWeight:800, color:'#555', textTransform:'uppercase', letterSpacing:'0.12em', marginBottom:10 }}>PSA Pop Report</div>
+                          <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr 1fr', gap:8 }}>
+                            {[
+                              { label:'This Grade', value: (result.totalPop - result.popHigher - result.totalPopWithQualifier) || result.totalPop, color:'#a855f7' },
+                              { label:'Graded Higher', value: result.popHigher, color:'#22c55e' },
+                              { label:'Total Pop', value: result.totalPop, color:'#888' },
+                            ].map((p,i) => (
+                              <div key={i} style={{ textAlign:'center' }}>
+                                <div style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:18, fontWeight:900, color:p.color }}>{p.value.toLocaleString()}</div>
+                                <div style={{ fontSize:9, fontWeight:700, color:'#444', textTransform:'uppercase', letterSpacing:'0.08em', marginTop:3 }}>{p.label}</div>
+                              </div>
+                            ))}
+                          </div>
+                          {result.popHigher === 0 && <div style={{ marginTop:10, fontSize:11, color:'#22c55e', fontWeight:700, textAlign:'center' }}>🏆 Top grade — nothing graded higher</div>}
+                        </div>
+                      )}
+
                       {!result.isCancelled && (
                         <button onClick={handleAddToCollection} style={{ width:'100%', padding:'12px', borderRadius:10, background:'#9333ea', border:'none', color:'#fff', fontSize:14, fontWeight:800, cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'center', gap:6 }}>
                           + Add to Collection
@@ -494,6 +518,45 @@ export default function PSALookupPage() {
         </main>
         <BottomNav active="PSA Lookup" />
       </div>
+
+
+      {/* QR Scanner Modal */}
+      {scanning && (
+        <div style={{ position:'fixed', inset:0, background:'rgba(0,0,0,0.95)', zIndex:300, display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', padding:24 }}>
+          <div style={{ width:'100%', maxWidth:400, background:'#111', border:'1px solid #1e1e1e', borderRadius:20, padding:28, textAlign:'center' }}>
+            <div style={{ fontSize:9, fontWeight:800, color:'#a855f7', textTransform:'uppercase', letterSpacing:'0.12em', marginBottom:8 }}>QR Scanner</div>
+            <h3 style={{ fontSize:20, fontWeight:900, color:'#fff', marginBottom:8 }}>Scan PSA Slab</h3>
+            <p style={{ fontSize:13, color:'#555', marginBottom:24, lineHeight:1.5 }}>Point your camera at the QR code on the PSA slab label. The cert number will be entered automatically.</p>
+            <div style={{ background:'#1a1a1a', border:'1px solid #2a2a2a', borderRadius:12, padding:'40px 20px', marginBottom:20 }}>
+              <div style={{ fontSize:48, marginBottom:12 }}>📷</div>
+              <div style={{ fontSize:13, color:'#555', marginBottom:16 }}>Camera access required</div>
+              <p style={{ fontSize:11, color:'#444', lineHeight:1.6 }}>Your browser will ask for camera permission. Once granted, hold the QR code steady in view and the cert number will auto-populate.</p>
+            </div>
+            <div id="qr-reader" style={{ width:'100%', marginBottom:16, borderRadius:10, overflow:'hidden' }}></div>
+            <div style={{ display:'flex', gap:10 }}>
+              <button onClick={() => setScanning(false)} style={{ flex:1, padding:'12px', borderRadius:10, background:'#1a1a1a', border:'1px solid #2a2a2a', color:'#666', fontSize:14, fontWeight:700, cursor:'pointer' }}>Cancel</button>
+              <button onClick={() => {
+                if (typeof window === 'undefined') return
+                import('https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js').then(() => {
+                  const scanner = new window.Html5Qrcode('qr-reader')
+                  scanner.start({ facingMode: 'environment' }, { fps:10, qrbox:250 }, (text) => {
+                    // PSA QR codes contain the cert number or a URL with it
+                    const certMatch = text.match(/(\d{7,12})/) || text.match(/cert\/(\d+)/)
+                    if (certMatch) {
+                      setCert(certMatch[1])
+                      scanner.stop()
+                      setScanning(false)
+                      setTimeout(() => handleLookup(), 100)
+                    }
+                  }).catch(e => console.log(e))
+                })
+              }} style={{ flex:2, padding:'12px', borderRadius:10, background:'#9333ea', border:'none', color:'#fff', fontSize:14, fontWeight:800, cursor:'pointer' }}>
+                Open Camera
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {showAddModal && addForm && <CardModal card={addForm} onClose={() => setShowAddModal(false)} onSave={() => { setShowAddModal(false); setAddSuccess(true); setTimeout(() => setAddSuccess(false), 3000) }} />}
     </>
