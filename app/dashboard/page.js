@@ -321,7 +321,16 @@ function StatCard({ label, value, sub, positive, style = {} }) {
 
 
 function MobileSparkline({ snapshots, color }) {
-  if (!snapshots || snapshots.length < 2) return null
+  if (!snapshots || snapshots.length === 0) return (
+    <div style={{ marginBottom:8, fontSize:11, color:'#333', paddingTop:8 }}>
+      📈 Graph builds as you use the app — check back tomorrow
+    </div>
+  )
+  if (snapshots.length < 2) return (
+    <div style={{ marginBottom:8, fontSize:11, color:'#555', paddingTop:8 }}>
+      📈 First data point saved · graph appears after next visit
+    </div>
+  )
   const vals = snapshots.map(s => s.value)
   const min = Math.min(...vals)
   const max = Math.max(...vals)
