@@ -3,11 +3,13 @@ import { PrismaClient } from '@prisma/client'
 
 const prisma = new PrismaClient()
 
-export async function GET(req, { params }) {
+export async function GET(req, context) {
   try {
-    const { username } = params
+    const { username } = await context.params
+    if (!username) return NextResponse.json({ error: 'No username' }, { status: 400 })
+
     const user = await prisma.user.findUnique({
-      where: { username },
+      where: { username: decodeURIComponent(username) },
       select: {
         username: true,
         cards: {
@@ -16,14 +18,15 @@ export async function GET(req, { params }) {
             id: true, player: true, year: true, sport: true,
             brand: true, name: true, num: true, grade: true,
             gradingCo: true, auto: true, val: true, qty: true,
-            cond: true, variety: true, createdAt: true,
-            // intentionally exclude: buy, soldPrice, notes
+            cond: true, createdAt: true,
           },
           orderBy: { createdAt: 'desc' }
         }
       }
     })
+
     if (!user) return NextResponse.json({ error: 'User not found' }, { status: 404 })
+
     const totalValue = user.cards.reduce((s, c) => s + (parseFloat(c.val) || 0) * (parseInt(c.qty) || 1), 0)
     return NextResponse.json({ username: user.username, cards: user.cards, totalValue, cardCount: user.cards.length })
   } catch(e) {
