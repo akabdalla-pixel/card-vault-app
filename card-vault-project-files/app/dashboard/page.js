@@ -167,7 +167,7 @@ function BottomNav({ active = "" }) {
   )
 }
 
-function SparklineChart({ cards }) {
+function SparklineChart({ cards, snapshots }) {
   if (!cards.length) return null
   const activeCards = cards.filter(c => !c.sold)
   const totalVal = activeCards.reduce((s,c) => s+(parseFloat(c.val)||parseFloat(c.buy)||0)*(parseInt(c.qty)||1),0)
@@ -360,6 +360,7 @@ export default function DashboardPage() {
   const [installed, setInstalled] = useState(false)
   const [showInstallModal, setShowInstallModal] = useState(false)
   const [activity, setActivity] = useState([])
+  const [snapshots, setSnapshots] = useState([])
   const router = useRouter()
 
   const loadData = useCallback(async () => {
@@ -369,10 +370,14 @@ export default function DashboardPage() {
       setUser((await meRes.json()).user)
       let loadedCards = []
       if (cardsRes.ok) { const d=await cardsRes.json(); loadedCards=Array.isArray(d)?d:[]; setCards(loadedCards) }
-    // fetch activity
+    // fetch activity + snapshots
     try {
-      const actRes = await fetch('/api/activity')
+      const [actRes, snapRes] = await Promise.all([
+        fetch('/api/activity'),
+        fetch('/api/snapshot')
+      ])
       if (actRes.ok) setActivity(await actRes.json())
+      if (snapRes.ok) setSnapshots(await snapRes.json())
     } catch(e) {}
     } catch(e) { console.error(e) }
     finally { setLoading(false) }
@@ -482,7 +487,7 @@ export default function DashboardPage() {
               <span style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:16, fontWeight:800, color: gainPos?'#22c55e':'#ef4444' }}>{gainPos?'▲':'▼'} {gainPos?'+':''}{fmt(gainLoss)}</span>
               <span style={{ fontSize:13, color:'#555' }}>{gainPos?'+':''}{portfolioReturn.toFixed(1)}%</span>
             </div>
-            <MobileSparkline snapshots={[]} color={gainPos ? '#22c55e' : '#ef4444'} />
+            <MobileSparkline snapshots={snapshots} color={gainPos ? '#22c55e' : '#ef4444'} />
             <div style={{ display:'flex', gap:0, paddingTop:16, borderTop:'1px solid #1a1a1a' }}>
               <div style={{ flex:1 }}>
                 <div style={{ fontSize:9, color:'#444', fontWeight:700, textTransform:'uppercase', letterSpacing:'0.1em', marginBottom:4 }}>Invested</div>
@@ -525,7 +530,7 @@ export default function DashboardPage() {
               <Link href="/collection" style={{ display:'flex',alignItems:'center',gap:7,padding:'9px 14px',background:'rgba(147,51,234,0.08)',border:'1px solid rgba(147,51,234,0.25)',borderRadius:10,color:'#9333ea',fontFamily:"'Outfit',sans-serif",fontSize:13,fontWeight:600,textDecoration:'none' }}>+ Add Card</Link>
             </div>
           </div>
-          {cards.length>0&&<div className="desk-chart"><SparklineChart cards={cards} /></div>}
+          {cards.length>0&&<div className="desk-chart"><SparklineChart cards={cards} snapshots={snapshots} /></div>}
           <div className="desk-stats">
           <div className="stat-grid">
             <StatCard style={{animation:"fadeUp 0.45s ease 0s both"}} label="Active Cards" value={activeCards.length} />
