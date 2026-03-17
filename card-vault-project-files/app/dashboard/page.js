@@ -169,29 +169,40 @@ function BottomNav({ active = "" }) {
 
 function SparklineChart({ cards, snapshots }) {
   if (!cards.length) return null
-  const activeCards = cards.filter(c => !c.sold)
-  const totalVal = activeCards.reduce((s,c) => s+(parseFloat(c.val)||parseFloat(c.buy)||0)*(parseInt(c.qty)||1),0)
-  const totalCost = activeCards.reduce((s,c) => s+(parseFloat(c.buy)||0)*(parseInt(c.qty)||1),0)
 
-  const sorted = [...activeCards].sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt))
-  let points = []
-  let cumValue = 0, cumCost = 0
-  sorted.forEach(c => {
-    cumCost += (parseFloat(c.buy)||0)*(parseInt(c.qty)||1)
-    cumValue += (parseFloat(c.val)||parseFloat(c.buy)||0)*(parseInt(c.qty)||1)
-    points.push({ value: cumValue, cost: cumCost })
-  })
-  if (points.length < 2) points.unshift({ value: 0, cost: 0 })
-  points.push({ value: totalVal, cost: totalCost })
-  const W=600, H=100
-  const maxV = Math.max(...points.map(p=>p.value))*1.1||100
-  const toX = i => (i/(points.length-1))*W
-  const toY = v => H-((v)/(maxV))*H
-  const valuePath = points.map((p,i) => `${i===0?'M':'L'} ${toX(i)} ${toY(p.value)}`).join(' ')
-  const costPath = points.map((p,i) => `${i===0?'M':'L'} ${toX(i)} ${toY(p.cost)}`).join(' ')
-  const areaPath = `${valuePath} L ${W} ${H} L 0 ${H} Z`
+  const activeCards = cards.filter(c => !c.sold)
+  const totalVal = activeCards.reduce((s,c) => s+(parseFloat(c.val)||parseFloat(c.buy)||0)*(parseInt(c.qty)||1), 0)
+  const totalCost = activeCards.reduce((s,c) => s+(parseFloat(c.buy)||0)*(parseInt(c.qty)||1), 0)
   const isUp = totalVal >= totalCost
   const lineColor = isUp ? '#22c55e' : '#ef4444'
+  const W = 600, H = 100
+
+  // Build point values array — use real snapshots if available (captured on every add/edit/delete)
+  // Always append current live totalVal as the rightmost point so chart is always fresh
+  let ptValues
+  if (snapshots && snapshots.length >= 2) {
+    ptValues = [...snapshots.map(s => parseFloat(s.value)), totalVal]
+  } else {
+    // Fallback: build from cards sorted by createdAt
+    const sorted = [...activeCards].sort((a,b) => new Date(a.createdAt)-new Date(b.createdAt))
+    let cum = 0
+    ptValues = sorted.map(c => { cum += (parseFloat(c.val)||parseFloat(c.buy)||0)*(parseInt(c.qty)||1); return cum })
+    if (ptValues.length < 2) ptValues.unshift(0)
+    ptValues.push(totalVal)
+  }
+
+  const minV = Math.min(0, ...ptValues, totalCost) * 0.98
+  const maxV = Math.max(...ptValues, totalCost) * 1.08 || 100
+  const range = maxV - minV || 1
+  const toX = i => (i / (ptValues.length - 1)) * W
+  const toY = v => H - ((v - minV) / range) * H * 0.88 - H * 0.06
+
+  const valuePath = ptValues.map((v,i) => `${i===0?'M':'L'} ${toX(i).toFixed(1)} ${toY(v).toFixed(1)}`).join(' ')
+  const areaPath = `${valuePath} L ${W} ${H} L 0 ${H} Z`
+  const costPath = `M 0 ${toY(totalCost).toFixed(1)} L ${W} ${toY(totalCost).toFixed(1)}`
+  const dotX = toX(ptValues.length - 1)
+  const dotY = toY(ptValues[ptValues.length - 1])
+
   return (
     <div style={{ background: '#13131f', border: '1px solid rgba(147,51,234,0.15)', boxShadow: '0 4px 20px rgba(0,0,0,0.4)', borderRadius: 16, padding: '18px 20px', marginBottom: 22 }}>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 }}>
@@ -200,22 +211,31 @@ function SparklineChart({ cards, snapshots }) {
           <div style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: 26, fontWeight: 700, color: '#f0f0f0', marginTop: 2 }}>{fmt(totalVal)}</div>
         </div>
         <div style={{ textAlign: 'right' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 4, justifyContent: 'flex-end', fontFamily: "'JetBrains Mono',monospace", fontSize: 14, fontWeight: 700, color: isUp ? '#22c55e' : '#ef4444' }}>
-            {isUp ? <IconTrendUp /> : <IconTrendDown />}{isUp?'+':''}{fmt(totalVal-totalCost)}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 4, justifyContent: 'flex-end', fontFamily: "'JetBrains Mono',monospace", fontSize: 14, fontWeight: 700, color: lineColor }}>
+            {isUp ? <IconTrendUp /> : <IconTrendDown />}{isUp?'+':''}{fmt(totalVal - totalCost)}
           </div>
           <div style={{ fontSize: 11, color: '#444', marginTop: 2 }}>vs cost basis</div>
         </div>
       </div>
       <svg viewBox={`0 0 ${W} ${H}`} style={{ width: '100%', height: 70, overflow: 'visible' }}>
-        <defs><linearGradient id="ag" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stopColor={lineColor} stopOpacity="0.2"/><stop offset="100%" stopColor={lineColor} stopOpacity="0.02"/></linearGradient></defs>
+        <defs>
+          <linearGradient id="ag" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor={lineColor} stopOpacity="0.2"/>
+            <stop offset="100%" stopColor={lineColor} stopOpacity="0.02"/>
+          </linearGradient>
+        </defs>
         <path d={areaPath} fill="url(#ag)" />
         <path d={costPath} stroke="#333" strokeWidth="1.5" fill="none" strokeDasharray="4 4" />
         <path d={valuePath} stroke={lineColor} strokeWidth="2.5" fill="none" strokeLinecap="round" strokeLinejoin="round" />
-        <circle cx={toX(points.length-1)} cy={toY(points[points.length-1].value)} r="4" fill={lineColor} />
+        <circle cx={dotX} cy={dotY} r="4" fill={lineColor} />
       </svg>
       <div style={{ display: 'flex', gap: 16, marginTop: 8 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 11, color: '#555' }}><div style={{ width: 20, height: 2, background: lineColor, borderRadius: 1 }} />Portfolio Value</div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 11, color: '#555' }}><div style={{ width: 20, height: 2, background: '#333', borderRadius: 1 }} />Cost Basis</div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 11, color: '#555' }}>
+          <div style={{ width: 20, height: 2, background: lineColor, borderRadius: 1 }} />Portfolio Value
+        </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 11, color: '#555' }}>
+          <div style={{ width: 20, height: 2, background: '#333', borderRadius: 1 }} />Cost Basis
+        </div>
       </div>
     </div>
   )
