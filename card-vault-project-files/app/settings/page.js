@@ -146,8 +146,6 @@ export default function SettingsPage() {
       prompt('Copy this link:', `https://www.toploadcards.com/share/${user?.username}`)
     })
   }
-  const [theme, setTheme] = useState('dark')
-  const [shareCopied, setShareCopied] = useState(false)
   const router = useRouter()
 
   // Change password
