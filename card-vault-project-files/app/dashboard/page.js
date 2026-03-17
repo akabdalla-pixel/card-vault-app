@@ -173,20 +173,15 @@ function SparklineChart({ cards, snapshots }) {
   const totalVal = activeCards.reduce((s,c) => s+(parseFloat(c.val)||parseFloat(c.buy)||0)*(parseInt(c.qty)||1),0)
   const totalCost = activeCards.reduce((s,c) => s+(parseFloat(c.buy)||0)*(parseInt(c.qty)||1),0)
 
-  // Use real snapshots if we have at least 2, otherwise fall back to card-order estimate
+  // Use real snapshots — duplicate if only 1 so chart renders immediately
+  let snaps = snapshots || []
+  if (snaps.length === 1) snaps = [{ ...snaps[0], createdAt: new Date(new Date(snaps[0].createdAt).getTime() - 86400000).toISOString() }, snaps[0]]
   let points = []
-  if (snapshots && snapshots.length >= 2) {
-    points = snapshots.map(s => ({ value: s.value, cost: totalCost }))
+  if (snaps.length >= 2) {
+    points = snaps.map(s => ({ value: s.value, cost: totalCost }))
   } else {
-    const sorted = [...activeCards].sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt))
-    let cumValue = 0, cumCost = 0
-    sorted.forEach(c => {
-      cumCost += (parseFloat(c.buy)||0)*(parseInt(c.qty)||1)
-      cumValue += (parseFloat(c.val)||parseFloat(c.buy)||0)*(parseInt(c.qty)||1)
-      points.push({ value: cumValue, cost: cumCost })
-    })
-    if (points.length < 2) points.unshift({ value: 0, cost: 0 })
-    points.push({ value: totalVal, cost: totalCost })
+    // No snapshots yet — flat line at current value
+    points = [{ value: totalVal, cost: totalCost }, { value: totalVal, cost: totalCost }]
   }
   const W=600, H=100
   const maxV = Math.max(...points.map(p=>p.value))*1.1||100
@@ -326,11 +321,11 @@ function MobileSparkline({ snapshots, color }) {
       📈 Graph builds as you use the app — check back tomorrow
     </div>
   )
-  if (snapshots.length < 2) return (
-    <div style={{ marginBottom:8, fontSize:11, color:'#555', paddingTop:8 }}>
-      📈 First data point saved · graph appears after next visit
-    </div>
-  )
+  // If only 1 point, duplicate it so chart renders immediately
+  if (snapshots.length < 2) {
+    const s = snapshots[0]
+    snapshots = [{ ...s, createdAt: new Date(new Date(s.createdAt).getTime() - 86400000).toISOString() }, s]
+  }
   const vals = snapshots.map(s => s.value)
   const min = Math.min(...vals)
   const max = Math.max(...vals)
@@ -390,7 +385,13 @@ export default function DashboardPage() {
       // save today's portfolio value snapshot
       const activeNow = loadedCards.filter(c=>!c.sold)
       const val = activeNow.reduce((s,c)=>s+(parseFloat(c.val)||parseFloat(c.buy)||0)*(parseInt(c.qty)||1),0)
-      if (val > 0) fetch('/api/snapshot', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({ value: val }) }).catch(()=>{})
+      if (val > 0) {
+        try {
+          await fetch('/api/snapshot', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({ value: val }) })
+          const snapRes2 = await fetch('/api/snapshot')
+          if (snapRes2.ok) setSnapshots(await snapRes2.json())
+        } catch(e) {}
+      }
     } catch(e) {}
     } catch(e) { console.error(e) }
     finally { setLoading(false) }

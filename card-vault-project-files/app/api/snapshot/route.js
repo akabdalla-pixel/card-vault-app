@@ -16,6 +16,7 @@ async function getUserId() {
   } catch { return null }
 }
 
+// GET — fetch last 30 snapshots for chart
 export async function GET() {
   const userId = await getUserId()
   if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
@@ -27,22 +28,21 @@ export async function GET() {
   return NextResponse.json(snapshots)
 }
 
+// POST — save a new snapshot every time called (no dedup)
 export async function POST(req) {
   const userId = await getUserId()
   if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   const { value } = await req.json()
-  if (typeof value !== 'number') return NextResponse.json({ error: 'Invalid value' }, { status: 400 })
-  const today = new Date()
-  today.setHours(0, 0, 0, 0)
-  const tomorrow = new Date(today)
-  tomorrow.setDate(tomorrow.getDate() + 1)
-  const existing = await prisma.portfolioSnapshot.findFirst({
-    where: { userId, createdAt: { gte: today, lt: tomorrow } }
+  if (typeof value !== 'number' || value <= 0) return NextResponse.json({ error: 'Invalid value' }, { status: 400 })
+
+  // Always create a new point — but delete any from the last 10 minutes
+  // to avoid spam if someone edits many cards rapidly
+  const tenMinutesAgo = new Date(Date.now() - 10 * 60 * 1000)
+  await prisma.portfolioSnapshot.deleteMany({
+    where: { userId, createdAt: { gte: tenMinutesAgo } }
   })
-  if (existing) {
-    await prisma.portfolioSnapshot.update({ where: { id: existing.id }, data: { value } })
-  } else {
-    await prisma.portfolioSnapshot.create({ data: { userId, value } })
-  }
+
+  await prisma.portfolioSnapshot.create({ data: { userId, value } })
+
   return NextResponse.json({ ok: true })
 }
