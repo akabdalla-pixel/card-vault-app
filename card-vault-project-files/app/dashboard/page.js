@@ -267,16 +267,18 @@ function TopMovers({ cards }) {
   const losers = [...withGL].sort((a,b)=>a.pct-b.pct).slice(0,3)
   if (!withGL.length) return null
   const MoverRow = ({ card, isGainer }) => (
-    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '9px 0', borderBottom: '1px solid #1e1e1e' }}>
-      <div style={{ flex: 1, minWidth: 0 }}>
-        <div style={{ fontFamily: "'Outfit',sans-serif", fontSize: 12, fontWeight: 700, color: '#ccc', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{card.player}</div>
-        <div style={{ fontSize: 10, color: '#444' }}>{card.year} {card.sport}</div>
+    <Link href={`/collection?search=${encodeURIComponent(card.player)}`} style={{ textDecoration:'none', display:'flex', alignItems:'center', justifyContent:'space-between', padding:'10px 12px', borderRadius:10, marginBottom:4, border:'1px solid transparent', transition:'all 0.15s', cursor:'pointer' }}
+      onMouseEnter={e => { e.currentTarget.style.background='rgba(255,255,255,0.03)'; e.currentTarget.style.borderColor='rgba(147,51,234,0.2)' }}
+      onMouseLeave={e => { e.currentTarget.style.background='transparent'; e.currentTarget.style.borderColor='transparent' }}>
+      <div style={{ flex:1, minWidth:0 }}>
+        <div style={{ fontSize:12, fontWeight:700, color:'#ccc', whiteSpace:'nowrap', overflow:'hidden', textOverflow:'ellipsis' }}>{card.player}</div>
+        <div style={{ fontSize:10, color:'#444', marginTop:1 }}>{[card.year, card.sport, card.grade ? 'PSA ' + card.grade : null].filter(Boolean).join(' · ')}</div>
       </div>
-      <div style={{ textAlign: 'right', marginLeft: 12 }}>
-        <div style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: 13, fontWeight: 700, color: isGainer?'#4ade80':'#9333ea' }}>{isGainer?'+':''}{card.pct.toFixed(1)}%</div>
-        <div style={{ fontSize: 10, color: '#444', fontFamily: "'JetBrains Mono',monospace" }}>{isGainer?'+':''}{fmt(card.gl)}</div>
+      <div style={{ textAlign:'right', marginLeft:12, flexShrink:0 }}>
+        <div style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:13, fontWeight:700, color: isGainer ? '#22c55e' : '#ef4444' }}>{isGainer?'+':''}{card.pct.toFixed(1)}%</div>
+        <div style={{ fontSize:10, color:'#555', fontFamily:"'JetBrains Mono',monospace" }}>{isGainer?'+':''}{fmt(card.gl)}</div>
       </div>
-    </div>
+    </Link>
   )
   return (
     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 22 }}>
