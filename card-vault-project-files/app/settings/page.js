@@ -36,6 +36,27 @@ function showToast(msg, type = 'success') { if (_toastFn) _toastFn(msg, type) }
 function ToastContainer() {
   const [toasts, setToasts] = useState([])
   useEffect(() => {
+    const saved = localStorage.getItem('topload-theme') || 'dark'
+    setTheme(saved)
+    document.documentElement.setAttribute('data-theme', saved)
+  }, [])
+
+  function toggleTheme() {
+    const next = theme === 'dark' ? 'light' : 'dark'
+    setTheme(next)
+    localStorage.setItem('topload-theme', next)
+    document.documentElement.setAttribute('data-theme', next)
+  }
+
+  function handleShare() {
+    const url = `https://www.toploadcards.com/share/${user?.username}`
+    navigator.clipboard.writeText(url).then(() => {
+      setShareCopied(true)
+      setTimeout(() => setShareCopied(false), 2500)
+    })
+  }
+
+  useEffect(() => {
     _toastFn = (msg, type) => {
       const id = Date.now()
       setToasts(prev => [...prev.slice(-2), { id, msg, type }])
@@ -122,6 +143,8 @@ export default function SettingsPage() {
   const [user, setUser] = useState(null)
   const [cards, setCards] = useState([])
   const [loading, setLoading] = useState(true)
+  const [theme, setTheme] = useState('dark')
+  const [shareCopied, setShareCopied] = useState(false)
   const router = useRouter()
 
   // Change password
@@ -285,7 +308,43 @@ export default function SettingsPage() {
           <div style={{ maxWidth:560, display:'flex', flexDirection:'column', gap:18 }}>
 
             {/* ── Account Info ── */}
-            <Section title="Account" subtitle="Your account details" icon="👤">
+            
+              {/* Share Collection */}
+              <div style={{ background:'#111', border:'1px solid #1e1e1e', borderRadius:14, padding:'20px', marginBottom:16 }}>
+                <div style={{ fontSize:9, fontWeight:800, color:'#a855f7', textTransform:'uppercase', letterSpacing:'0.12em', marginBottom:14 }}>Share Collection</div>
+                <div style={{ fontSize:13, color:'#555', marginBottom:16, lineHeight:1.6 }}>
+                  Share your collection publicly — only card values are visible, not what you paid.
+                </div>
+                <div style={{ display:'flex', alignItems:'center', gap:8, padding:'10px 12px', background:'#0d0d0d', border:'1px solid #1a1a1a', borderRadius:8, marginBottom:12 }}>
+                  <div style={{ flex:1, fontSize:12, color:'#555', overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap', fontFamily:"'JetBrains Mono',monospace" }}>
+                    toploadcards.com/share/{user?.username}
+                  </div>
+                </div>
+                <div style={{ display:'flex', gap:8 }}>
+                  <button onClick={handleShare} style={{ flex:1, padding:'10px', borderRadius:10, background: shareCopied ? 'rgba(34,197,94,0.1)' : 'rgba(147,51,234,0.1)', border: shareCopied ? '1px solid rgba(34,197,94,0.3)' : '1px solid rgba(147,51,234,0.25)', color: shareCopied ? '#22c55e' : '#9333ea', fontSize:13, fontWeight:800, cursor:'pointer' }}>
+                    {shareCopied ? '✓ Copied!' : '📋 Copy Link'}
+                  </button>
+                  <a href={`/share/${user?.username}`} target="_blank" rel="noopener noreferrer" style={{ flex:1, padding:'10px', borderRadius:10, background:'#111', border:'1px solid #1e1e1e', color:'#888', fontSize:13, fontWeight:700, cursor:'pointer', textDecoration:'none', textAlign:'center' }}>
+                    👁 Preview
+                  </a>
+                </div>
+              </div>
+
+              {/* Theme */}
+              <div style={{ background:'#111', border:'1px solid #1e1e1e', borderRadius:14, padding:'20px', marginBottom:16 }}>
+                <div style={{ fontSize:9, fontWeight:800, color:'#a855f7', textTransform:'uppercase', letterSpacing:'0.12em', marginBottom:14 }}>Appearance</div>
+                <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between' }}>
+                  <div>
+                    <div style={{ fontSize:14, fontWeight:700, color:'#ccc', marginBottom:3 }}>{theme === 'dark' ? '🌙 Dark Mode' : '☀️ Light Mode'}</div>
+                    <div style={{ fontSize:12, color:'#555' }}>{theme === 'dark' ? 'Easy on the eyes' : 'Bright and clean'}</div>
+                  </div>
+                  <button onClick={toggleTheme} style={{ width:52, height:28, borderRadius:14, background: theme==='dark'?'#9333ea':'#e5e7eb', border:'none', cursor:'pointer', position:'relative', transition:'background 0.2s', flexShrink:0 }}>
+                    <div style={{ width:22, height:22, borderRadius:'50%', background:'#fff', position:'absolute', top:3, left: theme==='dark'?26:3, transition:'left 0.2s', boxShadow:'0 1px 3px rgba(0,0,0,0.3)' }} />
+                  </button>
+                </div>
+              </div>
+
+<Section title="Account" subtitle="Your account details" icon="👤">
               <div style={{ display:'flex', flexDirection:'column', gap:10 }}>
                 {[['Username', `@${user?.username}`], ['Email', user?.email]].map(([label, val]) => (
                   <div key={label}>
