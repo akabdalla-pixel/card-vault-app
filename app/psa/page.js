@@ -545,11 +545,10 @@ export default function PSALookupPage() {
                       <div style={{ display:'flex', alignItems:'center', gap:12, marginBottom:16 }}>
                         <div style={{ width:56, height:56, borderRadius:10, background:`${gradeColor}18`, border:`2px solid ${gradeColor}`, display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', flexShrink:0 }}>
                           <div style={{ fontFamily:"'Unbounded',sans-serif", fontSize:26, fontWeight:900, color:gradeColor, lineHeight:1 }}>{result.grade}</div>
-                          {result.autoGrade && <div style={{ fontSize:9, fontWeight:700, color:'#ffbe2e', marginTop:2 }}>{result.autoGrade}</div>}
                         </div>
                         <div>
                           <div style={{ fontSize:18, fontWeight:900, color:'#fff', letterSpacing:'-0.5px', lineHeight:1.1 }}>{result.player || '—'}</div>
-                        </div>
+                          {result.gradeDescription && <div style={{ fontSize:12, color:'#555', marginTop:3 }}>{result.gradeDescription}</div>}
                       </div>
                       <div className="psa-details-grid" style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:8, marginBottom:14 }}>
                         {[
