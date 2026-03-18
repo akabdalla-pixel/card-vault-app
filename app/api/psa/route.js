@@ -40,7 +40,7 @@ export async function GET(req) {
       valid: true,
       cert: cert_data.CertNumber,
       grade: cert_data.CardGrade ? cert_data.CardGrade.replace(/[^0-9.]/g, '').trim() : null,
-      autoGrade: cert_data.AutoGrade || null,
+      autoGrade: cert_data.AutoGrade ? cert_data.AutoGrade.replace(/^AUTO\s*/i, '').trim() : null,
       gradeDescription: cert_data.GradeDescription || null,
       player: cert_data.Subject || null,
       year: cert_data.Year || null,

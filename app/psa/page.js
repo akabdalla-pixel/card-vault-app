@@ -558,6 +558,7 @@ export default function PSALookupPage() {
                           { label:'Brand', value: result.brand || '—' },
                           { label:'Card #', value: result.cardNumber || '—' },
                           { label:'Set', value: result.set || '—' },
+                          ...(result.autoGrade ? [{ label:'Auto Grade', value: result.autoGrade }] : []),
                           ...(result.variety ? [{ label:'Variety', value: result.variety }] : []),
                           ...(result.labelType ? [{ label:'Label', value: result.labelType }] : []),
                         ].map((f,i) => (
