@@ -337,13 +337,6 @@ export default function PSALookupPage() {
                     </span>
                   </div>
                   <div className="psa-result-inner" style={{ display:'flex', gap:20, padding:'20px', flexWrap:'wrap' }}>
-                    <div style={{ flexShrink:0, width:180 }} className="psa-img-wrap">
-                      {result.certPageUrl && (
-                        <a href={result.certPageUrl} target="_blank" rel="noopener noreferrer" style={{ display:'block', width:'100%', padding:'11px', borderRadius:10, background:'rgba(147,51,234,0.08)', border:'1px solid rgba(147,51,234,0.2)', color:'#a855f7', fontSize:13, fontWeight:800, textAlign:'center', textDecoration:'none' }}>
-                          View on PSA ↗
-                        </a>
-                      )}
-                    </div>
                     <div style={{ flex:1, minWidth:0 }}>
                       <div style={{ display:'flex', alignItems:'center', gap:14, marginBottom:16 }}>
                         <div style={{ width:62, height:62, borderRadius:12, background:`${gradeColor}18`, border:`2px solid ${gradeColor}`, display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', flexShrink:0, gap:1 }}>
@@ -407,6 +400,11 @@ export default function PSALookupPage() {
                         <button onClick={handleAddToCollection} style={{ width:'100%', padding:'12px', borderRadius:10, background:'#9333ea', border:'none', color:'#fff', fontSize:14, fontWeight:800, cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'center', gap:6 }}>
                           + Add to Collection
                         </button>
+                      )}
+                      {result.certPageUrl && (
+                        <a href={result.certPageUrl} target="_blank" rel="noopener noreferrer" style={{ display:'block', width:'100%', marginTop:8, padding:'11px', borderRadius:10, background:'rgba(147,51,234,0.08)', border:'1px solid rgba(147,51,234,0.2)', color:'#a855f7', fontSize:13, fontWeight:800, textAlign:'center', textDecoration:'none', boxSizing:'border-box' }}>
+                          View on PSA ↗
+                        </a>
                       )}
                     </div>
                   </div>
