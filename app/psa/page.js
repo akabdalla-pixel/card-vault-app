@@ -374,9 +374,8 @@ export default function PSALookupPage() {
                           { label:'Brand', value: result.brand || '—' },
                           { label:'Card #', value: result.cardNumber || '—' },
                           { label:'Set', value: result.set || '—' },
-                          ...(result.isAuto ? [{ label:'Auto Grade', value: result.autoGrade || result.grade }] : []),
                           ...(result.variety ? [{ label:'Variety', value: result.variety }] : []),
-                          ...(result.labelType ? [{ label:'Label', value: result.labelType }] : []),
+                          ...(result.isAuto ? [{ label:'Auto', value: result.autoGrade || result.grade }] : []),
                         ].map((f,i) => (
                           <div key={i} style={{ background:'#181818', border:'1px solid #1e1e1e', borderRadius:8, padding:'10px 12px' }}>
                             <div style={{ fontSize:9, fontWeight:700, color:'#444', textTransform:'uppercase', letterSpacing:'0.1em', marginBottom:3 }}>{f.label}</div>
