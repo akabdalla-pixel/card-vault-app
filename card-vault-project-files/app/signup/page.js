@@ -35,12 +35,12 @@ export default function SignupPage() {
         @keyframes fadeUp { from { opacity:0; transform:translateY(16px) } to { opacity:1; transform:translateY(0) } }
         @keyframes float { 0%,100% { transform:translateY(0px) } 50% { transform:translateY(-8px) } }
         .su-input { width:100%; padding:11px 14px; border-radius:10px; background:#1a1a1a; border:1px solid #2a2a2a; color:#f0f0f0; font-size:15px; outline:none; transition:border-color 0.15s; box-sizing:border-box; font-family:inherit; }
-        .su-input:focus { border-color:#9333ea; box-shadow:0 0 0 3px rgba(147,51,234,0.12); }
+        .su-input:focus { border-color:var(--accent); box-shadow:0 0 0 3px rgba(var(--accent-rgb),0.12); }
         .su-input::placeholder { color:#444; }
         button:not(:disabled):active { transform:scale(0.97)!important; }
       `}</style>
       <div style={{ minHeight:'100vh', background:'#0a0a0a', display:'flex', alignItems:'center', justifyContent:'center', padding:20 }}>
-        <div style={{ position:'fixed', top:'20%', left:'50%', transform:'translateX(-50%)', width:600, height:600, background:'radial-gradient(circle, rgba(147,51,234,0.06) 0%, transparent 70%)', pointerEvents:'none', zIndex:0 }} />
+        <div style={{ position:'fixed', top:'20%', left:'50%', transform:'translateX(-50%)', width:600, height:600, background:'radial-gradient(circle, rgba(var(--accent-rgb),0.06) 0%, transparent 70%)', pointerEvents:'none', zIndex:0 }} />
 
         <div style={{ position:'relative', zIndex:1, width:'100%', maxWidth:380, animation:'fadeUp 0.4s ease' }}>
 
@@ -75,13 +75,13 @@ export default function SignupPage() {
                   <input type="password" value={form.confirm} onChange={e => set('confirm', e.target.value)} required placeholder="Repeat" className="su-input" />
                 </div>
               </div>
-              <button type="button" onClick={handleSubmit} disabled={loading} style={{ width:'100%', padding:'13px', borderRadius:12, background: loading ? '#1a1a1a' : '#9333ea', border:'none', color:'#fff', fontFamily:'var(--font-geist-sans)', fontSize:15, fontWeight:800, cursor: loading ? 'not-allowed' : 'pointer', marginTop:4, boxShadow: loading ? 'none' : '0 4px 20px rgba(147,51,234,0.3)', transition:'all 0.15s' }}>
+              <button type="button" onClick={handleSubmit} disabled={loading} style={{ width:'100%', padding:'13px', borderRadius:12, background: loading ? '#1a1a1a' : 'var(--accent)', border:'none', color:'#fff', fontFamily:'var(--font-geist-sans)', fontSize:15, fontWeight:800, cursor: loading ? 'not-allowed' : 'pointer', marginTop:4, boxShadow: loading ? 'none' : '0 4px 20px rgba(var(--accent-rgb),0.3)', transition:'all 0.15s' }}>
                 {loading ? 'Creating account...' : 'Create Account →'}
               </button>
             </div>
 
             <p style={{ fontFamily:'var(--font-geist-sans)', fontSize:13, color:'#555', marginTop:20, textAlign:'center' }}>
-              Already have an account? <Link href="/login" style={{ color:'#a855f7', fontWeight:700, textDecoration:'none' }}>Sign In</Link>
+              Already have an account? <Link href="/login" style={{ color:'var(--accent-light)', fontWeight:700, textDecoration:'none' }}>Sign In</Link>
             </p>
           </div>
         </div>

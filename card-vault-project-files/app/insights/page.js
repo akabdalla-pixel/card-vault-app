@@ -40,7 +40,7 @@ function ToastContainer() {
     }
     return () => { _toastFn=null }
   },[])
-  const colors={success:'#4ade80',error:'#9333ea',info:'#888'}
+  const colors={success:'#4ade80',error:'var(--accent)',info:'#888'}
   const icons={success:'✓',error:'✕',info:'ℹ'}
   if(!toasts.length) return null
   return (
@@ -49,7 +49,7 @@ function ToastContainer() {
         <div key={t.id} style={{display:'flex',alignItems:'center',gap:10,padding:'10px 18px',borderRadius:12,background:'#1e1e1e',border:`1px solid ${colors[t.type]}50`,boxShadow:'0 8px 28px rgba(0,0,0,0.6)',fontFamily:'var(--font-geist-sans)',fontSize:13,fontWeight:600,color:'#f0f0f0',pointerEvents:'auto',animation:'toastIn 0.2s ease',whiteSpace:'nowrap'}}>
           <span style={{color:colors[t.type]}}>{icons[t.type]}</span>
           {t.msg}
-          {t.onUndo&&<button onClick={t.onUndo} style={{marginLeft:6,padding:'2px 10px',borderRadius:6,background:'rgba(255,255,255,0.08)',border:'none',color:'#9333ea',fontFamily:'var(--font-geist-sans)',fontSize:12,fontWeight:700,cursor:'pointer',pointerEvents:'auto'}}>Undo</button>}
+          {t.onUndo&&<button onClick={t.onUndo} style={{marginLeft:6,padding:'2px 10px',borderRadius:6,background:'rgba(255,255,255,0.08)',border:'none',color:'var(--accent)',fontFamily:'var(--font-geist-sans)',fontSize:12,fontWeight:700,cursor:'pointer',pointerEvents:'auto'}}>Undo</button>}
         </div>
       ))}
     </div>
@@ -65,8 +65,8 @@ function Sk({w='100%',h=20,r=8,style={}}) {
 
 
 const fmt = n => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 2 }).format(n || 0)
-const RED = '#9333ea'
-const CHART_COLORS = ['#9333ea','#ff7043','#ffb300','#66bb6a','#42a5f5','#ab47bc','#26c6da','#a855f7','#ffa726','#9ccc65']
+const RED = 'var(--accent)'
+const CHART_COLORS = ['var(--accent)','#ff7043','#ffb300','#66bb6a','#42a5f5','#ab47bc','#26c6da','var(--accent-light)','#ffa726','#9ccc65']
 
 function Sidebar({ user, onLogout, cardCount = 0, active = "" }) {
   return (
@@ -80,10 +80,10 @@ function Sidebar({ user, onLogout, cardCount = 0, active = "" }) {
           const Icon = navIcons[label]
           if (!Icon) return null
           return (
-            <Link key={label} href={href} style={{ display:'flex', alignItems:'center', gap:10, padding:'9px 12px', borderRadius:10, marginBottom:2, textDecoration:'none', color: isActive ? '#fff' : '#555', background: isActive ? '#9333ea' : 'transparent', fontSize:13, fontWeight: isActive ? 700 : 500, transition:'all 0.15s', letterSpacing:'0.01em' }}>
+            <Link key={label} href={href} style={{ display:'flex', alignItems:'center', gap:10, padding:'9px 12px', borderRadius:10, marginBottom:2, textDecoration:'none', color: isActive ? '#fff' : '#555', background: isActive ? 'var(--accent)' : 'transparent', fontSize:13, fontWeight: isActive ? 700 : 500, transition:'all 0.15s', letterSpacing:'0.01em' }}>
               <Icon />
               <span style={{flex:1}}>{label}</span>
-              {label === 'Collection' && cardCount > 0 && <span style={{ fontSize:9, fontWeight:800, background: isActive ? 'rgba(255,255,255,0.2)' : 'rgba(147,51,234,0.2)', color: isActive ? '#fff' : '#a855f7', borderRadius:5, padding:'1px 6px' }}>{cardCount}</span>}
+              {label === 'Collection' && cardCount > 0 && <span style={{ fontSize:9, fontWeight:800, background: isActive ? 'rgba(255,255,255,0.2)' : 'rgba(var(--accent-rgb),0.2)', color: isActive ? '#fff' : 'var(--accent-light)', borderRadius:5, padding:'1px 6px' }}>{cardCount}</span>}
             </Link>
           )
         })}
@@ -92,7 +92,7 @@ function Sidebar({ user, onLogout, cardCount = 0, active = "" }) {
         <Link href="/settings" style={{ display:'flex', alignItems:'center', gap:10, padding:'9px 12px', borderRadius:10, marginBottom:2, textDecoration:'none', color:'#555', fontSize:13, fontWeight:500 }}><IconSettings /><span>Settings</span></Link>
         <button onClick={onLogout} style={{ display:'flex', alignItems:'center', gap:10, padding:'9px 12px', borderRadius:10, width:'100%', background:'transparent', border:'none', cursor:'pointer', color:'#555', fontSize:13, fontWeight:500 }}><IconLogout /><span>Sign Out</span></button>
         {user && <div style={{ display:'flex', alignItems:'center', gap:8, padding:'8px 10px', marginTop:4, borderRadius:10, background:'#111' }}>
-          <div style={{ width:28, height:28, borderRadius:8, background:'#9333ea', display:'flex', alignItems:'center', justifyContent:'center', fontSize:12, fontWeight:900, color:'#fff', flexShrink:0 }}>{user.username?.[0]?.toUpperCase()||'A'}</div>
+          <div style={{ width:28, height:28, borderRadius:8, background:'var(--accent)', display:'flex', alignItems:'center', justifyContent:'center', fontSize:12, fontWeight:900, color:'#fff', flexShrink:0 }}>{user.username?.[0]?.toUpperCase()||'A'}</div>
           <div style={{overflow:'hidden'}}><div style={{ fontSize:11, fontWeight:700, color:'#ccc', overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>@{user.username}</div><div style={{ fontSize:9, color:'#555', marginTop:1 }}>{user.email}</div></div>
         </div>}
       </div>
@@ -110,8 +110,8 @@ function BottomNav({ active = "" }) {
         if (!Icon) return null
         return (
           <Link key={label} href={href} style={{ flex:1, display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', gap:3, textDecoration:'none', paddingBottom:4 }}>
-            <div style={{ width:32, height:32, borderRadius:9, display:'flex', alignItems:'center', justifyContent:'center', background: isActive ? '#9333ea' : 'transparent', color: isActive ? '#fff' : '#444', transition:'all 0.15s' }}><Icon /></div>
-            <span style={{ fontSize:10, fontWeight:800, color: isActive ? '#9333ea' : '#444', letterSpacing:'0.06em', textTransform:'uppercase' }}>{SHORT[label]||label}</span>
+            <div style={{ width:32, height:32, borderRadius:9, display:'flex', alignItems:'center', justifyContent:'center', background: isActive ? 'var(--accent)' : 'transparent', color: isActive ? '#fff' : '#444', transition:'all 0.15s' }}><Icon /></div>
+            <span style={{ fontSize:10, fontWeight:800, color: isActive ? 'var(--accent)' : '#444', letterSpacing:'0.06em', textTransform:'uppercase' }}>{SHORT[label]||label}</span>
           </Link>
         )
       })}
@@ -131,8 +131,8 @@ function DonutChart({ data, title }) {
       {isGraded ? (
         <div style={{ display:'flex', gap:8 }}>
           {data.map((d,i) => (
-            <div key={i} style={{ flex:1, background: i===0?'rgba(147,51,234,0.1)':'rgba(255,255,255,0.04)', border: i===0?'1px solid rgba(147,51,234,0.2)':'1px solid #1e1e1e', borderRadius:9, padding:'10px 12px', textAlign:'center' }}>
-              <div style={{ fontFamily:'var(--font-geist-sans)', fontSize:22, fontWeight:900, color: i===0?'#a855f7':'#888' }}>{d.value}</div>
+            <div key={i} style={{ flex:1, background: i===0?'rgba(var(--accent-rgb),0.1)':'rgba(255,255,255,0.04)', border: i===0?'1px solid rgba(var(--accent-rgb),0.2)':'1px solid #1e1e1e', borderRadius:9, padding:'10px 12px', textAlign:'center' }}>
+              <div style={{ fontFamily:'var(--font-geist-sans)', fontSize:22, fontWeight:900, color: i===0?'var(--accent-light)':'#888' }}>{d.value}</div>
               <div style={{ fontSize:9, fontWeight:700, color:'#555', textTransform:'uppercase', letterSpacing:'0.1em', marginTop:3 }}>{d.label}</div>
             </div>
           ))}
@@ -145,7 +145,7 @@ function DonutChart({ data, title }) {
               <div key={i}>
                 <div style={{ display:'flex', justifyContent:'space-between', marginBottom:4 }}>
                   <span style={{ fontSize:11, fontWeight:700, color:'#ccc' }}>{d.label}</span>
-                  <span style={{ fontSize:11, fontWeight:800, color:'#a855f7', fontFamily:'var(--font-geist-sans)' }}>{pct}%</span>
+                  <span style={{ fontSize:11, fontWeight:800, color:'var(--accent-light)', fontFamily:'var(--font-geist-sans)' }}>{pct}%</span>
                 </div>
                 <div style={{ height:4, borderRadius:100, background:'#1a1a1a', overflow:'hidden' }}>
                   <div style={{ height:'100%', width:pct+'%', borderRadius:100, background: CHART_COLORS[i % CHART_COLORS.length] }} />
@@ -186,8 +186,8 @@ function BarChart({ data, title, valuePrefix = '', valueSuffix = '', color = RED
 // ── Stat Card ────────────────────────────────────────────────
 function StatCard({ label, value, sub, icon, positive, accent, style = {} }) {
   return (
-    <div style={{ background: '#111', border: `1px solid ${accent ? 'rgba(147,51,234,0.25)' : '#1e1e1e'}`, borderRadius: 16, padding: '16px 18px', position: 'relative', overflow: 'hidden', ...style }}>
-      {accent && <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 2, background: 'linear-gradient(90deg,#9333ea,#a855f7)' }} />}
+    <div style={{ background: '#111', border: `1px solid ${accent ? 'rgba(var(--accent-rgb),0.25)' : '#1e1e1e'}`, borderRadius: 16, padding: '16px 18px', position: 'relative', overflow: 'hidden', ...style }}>
+      {accent && <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 2, background: 'linear-gradient(90deg,var(--accent),var(--accent-light))' }} />}
       <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 10 }}>
         <div style={{ fontSize: 10, fontWeight: 700, color: '#333', letterSpacing: '0.12em', textTransform: 'uppercase', fontFamily: 'var(--font-geist-sans)' }}>{label}</div>
         {icon && <div style={{ fontSize: 16 }}>{icon}</div>}
@@ -219,11 +219,11 @@ function TopCardsRank({ cards }) {
             <Link key={card.id} href={href} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '8px 10px', borderRadius: 10, textDecoration: 'none', transition: 'background 0.12s' }}
               onMouseEnter={e => e.currentTarget.style.background = '#1a1a1a'}
               onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
-              <div style={{ width: 24, height: 24, borderRadius: 8, background: i === 0 ? 'rgba(147,51,234,0.2)' : '#1a1a1a', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'var(--font-geist-sans)', fontSize: 11, fontWeight: 700, color: i === 0 ? '#9333ea' : '#555', flexShrink: 0 }}>{i + 1}</div>
+              <div style={{ width: 24, height: 24, borderRadius: 8, background: i === 0 ? 'rgba(var(--accent-rgb),0.2)' : '#1a1a1a', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'var(--font-geist-sans)', fontSize: 11, fontWeight: 700, color: i === 0 ? 'var(--accent)' : '#555', flexShrink: 0 }}>{i + 1}</div>
               <div style={{ flex: 1, minWidth: 0 }}>
                 <div style={{ fontFamily: 'var(--font-geist-sans)', fontSize: 13, fontWeight: 700, color: '#ccc', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{card.player}</div>
                 <div style={{ position: 'relative', height: 4, background: '#1e1e1e', borderRadius: 4, marginTop: 6, overflow: 'hidden' }}>
-                  <div style={{ height: '100%', width: `${(val / max) * 100}%`, background: i === 0 ? 'linear-gradient(90deg,#9333ea,#a855f7)' : '#333', borderRadius: 4, transition: 'width 0.5s ease' }} />
+                  <div style={{ height: '100%', width: `${(val / max) * 100}%`, background: i === 0 ? 'linear-gradient(90deg,var(--accent),var(--accent-light))' : '#333', borderRadius: 4, transition: 'width 0.5s ease' }} />
                 </div>
               </div>
               <div style={{ textAlign: 'right', flexShrink: 0 }}>
@@ -281,7 +281,7 @@ function PersonalRecords({ cards, soldCards }) {
 
   const records = [
     { icon:'👑', label:'Most Valuable',  value: byVal[0]?.player||'—',  sub: byVal[0] ? fmtC(parseFloat(byVal[0].val)||0) : '',  subColor:'#22c55e', card: byVal[0] },
-    { icon:'📈', label:'Biggest Win %',  value: byPct[0]?.player||'—',  sub: byPct[0] ? `+${byPct[0].pct.toFixed(0)}%` : '—',  subColor:'#a855f7', card: byPct[0] },
+    { icon:'📈', label:'Biggest Win %',  value: byPct[0]?.player||'—',  sub: byPct[0] ? `+${byPct[0].pct.toFixed(0)}%` : '—',  subColor:'var(--accent-light)', card: byPct[0] },
     { icon:'🏆', label:'Top Sport',      value: topSport?.[0]||'—',     sub: topSport ? `${topSport[1]} card${topSport[1]>1?'s':''}` : '—', subColor:'#ffbe2e', card: null, href: topSport ? `/collection?sport=${encodeURIComponent(topSport[0])}` : null },
     { icon:'💸', label:'Most Expensive Purchase', value: byBuy[0]?.player||'—',  sub: byBuy[0] ? fmtC(parseFloat(byBuy[0].buy)||0) : '',  subColor:'#888',    card: byBuy[0] },
     ...(bestFlip ? [{ icon:'🔥', label:'Best Flip', value: bestFlip.player, sub:`+${fmtC((parseFloat(bestFlip.soldPrice)||0)-(parseFloat(bestFlip.buy)||0))}`, subColor:'#22c55e', card: bestFlip }] : []),
@@ -290,7 +290,7 @@ function PersonalRecords({ cards, soldCards }) {
 
   return (
     <div style={{ background:'#111', border:'1px solid #1e1e1e', borderRadius:14, padding:'16px' }}>
-      <div style={{ fontSize:9, fontWeight:800, color:'#a855f7', textTransform:'uppercase', letterSpacing:'0.12em', marginBottom:12, display:'flex', alignItems:'center', gap:6 }}><IconStar /><span>Personal Records</span></div>
+      <div style={{ fontSize:9, fontWeight:800, color:'var(--accent-light)', textTransform:'uppercase', letterSpacing:'0.12em', marginBottom:12, display:'flex', alignItems:'center', gap:6 }}><IconStar /><span>Personal Records</span></div>
       <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:8 }}>
         {records.map((r, i) => {
           const isLastOdd = i === records.length-1 && records.length % 2 !== 0
@@ -437,14 +437,14 @@ export default function InsightsPage() {
 
           {/* Mobile topbar */}
           <div className="mob-topbar" style={{ alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
-            <img src={LOGO} alt="TopLoad" style={{ height: 32, filter: 'drop-shadow(0 0 8px rgba(147,51,234,0.4))' }} />
+            <img src={LOGO} alt="TopLoad" style={{ height: 32, filter: 'drop-shadow(0 0 8px rgba(var(--accent-rgb),0.4))' }} />
             <div style={{ fontFamily:'var(--font-geist-sans)', fontSize: 16, fontWeight: 800, color: '#f0f0f0' }}>Insights</div>
             <div style={{ width: 32 }} />
           </div>
 
           {/* Desktop header */}
           <div className="hide-mobile" style={{ marginBottom: 28 }}>
-            <h1 style={{ fontFamily: 'var(--font-geist-pixel-square)', fontSize: 40, fontWeight: 900, letterSpacing: '-2px', margin: 0, textTransform: 'uppercase', background: 'linear-gradient(135deg,#f5f5f5 40%,#a855f7)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>INSIGHTS</h1>
+            <h1 style={{ fontFamily: 'var(--font-geist-pixel-square)', fontSize: 40, fontWeight: 900, letterSpacing: '-2px', margin: 0, textTransform: 'uppercase', background: 'linear-gradient(135deg,#f5f5f5 40%,var(--accent-light))', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>INSIGHTS</h1>
             <p style={{ fontSize: 13, color: '#555', marginTop: 4, fontWeight: 500 }}>A deep look at your collection — updates automatically with every new card</p>
           </div>
 

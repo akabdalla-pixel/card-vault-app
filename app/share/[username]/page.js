@@ -44,7 +44,7 @@ export default function SharedCollectionPage() {
     <div style={{ minHeight:'100vh', display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', background:'#0a0a0a', color:'#555', gap:16 }}>
       <img src={LOGO} alt="TopLoad" style={{ width:80, filter:'brightness(0) invert(1)', opacity:0.3 }} />
       <div style={{ fontSize:15, fontWeight:700 }}>Collection not found</div>
-      <Link href="/" style={{ fontSize:13, color:'#9333ea', textDecoration:'none' }}>← toploadcards.com</Link>
+      <Link href="/" style={{ fontSize:13, color:'var(--accent)', textDecoration:'none' }}>← toploadcards.com</Link>
     </div>
   )
 
@@ -83,8 +83,8 @@ export default function SharedCollectionPage() {
         @keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
         @keyframes pulse{0%,100%{opacity:0.2}50%{opacity:0.5}}
         .card-item{background:#111;border:1px solid #1a1a1a;border-radius:12px;padding:14px 16px;transition:border-color 0.15s}
-        .card-item:hover{border-color:rgba(147,51,234,0.3)}
-        input:focus,select:focus{outline:none;border-color:#9333ea!important}
+        .card-item:hover{border-color:rgba(var(--accent-rgb),0.3)}
+        input:focus,select:focus{outline:none;border-color:var(--accent)!important}
       `}</style>
 
       <div style={{ minHeight:'100vh', background:'#0a0a0a', color:'#fff', paddingBottom:40 }}>
@@ -94,7 +94,7 @@ export default function SharedCollectionPage() {
           <Link href="/" style={{ textDecoration:'none' }}>
             <img src={LOGO} alt="TopLoad" style={{ height:26, filter:'brightness(0) invert(1)' }} />
           </Link>
-          <Link href="/signup" style={{ padding:'7px 14px', background:'#9333ea', borderRadius:8, color:'#fff', fontSize:12, fontWeight:800, textDecoration:'none' }}>
+          <Link href="/signup" style={{ padding:'7px 14px', background:'var(--accent)', borderRadius:8, color:'#fff', fontSize:12, fontWeight:800, textDecoration:'none' }}>
             Track Yours →
           </Link>
         </nav>
@@ -104,7 +104,7 @@ export default function SharedCollectionPage() {
           {/* Header */}
           <div style={{ marginBottom:20, display:'flex', alignItems:'flex-start', justifyContent:'space-between', flexWrap:'wrap', gap:14 }}>
             <div>
-              <div style={{ fontSize:9, fontWeight:800, color:'#a855f7', textTransform:'uppercase', letterSpacing:'0.15em', marginBottom:5 }}>Public Collection</div>
+              <div style={{ fontSize:9, fontWeight:800, color:'var(--accent-light)', textTransform:'uppercase', letterSpacing:'0.15em', marginBottom:5 }}>Public Collection</div>
               <h1 style={{ fontSize:28, fontWeight:900, letterSpacing:'-0.8px', color:'#fff', margin:'0 0 3px' }}>@{data.username}</h1>
               <p style={{ fontSize:12, color:'#555' }}>{data.cardCount} cards · TopLoad</p>
             </div>
@@ -125,7 +125,7 @@ export default function SharedCollectionPage() {
                 style={{ width:'100%', padding:'10px 14px 10px 36px', borderRadius:10, background:'#111', border:'1px solid #1e1e1e', color:'#f0f0f0', fontSize:13, transition:'border-color 0.15s' }}
               />
             </div>
-            <button onClick={() => setFilterSheetOpen(true)} style={{ width:42, height:42, borderRadius:10, background: hasFilters?'#9333ea':'#111', border: hasFilters?'none':'1px solid #1e1e1e', color: hasFilters?'#fff':'#555', cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0 }}>
+            <button onClick={() => setFilterSheetOpen(true)} style={{ width:42, height:42, borderRadius:10, background: hasFilters?'var(--accent)':'#111', border: hasFilters?'none':'1px solid #1e1e1e', color: hasFilters?'#fff':'#555', cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0 }}>
               <IconFilter />
             </button>
           </div>
@@ -133,9 +133,9 @@ export default function SharedCollectionPage() {
           {/* Sport chips */}
           {uniqueSports.length > 1 && (
             <div style={{ display:'flex', gap:6, flexWrap:'wrap', marginBottom:16 }}>
-              <button onClick={() => setSportTab('all')} style={{ padding:'5px 12px', borderRadius:20, fontSize:11, fontWeight:700, cursor:'pointer', border: sportTab==='all'?'1px solid rgba(147,51,234,0.4)':'1px solid #2a2a2a', background: sportTab==='all'?'rgba(147,51,234,0.12)':'#111', color: sportTab==='all'?'#a855f7':'#555' }}>All</button>
+              <button onClick={() => setSportTab('all')} style={{ padding:'5px 12px', borderRadius:20, fontSize:11, fontWeight:700, cursor:'pointer', border: sportTab==='all'?'1px solid rgba(var(--accent-rgb),0.4)':'1px solid #2a2a2a', background: sportTab==='all'?'rgba(var(--accent-rgb),0.12)':'#111', color: sportTab==='all'?'var(--accent-light)':'#555' }}>All</button>
               {uniqueSports.map(s => (
-                <button key={s} onClick={() => setSportTab(sportTab===s?'all':s)} style={{ padding:'5px 12px', borderRadius:20, fontSize:11, fontWeight:700, cursor:'pointer', border: sportTab===s?'1px solid rgba(147,51,234,0.4)':'1px solid #2a2a2a', background: sportTab===s?'rgba(147,51,234,0.12)':'#111', color: sportTab===s?'#a855f7':'#555' }}>
+                <button key={s} onClick={() => setSportTab(sportTab===s?'all':s)} style={{ padding:'5px 12px', borderRadius:20, fontSize:11, fontWeight:700, cursor:'pointer', border: sportTab===s?'1px solid rgba(var(--accent-rgb),0.4)':'1px solid #2a2a2a', background: sportTab===s?'rgba(var(--accent-rgb),0.12)':'#111', color: sportTab===s?'var(--accent-light)':'#555' }}>
                   {SPORT_EMOJI[s]||'🃏'} {s}
                 </button>
               ))}
@@ -145,7 +145,7 @@ export default function SharedCollectionPage() {
           {/* Sort bar */}
           <div style={{ display:'flex', gap:6, marginBottom:16, flexWrap:'wrap' }}>
             {[['date_desc','Newest'],['price_desc','Value ↓'],['price_asc','Value ↑'],['name_asc','A→Z']].map(([val,label]) => (
-              <button key={val} onClick={() => setSortBy(val)} style={{ padding:'5px 12px', borderRadius:8, fontSize:11, fontWeight:700, cursor:'pointer', border:'1px solid #1e1e1e', background: sortBy===val?'rgba(147,51,234,0.12)':'#111', color: sortBy===val?'#a855f7':'#555' }}>{label}</button>
+              <button key={val} onClick={() => setSortBy(val)} style={{ padding:'5px 12px', borderRadius:8, fontSize:11, fontWeight:700, cursor:'pointer', border:'1px solid #1e1e1e', background: sortBy===val?'rgba(var(--accent-rgb),0.12)':'#111', color: sortBy===val?'var(--accent-light)':'#555' }}>{label}</button>
             ))}
           </div>
 
@@ -173,7 +173,7 @@ export default function SharedCollectionPage() {
                   </div>
                   <div style={{ textAlign:'right', flexShrink:0 }}>
                     {c.grade && (
-                      <div style={{ fontSize:11, fontWeight:800, color:'#a855f7', marginBottom:3 }}>
+                      <div style={{ fontSize:11, fontWeight:800, color:'var(--accent-light)', marginBottom:3 }}>
                         {c.gradingCo||'PSA'} {c.grade}
                       </div>
                     )}
@@ -189,7 +189,7 @@ export default function SharedCollectionPage() {
           {/* Footer CTA */}
           <div style={{ marginTop:40, textAlign:'center', padding:'28px 20px', background:'#111', border:'1px solid #1a1a1a', borderRadius:16 }}>
             <div style={{ fontSize:14, fontWeight:700, color:'#555', marginBottom:10 }}>Track your own collection on TopLoad</div>
-            <Link href="/signup" style={{ display:'inline-block', padding:'10px 24px', background:'#9333ea', borderRadius:10, color:'#fff', fontSize:14, fontWeight:800, textDecoration:'none' }}>
+            <Link href="/signup" style={{ display:'inline-block', padding:'10px 24px', background:'var(--accent)', borderRadius:10, color:'#fff', fontSize:14, fontWeight:800, textDecoration:'none' }}>
               Get Started Free →
             </Link>
           </div>
@@ -204,7 +204,7 @@ export default function SharedCollectionPage() {
             <div style={{ width:40, height:4, borderRadius:2, background:'#333', margin:'0 auto 20px' }} />
             <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:20 }}>
               <span style={{ fontSize:16, fontWeight:900, color:'#fff', textTransform:'uppercase', letterSpacing:'-0.3px' }}>Filters</span>
-              <button onClick={() => { setFilterGraded(''); setFilterAuto(false); setPriceMin(''); setPriceMax(''); setSortBy('date_desc'); setSportTab('all') }} style={{ fontSize:11, color:'#9333ea', fontWeight:700, background:'none', border:'none', cursor:'pointer' }}>Reset all</button>
+              <button onClick={() => { setFilterGraded(''); setFilterAuto(false); setPriceMin(''); setPriceMax(''); setSortBy('date_desc'); setSportTab('all') }} style={{ fontSize:11, color:'var(--accent)', fontWeight:700, background:'none', border:'none', cursor:'pointer' }}>Reset all</button>
             </div>
 
             {/* Grade */}
@@ -212,7 +212,7 @@ export default function SharedCollectionPage() {
               <div style={{ fontSize:9, fontWeight:700, color:'#555', textTransform:'uppercase', letterSpacing:'0.1em', marginBottom:8 }}>Grade</div>
               <div style={{ display:'flex', gap:6 }}>
                 {[['','All'],['graded','Graded'],['raw','Raw']].map(([val,label]) => (
-                  <button key={val} onClick={() => setFilterGraded(val)} style={{ padding:'8px 16px', borderRadius:8, border:'1px solid #1e1e1e', background: filterGraded===val?'#9333ea':'#1a1a1a', color: filterGraded===val?'#fff':'#555', fontSize:12, fontWeight:700, cursor:'pointer' }}>{label}</button>
+                  <button key={val} onClick={() => setFilterGraded(val)} style={{ padding:'8px 16px', borderRadius:8, border:'1px solid #1e1e1e', background: filterGraded===val?'var(--accent)':'#1a1a1a', color: filterGraded===val?'#fff':'#555', fontSize:12, fontWeight:700, cursor:'pointer' }}>{label}</button>
                 ))}
               </div>
             </div>
@@ -222,9 +222,9 @@ export default function SharedCollectionPage() {
               <div style={{ marginBottom:18 }}>
                 <div style={{ fontSize:9, fontWeight:700, color:'#555', textTransform:'uppercase', letterSpacing:'0.1em', marginBottom:8 }}>Sport</div>
                 <div style={{ display:'flex', gap:6, flexWrap:'wrap' }}>
-                  <button onClick={() => setSportTab('all')} style={{ padding:'8px 14px', borderRadius:8, border:'1px solid #1e1e1e', background: sportTab==='all'?'#9333ea':'#1a1a1a', color: sportTab==='all'?'#fff':'#555', fontSize:12, fontWeight:700, cursor:'pointer' }}>All</button>
+                  <button onClick={() => setSportTab('all')} style={{ padding:'8px 14px', borderRadius:8, border:'1px solid #1e1e1e', background: sportTab==='all'?'var(--accent)':'#1a1a1a', color: sportTab==='all'?'#fff':'#555', fontSize:12, fontWeight:700, cursor:'pointer' }}>All</button>
                   {uniqueSports.map(s => (
-                    <button key={s} onClick={() => setSportTab(s)} style={{ padding:'8px 14px', borderRadius:8, border:'1px solid #1e1e1e', background: sportTab===s?'#9333ea':'#1a1a1a', color: sportTab===s?'#fff':'#555', fontSize:12, fontWeight:700, cursor:'pointer' }}>{s}</button>
+                    <button key={s} onClick={() => setSportTab(s)} style={{ padding:'8px 14px', borderRadius:8, border:'1px solid #1e1e1e', background: sportTab===s?'var(--accent)':'#1a1a1a', color: sportTab===s?'#fff':'#555', fontSize:12, fontWeight:700, cursor:'pointer' }}>{s}</button>
                   ))}
                 </div>
               </div>
@@ -241,7 +241,7 @@ export default function SharedCollectionPage() {
               <div style={{ fontSize:9, fontWeight:700, color:'#555', textTransform:'uppercase', letterSpacing:'0.1em', marginBottom:8 }}>Sort By</div>
               <div style={{ display:'flex', gap:6, flexWrap:'wrap' }}>
                 {[['date_desc','Newest'],['date_asc','Oldest'],['price_desc','Value ↓'],['price_asc','Value ↑'],['name_asc','A→Z']].map(([val,label]) => (
-                  <button key={val} onClick={() => setSortBy(val)} style={{ padding:'8px 14px', borderRadius:8, border:'1px solid #1e1e1e', background: sortBy===val?'#9333ea':'#1a1a1a', color: sortBy===val?'#fff':'#555', fontSize:12, fontWeight:700, cursor:'pointer' }}>{label}</button>
+                  <button key={val} onClick={() => setSortBy(val)} style={{ padding:'8px 14px', borderRadius:8, border:'1px solid #1e1e1e', background: sortBy===val?'var(--accent)':'#1a1a1a', color: sortBy===val?'#fff':'#555', fontSize:12, fontWeight:700, cursor:'pointer' }}>{label}</button>
                 ))}
               </div>
             </div>
@@ -256,7 +256,7 @@ export default function SharedCollectionPage() {
               </div>
             </div>
 
-            <button onClick={() => setFilterSheetOpen(false)} style={{ width:'100%', padding:'14px', borderRadius:12, background:'#9333ea', border:'none', color:'#fff', fontSize:14, fontWeight:900, cursor:'pointer', textTransform:'uppercase', letterSpacing:'0.05em' }}>Apply Filters</button>
+            <button onClick={() => setFilterSheetOpen(false)} style={{ width:'100%', padding:'14px', borderRadius:12, background:'var(--accent)', border:'none', color:'#fff', fontSize:14, fontWeight:900, cursor:'pointer', textTransform:'uppercase', letterSpacing:'0.05em' }}>Apply Filters</button>
           </div>
         </div>
       )}

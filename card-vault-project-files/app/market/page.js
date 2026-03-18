@@ -41,7 +41,7 @@ function Sidebar({ user, onLogout, active }) {
           const Icon = navIcons[label]
           if (!Icon) return null
           return (
-            <Link key={label} href={href} style={{ display:'flex', alignItems:'center', gap:10, padding:'9px 12px', borderRadius:10, marginBottom:2, textDecoration:'none', color: isActive ? '#fff' : '#555', background: isActive ? '#9333ea' : 'transparent', fontSize:13, fontWeight: isActive ? 700 : 500, transition:'all 0.15s' }}>
+            <Link key={label} href={href} style={{ display:'flex', alignItems:'center', gap:10, padding:'9px 12px', borderRadius:10, marginBottom:2, textDecoration:'none', color: isActive ? '#fff' : '#555', background: isActive ? 'var(--accent)' : 'transparent', fontSize:13, fontWeight: isActive ? 700 : 500, transition:'all 0.15s' }}>
               <Icon /><span style={{flex:1}}>{label}</span>
             </Link>
           )
@@ -51,7 +51,7 @@ function Sidebar({ user, onLogout, active }) {
         <Link href="/settings" style={{ display:'flex', alignItems:'center', gap:10, padding:'9px 12px', borderRadius:10, textDecoration:'none', color:'#555', fontSize:13, fontWeight:500 }}><IconSettings /><span>Settings</span></Link>
         <button onClick={onLogout} style={{ display:'flex', alignItems:'center', gap:10, padding:'9px 12px', borderRadius:10, width:'100%', background:'transparent', border:'none', cursor:'pointer', color:'#555', fontSize:13, fontWeight:500 }}><IconLogout /><span>Sign Out</span></button>
         {user && <div style={{ display:'flex', alignItems:'center', gap:8, padding:'8px 10px', marginTop:4, borderRadius:10, background:'#111' }}>
-          <div style={{ width:28, height:28, borderRadius:8, background:'#9333ea', display:'flex', alignItems:'center', justifyContent:'center', fontSize:12, fontWeight:900, color:'#fff', flexShrink:0 }}>{user.username?.[0]?.toUpperCase()||'A'}</div>
+          <div style={{ width:28, height:28, borderRadius:8, background:'var(--accent)', display:'flex', alignItems:'center', justifyContent:'center', fontSize:12, fontWeight:900, color:'#fff', flexShrink:0 }}>{user.username?.[0]?.toUpperCase()||'A'}</div>
           <div style={{overflow:'hidden'}}><div style={{ fontSize:11, fontWeight:700, color:'#ccc', overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>@{user.username}</div><div style={{ fontSize:9, color:'#555', marginTop:1 }}>{user.email}</div></div>
         </div>}
       </div>
@@ -69,8 +69,8 @@ function BottomNav({ active = "" }) {
         if (!Icon) return null
         return (
           <Link key={label} href={href} style={{ flex:1, display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', gap:3, textDecoration:'none', paddingBottom:4 }}>
-            <div style={{ width:32, height:32, borderRadius:9, display:'flex', alignItems:'center', justifyContent:'center', background: isActive ? '#9333ea' : 'transparent', color: isActive ? '#fff' : '#444', transition:'all 0.15s' }}><Icon /></div>
-            <span style={{ fontSize:10, fontWeight:800, color: isActive ? '#9333ea' : '#444', letterSpacing:'0.06em', textTransform:'uppercase' }}>{SHORT[label]||label}</span>
+            <div style={{ width:32, height:32, borderRadius:9, display:'flex', alignItems:'center', justifyContent:'center', background: isActive ? 'var(--accent)' : 'transparent', color: isActive ? '#fff' : '#444', transition:'all 0.15s' }}><Icon /></div>
+            <span style={{ fontSize:10, fontWeight:800, color: isActive ? 'var(--accent)' : '#444', letterSpacing:'0.06em', textTransform:'uppercase' }}>{SHORT[label]||label}</span>
           </Link>
         )
       })}
@@ -155,9 +155,9 @@ export default function MarketPage() {
         *{font-family:var(--font-geist-sans),-apple-system,sans-serif!important}
         .sidebar-el{display:flex;flex-direction:column}.mobile-only{display:none!important}.mob-topbar{display:none}.main-wrap{margin-left:200px;min-height:100vh;width:calc(100% - 200px)}
         @media(max-width:768px){.sidebar-el{display:none!important}.mobile-only{display:flex!important}.mob-topbar{display:flex}.main-wrap{margin-left:0!important;width:100%!important;padding:16px 16px 90px!important}}
-        .listing-card:hover{border-color:rgba(147,51,234,0.4)!important;transform:translateY(-2px)}
+        .listing-card:hover{border-color:rgba(var(--accent-rgb),0.4)!important;transform:translateY(-2px)}
         .listing-card{transition:border-color 0.15s,transform 0.15s}
-        input:focus{border-color:#9333ea!important;outline:none}
+        input:focus{border-color:var(--accent)!important;outline:none}
       `}</style>
 
       <div style={{ display:'flex', minHeight:'100vh', background:'#0a0a0a' }}>
@@ -172,7 +172,7 @@ export default function MarketPage() {
 
           {/* Header */}
           <div style={{ marginBottom:28 }}>
-            <div style={{ fontSize:9, fontWeight:800, color:'#a855f7', textTransform:'uppercase', letterSpacing:'0.15em', marginBottom:6 }}>Browse & Buy</div>
+            <div style={{ fontSize:9, fontWeight:800, color:'var(--accent-light)', textTransform:'uppercase', letterSpacing:'0.15em', marginBottom:6 }}>Browse & Buy</div>
             <h1 style={{ fontSize:36, fontWeight:900, color:'#fff', letterSpacing:'-1.5px', textTransform:'uppercase', margin:'0 0 6px', fontFamily:'var(--font-geist-pixel-square)' }}>MARKETPLACE</h1>
             <p style={{ fontSize:12, color:'#555', fontWeight:500 }}>Search eBay listings · select a card to add it directly to your collection</p>
           </div>
@@ -190,7 +190,7 @@ export default function MarketPage() {
                 />
                 <div style={{ position:'absolute', left:13, top:'50%', transform:'translateY(-50%)', color:'#444', pointerEvents:'none' }}><IconSearch /></div>
               </div>
-              <button onClick={handleSearch} disabled={searching || !query.trim()} style={{ padding:'11px 24px', borderRadius:10, background: searching?'#1a1a1a':'#9333ea', border:'none', color: searching?'#555':'#fff', fontSize:14, fontWeight:800, cursor: searching?'not-allowed':'pointer', whiteSpace:'nowrap', transition:'all 0.15s' }}>
+              <button onClick={handleSearch} disabled={searching || !query.trim()} style={{ padding:'11px 24px', borderRadius:10, background: searching?'#1a1a1a':'var(--accent)', border:'none', color: searching?'#555':'#fff', fontSize:14, fontWeight:800, cursor: searching?'not-allowed':'pointer', whiteSpace:'nowrap', transition:'all 0.15s' }}>
                 {searching ? 'Searching...' : 'Search'}
               </button>
             </div>
@@ -220,7 +220,7 @@ export default function MarketPage() {
                 { label:'Lowest', value: fmt(results.low) },
               ].map((s,i) => (
                 <div key={i} style={{ background:'#111', border:'1px solid #1a1a1a', borderRadius:10, padding:'12px 14px', position:'relative', overflow:'hidden' }}>
-                  <div style={{ position:'absolute', top:0, left:0, right:0, height:2, background: i===0?'#9333ea':i===2?'#ef4444':i===3?'#22c55e':'#333' }} />
+                  <div style={{ position:'absolute', top:0, left:0, right:0, height:2, background: i===0?'var(--accent)':i===2?'#ef4444':i===3?'#22c55e':'#333' }} />
                   <div style={{ fontSize:9, fontWeight:700, color:'#444', textTransform:'uppercase', letterSpacing:'0.1em', marginBottom:6 }}>{s.label}</div>
                   <div style={{ fontFamily:'var(--font-geist-sans)', fontSize:16, fontWeight:900, color:'#fff' }}>{s.value}</div>
                 </div>
@@ -231,11 +231,11 @@ export default function MarketPage() {
           {/* Results header */}
           {results && (
             <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:14 }}>
-              <div style={{ fontSize:9, fontWeight:800, color:'#a855f7', textTransform:'uppercase', letterSpacing:'0.12em' }}>
+              <div style={{ fontSize:9, fontWeight:800, color:'var(--accent-light)', textTransform:'uppercase', letterSpacing:'0.12em' }}>
                 {results.count} Listings on eBay
                 {results.searchedAs && <span style={{ color:'#444', fontWeight:600, textTransform:'none', letterSpacing:0 }}> · simplified to "{results.searchedAs}"</span>}
               </div>
-              <a href={`https://www.ebay.com/sch/i.html?_nkw=${encodeURIComponent(query)}`} target="_blank" rel="noopener noreferrer" style={{ display:'flex', alignItems:'center', gap:4, fontSize:11, color:'#9333ea', textDecoration:'none', fontWeight:700 }}>
+              <a href={`https://www.ebay.com/sch/i.html?_nkw=${encodeURIComponent(query)}`} target="_blank" rel="noopener noreferrer" style={{ display:'flex', alignItems:'center', gap:4, fontSize:11, color:'var(--accent)', textDecoration:'none', fontWeight:700 }}>
                 View on eBay <IconExternal />
               </a>
             </div>
@@ -260,7 +260,7 @@ export default function MarketPage() {
                       <div style={{ fontFamily:'var(--font-geist-sans)', fontSize:15, fontWeight:900, color:'#fff' }}>{fmt(r.price)}</div>
                       {r.condition && <div style={{ fontSize:9, fontWeight:700, color:'#555', textTransform:'uppercase' }}>{r.condition}</div>}
                     </div>
-                    <button onClick={e => { e.preventDefault(); e.stopPropagation(); openAddModal(r) }} style={{ marginTop:8, width:'100%', padding:'7px', borderRadius:8, background:'rgba(147,51,234,0.1)', border:'1px solid rgba(147,51,234,0.2)', color:'#a855f7', fontSize:11, fontWeight:800, cursor:'pointer', textTransform:'uppercase', letterSpacing:'0.06em' }}>
+                    <button onClick={e => { e.preventDefault(); e.stopPropagation(); openAddModal(r) }} style={{ marginTop:8, width:'100%', padding:'7px', borderRadius:8, background:'rgba(var(--accent-rgb),0.1)', border:'1px solid rgba(var(--accent-rgb),0.2)', color:'var(--accent-light)', fontSize:11, fontWeight:800, cursor:'pointer', textTransform:'uppercase', letterSpacing:'0.06em' }}>
                       + Add to Collection
                     </button>
                   </div>

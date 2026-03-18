@@ -75,7 +75,7 @@ export default function AdminPage() {
           <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:32 }}>
             <div style={{ display:'flex', alignItems:'center', gap:14 }}>
               <img src="/logo-transparent.png" alt="TopLoad" style={{ height:36, filter:'brightness(0) invert(1)' }} />
-              <div style={{ padding:'3px 10px', background:'rgba(147,51,234,0.1)', border:'1px solid rgba(147,51,234,0.25)', borderRadius:6, fontSize:10, fontWeight:900, color:'#a855f7', letterSpacing:'0.12em' }}>ADMIN</div>
+              <div style={{ padding:'3px 10px', background:'rgba(var(--accent-rgb),0.1)', border:'1px solid rgba(var(--accent-rgb),0.25)', borderRadius:6, fontSize:10, fontWeight:900, color:'var(--accent-light)', letterSpacing:'0.12em' }}>ADMIN</div>
             </div>
             <Link href="/dashboard" style={{ padding:'8px 16px', borderRadius:8, background:'#111', border:'1px solid #1e1e1e', color:'#555', fontSize:12, fontWeight:700, textDecoration:'none' }}>← Dashboard</Link>
           </div>
@@ -89,15 +89,15 @@ export default function AdminPage() {
           {/* Stats grid */}
           <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fit,minmax(160px,1fr))', gap:10, marginBottom:28 }}>
             {[
-              { label:'Total Users',     value: stats.totalUsers,                           accent:'#9333ea' },
-              { label:'Total Cards',     value: stats.totalCards,                           accent:'#9333ea' },
+              { label:'Total Users',     value: stats.totalUsers,                           accent:'var(--accent)' },
+              { label:'Total Cards',     value: stats.totalCards,                           accent:'var(--accent)' },
               { label:'Active Cards',    value: stats.totalActiveCards,                     accent:'#333' },
               { label:'Sold Cards',      value: stats.totalSoldCards,                       accent:'#ffbe2e' },
               { label:'Portfolio Value', value: fmt(stats.totalPortfolioValue),             accent:'#22c55e' },
               { label:'Total Invested',  value: fmt(stats.totalInvested),                   accent:'#333' },
-              { label:'Cards This Week', value: stats.cardsThisWeek,                        accent:'#a855f7' },
-              { label:'Most Active',     value: '@'+stats.mostActiveUser,                   accent:'#9333ea', small:true },
-              { label:'PSA Lookups',     value: psaCache?.total ?? '—',                     accent:'#9333ea' },
+              { label:'Cards This Week', value: stats.cardsThisWeek,                        accent:'var(--accent-light)' },
+              { label:'Most Active',     value: '@'+stats.mostActiveUser,                   accent:'var(--accent)', small:true },
+              { label:'PSA Lookups',     value: psaCache?.total ?? '—',                     accent:'var(--accent)' },
             ].map((s,i) => (
               <div key={i} style={{ background:'#111', border:'1px solid #1a1a1a', borderRadius:12, padding:'14px 16px', position:'relative', overflow:'hidden' }}>
                 <div style={{ position:'absolute', top:0, left:0, right:0, height:2, background:s.accent }} />
@@ -138,7 +138,7 @@ export default function AdminPage() {
                   <div style={{ fontFamily:'var(--font-geist-mono)', fontSize:13, color:'#555', textAlign:'right', alignSelf:'center' }}>{user.wishCount}</div>
                   <div style={{ fontFamily:'var(--font-geist-mono)', fontSize:13, fontWeight:700, color:'#22c55e', textAlign:'right', alignSelf:'center' }}>{fmt(user.portfolioValue)}</div>
                   <div style={{ fontSize:11, color:'#444', textAlign:'right', alignSelf:'center' }}>{fmtDate(user.createdAt)}</div>
-                  <div style={{ textAlign:'right', alignSelf:'center', fontSize:12, color: expanded===user.id?'#9333ea':'#333', transition:'transform 0.15s', transform: expanded===user.id?'rotate(90deg)':'rotate(0deg)' }}>▶</div>
+                  <div style={{ textAlign:'right', alignSelf:'center', fontSize:12, color: expanded===user.id?'var(--accent)':'#333', transition:'transform 0.15s', transform: expanded===user.id?'rotate(90deg)':'rotate(0deg)' }}>▶</div>
                 </div>
 
                 {expanded === user.id && (
@@ -177,7 +177,7 @@ export default function AdminPage() {
                                 <div style={{ fontSize:12, fontWeight:700, color: card.sold?'#555':'#ccc', textTransform:'uppercase', letterSpacing:'-0.2px' }}>{card.player}</div>
                                 <div style={{ display:'flex', gap:4, marginTop:2 }}>
                                   {card.sold && <span style={{ fontSize:8, fontWeight:800, color:'#ffbe2e', background:'rgba(255,190,46,0.1)', padding:'1px 5px', borderRadius:3 }}>SOLD</span>}
-                                  {card.auto && <span style={{ fontSize:8, fontWeight:800, color:'#a855f7', background:'rgba(147,51,234,0.1)', padding:'1px 5px', borderRadius:3 }}>AUTO</span>}
+                                  {card.auto && <span style={{ fontSize:8, fontWeight:800, color:'var(--accent-light)', background:'rgba(var(--accent-rgb),0.1)', padding:'1px 5px', borderRadius:3 }}>AUTO</span>}
                                   {card.brand && <span style={{ fontSize:9, color:'#333' }}>{card.brand}</span>}
                                 </div>
                               </div>
@@ -185,7 +185,7 @@ export default function AdminPage() {
                               <div style={{ fontFamily:'var(--font-geist-mono)', fontSize:11, color:'#555', textAlign:'right', alignSelf:'center' }}>{card.year||'—'}</div>
                               <div style={{ textAlign:'right', alignSelf:'center' }}>
                                 {card.grade
-                                  ? <span style={{ fontSize:10, fontWeight:800, color:'#a855f7', background:'rgba(147,51,234,0.1)', padding:'2px 6px', borderRadius:4 }}>{card.gradingCo?card.gradingCo+' ':''}{card.grade}</span>
+                                  ? <span style={{ fontSize:10, fontWeight:800, color:'var(--accent-light)', background:'rgba(var(--accent-rgb),0.1)', padding:'2px 6px', borderRadius:4 }}>{card.gradingCo?card.gradingCo+' ':''}{card.grade}</span>
                                   : <span style={{ fontSize:10, color:'#333' }}>Raw</span>
                                 }
                               </div>
@@ -210,7 +210,7 @@ export default function AdminPage() {
             <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:12 }}>
               <div style={{ display:'flex', alignItems:'center', gap:10 }}>
                 <h2 style={{ fontSize:14, fontWeight:900, color:'#fff', textTransform:'uppercase', letterSpacing:'0.05em', margin:0 }}>PSA Lookup Cache ({psaCache?.total ?? 0})</h2>
-                <div style={{ padding:'2px 8px', background:'rgba(147,51,234,0.1)', border:'1px solid rgba(147,51,234,0.25)', borderRadius:4, fontSize:9, fontWeight:800, color:'#a855f7', letterSpacing:'0.1em' }}>24H CACHE</div>
+                <div style={{ padding:'2px 8px', background:'rgba(var(--accent-rgb),0.1)', border:'1px solid rgba(var(--accent-rgb),0.25)', borderRadius:4, fontSize:9, fontWeight:800, color:'var(--accent-light)', letterSpacing:'0.1em' }}>24H CACHE</div>
               </div>
               <div style={{ display:'flex', gap:8 }}>
                 <input value={psaSearch} onChange={e => setPsaSearch(e.target.value)} placeholder="Search certs..." style={{ padding:'7px 12px', borderRadius:8, background:'#111', border:'1px solid #1e1e1e', color:'#f0f0f0', fontSize:12, outline:'none', width:200 }} />
@@ -256,13 +256,13 @@ export default function AdminPage() {
                       </div>
                       <div style={{ textAlign:'right' }}>
                         {entry.certPageUrl
-                          ? <a href={entry.certPageUrl} target="_blank" rel="noreferrer" style={{ fontFamily:'var(--font-geist-mono)', fontSize:10, color:'#a855f7', textDecoration:'none' }}>{entry.cert}</a>
+                          ? <a href={entry.certPageUrl} target="_blank" rel="noreferrer" style={{ fontFamily:'var(--font-geist-mono)', fontSize:10, color:'var(--accent-light)', textDecoration:'none' }}>{entry.cert}</a>
                           : <span style={{ fontFamily:'var(--font-geist-mono)', fontSize:10, color:'#555' }}>{entry.cert}</span>
                         }
                       </div>
                       <div style={{ textAlign:'right' }}>
                         {entry.grade !== '—'
-                          ? <span style={{ fontSize:10, fontWeight:800, color:'#a855f7', background:'rgba(147,51,234,0.1)', padding:'2px 6px', borderRadius:4 }}>PSA {entry.grade}</span>
+                          ? <span style={{ fontSize:10, fontWeight:800, color:'var(--accent-light)', background:'rgba(var(--accent-rgb),0.1)', padding:'2px 6px', borderRadius:4 }}>PSA {entry.grade}</span>
                           : <span style={{ fontSize:10, color:'#333' }}>—</span>
                         }
                       </div>

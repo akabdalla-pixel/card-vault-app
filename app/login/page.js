@@ -32,13 +32,13 @@ export default function LoginPage() {
         @keyframes fadeUp { from { opacity:0; transform:translateY(16px) } to { opacity:1; transform:translateY(0) } }
         @keyframes float { 0%,100% { transform:translateY(0px) } 50% { transform:translateY(-8px) } }
         .login-input { width:100%; padding:11px 14px; border-radius:10px; background:#1a1a1a; border:1px solid #2a2a2a; color:#f0f0f0; font-size:15px; outline:none; transition:border-color 0.15s; box-sizing:border-box; font-family:inherit; }
-        .login-input:focus { border-color:#9333ea; box-shadow:0 0 0 3px rgba(147,51,234,0.12); }
+        .login-input:focus { border-color:var(--accent); box-shadow:0 0 0 3px rgba(var(--accent-rgb),0.12); }
         .login-input::placeholder { color:#444; }
         button:not(:disabled):active { transform:scale(0.97)!important; }
       `}</style>
       <div style={{ minHeight:'100vh', background:'#0a0a0a', display:'flex', alignItems:'center', justifyContent:'center', padding:20 }}>
         {/* Subtle background accent */}
-        <div style={{ position:'fixed', top:'20%', left:'50%', transform:'translateX(-50%)', width:600, height:600, background:'radial-gradient(circle, rgba(147,51,234,0.06) 0%, transparent 70%)', pointerEvents:'none', zIndex:0 }} />
+        <div style={{ position:'fixed', top:'20%', left:'50%', transform:'translateX(-50%)', width:600, height:600, background:'radial-gradient(circle, rgba(var(--accent-rgb),0.06) 0%, transparent 70%)', pointerEvents:'none', zIndex:0 }} />
 
         <div style={{ position:'relative', zIndex:1, width:'100%', maxWidth:380, animation:'fadeUp 0.4s ease' }}>
 
@@ -67,14 +67,14 @@ export default function LoginPage() {
                 <label style={{ display:'block', fontSize:10, fontWeight:700, color:'#555', textTransform:'uppercase', letterSpacing:'0.08em', marginBottom:6, fontFamily:'var(--font-geist-sans)' }}>Password</label>
                 <input type="password" value={password} onChange={e => setPassword(e.target.value)} required placeholder="Your password" className="login-input" />
               </div>
-              <button type="button" onClick={handleSubmit} disabled={loading} style={{ width:'100%', padding:'13px', borderRadius:12, background: loading ? '#1a1a1a' : '#9333ea', border:'none', color:'#fff', fontFamily:'var(--font-geist-sans)', fontSize:15, fontWeight:800, cursor: loading ? 'not-allowed' : 'pointer', marginTop:4, boxShadow: loading ? 'none' : '0 4px 20px rgba(147,51,234,0.3)', transition:'all 0.15s', letterSpacing:'-0.2px' }}>
+              <button type="button" onClick={handleSubmit} disabled={loading} style={{ width:'100%', padding:'13px', borderRadius:12, background: loading ? '#1a1a1a' : 'var(--accent)', border:'none', color:'#fff', fontFamily:'var(--font-geist-sans)', fontSize:15, fontWeight:800, cursor: loading ? 'not-allowed' : 'pointer', marginTop:4, boxShadow: loading ? 'none' : '0 4px 20px rgba(var(--accent-rgb),0.3)', transition:'all 0.15s', letterSpacing:'-0.2px' }}>
                 {loading ? 'Signing in...' : 'Sign In →'}
               </button>
             </div>
 
             <div style={{ marginTop:20, display:'flex', alignItems:'center', justifyContent:'center' }}>
               <p style={{ fontFamily:'var(--font-geist-sans)', fontSize:13, color:'#555' }}>
-                No account? <Link href="/signup" style={{ color:'#a855f7', fontWeight:700, textDecoration:'none' }}>Sign Up</Link>
+                No account? <Link href="/signup" style={{ color:'var(--accent-light)', fontWeight:700, textDecoration:'none' }}>Sign Up</Link>
               </p>
             </div>
           </div>

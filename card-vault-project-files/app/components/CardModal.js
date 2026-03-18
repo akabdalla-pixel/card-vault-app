@@ -94,7 +94,7 @@ export default function CardModal({ card, onClose, onSave }) {
     />
   )
 
-  const sel = (key, children, activeColor = '#a855f7', activeBg = 'rgba(147,51,234,0.08)') => {
+  const sel = (key, children, activeColor = 'var(--accent-light)', activeBg = 'rgba(var(--accent-rgb),0.08)') => {
     const active = !!form[key]
     return (
       <select
@@ -184,13 +184,13 @@ export default function CardModal({ card, onClose, onSave }) {
                   onClick={() => set('sport', form.sport === s.label ? '' : s.label)}
                   style={{
                     padding: '7px 4px', borderRadius: 9, cursor: 'pointer',
-                    border: form.sport === s.label ? '2px solid rgba(147,51,234,0.6)' : '1px solid #252525',
-                    background: form.sport === s.label ? 'rgba(147,51,234,0.12)' : '#191919',
+                    border: form.sport === s.label ? '2px solid rgba(var(--accent-rgb),0.6)' : '1px solid #252525',
+                    background: form.sport === s.label ? 'rgba(var(--accent-rgb),0.12)' : '#191919',
                     display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3,
                   }}
                 >
                   <span style={{ fontSize: 19 }}>{s.emoji}</span>
-                  <span style={{ fontFamily: 'var(--font-geist-sans)', fontSize: 10, fontWeight: 700, color: form.sport === s.label ? '#9333ea' : '#555' }}>{s.label}</span>
+                  <span style={{ fontFamily: 'var(--font-geist-sans)', fontSize: 10, fontWeight: 700, color: form.sport === s.label ? 'var(--accent)' : '#555' }}>{s.label}</span>
                 </button>
               ))}
             </div>
@@ -199,9 +199,9 @@ export default function CardModal({ card, onClose, onSave }) {
               onChange={e => set('sport', e.target.value)}
               style={{
                 ...INP,
-                background: isMoreSport ? 'rgba(147,51,234,0.08)' : '#191919',
-                border: `1px solid ${isMoreSport ? 'rgba(147,51,234,0.35)' : '#252525'}`,
-                color: isMoreSport ? '#9333ea' : '#555',
+                background: isMoreSport ? 'rgba(var(--accent-rgb),0.08)' : '#191919',
+                border: `1px solid ${isMoreSport ? 'rgba(var(--accent-rgb),0.35)' : '#252525'}`,
+                color: isMoreSport ? 'var(--accent)' : '#555',
               }}
             >
               <option value="">More sports / TCG / Other...</option>
@@ -424,7 +424,7 @@ export default function CardModal({ card, onClose, onSave }) {
             disabled={saving || !form.player}
             style={{
               width: '100%', padding: '13px', borderRadius: 12,
-              background: (!form.player || saving) ? '#191919' : 'linear-gradient(135deg,#9333ea,#a855f7)',
+              background: (!form.player || saving) ? '#191919' : 'linear-gradient(135deg,var(--accent),var(--accent-light))',
               border: (!form.player || saving) ? '1px solid #252525' : 'none',
               color: (!form.player || saving) ? '#333' : '#fff',
               fontFamily: 'var(--font-geist-sans)', fontSize: 15, fontWeight: 800,

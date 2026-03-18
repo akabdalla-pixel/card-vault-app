@@ -42,7 +42,7 @@ function Sidebar({ user, onLogout, active = '' }) {
           const Icon = navIcons[label]
           if (!Icon) return null
           return (
-            <Link key={label} href={href} style={{ display:'flex', alignItems:'center', gap:10, padding:'9px 12px', borderRadius:10, marginBottom:2, textDecoration:'none', color: isActive ? '#fff' : '#555', background: isActive ? '#9333ea' : 'transparent', fontSize:13, fontWeight: isActive ? 700 : 500, transition:'all 0.15s' }}>
+            <Link key={label} href={href} style={{ display:'flex', alignItems:'center', gap:10, padding:'9px 12px', borderRadius:10, marginBottom:2, textDecoration:'none', color: isActive ? '#fff' : '#555', background: isActive ? 'var(--accent)' : 'transparent', fontSize:13, fontWeight: isActive ? 700 : 500, transition:'all 0.15s' }}>
               <Icon /><span style={{flex:1}}>{label}</span>
             </Link>
           )
@@ -52,7 +52,7 @@ function Sidebar({ user, onLogout, active = '' }) {
         <Link href="/settings" style={{ display:'flex', alignItems:'center', gap:10, padding:'9px 12px', borderRadius:10, textDecoration:'none', color:'#555', fontSize:13, fontWeight:500 }}><IconSettings /><span>Settings</span></Link>
         <button onClick={onLogout} style={{ display:'flex', alignItems:'center', gap:10, padding:'9px 12px', borderRadius:10, width:'100%', background:'transparent', border:'none', cursor:'pointer', color:'#555', fontSize:13, fontWeight:500 }}><IconLogout /><span>Sign Out</span></button>
         {user && <div style={{ display:'flex', alignItems:'center', gap:8, padding:'8px 10px', marginTop:4, borderRadius:10, background:'#111' }}>
-          <div style={{ width:28, height:28, borderRadius:8, background:'#9333ea', display:'flex', alignItems:'center', justifyContent:'center', fontSize:12, fontWeight:900, color:'#fff', flexShrink:0 }}>{user.username?.[0]?.toUpperCase()||'A'}</div>
+          <div style={{ width:28, height:28, borderRadius:8, background:'var(--accent)', display:'flex', alignItems:'center', justifyContent:'center', fontSize:12, fontWeight:900, color:'#fff', flexShrink:0 }}>{user.username?.[0]?.toUpperCase()||'A'}</div>
           <div style={{overflow:'hidden'}}><div style={{ fontSize:11, fontWeight:700, color:'#ccc', overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>@{user.username}</div><div style={{ fontSize:9, color:'#555', marginTop:1 }}>{user.email}</div></div>
         </div>}
       </div>
@@ -70,8 +70,8 @@ function BottomNav({ active = '' }) {
         if (!Icon) return null
         return (
           <Link key={label} href={href} style={{ flex:1, display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', gap:3, textDecoration:'none', paddingBottom:4 }}>
-            <div style={{ width:32, height:32, borderRadius:9, display:'flex', alignItems:'center', justifyContent:'center', background: isActive ? '#9333ea' : 'transparent', color: isActive ? '#fff' : '#444', transition:'all 0.15s' }}><Icon /></div>
-            <span style={{ fontSize:10, fontWeight:800, color: isActive ? '#9333ea' : '#444', letterSpacing:'0.06em', textTransform:'uppercase' }}>{SHORT[label]||label}</span>
+            <div style={{ width:32, height:32, borderRadius:9, display:'flex', alignItems:'center', justifyContent:'center', background: isActive ? 'var(--accent)' : 'transparent', color: isActive ? '#fff' : '#444', transition:'all 0.15s' }}><Icon /></div>
+            <span style={{ fontSize:10, fontWeight:800, color: isActive ? 'var(--accent)' : '#444', letterSpacing:'0.06em', textTransform:'uppercase' }}>{SHORT[label]||label}</span>
           </Link>
         )
       })}
@@ -160,7 +160,7 @@ function QRScannerModal({ onScan, onClose }) {
       <div style={{ width:'100%', maxWidth:380, background:'#111', border:'1px solid #1e1e1e', borderRadius:20, overflow:'hidden' }}>
         <div style={{ padding:'16px 20px', borderBottom:'1px solid #1a1a1a', display:'flex', alignItems:'center', justifyContent:'space-between' }}>
           <div>
-            <div style={{ fontSize:9, fontWeight:800, color:'#a855f7', textTransform:'uppercase', letterSpacing:'0.12em' }}>PSA QR Scanner</div>
+            <div style={{ fontSize:9, fontWeight:800, color:'var(--accent-light)', textTransform:'uppercase', letterSpacing:'0.12em' }}>PSA QR Scanner</div>
             <div style={{ fontSize:15, fontWeight:900, color:'#fff', marginTop:2 }}>Scan the slab label</div>
           </div>
           <button onClick={onClose} style={{ width:32, height:32, borderRadius:8, background:'#1a1a1a', border:'1px solid #2a2a2a', color:'#555', cursor:'pointer', fontSize:16, display:'flex', alignItems:'center', justifyContent:'center' }}>✕</button>
@@ -176,10 +176,10 @@ function QRScannerModal({ onScan, onClose }) {
             <div style={{ width:200, height:200, position:'relative' }}>
               {[['top','left'],['top','right'],['bottom','left'],['bottom','right']].map(([v,h],i) => (
                 <div key={i} style={{ position:'absolute', [v]:0, [h]:0, width:28, height:28,
-                  borderTop: v==='top' ? '3px solid #9333ea' : 'none',
-                  borderBottom: v==='bottom' ? '3px solid #9333ea' : 'none',
-                  borderLeft: h==='left' ? '3px solid #9333ea' : 'none',
-                  borderRight: h==='right' ? '3px solid #9333ea' : 'none',
+                  borderTop: v==='top' ? '3px solid var(--accent)' : 'none',
+                  borderBottom: v==='bottom' ? '3px solid var(--accent)' : 'none',
+                  borderLeft: h==='left' ? '3px solid var(--accent)' : 'none',
+                  borderRight: h==='right' ? '3px solid var(--accent)' : 'none',
                   borderRadius: v==='top'&&h==='left'?'4px 0 0 0':v==='top'&&h==='right'?'0 4px 0 0':v==='bottom'&&h==='left'?'0 0 0 4px':'0 0 4px 0'
                 }} />
               ))}
@@ -278,7 +278,7 @@ export default function PSALookupPage() {
 
   if (loading) return <div style={{ minHeight:'100vh', display:'flex', alignItems:'center', justifyContent:'center', background:'#0a0a0a' }}><img src={LOGO} alt="TopLoad" style={{ width:120, opacity:0.4, filter:'brightness(0) invert(1)' }} /></div>
 
-  const gradeColor = result ? (parseInt(result.grade) >= 9 ? '#22c55e' : parseInt(result.grade) >= 7 ? '#ffbe2e' : '#ef4444') : '#9333ea'
+  const gradeColor = result ? (parseInt(result.grade) >= 9 ? '#22c55e' : parseInt(result.grade) >= 7 ? '#ffbe2e' : '#ef4444') : 'var(--accent)'
 
   return (
     <>
@@ -287,7 +287,7 @@ export default function PSALookupPage() {
         *{font-family:var(--font-geist-sans),-apple-system,sans-serif!important}
         .sidebar-el{display:flex;flex-direction:column}.mobile-only{display:none!important}.mob-topbar{display:none}.main-wrap{margin-left:200px;min-height:100vh;width:calc(100% - 200px)}
         @media(max-width:768px){.sidebar-el{display:none!important}.mobile-only{display:flex!important}.mob-topbar{display:flex}.main-wrap{margin-left:0!important;width:100%!important;padding:16px 16px 90px!important}}
-        input:focus,select:focus,textarea:focus{border-color:#9333ea!important;outline:none}
+        input:focus,select:focus,textarea:focus{border-color:var(--accent)!important;outline:none}
         .hist-item:hover{background:#1a1a1a!important}
         html,body{overflow-x:hidden!important;max-width:100vw!important}
         @media(max-width:768px){.main-wrap{overflow-x:hidden!important;max-width:100%!important;padding:12px 12px 90px!important;box-sizing:border-box!important}*{max-width:100%!important;box-sizing:border-box!important}.psa-grid{grid-template-columns:1fr!important}.psa-result-inner{flex-direction:column!important}.psa-search-row{flex-wrap:wrap!important}}
@@ -304,7 +304,7 @@ export default function PSALookupPage() {
           </div>
 
           <div style={{ marginBottom:28 }}>
-            <div style={{ fontSize:9, fontWeight:800, color:'#a855f7', textTransform:'uppercase', letterSpacing:'0.15em', marginBottom:6 }}>Grade Verification</div>
+            <div style={{ fontSize:9, fontWeight:800, color:'var(--accent-light)', textTransform:'uppercase', letterSpacing:'0.15em', marginBottom:6 }}>Grade Verification</div>
             <h1 style={{ fontSize:36, fontWeight:900, color:'#fff', letterSpacing:'-1.5px', textTransform:'uppercase', margin:'0 0 6px', fontFamily:'var(--font-geist-pixel-square)' }}>PSA LOOKUP</h1>
             <p style={{ fontSize:12, color:'#555', fontWeight:500 }}>Enter a PSA cert number to verify the grade, view card details and images</p>
           </div>
@@ -316,10 +316,10 @@ export default function PSALookupPage() {
                 <div className="psa-search-row" style={{ display:'flex', gap:10 }}>
                   <input value={cert} onChange={e => setCert(e.target.value)} onKeyDown={e => e.key==='Enter' && handleLookup()} placeholder="e.g. 12345678"
                     style={{ flex:1, minWidth:0, padding:'11px 14px', borderRadius:10, background:'#1a1a1a', border:'1px solid #2a2a2a', color:'#f0f0f0', fontSize:16, fontFamily:'var(--font-geist-sans)', letterSpacing:'0.05em', transition:'border-color 0.15s', boxSizing:'border-box' }} />
-                  <button onClick={handleLookup} disabled={searching || !cert.trim()} style={{ padding:'11px 20px', borderRadius:10, background: searching||!cert.trim() ? '#1a1a1a' : '#9333ea', border:'none', color: searching||!cert.trim() ? '#555' : '#fff', fontSize:14, fontWeight:800, cursor: searching||!cert.trim() ? 'not-allowed' : 'pointer', whiteSpace:'nowrap', flexShrink:0 }}>
+                  <button onClick={handleLookup} disabled={searching || !cert.trim()} style={{ padding:'11px 20px', borderRadius:10, background: searching||!cert.trim() ? '#1a1a1a' : 'var(--accent)', border:'none', color: searching||!cert.trim() ? '#555' : '#fff', fontSize:14, fontWeight:800, cursor: searching||!cert.trim() ? 'not-allowed' : 'pointer', whiteSpace:'nowrap', flexShrink:0 }}>
                     {searching ? 'Looking up...' : 'Verify'}
                   </button>
-                  <button onClick={() => setScanning(true)} style={{ padding:'11px 12px', borderRadius:10, background:'#111', border:'1px solid #1e1e1e', color:'#a855f7', cursor:'pointer', fontSize:13, fontWeight:700, whiteSpace:'nowrap', display:'flex', alignItems:'center', gap:4 }}>
+                  <button onClick={() => setScanning(true)} style={{ padding:'11px 12px', borderRadius:10, background:'#111', border:'1px solid #1e1e1e', color:'var(--accent-light)', cursor:'pointer', fontSize:13, fontWeight:700, whiteSpace:'nowrap', display:'flex', alignItems:'center', gap:4 }}>
                     📷 Scan
                   </button>
                 </div>
@@ -382,7 +382,7 @@ export default function PSALookupPage() {
                           <div style={{ fontSize:9, fontWeight:800, color:'#555', textTransform:'uppercase', letterSpacing:'0.12em', marginBottom:10 }}>PSA Pop Report</div>
                           <div className="psa-pop-grid" style={{ display:'grid', gridTemplateColumns:'1fr 1fr 1fr', gap:8 }}>
                             {[
-                              { label:'This Grade', value: (result.totalPop - result.popHigher - result.totalPopWithQualifier) || result.totalPop, color:'#a855f7' },
+                              { label:'This Grade', value: (result.totalPop - result.popHigher - result.totalPopWithQualifier) || result.totalPop, color:'var(--accent-light)' },
                               { label:'Graded Higher', value: result.popHigher, color:'#22c55e' },
                               { label:'Total Pop', value: result.totalPop, color:'#888' },
                             ].map((p,i) => (
@@ -397,12 +397,12 @@ export default function PSALookupPage() {
                       )}
 
                       {!result.isCancelled && (
-                        <button onClick={handleAddToCollection} style={{ width:'100%', padding:'12px', borderRadius:10, background:'#9333ea', border:'none', color:'#fff', fontSize:14, fontWeight:800, cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'center', gap:6 }}>
+                        <button onClick={handleAddToCollection} style={{ width:'100%', padding:'12px', borderRadius:10, background:'var(--accent)', border:'none', color:'#fff', fontSize:14, fontWeight:800, cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'center', gap:6 }}>
                           + Add to Collection
                         </button>
                       )}
                       {result.certPageUrl && (
-                        <a href={result.certPageUrl} target="_blank" rel="noopener noreferrer" style={{ display:'block', width:'100%', marginTop:8, padding:'11px', borderRadius:10, background:'rgba(147,51,234,0.08)', border:'1px solid rgba(147,51,234,0.2)', color:'#a855f7', fontSize:13, fontWeight:800, textAlign:'center', textDecoration:'none', boxSizing:'border-box' }}>
+                        <a href={result.certPageUrl} target="_blank" rel="noopener noreferrer" style={{ display:'block', width:'100%', marginTop:8, padding:'11px', borderRadius:10, background:'rgba(var(--accent-rgb),0.08)', border:'1px solid rgba(var(--accent-rgb),0.2)', color:'var(--accent-light)', fontSize:13, fontWeight:800, textAlign:'center', textDecoration:'none', boxSizing:'border-box' }}>
                           View on PSA ↗
                         </a>
                       )}
@@ -418,7 +418,7 @@ export default function PSALookupPage() {
                   <div style={{ fontSize:9, fontWeight:800, color:'#555', textTransform:'uppercase', letterSpacing:'0.1em', marginBottom:12 }}>Recent Lookups</div>
                   {history.map((h, i) => (
                     <div key={i} className="hist-item" onClick={() => setCert(h.cert)} style={{ display:'flex', alignItems:'center', gap:10, padding:'9px 10px', borderRadius:8, cursor:'pointer', background:'transparent', transition:'background 0.1s', marginBottom: i<history.length-1?4:0 }}>
-                      <div style={{ width:32, height:32, borderRadius:7, background:'rgba(147,51,234,0.1)', border:'1px solid rgba(147,51,234,0.2)', display:'flex', alignItems:'center', justifyContent:'center', fontFamily:'var(--font-geist-sans)', fontSize:13, fontWeight:900, color:'#a855f7', flexShrink:0 }}>{h.grade}</div>
+                      <div style={{ width:32, height:32, borderRadius:7, background:'rgba(var(--accent-rgb),0.1)', border:'1px solid rgba(var(--accent-rgb),0.2)', display:'flex', alignItems:'center', justifyContent:'center', fontFamily:'var(--font-geist-sans)', fontSize:13, fontWeight:900, color:'var(--accent-light)', flexShrink:0 }}>{h.grade}</div>
                       <div style={{ minWidth:0 }}>
                         <div style={{ fontSize:12, fontWeight:700, color:'#ccc', overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>{h.player}</div>
                         <div style={{ fontSize:10, color:'#444', fontFamily:'var(--font-geist-sans)' }}>#{h.cert}</div>

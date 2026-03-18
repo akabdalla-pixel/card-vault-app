@@ -15,10 +15,10 @@ export default function LandingPage() {
         .fade2 { animation: fadeUp 0.6s ease 0.2s both }
         .fade3 { animation: fadeUp 0.6s ease 0.3s both }
         .fade4 { animation: fadeUp 0.6s ease 0.4s both }
-        .btn-primary { display:inline-flex; align-items:center; justify-content:center; padding:14px 32px; background:#9333ea; border:none; border-radius:10px; color:#fff; font-size:15px; font-weight:900; text-decoration:none; cursor:pointer; transition:all 0.15s; }
-        .btn-primary:hover { background:#a855f7; transform:translateY(-1px) }
+        .btn-primary { display:inline-flex; align-items:center; justify-content:center; padding:14px 32px; background:var(--accent); border:none; border-radius:10px; color:#fff; font-size:15px; font-weight:900; text-decoration:none; cursor:pointer; transition:all 0.15s; }
+        .btn-primary:hover { background:var(--accent-light); transform:translateY(-1px) }
         .btn-secondary { display:inline-flex; align-items:center; justify-content:center; padding:14px 32px; background:transparent; border:1px solid #2a2a2a; border-radius:10px; color:#888; font-size:15px; font-weight:700; text-decoration:none; cursor:pointer; transition:all 0.15s; }
-        .btn-secondary:hover { border-color:#9333ea; color:#a855f7; transform:translateY(-1px) }
+        .btn-secondary:hover { border-color:var(--accent); color:var(--accent-light); transform:translateY(-1px) }
         .ticker-wrap { overflow:hidden; border-top:1px solid #111; border-bottom:1px solid #111; padding:12px 0; background:#000; }
         .ticker-inner { display:flex; gap:0; white-space:nowrap; animation:ticker 20s linear infinite; width:max-content; }
         .ticker-item { display:inline-flex; align-items:center; gap:8px; padding:0 32px; font-size:13px; font-weight:700; color:#444; }
@@ -42,10 +42,10 @@ export default function LandingPage() {
 
         {/* Hero */}
         <div style={{ minHeight:'100vh', display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', textAlign:'center', padding:'100px 24px 40px', position:'relative', overflow:'hidden' }}>
-          <div style={{ position:'absolute', top:'30%', left:'50%', transform:'translate(-50%,-50%)', width:700, height:700, background:'radial-gradient(circle, rgba(147,51,234,0.1) 0%, transparent 70%)', pointerEvents:'none' }} />
+          <div style={{ position:'absolute', top:'30%', left:'50%', transform:'translate(-50%,-50%)', width:700, height:700, background:'radial-gradient(circle, rgba(var(--accent-rgb),0.1) 0%, transparent 70%)', pointerEvents:'none' }} />
           <img className="fade1" src="/logo-transparent.png" alt="TopLoad" style={{ height:140, filter:'brightness(0) invert(1)', marginBottom:24, animation:'float 4s ease-in-out infinite' }} />
           <h1 className="fade2" style={{ fontSize:'clamp(36px,6vw,64px)', fontWeight:900, lineHeight:1.05, letterSpacing:'-2.5px', marginBottom:20, maxWidth:800 }}>
-            Every card.<br /><span style={{ color:'#9333ea' }}>Every dollar.</span><br />One place.
+            Every card.<br /><span style={{ color:'var(--accent)' }}>Every dollar.</span><br />One place.
           </h1>
           <p className="fade3" style={{ fontSize:'clamp(16px,2.5vw,20px)', color:'#555', maxWidth:520, lineHeight:1.6, marginBottom:40 }}>
             Your entire collection, organized and valued in one place.
@@ -71,7 +71,7 @@ export default function LandingPage() {
         {/* Dashboard mockup */}
         <div style={{ padding:'48px 24px', maxWidth:800, margin:'0 auto' }}>
           <div style={{ textAlign:'center', marginBottom:40 }}>
-            <div style={{ fontSize:9, fontWeight:800, color:'#a855f7', textTransform:'uppercase', letterSpacing:'0.15em', marginBottom:10 }}>What it looks like</div>
+            <div style={{ fontSize:9, fontWeight:800, color:'var(--accent-light)', textTransform:'uppercase', letterSpacing:'0.15em', marginBottom:10 }}>What it looks like</div>
             <h2 style={{ fontSize:'clamp(26px,4vw,38px)', fontWeight:900, letterSpacing:'-1px' }}>Built for the serious collector</h2>
           </div>
           <div className="mock-screen">
@@ -85,7 +85,7 @@ export default function LandingPage() {
               {/* Mock stats */}
               <div style={{ display:'grid', gridTemplateColumns:'repeat(3,1fr)', gap:10, marginBottom:14 }}>
                 {[
-                  { label:'Portfolio Value', value:'$4,280', color:'#fff', accent:'#9333ea' },
+                  { label:'Portfolio Value', value:'$4,280', color:'#fff', accent:'var(--accent)' },
                   { label:'Total Gain', value:'+$920', color:'#22c55e', accent:'#22c55e' },
                   { label:'Active Cards', value:'47', color:'#fff', accent:'#333' },
                 ].map((s,i) => (
@@ -106,7 +106,7 @@ export default function LandingPage() {
                   <div key={i} style={{ display:'flex', alignItems:'center', justifyContent:'space-between', padding:'10px 14px', borderBottom: i<2?'1px solid #141414':'none' }}>
                     <div>
                       <div style={{ fontSize:12, fontWeight:800, color:'#fff', textTransform:'uppercase', letterSpacing:'-0.2px' }}>{c.player}</div>
-                      <div style={{ fontSize:10, color:'#444', marginTop:2 }}>{c.sport} · <span style={{ color:'#a855f7' }}>{c.grade}</span></div>
+                      <div style={{ fontSize:10, color:'#444', marginTop:2 }}>{c.sport} · <span style={{ color:'var(--accent-light)' }}>{c.grade}</span></div>
                     </div>
                     <div style={{ textAlign:'right' }}>
                       <div style={{ fontFamily:'var(--font-geist-sans)', fontSize:13, fontWeight:800, color:'#fff' }}>{c.val}</div>
@@ -122,7 +122,7 @@ export default function LandingPage() {
         {/* How it works */}
         <div style={{ padding:'0 24px 48px', maxWidth:900, margin:'0 auto' }}>
           <div style={{ textAlign:'center', marginBottom:28 }}>
-            <div style={{ fontSize:9, fontWeight:800, color:'#a855f7', textTransform:'uppercase', letterSpacing:'0.15em', marginBottom:10 }}>Simple by design</div>
+            <div style={{ fontSize:9, fontWeight:800, color:'var(--accent-light)', textTransform:'uppercase', letterSpacing:'0.15em', marginBottom:10 }}>Simple by design</div>
             <h2 style={{ fontSize:'clamp(26px,4vw,38px)', fontWeight:900, letterSpacing:'-1px' }}>How it works</h2>
           </div>
           <div style={{ display:'flex', gap:16, flexWrap:'wrap' }}>
@@ -132,7 +132,7 @@ export default function LandingPage() {
               { step:'03', title:'See your gains', desc:'View insights, personal records, top movers, and realized profit on every card you\'ve sold.' },
             ].map((s,i) => (
               <div key={i} className="step-card">
-                <div style={{ fontFamily:'var(--font-geist-sans)', fontSize:11, fontWeight:900, color:'rgba(147,51,234,0.4)', marginBottom:14, letterSpacing:'0.1em' }}>{s.step}</div>
+                <div style={{ fontFamily:'var(--font-geist-sans)', fontSize:11, fontWeight:900, color:'rgba(var(--accent-rgb),0.4)', marginBottom:14, letterSpacing:'0.1em' }}>{s.step}</div>
                 <div style={{ fontSize:15, fontWeight:900, color:'#fff', marginBottom:8, letterSpacing:'-0.3px' }}>{s.title}</div>
                 <div style={{ fontSize:12, color:'#555', lineHeight:1.5 }}>{s.desc}</div>
               </div>
@@ -159,7 +159,7 @@ export default function LandingPage() {
 
         {/* CTA */}
         <div style={{ padding:'40px 24px 56px', textAlign:'center', borderTop:'1px solid #111', position:'relative', overflow:'hidden' }}>
-          <div style={{ position:'absolute', top:'50%', left:'50%', transform:'translate(-50%,-50%)', width:500, height:300, background:'radial-gradient(circle, rgba(147,51,234,0.1) 0%, transparent 70%)', pointerEvents:'none' }} />
+          <div style={{ position:'absolute', top:'50%', left:'50%', transform:'translate(-50%,-50%)', width:500, height:300, background:'radial-gradient(circle, rgba(var(--accent-rgb),0.1) 0%, transparent 70%)', pointerEvents:'none' }} />
           <img src="/logo-transparent.png" alt="TopLoad" style={{ height:40, filter:'brightness(0) invert(1)', marginBottom:16, animation:'float 4s ease-in-out infinite' }} />
           <h2 style={{ fontSize:'clamp(28px,4vw,42px)', fontWeight:900, letterSpacing:'-1px', marginBottom:8 }}>Ready to start tracking?</h2>
           <p style={{ fontSize:15, color:'#555', marginBottom:4 }}>Free to use. No credit card required.</p>

@@ -82,7 +82,7 @@ function ToastContainer() {
     }
     return () => { _toastFn = null }
   }, [])
-  const colors = { success: '#4ade80', error: '#9333ea', info: '#888' }
+  const colors = { success: '#4ade80', error: 'var(--accent)', info: '#888' }
   const icons = { success: '✓', error: '✕', info: 'ℹ' }
   if (!toasts.length) return null
   return (
@@ -91,7 +91,7 @@ function ToastContainer() {
         <div key={t.id} style={{ display:'flex', alignItems:'center', gap:10, padding:'10px 18px', borderRadius:12, background:'#1e1e1e', border:`1px solid ${colors[t.type]}50`, boxShadow:'0 8px 28px rgba(0,0,0,0.6)', fontFamily:'var(--font-geist-sans)', fontSize:13, fontWeight:600, color:'#f0f0f0', pointerEvents:'auto', animation:'toastIn 0.2s ease', whiteSpace:'nowrap' }}>
           <span style={{ color:colors[t.type] }}>{icons[t.type]}</span>
           {t.msg}
-          {t.onUndo && <button onClick={t.onUndo} style={{ marginLeft:6, padding:'2px 10px', borderRadius:6, background:'rgba(255,255,255,0.08)', border:'none', color:'#9333ea', fontFamily:'var(--font-geist-sans)', fontSize:12, fontWeight:700, cursor:'pointer', pointerEvents:'auto' }}>Undo</button>}
+          {t.onUndo && <button onClick={t.onUndo} style={{ marginLeft:6, padding:'2px 10px', borderRadius:6, background:'rgba(255,255,255,0.08)', border:'none', color:'var(--accent)', fontFamily:'var(--font-geist-sans)', fontSize:12, fontWeight:700, cursor:'pointer', pointerEvents:'auto' }}>Undo</button>}
         </div>
       ))}
     </div>
@@ -109,7 +109,7 @@ function CollectionSkeleton() {
       <Sk h={42} r={10} style={{ marginBottom:10 }} />
       <Sk h={36} r={10} style={{ marginBottom:16 }} />
       {[1,2,3,4].map(i => (
-        <div key={i} style={{ background:'#13131f', border:'1px solid rgba(147,51,234,0.15)', boxShadow:'0 4px 20px rgba(0,0,0,0.4)', borderRadius:14, padding:'14px 16px', marginBottom:10, animation:`fadeUp 0.45s ease ${i*0.12}s both` }}>
+        <div key={i} style={{ background:'#13131f', border:'1px solid rgba(var(--accent-rgb),0.15)', boxShadow:'0 4px 20px rgba(0,0,0,0.4)', borderRadius:14, padding:'14px 16px', marginBottom:10, animation:`fadeUp 0.45s ease ${i*0.12}s both` }}>
           <div style={{ display:'flex', justifyContent:'space-between', marginBottom:10 }}><Sk w={160} h={16} r={6} /><Sk w={50} h={22} r={6} /></div>
           <div style={{ display:'flex', gap:10, marginBottom:10 }}><Sk w={70} h={34} r={8} /><Sk w={70} h={34} r={8} /><Sk w={70} h={34} r={8} /></div>
           <div style={{ display:'flex', gap:6 }}><Sk h={32} r={8} style={{ flex:1 }} /><Sk h={32} r={8} style={{ flex:1 }} /><Sk h={32} r={8} style={{ flex:1 }} /></div>
@@ -137,9 +137,9 @@ function SwipeRow({ children, onDelete }) {
   }
   return (
     <div style={{ position:'relative', overflow:'hidden', borderRadius:14 }}>
-      <div style={{ position:'absolute', right:0, top:0, bottom:0, width:76, background:'rgba(147,51,234,0.12)', display:'flex', alignItems:'center', justifyContent:'center', cursor:'pointer', borderRadius:'0 14px 14px 0' }}
+      <div style={{ position:'absolute', right:0, top:0, bottom:0, width:76, background:'rgba(var(--accent-rgb),0.12)', display:'flex', alignItems:'center', justifyContent:'center', cursor:'pointer', borderRadius:'0 14px 14px 0' }}
         onClick={() => { setSwipeX(0); onDelete() }}>
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#9333ea" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/></svg>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/></svg>
       </div>
       <div style={{ transform:`translateX(${swipeX}px)`, transition:dragging.current?'none':'transform 0.2s ease', willChange:'transform' }}
         onTouchStart={onStart} onTouchMove={onMove} onTouchEnd={onEnd}>
@@ -193,7 +193,7 @@ function getPriceLinks(card) {
     { label: 'eBay Sold Listings', color: '#e53238', url: 'https://www.ebay.com/sch/i.html?_nkw=' + q + '&LH_Sold=1&LH_Complete=1' },
     { label: 'eBay Active Listings', color: '#0064d2', url: 'https://www.ebay.com/sch/i.html?_nkw=' + q },
     { label: '130Point', color: '#7c5cfc', url: 'https://130point.com/sales/?query=' + qs },
-    { label: 'Card Ladder', color: '#9333ea', url: 'https://www.cardladder.com/search?q=' + qs },
+    { label: 'Card Ladder', color: 'var(--accent)', url: 'https://www.cardladder.com/search?q=' + qs },
     { label: 'PSA Auction Prices', color: '#ffbe2e', url: 'https://www.psacard.com/auctionprices/search?q=' + qs },
   ]
 }
@@ -239,10 +239,10 @@ function Sidebar({ user, onLogout, cardCount = 0, active = "" }) {
           const Icon = navIcons[label]
           if (!Icon) return null
           return (
-            <Link key={label} href={href} style={{ display:'flex', alignItems:'center', gap:10, padding:'9px 12px', borderRadius:10, marginBottom:2, textDecoration:'none', color: isActive ? '#fff' : '#555', background: isActive ? '#9333ea' : 'transparent', fontSize:13, fontWeight: isActive ? 700 : 500, transition:'all 0.15s', letterSpacing:'0.01em' }}>
+            <Link key={label} href={href} style={{ display:'flex', alignItems:'center', gap:10, padding:'9px 12px', borderRadius:10, marginBottom:2, textDecoration:'none', color: isActive ? '#fff' : '#555', background: isActive ? 'var(--accent)' : 'transparent', fontSize:13, fontWeight: isActive ? 700 : 500, transition:'all 0.15s', letterSpacing:'0.01em' }}>
               <Icon />
               <span style={{flex:1}}>{label}</span>
-              {label === 'Collection' && cardCount > 0 && <span style={{ fontSize:9, fontWeight:800, background: isActive ? 'rgba(255,255,255,0.2)' : 'rgba(147,51,234,0.2)', color: isActive ? '#fff' : '#a855f7', borderRadius:5, padding:'1px 6px' }}>{cardCount}</span>}
+              {label === 'Collection' && cardCount > 0 && <span style={{ fontSize:9, fontWeight:800, background: isActive ? 'rgba(255,255,255,0.2)' : 'rgba(var(--accent-rgb),0.2)', color: isActive ? '#fff' : 'var(--accent-light)', borderRadius:5, padding:'1px 6px' }}>{cardCount}</span>}
             </Link>
           )
         })}
@@ -251,7 +251,7 @@ function Sidebar({ user, onLogout, cardCount = 0, active = "" }) {
         <Link href="/settings" style={{ display:'flex', alignItems:'center', gap:10, padding:'9px 12px', borderRadius:10, marginBottom:2, textDecoration:'none', color:'#555', fontSize:13, fontWeight:500 }}><IconSettings /><span>Settings</span></Link>
         <button onClick={onLogout} style={{ display:'flex', alignItems:'center', gap:10, padding:'9px 12px', borderRadius:10, width:'100%', background:'transparent', border:'none', cursor:'pointer', color:'#555', fontSize:13, fontWeight:500 }}><IconLogout /><span>Sign Out</span></button>
         {user && <div style={{ display:'flex', alignItems:'center', gap:8, padding:'8px 10px', marginTop:4, borderRadius:10, background:'#111' }}>
-          <div style={{ width:28, height:28, borderRadius:8, background:'#9333ea', display:'flex', alignItems:'center', justifyContent:'center', fontSize:12, fontWeight:900, color:'#fff', flexShrink:0 }}>{user.username?.[0]?.toUpperCase()||'A'}</div>
+          <div style={{ width:28, height:28, borderRadius:8, background:'var(--accent)', display:'flex', alignItems:'center', justifyContent:'center', fontSize:12, fontWeight:900, color:'#fff', flexShrink:0 }}>{user.username?.[0]?.toUpperCase()||'A'}</div>
           <div style={{overflow:'hidden'}}><div style={{ fontSize:11, fontWeight:700, color:'#ccc', overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>@{user.username}</div><div style={{ fontSize:9, color:'#555', marginTop:1 }}>{user.email}</div></div>
         </div>}
       </div>
@@ -269,8 +269,8 @@ function BottomNav({ active = "" }) {
         if (!Icon) return null
         return (
           <Link key={label} href={href} style={{ flex:1, display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', gap:3, textDecoration:'none', paddingBottom:4 }}>
-            <div style={{ width:32, height:32, borderRadius:9, display:'flex', alignItems:'center', justifyContent:'center', background: isActive ? '#9333ea' : 'transparent', color: isActive ? '#fff' : '#444', transition:'all 0.15s' }}><Icon /></div>
-            <span style={{ fontSize:10, fontWeight:800, color: isActive ? '#9333ea' : '#444', letterSpacing:'0.06em', textTransform:'uppercase' }}>{SHORT[label]||label}</span>
+            <div style={{ width:32, height:32, borderRadius:9, display:'flex', alignItems:'center', justifyContent:'center', background: isActive ? 'var(--accent)' : 'transparent', color: isActive ? '#fff' : '#444', transition:'all 0.15s' }}><Icon /></div>
+            <span style={{ fontSize:10, fontWeight:800, color: isActive ? 'var(--accent)' : '#444', letterSpacing:'0.06em', textTransform:'uppercase' }}>{SHORT[label]||label}</span>
           </Link>
         )
       })}
@@ -358,7 +358,7 @@ function SoldModal({ card, onClose, onSave }) {
             <input type="date" value={soldDate} onChange={e => setSoldDate(e.target.value)} style={{ width: '100%', padding: '10px 12px', borderRadius: 10, background: '#202020', border: '1px solid #2a2a2a', color: '#f0f0f0', fontSize: 14, outline: 'none' }} />
           </div>
           {soldPrice && (
-            <div style={{ padding: '12px 16px', borderRadius: 10, background: profit >= 0 ? 'rgba(34,211,167,0.08)' : 'rgba(168,85,247,0.08)', border: '1px solid ' + (profit >= 0 ? 'rgba(147,51,234,0.2)' : 'rgba(168,85,247,0.2)') }}>
+            <div style={{ padding: '12px 16px', borderRadius: 10, background: profit >= 0 ? 'rgba(34,211,167,0.08)' : 'rgba(168,85,247,0.08)', border: '1px solid ' + (profit >= 0 ? 'rgba(var(--accent-rgb),0.2)' : 'rgba(168,85,247,0.2)') }}>
               <div style={{ fontSize: 11, color: '#555', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 4 }}>Realized P&L</div>
               <div style={{ fontFamily: 'var(--font-geist-sans)', fontSize: 20, fontWeight: 700, color: profit >= 0 ? '#22c55e' : '#ef4444' }}>{profit >= 0 ? '+' : ''}{fmt(profit)} <span style={{ fontSize: 13 }}>({profitPct >= 0 ? '+' : ''}{profitPct.toFixed(1)}%)</span></div>
               <div style={{ fontSize: 12, color: '#555', marginTop: 4 }}>Bought for {fmt(buy)}</div>
@@ -367,7 +367,7 @@ function SoldModal({ card, onClose, onSave }) {
         </div>
         <div style={{ display: 'flex', gap: 10, marginTop: 20 }}>
           <button onClick={onClose} style={{ flex: 1, padding: 11, borderRadius: 10, background: '#202020', border: '1px solid #2a2a2a', color: '#666', fontFamily: 'var(--font-geist-sans)', fontSize: 14, fontWeight: 600, cursor: 'pointer' }}>Cancel</button>
-          <button onClick={handleSave} disabled={saving || !soldPrice} style={{ flex: 1, padding: 11, borderRadius: 10, background: 'linear-gradient(135deg,#9333ea,#a855f7)', border: 'none', color: '#000', fontFamily: 'var(--font-geist-sans)', fontSize: 14, fontWeight: 700, cursor: 'pointer', opacity: (saving || !soldPrice) ? 0.5 : 1 }}>{saving ? 'Saving...' : 'Mark Sold'}</button>
+          <button onClick={handleSave} disabled={saving || !soldPrice} style={{ flex: 1, padding: 11, borderRadius: 10, background: 'linear-gradient(135deg,var(--accent),var(--accent-light))', border: 'none', color: '#000', fontFamily: 'var(--font-geist-sans)', fontSize: 14, fontWeight: 700, cursor: 'pointer', opacity: (saving || !soldPrice) ? 0.5 : 1 }}>{saving ? 'Saving...' : 'Mark Sold'}</button>
         </div>
       </div>
     </div>
@@ -411,7 +411,7 @@ function ImportModal({ onClose, onImport }) {
           <button onClick={onClose} style={{ background: 'none', border: 'none', color: '#555', cursor: 'pointer', padding: 4 }}><IconClose /></button>
         </div>
         <p style={{ fontSize: 13, color: '#555', marginBottom: 16, lineHeight: 1.6, fontFamily: 'var(--font-geist-sans)' }}>Upload a CSV with your cards. Required column: <strong style={{ color: '#ccc' }}>Player</strong>. Optional: Sport, Year, Card Name, Brand, Grade, Qty, Buy Price, Current Value.</p>
-        {error && <div style={{ marginBottom: 14, padding: '10px 14px', borderRadius: 10, background: 'rgba(168,85,247,0.1)', color: '#a855f7', fontSize: 13 }}>{error}</div>}
+        {error && <div style={{ marginBottom: 14, padding: '10px 14px', borderRadius: 10, background: 'rgba(168,85,247,0.1)', color: 'var(--accent-light)', fontSize: 13 }}>{error}</div>}
         <div style={{ border: '2px dashed rgba(255,255,255,0.1)', borderRadius: 12, padding: '28px 20px', textAlign: 'center', marginBottom: 16, cursor: 'pointer' }} onClick={() => fileRef.current?.click()}>
           <div style={{ fontSize: 28, marginBottom: 8 }}>📄</div>
           <div style={{ fontFamily: 'var(--font-geist-sans)', fontSize: 14, color: '#666' }}>{cards.length ? cards.length + ' cards ready to import' : 'Click to select a CSV file'}</div>
@@ -425,7 +425,7 @@ function ImportModal({ onClose, onImport }) {
         )}
         <div style={{ display: 'flex', gap: 10 }}>
           <button onClick={onClose} style={{ flex: 1, padding: 11, borderRadius: 10, background: '#202020', border: '1px solid #2a2a2a', color: '#666', fontFamily: 'var(--font-geist-sans)', fontSize: 14, fontWeight: 600, cursor: 'pointer' }}>Cancel</button>
-          <button onClick={handleImport} disabled={!cards.length || importing} style={{ flex: 1, padding: 11, borderRadius: 10, background: 'linear-gradient(135deg,#9333ea,#a855f7)', border: 'none', color: '#000', fontFamily: 'var(--font-geist-sans)', fontSize: 14, fontWeight: 700, cursor: 'pointer', opacity: (!cards.length || importing) ? 0.5 : 1 }}>{importing ? 'Importing...' : 'Import ' + cards.length + ' Cards'}</button>
+          <button onClick={handleImport} disabled={!cards.length || importing} style={{ flex: 1, padding: 11, borderRadius: 10, background: 'linear-gradient(135deg,var(--accent),var(--accent-light))', border: 'none', color: '#000', fontFamily: 'var(--font-geist-sans)', fontSize: 14, fontWeight: 700, cursor: 'pointer', opacity: (!cards.length || importing) ? 0.5 : 1 }}>{importing ? 'Importing...' : 'Import ' + cards.length + ' Cards'}</button>
         </div>
       </div>
     </div>
@@ -481,21 +481,21 @@ function BreakEvenModal({ card, onClose }) {
           <div>
             <label style={{ display: 'block', fontSize: 11, fontWeight: 600, color: '#555', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 6, fontFamily: 'var(--font-geist-sans)' }}>eBay Fee %</label>
             <input type="number" value={ebayFee} onChange={e => setEbayFee(e.target.value)} style={inputStyle} step="0.01"
-              onFocus={e => e.target.style.borderColor = '#9333ea'}
+              onFocus={e => e.target.style.borderColor = 'var(--accent)'}
               onBlur={e => e.target.style.borderColor = '#2a2a2a'} />
           </div>
           <div>
             <label style={{ display: 'block', fontSize: 11, fontWeight: 600, color: '#555', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 6, fontFamily: 'var(--font-geist-sans)' }}>Shipping ($)</label>
             <input type="number" value={shipping} onChange={e => setShipping(e.target.value)} style={inputStyle} step="0.01"
-              onFocus={e => e.target.style.borderColor = '#9333ea'}
+              onFocus={e => e.target.style.borderColor = 'var(--accent)'}
               onBlur={e => e.target.style.borderColor = '#2a2a2a'} />
           </div>
         </div>
 
         {/* Break even result */}
-        <div style={{ padding: '14px 16px', borderRadius: 10, background: 'rgba(147,51,234,0.06)', border: '1px solid rgba(147,51,234,0.2)', marginBottom: 18 }}>
-          <div style={{ fontSize: 10, color: '#9333ea', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 6, fontFamily: 'var(--font-geist-sans)' }}>Break Even Price</div>
-          <div style={{ fontFamily: 'var(--font-geist-sans)', fontSize: 26, fontWeight: 700, color: '#9333ea' }}>{fmt(breakEvenExact)}</div>
+        <div style={{ padding: '14px 16px', borderRadius: 10, background: 'rgba(var(--accent-rgb),0.06)', border: '1px solid rgba(var(--accent-rgb),0.2)', marginBottom: 18 }}>
+          <div style={{ fontSize: 10, color: 'var(--accent)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 6, fontFamily: 'var(--font-geist-sans)' }}>Break Even Price</div>
+          <div style={{ fontFamily: 'var(--font-geist-sans)', fontSize: 26, fontWeight: 700, color: 'var(--accent)' }}>{fmt(breakEvenExact)}</div>
           <div style={{ fontSize: 11, color: '#666', marginTop: 6, fontFamily: 'var(--font-geist-sans)', display: 'flex', flexDirection: 'column', gap: 2 }}>
             <span>Cost: {fmt(buy)} + eBay fee: {fmt(breakEvenExact * (parseFloat(ebayFee) / 100))} + Shipping: {fmt(shippingAmt)}</span>
           </div>
@@ -505,13 +505,13 @@ function BreakEvenModal({ card, onClose }) {
         <div style={{ marginBottom: 18 }}>
           <label style={{ display: 'block', fontSize: 11, fontWeight: 600, color: '#555', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 6, fontFamily: 'var(--font-geist-sans)' }}>My Target Sell Price ($)</label>
           <input type="number" value={targetSell} onChange={e => setTargetSell(e.target.value)} placeholder="Enter your target price..." style={{ ...inputStyle, fontSize: 16 }} step="0.01"
-            onFocus={e => e.target.style.borderColor = '#9333ea'}
+            onFocus={e => e.target.style.borderColor = 'var(--accent)'}
             onBlur={e => e.target.style.borderColor = '#2a2a2a'} />
         </div>
 
         {/* Target result */}
         {targetSellAmt > 0 && (
-          <div style={{ padding: '14px 16px', borderRadius: 10, background: isProfit ? 'rgba(147,51,234,0.06)' : 'rgba(97,97,97,0.08)', border: `1px solid ${isProfit ? 'rgba(147,51,234,0.2)' : 'rgba(97,97,97,0.2)'}` }}>
+          <div style={{ padding: '14px 16px', borderRadius: 10, background: isProfit ? 'rgba(var(--accent-rgb),0.06)' : 'rgba(97,97,97,0.08)', border: `1px solid ${isProfit ? 'rgba(var(--accent-rgb),0.2)' : 'rgba(97,97,97,0.2)'}` }}>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 12 }}>
               <div>
                 <div style={{ fontSize: 10, color: '#444', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 4, fontFamily: 'var(--font-geist-sans)' }}>eBay Fee</div>
@@ -716,10 +716,10 @@ function CollectionPage() {
           <div className="mob-topbar" style={{ alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
             <img src="/logo-transparent.png" alt="TopLoad" style={{ height: 28, width: 'auto', objectFit: 'contain', filter: 'brightness(0) invert(1)' }} />
             <div style={{ display:'flex', gap:6 }}>
-              <button onClick={handleShareCollection} style={{ display:'flex', alignItems:'center', gap:4, padding:'8px 12px', background: shareCopied?'rgba(34,197,94,0.1)':'rgba(147,51,234,0.08)', border: shareCopied?'1px solid rgba(34,197,94,0.3)':'1px solid rgba(147,51,234,0.25)', borderRadius:8, color: shareCopied?'#22c55e':'#9333ea', fontSize:12, fontWeight:700, cursor:'pointer' }}>
+              <button onClick={handleShareCollection} style={{ display:'flex', alignItems:'center', gap:4, padding:'8px 12px', background: shareCopied?'rgba(34,197,94,0.1)':'rgba(var(--accent-rgb),0.08)', border: shareCopied?'1px solid rgba(34,197,94,0.3)':'1px solid rgba(var(--accent-rgb),0.25)', borderRadius:8, color: shareCopied?'#22c55e':'var(--accent)', fontSize:12, fontWeight:700, cursor:'pointer' }}>
                 {shareCopied ? '✓' : '🔗'}
               </button>
-              <button onClick={() => setModal('add')} className="press" style={{ display:'flex', alignItems:'center', gap:6, padding:'8px 16px', background:'#9333ea', border:'none', borderRadius:8, color:'#fff', fontSize:12, fontWeight:900, cursor:'pointer', letterSpacing:'0.05em', textTransform:'uppercase' }}>+ Add</button>
+              <button onClick={() => setModal('add')} className="press" style={{ display:'flex', alignItems:'center', gap:6, padding:'8px 16px', background:'var(--accent)', border:'none', borderRadius:8, color:'#fff', fontSize:12, fontWeight:900, cursor:'pointer', letterSpacing:'0.05em', textTransform:'uppercase' }}>+ Add</button>
             </div>
           </div>
           {/* ── Desktop header ── */}
@@ -732,16 +732,16 @@ function CollectionPage() {
               <div style={{ display:'flex', gap:8 }}>
                 <button onClick={() => setShowImport(true)} style={{ display:'flex', alignItems:'center', gap:6, padding:'9px 16px', background:'transparent', border:'1px solid #222', borderRadius:8, color:'#555', fontSize:12, fontWeight:700, cursor:'pointer', letterSpacing:'0.03em', textTransform:'uppercase' }}><IconUpload />Import</button>
                 <button onClick={() => exportCSV(cards)} disabled={!cards.length} style={{ display:'flex', alignItems:'center', gap:6, padding:'9px 16px', background:'transparent', border:'1px solid #222', borderRadius:8, color:'#555', fontSize:12, fontWeight:700, cursor:'pointer', opacity:cards.length?1:0.4, letterSpacing:'0.03em', textTransform:'uppercase' }}><IconDownload />Export</button>
-                <button onClick={handleShareCollection} style={{ display:'flex', alignItems:'center', gap:6, padding:'9px 16px', background: shareCopied?'rgba(34,197,94,0.1)':'rgba(147,51,234,0.08)', border: shareCopied?'1px solid rgba(34,197,94,0.3)':'1px solid rgba(147,51,234,0.25)', borderRadius:8, color: shareCopied?'#22c55e':'#9333ea', fontSize:12, fontWeight:700, cursor:'pointer', letterSpacing:'0.03em', textTransform:'uppercase' }}>
+                <button onClick={handleShareCollection} style={{ display:'flex', alignItems:'center', gap:6, padding:'9px 16px', background: shareCopied?'rgba(34,197,94,0.1)':'rgba(var(--accent-rgb),0.08)', border: shareCopied?'1px solid rgba(34,197,94,0.3)':'1px solid rgba(var(--accent-rgb),0.25)', borderRadius:8, color: shareCopied?'#22c55e':'var(--accent)', fontSize:12, fontWeight:700, cursor:'pointer', letterSpacing:'0.03em', textTransform:'uppercase' }}>
                   {shareCopied ? '✓ Copied' : '🔗 Share'}
                 </button>
-                <button onClick={() => setModal('add')} style={{ display:'flex', alignItems:'center', gap:6, padding:'9px 20px', background:'#9333ea', border:'none', borderRadius:8, color:'#fff', fontSize:12, fontWeight:900, cursor:'pointer', letterSpacing:'0.08em', textTransform:'uppercase' }}>+ Add Card</button>
+                <button onClick={() => setModal('add')} style={{ display:'flex', alignItems:'center', gap:6, padding:'9px 20px', background:'var(--accent)', border:'none', borderRadius:8, color:'#fff', fontSize:12, fontWeight:900, cursor:'pointer', letterSpacing:'0.08em', textTransform:'uppercase' }}>+ Add Card</button>
               </div>
             </div>
             {cards.length > 0 && (
               <div style={{ display:'grid', gridTemplateColumns:'repeat(5,1fr)', gap:10 }}>
                 {[
-                  { label:'Cards', value: statActive.length, sub:'active', accent:'#9333ea', valColor:'#fff', big:true },
+                  { label:'Cards', value: statActive.length, sub:'active', accent:'var(--accent)', valColor:'#fff', big:true },
                   { label:'Invested', value: fmt(totalInvested), sub:'cost basis', accent:'#333', valColor:'#fff', big:false },
                   { label:'Portfolio Value', value: fmt(totalValue), sub:'current', accent:'#333', valColor:'#fff', big:false },
                   { label:'Gain / Loss', value: (totalValue-totalInvested>=0?'+':'')+fmt(totalValue-totalInvested), sub:(totalValue-totalInvested>=0?'+':'')+((totalInvested>0?(totalValue-totalInvested)/totalInvested*100:0).toFixed(1))+'%', accent: totalValue>=totalInvested?'#22c55e':'#ef4444', valColor: totalValue>=totalInvested?'#22c55e':'#ef4444', big:false },
@@ -759,9 +759,9 @@ function CollectionPage() {
           </div>
 
           {importSuccess !== null && (
-            <div style={{ marginBottom: 16, padding: '12px 16px', borderRadius: 10, background: 'rgba(147,51,234,0.1)', border: '1px solid rgba(147,51,234,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-              <span style={{ fontFamily: 'var(--font-geist-sans)', fontSize: 13, color: '#9333ea', fontWeight: 600 }}>✓ Successfully imported {importSuccess} cards</span>
-              <button onClick={() => setImportSuccess(null)} style={{ background: 'none', border: 'none', color: '#9333ea', cursor: 'pointer', fontSize: 18 }}>×</button>
+            <div style={{ marginBottom: 16, padding: '12px 16px', borderRadius: 10, background: 'rgba(var(--accent-rgb),0.1)', border: '1px solid rgba(var(--accent-rgb),0.2)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <span style={{ fontFamily: 'var(--font-geist-sans)', fontSize: 13, color: 'var(--accent)', fontWeight: 600 }}>✓ Successfully imported {importSuccess} cards</span>
+              <button onClick={() => setImportSuccess(null)} style={{ background: 'none', border: 'none', color: 'var(--accent)', cursor: 'pointer', fontSize: 18 }}>×</button>
             </div>
           )}
 
@@ -769,7 +769,7 @@ function CollectionPage() {
           {cards.length > 0 && (
             <div className="mob-stats" style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:8, marginBottom:12 }}>
               {[
-                { label:'Value', value: fmt(totalValue), accent:'#9333ea', color:'#fff' },
+                { label:'Value', value: fmt(totalValue), accent:'var(--accent)', color:'#fff' },
                 { label:'Gain / Loss', value: (totalValue-totalInvested>=0?'+':'')+fmt(totalValue-totalInvested), accent: totalValue>=totalInvested?'#22c55e':'#ef4444', color: totalValue>=totalInvested?'#22c55e':'#ef4444' },
                 { label:'Invested', value: fmt(totalInvested), accent:'#333', color:'#fff' },
                 { label:'Cards', value: statActive.length, accent:'#333', color:'#fff' },
@@ -802,10 +802,10 @@ function CollectionPage() {
             return (
               <div className="hide-mob-flex" style={{ gap:6, marginBottom:14, overflowX:'auto', flexWrap:'nowrap', paddingBottom:4, WebkitOverflowScrolling:'touch', scrollbarWidth:'none' }}>
                 {tabs.map(t => (
-                  <button key={t.val} onClick={() => setSportTab(t.val)} style={{ display:'flex', alignItems:'center', gap:6, padding:'8px 16px', borderRadius:100, border: sportTab === t.val ? '1px solid #9333ea' : '1px solid #1e1e1e', background: sportTab === t.val ? '#9333ea' : '#111', color: sportTab === t.val ? '#fff' : '#555', fontSize:12, fontWeight: sportTab === t.val ? 900 : 600, textTransform:'uppercase', letterSpacing:'0.05em', cursor:'pointer', whiteSpace:'nowrap', flexShrink:0, transition:'all 0.15s' }}>
+                  <button key={t.val} onClick={() => setSportTab(t.val)} style={{ display:'flex', alignItems:'center', gap:6, padding:'8px 16px', borderRadius:100, border: sportTab === t.val ? '1px solid var(--accent)' : '1px solid #1e1e1e', background: sportTab === t.val ? 'var(--accent)' : '#111', color: sportTab === t.val ? '#fff' : '#555', fontSize:12, fontWeight: sportTab === t.val ? 900 : 600, textTransform:'uppercase', letterSpacing:'0.05em', cursor:'pointer', whiteSpace:'nowrap', flexShrink:0, transition:'all 0.15s' }}>
                     <span>{t.emoji}</span>{t.label}
                     {sportTab === t.val && t.val !== 'all' && (
-                      <span style={{ fontSize:10, background:'rgba(147,51,234,0.2)', borderRadius:10, padding:'1px 6px', fontFamily:'var(--font-geist-sans)' }}>
+                      <span style={{ fontSize:10, background:'rgba(var(--accent-rgb),0.2)', borderRadius:10, padding:'1px 6px', fontFamily:'var(--font-geist-sans)' }}>
                         {statActive.length}
                       </span>
                     )}
@@ -823,7 +823,7 @@ function CollectionPage() {
             </select>
             <div style={{ display: 'flex', borderRadius: 9, overflow: 'hidden', border: '1px solid #222' }}>
               {[['active','Active'],['sold','Sold'],['all','All']].map(([val, label]) => (
-                <button key={val} onClick={() => setFilterStatus(val)} style={{ padding: '8px 14px', background: filterStatus===val ? '#9333ea' : '#111', border:'none', color: filterStatus===val ? '#fff' : '#555', fontSize:11, fontWeight:800, textTransform:'uppercase', letterSpacing:'0.06em', cursor: 'pointer' }}>{label}</button>
+                <button key={val} onClick={() => setFilterStatus(val)} style={{ padding: '8px 14px', background: filterStatus===val ? 'var(--accent)' : '#111', border:'none', color: filterStatus===val ? '#fff' : '#555', fontSize:11, fontWeight:800, textTransform:'uppercase', letterSpacing:'0.06em', cursor: 'pointer' }}>{label}</button>
               ))}
             </div>
           </div>
@@ -831,7 +831,7 @@ function CollectionPage() {
             {/* Graded filter */}
             <div style={{ display: 'flex', borderRadius: 8, overflow: 'hidden', border: '1px solid #1e1e1e' }}>
               {[['','All Cards'],['graded','Graded'],['raw','Raw']].map(([val, label]) => (
-                <button key={val} onClick={() => setFilterGraded(val)} style={{ padding: '8px 12px', background: filterGraded===val ? '#9333ea' : '#111', border:'none', color: filterGraded===val ? '#fff' : '#555', fontSize:11, fontWeight:800, textTransform:'uppercase', letterSpacing:'0.06em', cursor: 'pointer', whiteSpace: 'nowrap' }}>{label}</button>
+                <button key={val} onClick={() => setFilterGraded(val)} style={{ padding: '8px 12px', background: filterGraded===val ? 'var(--accent)' : '#111', border:'none', color: filterGraded===val ? '#fff' : '#555', fontSize:11, fontWeight:800, textTransform:'uppercase', letterSpacing:'0.06em', cursor: 'pointer', whiteSpace: 'nowrap' }}>{label}</button>
               ))}
             </div>
             <button onClick={() => setFilterAuto(v => !v)} style={{ padding: '8px 14px', borderRadius: 10, background: filterAuto ? 'rgba(255,190,46,0.1)' : '#181818', border: filterAuto ? '1px solid rgba(255,190,46,0.35)' : '1px solid #2a2a2a', color: filterAuto ? '#ffbe2e' : '#555', fontFamily: 'var(--font-geist-sans)', fontSize: 12, fontWeight: filterAuto ? 700 : 500, cursor: 'pointer', whiteSpace: 'nowrap' }}>✍️ Autos Only</button>
@@ -867,14 +867,14 @@ function CollectionPage() {
             </div>
             {/* Active filter count */}
             {(filterGraded || filterSport || sortBy !== 'date_desc' || priceMin || priceMax) && (
-              <button onClick={() => { setFilterGraded(''); setFilterSport(''); setSortBy('date_desc'); setPriceMin(''); setPriceMax(''); setSportTab('all'); setFilterAuto(false) }} style={{ padding: '8px 12px', borderRadius: 10, background: 'rgba(147,51,234,0.08)', border: '1px solid rgba(147,51,234,0.2)', color: '#9333ea', fontFamily: 'var(--font-geist-sans)', fontSize: 12, fontWeight: 600, cursor: 'pointer' }}>
+              <button onClick={() => { setFilterGraded(''); setFilterSport(''); setSortBy('date_desc'); setPriceMin(''); setPriceMax(''); setSportTab('all'); setFilterAuto(false) }} style={{ padding: '8px 12px', borderRadius: 10, background: 'rgba(var(--accent-rgb),0.08)', border: '1px solid rgba(var(--accent-rgb),0.2)', color: 'var(--accent)', fontFamily: 'var(--font-geist-sans)', fontSize: 12, fontWeight: 600, cursor: 'pointer' }}>
                 ✕ Clear Filters
               </button>
             )}
             {/* View toggle */}
             <div style={{ marginLeft: 'auto', display: 'flex', borderRadius: 8, overflow: 'hidden', border: '1px solid #1e1e1e' }}>
-              <button onClick={() => setViewMode('table')} title="Table view" style={{ padding: '8px 12px', background: viewMode === 'table' ? 'rgba(147,51,234,0.15)' : '#111', border: 'none', color: viewMode === 'table' ? '#9333ea' : '#555', cursor: 'pointer', display: 'flex', alignItems: 'center' }}><IconList /></button>
-              <button onClick={() => setViewMode('grid')} title="Grid view" style={{ padding: '8px 12px', background: viewMode === 'grid' ? 'rgba(147,51,234,0.15)' : '#111', border: 'none', color: viewMode === 'grid' ? '#9333ea' : '#555', cursor: 'pointer', display: 'flex', alignItems: 'center' }}><IconGrid /></button>
+              <button onClick={() => setViewMode('table')} title="Table view" style={{ padding: '8px 12px', background: viewMode === 'table' ? 'rgba(var(--accent-rgb),0.15)' : '#111', border: 'none', color: viewMode === 'table' ? 'var(--accent)' : '#555', cursor: 'pointer', display: 'flex', alignItems: 'center' }}><IconList /></button>
+              <button onClick={() => setViewMode('grid')} title="Grid view" style={{ padding: '8px 12px', background: viewMode === 'grid' ? 'rgba(var(--accent-rgb),0.15)' : '#111', border: 'none', color: viewMode === 'grid' ? 'var(--accent)' : '#555', cursor: 'pointer', display: 'flex', alignItems: 'center' }}><IconGrid /></button>
             </div>
           </div>
           {/* ── Mobile: search row ── */}
@@ -887,7 +887,7 @@ function CollectionPage() {
               return (
                 <div style={{ display:'flex', gap:6, overflowX:'auto', flexWrap:'nowrap', paddingBottom:6, marginBottom:8, WebkitOverflowScrolling:'touch', scrollbarWidth:'none' }}>
                   {allTabs.map(t => (
-                    <button key={t.val} onClick={() => setSportTab(t.val)} style={{ padding:'5px 12px', borderRadius:20, border: sportTab===t.val ? '1px solid #9333ea' : '1px solid #1e1e1e', background: sportTab===t.val ? '#9333ea' : '#111', color: sportTab===t.val ? '#fff' : '#555', fontSize:11, fontWeight:700, cursor:'pointer', whiteSpace:'nowrap', flexShrink:0, transition:'all 0.15s' }}>
+                    <button key={t.val} onClick={() => setSportTab(t.val)} style={{ padding:'5px 12px', borderRadius:20, border: sportTab===t.val ? '1px solid var(--accent)' : '1px solid #1e1e1e', background: sportTab===t.val ? 'var(--accent)' : '#111', color: sportTab===t.val ? '#fff' : '#555', fontSize:11, fontWeight:700, cursor:'pointer', whiteSpace:'nowrap', flexShrink:0, transition:'all 0.15s' }}>
                       {t.label}
                     </button>
                   ))}
@@ -904,14 +904,14 @@ function CollectionPage() {
                 </button>
                 <div style={{ display:'none', position:'absolute', right:0, top:34, background:'#1a1a1a', border:'1px solid #222', borderRadius:8, padding:'4px', zIndex:50, minWidth:110, boxShadow:'0 8px 24px rgba(0,0,0,0.6)' }}>
                   {[['table','List view'],['grid','Grid view']].map(([val,label]) => (
-                    <button key={val} onClick={e => { setViewMode(val); e.currentTarget.closest('[style*="display:block"]') && (e.currentTarget.closest('[style*="display:block"]').style.display='none') }} style={{ display:'flex', alignItems:'center', gap:8, width:'100%', padding:'7px 10px', background: viewMode===val?'rgba(147,51,234,0.1)':'transparent', border:'none', color: viewMode===val?'#a855f7':'#888', fontSize:12, fontWeight:700, cursor:'pointer', borderRadius:6, textAlign:'left' }}>
+                    <button key={val} onClick={e => { setViewMode(val); e.currentTarget.closest('[style*="display:block"]') && (e.currentTarget.closest('[style*="display:block"]').style.display='none') }} style={{ display:'flex', alignItems:'center', gap:8, width:'100%', padding:'7px 10px', background: viewMode===val?'rgba(var(--accent-rgb),0.1)':'transparent', border:'none', color: viewMode===val?'var(--accent-light)':'#888', fontSize:12, fontWeight:700, cursor:'pointer', borderRadius:6, textAlign:'left' }}>
                       {val==='table'?<IconList />:<IconGrid />}{label}
                     </button>
                   ))}
                 </div>
               </div>
               {/* Filter button */}
-              <button onClick={() => setFilterSheetOpen(true)} style={{ height:30, width:30, borderRadius:8, background: (filterGraded||filterStatus!=='active'||filterAuto||priceMin||priceMax||sportTab!=='all') ? '#9333ea' : '#111', border:'1px solid #1e1e1e', color: (filterGraded||filterStatus!=='active'||filterAuto||priceMin||priceMax||sportTab!=='all') ? '#fff' : '#555', cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0 }}>
+              <button onClick={() => setFilterSheetOpen(true)} style={{ height:30, width:30, borderRadius:8, background: (filterGraded||filterStatus!=='active'||filterAuto||priceMin||priceMax||sportTab!=='all') ? 'var(--accent)' : '#111', border:'1px solid #1e1e1e', color: (filterGraded||filterStatus!=='active'||filterAuto||priceMin||priceMax||sportTab!=='all') ? '#fff' : '#555', cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0 }}>
                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><line x1="4" y1="6" x2="20" y2="6"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="11" y1="18" x2="13" y2="18"/></svg>
               </button>
             </div>
@@ -926,14 +926,14 @@ function CollectionPage() {
                 <div style={{ width:40, height:4, borderRadius:2, background:'#333', margin:'0 auto 20px' }} />
                 <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:20 }}>
                   <span style={{ fontSize:16, fontWeight:900, color:'#fff', textTransform:'uppercase', letterSpacing:'-0.3px' }}>Filters</span>
-                  <button onClick={() => { setFilterGraded(''); setFilterStatus('active'); setFilterAuto(false); setPriceMin(''); setPriceMax(''); setSortBy('date_desc') }} style={{ fontSize:11, color:'#9333ea', fontWeight:700, background:'none', border:'none', cursor:'pointer' }}>Reset all</button>
+                  <button onClick={() => { setFilterGraded(''); setFilterStatus('active'); setFilterAuto(false); setPriceMin(''); setPriceMax(''); setSortBy('date_desc') }} style={{ fontSize:11, color:'var(--accent)', fontWeight:700, background:'none', border:'none', cursor:'pointer' }}>Reset all</button>
                 </div>
                 {/* Status */}
                 <div style={{ marginBottom:18 }}>
                   <div style={{ fontSize:9, fontWeight:700, color:'#555', textTransform:'uppercase', letterSpacing:'0.1em', marginBottom:8 }}>Status</div>
                   <div style={{ display:'flex', gap:6 }}>
                     {[['active','Active'],['sold','Sold'],['all','All']].map(([val,label]) => (
-                      <button key={val} onClick={() => setFilterStatus(val)} style={{ padding:'8px 16px', borderRadius:8, border:'1px solid #1e1e1e', background: filterStatus===val ? '#9333ea' : '#1a1a1a', color: filterStatus===val ? '#fff' : '#555', fontSize:12, fontWeight:700, cursor:'pointer' }}>{label}</button>
+                      <button key={val} onClick={() => setFilterStatus(val)} style={{ padding:'8px 16px', borderRadius:8, border:'1px solid #1e1e1e', background: filterStatus===val ? 'var(--accent)' : '#1a1a1a', color: filterStatus===val ? '#fff' : '#555', fontSize:12, fontWeight:700, cursor:'pointer' }}>{label}</button>
                     ))}
                   </div>
                 </div>
@@ -942,7 +942,7 @@ function CollectionPage() {
                   <div style={{ fontSize:9, fontWeight:700, color:'#555', textTransform:'uppercase', letterSpacing:'0.1em', marginBottom:8 }}>Grade</div>
                   <div style={{ display:'flex', gap:6 }}>
                     {[['','All'],['graded','Graded'],['raw','Raw']].map(([val,label]) => (
-                      <button key={val} onClick={() => setFilterGraded(val)} style={{ padding:'8px 16px', borderRadius:8, border:'1px solid #1e1e1e', background: filterGraded===val ? '#9333ea' : '#1a1a1a', color: filterGraded===val ? '#fff' : '#555', fontSize:12, fontWeight:700, cursor:'pointer' }}>{label}</button>
+                      <button key={val} onClick={() => setFilterGraded(val)} style={{ padding:'8px 16px', borderRadius:8, border:'1px solid #1e1e1e', background: filterGraded===val ? 'var(--accent)' : '#1a1a1a', color: filterGraded===val ? '#fff' : '#555', fontSize:12, fontWeight:700, cursor:'pointer' }}>{label}</button>
                     ))}
                   </div>
                 </div>
@@ -954,9 +954,9 @@ function CollectionPage() {
                     <div style={{ marginBottom:18 }}>
                       <div style={{ fontSize:9, fontWeight:700, color:'#555', textTransform:'uppercase', letterSpacing:'0.1em', marginBottom:8 }}>Sport</div>
                       <div style={{ display:'flex', gap:6, flexWrap:'wrap' }}>
-                        <button onClick={() => setSportTab('all')} style={{ padding:'8px 14px', borderRadius:8, border:'1px solid #1e1e1e', background: sportTab==='all' ? '#9333ea' : '#1a1a1a', color: sportTab==='all' ? '#fff' : '#555', fontSize:12, fontWeight:700, cursor:'pointer' }}>All</button>
+                        <button onClick={() => setSportTab('all')} style={{ padding:'8px 14px', borderRadius:8, border:'1px solid #1e1e1e', background: sportTab==='all' ? 'var(--accent)' : '#1a1a1a', color: sportTab==='all' ? '#fff' : '#555', fontSize:12, fontWeight:700, cursor:'pointer' }}>All</button>
                         {uniqueSports.map(s => (
-                          <button key={s} onClick={() => setSportTab(s)} style={{ padding:'8px 14px', borderRadius:8, border:'1px solid #1e1e1e', background: sportTab===s ? '#9333ea' : '#1a1a1a', color: sportTab===s ? '#fff' : '#555', fontSize:12, fontWeight:700, cursor:'pointer' }}>{s}</button>
+                          <button key={s} onClick={() => setSportTab(s)} style={{ padding:'8px 14px', borderRadius:8, border:'1px solid #1e1e1e', background: sportTab===s ? 'var(--accent)' : '#1a1a1a', color: sportTab===s ? '#fff' : '#555', fontSize:12, fontWeight:700, cursor:'pointer' }}>{s}</button>
                         ))}
                       </div>
                     </div>
@@ -972,7 +972,7 @@ function CollectionPage() {
                   <div style={{ fontSize:9, fontWeight:700, color:'#555', textTransform:'uppercase', letterSpacing:'0.1em', marginBottom:8 }}>Sort By</div>
                   <div style={{ display:'flex', gap:6, flexWrap:'wrap' }}>
                     {[['date_desc','Newest'],['date_asc','Oldest'],['price_desc','Value ↓'],['price_asc','Value ↑'],['name_asc','A→Z']].map(([val,label]) => (
-                      <button key={val} onClick={() => setSortBy(val)} style={{ padding:'8px 14px', borderRadius:8, border:'1px solid #1e1e1e', background: sortBy===val ? '#9333ea' : '#1a1a1a', color: sortBy===val ? '#fff' : '#555', fontSize:12, fontWeight:700, cursor:'pointer' }}>{label}</button>
+                      <button key={val} onClick={() => setSortBy(val)} style={{ padding:'8px 14px', borderRadius:8, border:'1px solid #1e1e1e', background: sortBy===val ? 'var(--accent)' : '#1a1a1a', color: sortBy===val ? '#fff' : '#555', fontSize:12, fontWeight:700, cursor:'pointer' }}>{label}</button>
                     ))}
                   </div>
                 </div>
@@ -985,18 +985,18 @@ function CollectionPage() {
                     <input type="number" placeholder="Max" value={priceMax} onChange={e => setPriceMax(e.target.value)} style={{ flex:1, padding:'10px 12px', borderRadius:8, background:'#1a1a1a', border:'1px solid #1e1e1e', color:'#f0f0f0', fontSize:14, outline:'none' }} />
                   </div>
                 </div>
-                <button onClick={() => setFilterSheetOpen(false)} style={{ width:'100%', padding:'14px', borderRadius:12, background:'#9333ea', border:'none', color:'#fff', fontSize:14, fontWeight:900, cursor:'pointer', textTransform:'uppercase', letterSpacing:'0.05em' }}>Apply Filters</button>
+                <button onClick={() => setFilterSheetOpen(false)} style={{ width:'100%', padding:'14px', borderRadius:12, background:'var(--accent)', border:'none', color:'#fff', fontSize:14, fontWeight:900, cursor:'pointer', textTransform:'uppercase', letterSpacing:'0.05em' }}>Apply Filters</button>
               </div>
             </div>
           )}
 
           {/* Bulk delete bar */}
           {selected.size > 0 && (
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 16px', marginBottom: 12, borderRadius: 10, background: 'rgba(147,51,234,0.08)', border: '1px solid rgba(147,51,234,0.2)' }}>
-              <span style={{ fontFamily: 'var(--font-geist-sans)', fontSize: 13, fontWeight: 600, color: '#9333ea' }}>{selected.size} card{selected.size !== 1 ? 's' : ''} selected</span>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 16px', marginBottom: 12, borderRadius: 10, background: 'rgba(var(--accent-rgb),0.08)', border: '1px solid rgba(var(--accent-rgb),0.2)' }}>
+              <span style={{ fontFamily: 'var(--font-geist-sans)', fontSize: 13, fontWeight: 600, color: 'var(--accent)' }}>{selected.size} card{selected.size !== 1 ? 's' : ''} selected</span>
               <div style={{ display: 'flex', gap: 8 }}>
                 <button onClick={() => setSelected(new Set())} style={{ padding: '6px 12px', borderRadius: 8, background: 'rgba(255,255,255,0.05)', border: '1px solid #2a2a2a', color: '#666', fontFamily: 'var(--font-geist-sans)', fontSize: 12, fontWeight: 600, cursor: 'pointer' }}>Deselect All</button>
-                <button onClick={handleBulkDelete} disabled={bulkDeleting} style={{ padding: '6px 14px', borderRadius: 8, background: 'rgba(147,51,234,0.15)', border: '1px solid rgba(147,51,234,0.3)', color: '#9333ea', fontFamily: 'var(--font-geist-sans)', fontSize: 12, fontWeight: 700, cursor: 'pointer', opacity: bulkDeleting ? 0.6 : 1 }}>
+                <button onClick={handleBulkDelete} disabled={bulkDeleting} style={{ padding: '6px 14px', borderRadius: 8, background: 'rgba(var(--accent-rgb),0.15)', border: '1px solid rgba(var(--accent-rgb),0.3)', color: 'var(--accent)', fontFamily: 'var(--font-geist-sans)', fontSize: 12, fontWeight: 700, cursor: 'pointer', opacity: bulkDeleting ? 0.6 : 1 }}>
                   {bulkDeleting ? 'Deleting...' : `🗑️ Delete ${selected.size} Selected`}
                 </button>
               </div>
@@ -1016,7 +1016,7 @@ function CollectionPage() {
                     { icon:'💰', label:'Track its value', sub:'Update current value anytime to see your P&L' },
                     { icon:'📊', label:'Watch your portfolio grow', sub:'Stats and insights update automatically' },
                   ].map((s,i) => (
-                    <div key={i} style={{ display:'flex', alignItems:'center', gap:12, padding:'11px 14px', background:'#13131f', border:'1px solid rgba(147,51,234,0.15)', boxShadow:'0 4px 20px rgba(0,0,0,0.4)', borderRadius:12, textAlign:'left', animation:`fadeUp 0.45s ease ${i*0.12}s both` }}>
+                    <div key={i} style={{ display:'flex', alignItems:'center', gap:12, padding:'11px 14px', background:'#13131f', border:'1px solid rgba(var(--accent-rgb),0.15)', boxShadow:'0 4px 20px rgba(0,0,0,0.4)', borderRadius:12, textAlign:'left', animation:`fadeUp 0.45s ease ${i*0.12}s both` }}>
                       <div style={{ fontSize:20, flexShrink:0 }}>{s.icon}</div>
                       <div>
                         <div style={{ fontFamily:'var(--font-geist-sans)', fontSize:13, fontWeight:700, color:'#ccc' }}>{s.label}</div>
@@ -1025,7 +1025,7 @@ function CollectionPage() {
                     </div>
                   ))}
                 </div>
-                <button className="press" onClick={() => setModal('add')} style={{ padding:'12px 28px', borderRadius:12, background:'rgba(147,51,234,0.1)', border:'1px solid rgba(147,51,234,0.3)', color:'#9333ea', fontFamily:'var(--font-geist-sans)', fontSize:15, fontWeight:700, cursor:'pointer' }}>
+                <button className="press" onClick={() => setModal('add')} style={{ padding:'12px 28px', borderRadius:12, background:'rgba(var(--accent-rgb),0.1)', border:'1px solid rgba(var(--accent-rgb),0.3)', color:'var(--accent)', fontFamily:'var(--font-geist-sans)', fontSize:15, fontWeight:700, cursor:'pointer' }}>
                   + Add Your First Card
                 </button>
               </div>
@@ -1034,7 +1034,7 @@ function CollectionPage() {
               <div style={{ textAlign:'center', padding:'60px 24px', animation:'fadeIn 0.2s ease' }}>
                 <div style={{ fontSize:36, marginBottom:12, opacity:0.2 }}>🔍</div>
                 <p style={{ color:'#444', fontFamily:'var(--font-geist-sans)', fontSize:14, marginBottom:16 }}>No cards match your filters</p>
-                <button className="press" onClick={() => { setSearch(''); setFilterSport(''); setFilterGraded(''); setSortBy('date_desc'); setPriceMin(''); setPriceMax(''); setSportTab('all') }} style={{ padding:'8px 18px', borderRadius:10, background:'rgba(147,51,234,0.08)', border:'1px solid rgba(147,51,234,0.2)', color:'#9333ea', fontFamily:'var(--font-geist-sans)', fontSize:13, fontWeight:600, cursor:'pointer' }}>Clear Filters</button>
+                <button className="press" onClick={() => { setSearch(''); setFilterSport(''); setFilterGraded(''); setSortBy('date_desc'); setPriceMin(''); setPriceMax(''); setSportTab('all') }} style={{ padding:'8px 18px', borderRadius:10, background:'rgba(var(--accent-rgb),0.08)', border:'1px solid rgba(var(--accent-rgb),0.2)', color:'var(--accent)', fontFamily:'var(--font-geist-sans)', fontSize:13, fontWeight:600, cursor:'pointer' }}>Clear Filters</button>
               </div>
             )
           ) : (
@@ -1051,13 +1051,13 @@ function CollectionPage() {
                     const glPct = buy > 0 ? (gl/buy)*100 : 0
                     const isSelected = selected.has(card.id)
                     return (
-                      <div key={card.id} style={{ background:'#111', border: isSelected ? '1px solid #9333ea' : '1px solid #1a1a1a', borderRadius:12, overflow:'hidden', position:'relative', opacity: card.sold ? 0.65 : 1, animation:`fadeUp 0.25s ease ${Math.min(idx*0.04,0.3)}s both`, transition:'border-color 0.12s, transform 0.12s' }}
-                        onMouseEnter={e => { e.currentTarget.style.borderColor = isSelected ? '#9333ea' : '#333'; e.currentTarget.style.transform='translateY(-2px)' }}
-                        onMouseLeave={e => { e.currentTarget.style.borderColor = isSelected ? '#9333ea' : '#1a1a1a'; e.currentTarget.style.transform='translateY(0)' }}>
+                      <div key={card.id} style={{ background:'#111', border: isSelected ? '1px solid var(--accent)' : '1px solid #1a1a1a', borderRadius:12, overflow:'hidden', position:'relative', opacity: card.sold ? 0.65 : 1, animation:`fadeUp 0.25s ease ${Math.min(idx*0.04,0.3)}s both`, transition:'border-color 0.12s, transform 0.12s' }}
+                        onMouseEnter={e => { e.currentTarget.style.borderColor = isSelected ? 'var(--accent)' : '#333'; e.currentTarget.style.transform='translateY(-2px)' }}
+                        onMouseLeave={e => { e.currentTarget.style.borderColor = isSelected ? 'var(--accent)' : '#1a1a1a'; e.currentTarget.style.transform='translateY(0)' }}>
                         <div style={{ height:2, background: glPos ? '#22c55e' : '#ef4444', opacity: buy===0?0.2:0.9 }} />
                         <div style={{ padding:'10px 12px' }}>
                           <div style={{ display:'flex', justifyContent:'space-between', alignItems:'flex-start', marginBottom:8 }}>
-                            <input type="checkbox" checked={isSelected} onChange={() => toggleSelect(card.id)} style={{ accentColor:'#9333ea', width:13, height:13, cursor:'pointer', marginTop:2 }} />
+                            <input type="checkbox" checked={isSelected} onChange={() => toggleSelect(card.id)} style={{ accentColor:'var(--accent)', width:13, height:13, cursor:'pointer', marginTop:2 }} />
                             <div style={{ position:'relative' }}>
                               <button onClick={e => { e.stopPropagation(); const m = e.currentTarget.nextSibling; m.style.display = m.style.display==='block'?'none':'block' }} style={{ width:22, height:22, borderRadius:6, background:'#1a1a1a', border:'1px solid #222', color:'#555', cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'center', fontSize:14, fontWeight:700 }}>⋯</button>
                               <div style={{ display:'none', position:'absolute', right:0, top:26, background:'#1a1a1a', border:'1px solid #2a2a2a', borderRadius:10, padding:'4px', zIndex:50, minWidth:140, boxShadow:'0 8px 24px rgba(0,0,0,0.6)' }}
@@ -1107,20 +1107,20 @@ function CollectionPage() {
                     const barColor = glPos ? '#22c55e' : '#ef4444'
                     const isSelected = selected.has(card.id)
                     return (
-                      <div key={card.id} style={{ background:'#111', border: isSelected ? '1px solid #9333ea' : '1px solid #1a1a1a', borderRadius:12, overflow:'hidden', position:'relative', opacity: card.sold ? 0.65 : 1, animation:`fadeUp 0.25s ease ${Math.min(idx*0.04,0.3)}s both`, transition:'border-color 0.12s, transform 0.12s' }}
-                        onMouseEnter={e => { e.currentTarget.style.borderColor = isSelected ? '#9333ea' : '#333'; e.currentTarget.style.transform='translateY(-2px)' }}
-                        onMouseLeave={e => { e.currentTarget.style.borderColor = isSelected ? '#9333ea' : '#1a1a1a'; e.currentTarget.style.transform='translateY(0)' }}>
+                      <div key={card.id} style={{ background:'#111', border: isSelected ? '1px solid var(--accent)' : '1px solid #1a1a1a', borderRadius:12, overflow:'hidden', position:'relative', opacity: card.sold ? 0.65 : 1, animation:`fadeUp 0.25s ease ${Math.min(idx*0.04,0.3)}s both`, transition:'border-color 0.12s, transform 0.12s' }}
+                        onMouseEnter={e => { e.currentTarget.style.borderColor = isSelected ? 'var(--accent)' : '#333'; e.currentTarget.style.transform='translateY(-2px)' }}
+                        onMouseLeave={e => { e.currentTarget.style.borderColor = isSelected ? 'var(--accent)' : '#1a1a1a'; e.currentTarget.style.transform='translateY(0)' }}>
                         {/* Color bar top */}
                         <div style={{ height:3, background: card.sold ? '#ffbe2e' : barColor, opacity: buy===0 ? 0.3 : 0.9 }} />
                         <div style={{ padding:'14px 16px' }}>
                           {/* Top row: sport icon + badges */}
                           <div style={{ display:'flex', justifyContent:'space-between', alignItems:'flex-start', marginBottom:12 }}>
                             <div style={{ display:'flex', alignItems:'center', gap:8 }}>
-                              <input type="checkbox" checked={isSelected} onChange={() => toggleSelect(card.id)} style={{ accentColor:'#9333ea', width:14, height:14, cursor:'pointer' }} />
+                              <input type="checkbox" checked={isSelected} onChange={() => toggleSelect(card.id)} style={{ accentColor:'var(--accent)', width:14, height:14, cursor:'pointer' }} />
                               <div style={{ width:36, height:36, borderRadius:8, background:'#1a1a1a', border:'1px solid #222', display:'flex', alignItems:'center', justifyContent:'center', fontSize:18 }}>{sportEmoji}</div>
                             </div>
                             <div style={{ display:'flex', gap:5, flexWrap:'wrap', justifyContent:'flex-end' }}>
-                              {card.grade && <span style={{ background:'rgba(147,51,234,0.15)', border:'1px solid rgba(147,51,234,0.3)', color:'#a855f7', fontSize:9, fontWeight:900, padding:'3px 8px', borderRadius:5, letterSpacing:'0.08em' }}>{card.gradingCo?`${card.gradingCo} `:''}{card.grade}</span>}
+                              {card.grade && <span style={{ background:'rgba(var(--accent-rgb),0.15)', border:'1px solid rgba(var(--accent-rgb),0.3)', color:'var(--accent-light)', fontSize:9, fontWeight:900, padding:'3px 8px', borderRadius:5, letterSpacing:'0.08em' }}>{card.gradingCo?`${card.gradingCo} `:''}{card.grade}</span>}
                               {card.auto && <span style={{ background:'rgba(255,190,46,0.1)', border:'1px solid rgba(255,190,46,0.25)', color:'#ffbe2e', fontSize:9, fontWeight:900, padding:'3px 8px', borderRadius:5, letterSpacing:'0.08em' }}>AUTO{card.autoGrade ? ` ${card.autoGrade}` : ''}</span>}
                               {card.sold && <span style={{ background:'rgba(255,190,46,0.1)', border:'1px solid rgba(255,190,46,0.25)', color:'#ffbe2e', fontSize:9, fontWeight:900, padding:'3px 8px', borderRadius:5 }}>SOLD</span>}
                               {buy > 0 && <span style={{ background: glPos ? 'rgba(34,197,94,0.1)' : 'rgba(239,68,68,0.1)', border: `1px solid ${glPos?'rgba(34,197,94,0.25)':'rgba(239,68,68,0.25)'}`, color: glPos ? '#22c55e' : '#ef4444', fontSize:9, fontWeight:900, padding:'3px 8px', borderRadius:5 }}>{glPos?'+':''}{glPct.toFixed(0)}%</span>}
@@ -1142,7 +1142,7 @@ function CollectionPage() {
                           </div>
                           {/* Action buttons */}
                           <div style={{ display:'flex', gap:5, marginTop:12 }}>
-                            <button onClick={() => window.open('https://www.ebay.com/sch/i.html?_nkw='+encodeURIComponent([card.year,card.player,card.brand,card.grade?'PSA '+card.grade:null].filter(Boolean).join(' '))+'&LH_Sold=1&LH_Complete=1&_sop=13', '_blank')} title="Prices" style={{ flex:1, padding:'7px 0', borderRadius:7, background:'rgba(147,51,234,0.1)', border:'1px solid rgba(147,51,234,0.2)', color:'#a855f7', cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'center' }}><IconSearch /></button>
+                            <button onClick={() => window.open('https://www.ebay.com/sch/i.html?_nkw='+encodeURIComponent([card.year,card.player,card.brand,card.grade?'PSA '+card.grade:null].filter(Boolean).join(' '))+'&LH_Sold=1&LH_Complete=1&_sop=13', '_blank')} title="Prices" style={{ flex:1, padding:'7px 0', borderRadius:7, background:'rgba(var(--accent-rgb),0.1)', border:'1px solid rgba(var(--accent-rgb),0.2)', color:'var(--accent-light)', cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'center' }}><IconSearch /></button>
                             {!card.sold && <button onClick={() => setSoldCard(card)} title="Sell" style={{ flex:1, padding:'7px 0', borderRadius:7, background:'rgba(255,190,46,0.08)', border:'1px solid rgba(255,190,46,0.15)', color:'#ffbe2e', cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'center' }}><IconTag /></button>}
                             <button onClick={() => setBreakEvenCard(card)} title="Calc" style={{ flex:1, padding:'7px 0', borderRadius:7, background:'rgba(255,255,255,0.04)', border:'1px solid #1e1e1e', color:'#555', cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'center' }}><IconCalc /></button>
                             <button onClick={() => setModal(card)} title="Edit" style={{ flex:1, padding:'7px 0', borderRadius:7, background:'rgba(255,255,255,0.04)', border:'1px solid #1e1e1e', color:'#555', cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'center' }}><IconEdit /></button>
@@ -1166,11 +1166,11 @@ function CollectionPage() {
                   const glPct = buy > 0 ? (gl / buy) * 100 : 0
                   const cardContent = viewMode === 'grid' ? (
                     // ── Grid tile — clean with dropdown ─────────────────────
-                    <div style={{ background:'#111', border: selected.has(card.id) ? '1px solid #9333ea' : '1px solid #1a1a1a', borderRadius:10, overflow:'hidden', opacity: card.sold ? 0.65 : 1, animation:`fadeUp 0.25s ease ${Math.min(idx*0.04,0.3)}s both` }}>
+                    <div style={{ background:'#111', border: selected.has(card.id) ? '1px solid var(--accent)' : '1px solid #1a1a1a', borderRadius:10, overflow:'hidden', opacity: card.sold ? 0.65 : 1, animation:`fadeUp 0.25s ease ${Math.min(idx*0.04,0.3)}s both` }}>
                       <div style={{ height:2, background: glPos?'#22c55e':'#ef4444', opacity: buy===0?0.2:0.9 }} />
                       <div style={{ padding:'9px 10px' }}>
                         <div style={{ display:'flex', justifyContent:'space-between', alignItems:'flex-start', marginBottom:6 }}>
-                          <input type="checkbox" checked={selected.has(card.id)} onChange={() => toggleSelect(card.id)} style={{ accentColor:'#9333ea', width:13, height:13, cursor:'pointer', marginTop:2 }} />
+                          <input type="checkbox" checked={selected.has(card.id)} onChange={() => toggleSelect(card.id)} style={{ accentColor:'var(--accent)', width:13, height:13, cursor:'pointer', marginTop:2 }} />
                           <div style={{ position:'relative' }}>
                             <button onClick={e => { e.stopPropagation(); const m = e.currentTarget.nextSibling; m.style.display = m.style.display==='block'?'none':'block' }} style={{ width:22, height:22, borderRadius:6, background:'#1a1a1a', border:'1px solid #222', color:'#555', cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'center', fontSize:14, fontWeight:700 }}>⋯</button>
                             <div style={{ display:'none', position:'absolute', right:0, top:26, background:'#1a1a1a', border:'1px solid #2a2a2a', borderRadius:10, padding:'4px', zIndex:50, minWidth:140, boxShadow:'0 8px 24px rgba(0,0,0,0.8)' }}
@@ -1203,11 +1203,11 @@ function CollectionPage() {
                     </div>
                   ) : (
                     // ── List card (full) ─────────────────────────────────────
-                    <div style={{ background: selected.has(card.id) ? 'rgba(147,51,234,0.06)' : 'linear-gradient(135deg,#111,#0d0d0d)', border: selected.has(card.id) ? '1px solid rgba(147,51,234,0.3)' : '1px solid #1e1e1e', borderRadius: 14, padding: '14px 16px', opacity: card.sold ? 0.8 : 1, animation:`fadeUp 0.45s ease ${idx*0.1}s both` }}>
+                    <div style={{ background: selected.has(card.id) ? 'rgba(var(--accent-rgb),0.06)' : 'linear-gradient(135deg,#111,#0d0d0d)', border: selected.has(card.id) ? '1px solid rgba(var(--accent-rgb),0.3)' : '1px solid #1e1e1e', borderRadius: 14, padding: '14px 16px', opacity: card.sold ? 0.8 : 1, animation:`fadeUp 0.45s ease ${idx*0.1}s both` }}>
                       {/* Top row: checkbox + name + status badge */}
                       <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 10 }}>
                         <div style={{ display: 'flex', alignItems: 'flex-start', gap: 10, flex: 1, minWidth: 0 }}>
-                          <input type="checkbox" checked={selected.has(card.id)} onChange={() => toggleSelect(card.id)} style={{ accentColor: '#9333ea', width: 16, height: 16, cursor: 'pointer', marginTop: 3, flexShrink: 0 }} />
+                          <input type="checkbox" checked={selected.has(card.id)} onChange={() => toggleSelect(card.id)} style={{ accentColor: 'var(--accent)', width: 16, height: 16, cursor: 'pointer', marginTop: 3, flexShrink: 0 }} />
                           <div style={{ minWidth: 0 }}>
                             <div style={{ fontFamily: 'var(--font-geist-sans)', fontSize: 15, fontWeight: 700, color: '#f0f0f0' }}>{card.player}</div>
                             <div style={{ fontSize: 12, color: '#555', marginTop: 2 }}>
@@ -1218,7 +1218,7 @@ function CollectionPage() {
                         <div style={{ marginLeft: 10, flexShrink: 0 }}>
                           {card.sold
                             ? <span style={{ padding: '3px 10px', borderRadius: 6, background: 'rgba(255,190,46,0.1)', color: '#ffbe2e', fontSize: 11, fontWeight: 700 }}>SOLD</span>
-                            : <span style={{ padding: '3px 10px', borderRadius: 6, background: 'rgba(147,51,234,0.12)', color: '#c084fc', fontSize: 9, fontWeight: 900, letterSpacing:'0.1em', border:'1px solid rgba(147,51,234,0.25)', borderRadius:100, padding:'3px 10px' }}>ACTIVE</span>
+                            : <span style={{ padding: '3px 10px', borderRadius: 6, background: 'rgba(var(--accent-rgb),0.12)', color: '#c084fc', fontSize: 9, fontWeight: 900, letterSpacing:'0.1em', border:'1px solid rgba(var(--accent-rgb),0.25)', borderRadius:100, padding:'3px 10px' }}>ACTIVE</span>
                           }
                         </div>
                       </div>
@@ -1251,7 +1251,7 @@ function CollectionPage() {
                             <IconTag />Sell
                           </button>
                         )}
-                        <button onClick={() => setBreakEvenCard(card)} style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, padding: '9px 0', borderRadius: 9, background: 'rgba(147,51,234,0.08)', border: '1px solid rgba(147,51,234,0.2)', color: '#9333ea', fontFamily: 'var(--font-geist-sans)', fontSize: 12, fontWeight: 600, cursor: 'pointer' }}>
+                        <button onClick={() => setBreakEvenCard(card)} style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, padding: '9px 0', borderRadius: 9, background: 'rgba(var(--accent-rgb),0.08)', border: '1px solid rgba(var(--accent-rgb),0.2)', color: 'var(--accent)', fontFamily: 'var(--font-geist-sans)', fontSize: 12, fontWeight: 600, cursor: 'pointer' }}>
                           <IconCalc />Calc
                         </button>
                         <button onClick={() => setModal(card)} style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, padding: '9px 0', borderRadius: 9, background: 'rgba(255,255,255,0.05)', border: '1px solid #2a2a2a', color: '#666', fontFamily: 'var(--font-geist-sans)', fontSize: 12, fontWeight: 600, cursor: 'pointer' }}>

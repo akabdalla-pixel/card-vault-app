@@ -2,6 +2,7 @@ import './globals.css'
 import { GeistSans } from 'geist/font/sans'
 import { GeistMono } from 'geist/font/mono'
 import { GeistPixelSquare } from 'geist/font/pixel'
+import ThemeProvider from '@/app/components/ThemeProvider'
 
 export const metadata = {
   title: '𝙏𝙤𝙥𝙇𝙤𝙖𝙙',
@@ -32,7 +33,9 @@ export default function RootLayout({ children }) {
         <meta name="theme-color" content="#9333ea" />
       </head>
       <body className={`${GeistSans.variable} ${GeistMono.variable} ${GeistPixelSquare.variable}`} style={{ background: '#0a0a0a', color: '#fff' }}>
-        {children}
+        <ThemeProvider>
+          {children}
+        </ThemeProvider>
       </body>
     </html>
   )

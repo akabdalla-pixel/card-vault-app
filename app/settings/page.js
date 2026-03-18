@@ -1,5 +1,6 @@
 'use client'
 import { useState, useEffect, useCallback } from 'react'
+import { THEMES, applyTheme } from '@/app/components/ThemeProvider'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 
@@ -42,7 +43,7 @@ function ToastContainer() {
     }
     return () => { _toastFn = null }
   }, [])
-  const colors = { success: '#4ade80', error: '#9333ea', info: '#888' }
+  const colors = { success: '#4ade80', error: 'var(--accent)', info: '#888' }
   const icons = { success: '✓', error: '✕', info: 'ℹ' }
   if (!toasts.length) return null
   return (
@@ -68,10 +69,10 @@ function Sidebar({ user, onLogout, cardCount = 0, active = "" }) {
           const Icon = navIcons[label]
           if (!Icon) return null
           return (
-            <Link key={label} href={href} style={{ display:'flex', alignItems:'center', gap:10, padding:'9px 12px', borderRadius:10, marginBottom:2, textDecoration:'none', color: isActive ? '#fff' : '#555', background: isActive ? '#9333ea' : 'transparent', fontSize:13, fontWeight: isActive ? 700 : 500, transition:'all 0.15s', letterSpacing:'0.01em' }}>
+            <Link key={label} href={href} style={{ display:'flex', alignItems:'center', gap:10, padding:'9px 12px', borderRadius:10, marginBottom:2, textDecoration:'none', color: isActive ? '#fff' : '#555', background: isActive ? 'var(--accent)' : 'transparent', fontSize:13, fontWeight: isActive ? 700 : 500, transition:'all 0.15s', letterSpacing:'0.01em' }}>
               <Icon />
               <span style={{flex:1}}>{label}</span>
-              {label === 'Collection' && cardCount > 0 && <span style={{ fontSize:9, fontWeight:800, background: isActive ? 'rgba(255,255,255,0.2)' : 'rgba(147,51,234,0.2)', color: isActive ? '#fff' : '#a855f7', borderRadius:5, padding:'1px 6px' }}>{cardCount}</span>}
+              {label === 'Collection' && cardCount > 0 && <span style={{ fontSize:9, fontWeight:800, background: isActive ? 'rgba(255,255,255,0.2)' : 'rgba(var(--accent-rgb),0.2)', color: isActive ? '#fff' : 'var(--accent-light)', borderRadius:5, padding:'1px 6px' }}>{cardCount}</span>}
             </Link>
           )
         })}
@@ -80,7 +81,7 @@ function Sidebar({ user, onLogout, cardCount = 0, active = "" }) {
         <Link href="/settings" style={{ display:'flex', alignItems:'center', gap:10, padding:'9px 12px', borderRadius:10, marginBottom:2, textDecoration:'none', color:'#555', fontSize:13, fontWeight:500 }}><IconSettings /><span>Settings</span></Link>
         <button onClick={onLogout} style={{ display:'flex', alignItems:'center', gap:10, padding:'9px 12px', borderRadius:10, width:'100%', background:'transparent', border:'none', cursor:'pointer', color:'#555', fontSize:13, fontWeight:500 }}><IconLogout /><span>Sign Out</span></button>
         {user && <div style={{ display:'flex', alignItems:'center', gap:8, padding:'8px 10px', marginTop:4, borderRadius:10, background:'#111' }}>
-          <div style={{ width:28, height:28, borderRadius:8, background:'#9333ea', display:'flex', alignItems:'center', justifyContent:'center', fontSize:12, fontWeight:900, color:'#fff', flexShrink:0 }}>{user.username?.[0]?.toUpperCase()||'A'}</div>
+          <div style={{ width:28, height:28, borderRadius:8, background:'var(--accent)', display:'flex', alignItems:'center', justifyContent:'center', fontSize:12, fontWeight:900, color:'#fff', flexShrink:0 }}>{user.username?.[0]?.toUpperCase()||'A'}</div>
           <div style={{overflow:'hidden'}}><div style={{ fontSize:11, fontWeight:700, color:'#ccc', overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>@{user.username}</div><div style={{ fontSize:9, color:'#555', marginTop:1 }}>{user.email}</div></div>
         </div>}
       </div>
@@ -94,7 +95,7 @@ function BottomNav() {
       {[...NAV, { label:'Settings', href:'/settings' }].slice(0,4).map(({ label, href }) => {
         const Icon = navIcons[label] || IconSettings
         const isActive = label === 'Settings'
-        return <Link key={label} href={href} style={{ flex:1, display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', gap:4, textDecoration:'none', color:isActive?'#9333ea':'#555', fontFamily:'var(--font-geist-sans)', fontSize:9, fontWeight:isActive?700:500, letterSpacing:'0.04em', textTransform:'uppercase', paddingBottom:4 }}><Icon />{label==='Sold History'?'Sold':label}</Link>
+        return <Link key={label} href={href} style={{ flex:1, display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', gap:4, textDecoration:'none', color:isActive?'var(--accent)':'#555', fontFamily:'var(--font-geist-sans)', fontSize:9, fontWeight:isActive?700:500, letterSpacing:'0.04em', textTransform:'uppercase', paddingBottom:4 }}><Icon />{label==='Sold History'?'Sold':label}</Link>
       })}
     </nav>
   )
@@ -103,12 +104,12 @@ function BottomNav() {
 // ── Section Card ──────────────────────────────────────────────
 function Section({ title, subtitle, icon, children, danger = false }) {
   return (
-    <div style={{ background: danger ? 'linear-gradient(135deg,#1a0808,#0d0d0d)' : 'linear-gradient(135deg,#111,#0d0d0d)', border: `1px solid ${danger ? 'rgba(147,51,234,0.25)' : '#1e1e1e'}`, borderRadius:14, padding:22, position:'relative', overflow:'hidden' }}>
-      {danger && <div style={{ position:'absolute', top:0, left:0, right:0, height:2, background:'linear-gradient(90deg,#9333ea,#a855f7)' }} />}
+    <div style={{ background: danger ? 'linear-gradient(135deg,#1a0808,#0d0d0d)' : 'linear-gradient(135deg,#111,#0d0d0d)', border: `1px solid ${danger ? 'rgba(var(--accent-rgb),0.25)' : '#1e1e1e'}`, borderRadius:14, padding:22, position:'relative', overflow:'hidden' }}>
+      {danger && <div style={{ position:'absolute', top:0, left:0, right:0, height:2, background:'linear-gradient(90deg,var(--accent),var(--accent-light))' }} />}
       <div style={{ display:'flex', alignItems:'center', gap:10, marginBottom:16 }}>
         {icon && <span style={{ fontSize:18 }}>{icon}</span>}
         <div>
-          <h2 style={{ fontFamily:'var(--font-geist-sans)', fontSize:14, fontWeight:700, color: danger ? '#a855f7' : '#ccc', margin:0 }}>{title}</h2>
+          <h2 style={{ fontFamily:'var(--font-geist-sans)', fontSize:14, fontWeight:700, color: danger ? 'var(--accent-light)' : '#ccc', margin:0 }}>{title}</h2>
           {subtitle && <p style={{ fontSize:12, color:'#444', margin:'3px 0 0', fontFamily:'var(--font-geist-sans)' }}>{subtitle}</p>}
         </div>
       </div>
@@ -152,6 +153,17 @@ export default function SettingsPage() {
   const [deleteAccountLoading, setDeleteAccountLoading] = useState(false)
   const [showDeleteCards, setShowDeleteCards] = useState(false)
   const [showDeleteAccount, setShowDeleteAccount] = useState(false)
+
+  // Theme
+  const [activeTheme, setActiveTheme] = useState('Purple')
+  useEffect(() => {
+    try { setActiveTheme(localStorage.getItem('topload-theme') || 'Purple') } catch {}
+  }, [])
+  function handleTheme(theme) {
+    setActiveTheme(theme.name)
+    applyTheme(theme)
+    try { localStorage.setItem('topload-theme', theme.name) } catch {}
+  }
 
   const load = useCallback(async () => {
     try {
@@ -305,7 +317,7 @@ export default function SettingsPage() {
         <main className="main-wrap" style={{ padding:'30px 28px' }}>
           {/* Mobile topbar */}
           <div className="mob-topbar" style={{ alignItems:'center', justifyContent:'space-between', marginBottom:20 }}>
-            <img src={LOGO} alt="TopLoad" style={{ height:32, filter:'drop-shadow(0 0 8px rgba(147,51,234,0.4))' }} />
+            <img src={LOGO} alt="TopLoad" style={{ height:32, filter:'drop-shadow(0 0 8px rgba(var(--accent-rgb),0.4))' }} />
             <div style={{ fontFamily:'var(--font-geist-sans)', fontSize:16, fontWeight:800, color:'#f0f0f0' }}>Settings</div>
             <div style={{ width:32 }} />
           </div>
@@ -318,11 +330,37 @@ export default function SettingsPage() {
 
           <div style={{ maxWidth:560, display:'flex', flexDirection:'column', gap:18 }}>
 
+            {/* ── Accent Color ── */}
+            <div style={{ background:'#111', border:'1px solid #1e1e1e', borderRadius:14, padding:'20px' }}>
+              <div style={{ fontSize:9, fontWeight:800, color:'var(--accent-light)', textTransform:'uppercase', letterSpacing:'0.12em', marginBottom:4 }}>Accent Color</div>
+              <div style={{ fontSize:13, color:'#555', marginBottom:16 }}>Choose the highlight color used across the entire app.</div>
+              <div style={{ display:'flex', flexWrap:'wrap', gap:10 }}>
+                {THEMES.map(theme => {
+                  const isActive = activeTheme === theme.name
+                  return (
+                    <button key={theme.name} onClick={() => handleTheme(theme)} style={{ display:'flex', flexDirection:'column', alignItems:'center', gap:6, background:'transparent', border:'none', cursor:'pointer', padding:0 }}>
+                      <div style={{
+                        width:36, height:36, borderRadius:10,
+                        background: theme.accent,
+                        border: isActive ? `3px solid #fff` : '3px solid transparent',
+                        boxShadow: isActive ? `0 0 0 2px ${theme.accent}` : 'none',
+                        transition:'all 0.15s',
+                        display:'flex', alignItems:'center', justifyContent:'center',
+                      }}>
+                        {isActive && <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>}
+                      </div>
+                      <span style={{ fontSize:9, fontWeight:700, color: isActive ? '#fff' : '#555', textTransform:'uppercase', letterSpacing:'0.06em' }}>{theme.name}</span>
+                    </button>
+                  )
+                })}
+              </div>
+            </div>
+
             {/* ── Account Info ── */}
             
               {/* Share Collection */}
               <div className="settings-card" style={{ background:'#111', border:'1px solid #1e1e1e', borderRadius:14, padding:'20px', marginBottom:16 }}>
-                <div style={{ fontSize:9, fontWeight:800, color:'#a855f7', textTransform:'uppercase', letterSpacing:'0.12em', marginBottom:14 }}>Share Collection</div>
+                <div style={{ fontSize:9, fontWeight:800, color:'var(--accent-light)', textTransform:'uppercase', letterSpacing:'0.12em', marginBottom:14 }}>Share Collection</div>
                 <div style={{ fontSize:13, color:'#555', marginBottom:16, lineHeight:1.6 }}>
                   Share your collection publicly — only card values are visible, not what you paid.
                 </div>
@@ -332,7 +370,7 @@ export default function SettingsPage() {
                   </div>
                 </div>
                 <div style={{ display:'flex', gap:8 }}>
-                  <button onClick={handleShare} style={{ flex:1, padding:'10px', borderRadius:10, background: shareCopied ? 'rgba(34,197,94,0.1)' : 'rgba(147,51,234,0.1)', border: shareCopied ? '1px solid rgba(34,197,94,0.3)' : '1px solid rgba(147,51,234,0.25)', color: shareCopied ? '#22c55e' : '#9333ea', fontSize:13, fontWeight:800, cursor:'pointer' }}>
+                  <button onClick={handleShare} style={{ flex:1, padding:'10px', borderRadius:10, background: shareCopied ? 'rgba(34,197,94,0.1)' : 'rgba(var(--accent-rgb),0.1)', border: shareCopied ? '1px solid rgba(34,197,94,0.3)' : '1px solid rgba(var(--accent-rgb),0.25)', color: shareCopied ? '#22c55e' : 'var(--accent)', fontSize:13, fontWeight:800, cursor:'pointer' }}>
                     {shareCopied ? '✓ Copied!' : '📋 Copy Link'}
                   </button>
                   <a href={`/share/${user?.username}`} target="_blank" rel="noopener noreferrer" style={{ flex:1, padding:'10px', borderRadius:10, background:'#111', border:'1px solid #1e1e1e', color:'#888', fontSize:13, fontWeight:700, cursor:'pointer', textDecoration:'none', textAlign:'center' }}>
@@ -377,9 +415,9 @@ export default function SettingsPage() {
             <Section title="Change Name" subtitle="Update your display name" icon="✏️">
               <div style={{ display:'flex', flexDirection:'column', gap:12 }}>
                 <div style={{ fontSize:12, color:'#555', fontFamily:'var(--font-geist-sans)', lineHeight:1.5 }}>
-                  Current name: <span style={{ color:'#a855f7', fontWeight:700 }}>{user?.username ? user.username[0].toUpperCase() + user.username.slice(1) : ''}</span>
+                  Current name: <span style={{ color:'var(--accent-light)', fontWeight:700 }}>{user?.username ? user.username[0].toUpperCase() + user.username.slice(1) : ''}</span>
                 </div>
-                {nameError && <div style={{ padding:'10px 14px', borderRadius:10, background:'rgba(147,51,234,0.08)', border:'1px solid rgba(147,51,234,0.2)', color:'#9333ea', fontSize:13, fontFamily:'var(--font-geist-sans)' }}>{nameError}</div>}
+                {nameError && <div style={{ padding:'10px 14px', borderRadius:10, background:'rgba(var(--accent-rgb),0.08)', border:'1px solid rgba(var(--accent-rgb),0.2)', color:'var(--accent)', fontSize:13, fontFamily:'var(--font-geist-sans)' }}>{nameError}</div>}
                 <div>
                   <div style={{ fontSize:10, fontWeight:700, color:'#444', textTransform:'uppercase', letterSpacing:'0.08em', marginBottom:6, fontFamily:'var(--font-geist-sans)' }}>New Name</div>
                   <input
@@ -390,7 +428,7 @@ export default function SettingsPage() {
                     style={{ width:'100%', padding:'10px 14px', borderRadius:10, background:'#202020', border:'1px solid #2a2a2a', color:'#f0f0f0', fontSize:14, outline:'none', fontFamily:'var(--font-geist-sans)', boxSizing:'border-box' }}
                   />
                 </div>
-                <button type="button" onClick={handleChangeName} disabled={nameLoading || !nameVal.trim()} style={{ display:'flex', alignItems:'center', justifyContent:'center', gap:8, padding:'11px 20px', borderRadius:10, background:'rgba(147,51,234,0.1)', border:'1px solid rgba(147,51,234,0.3)', color:'#9333ea', fontFamily:'var(--font-geist-sans)', fontSize:14, fontWeight:700, cursor:'pointer', opacity: !nameVal.trim() ? 0.4 : 1 }}>
+                <button type="button" onClick={handleChangeName} disabled={nameLoading || !nameVal.trim()} style={{ display:'flex', alignItems:'center', justifyContent:'center', gap:8, padding:'11px 20px', borderRadius:10, background:'rgba(var(--accent-rgb),0.1)', border:'1px solid rgba(var(--accent-rgb),0.3)', color:'var(--accent)', fontFamily:'var(--font-geist-sans)', fontSize:14, fontWeight:700, cursor:'pointer', opacity: !nameVal.trim() ? 0.4 : 1 }}>
                   {nameLoading ? 'Saving...' : <><IconCheck />Save Name</>}
                 </button>
               </div>
@@ -399,7 +437,7 @@ export default function SettingsPage() {
             {/* ── Change Password ── */}
             <Section title="Change Password" subtitle="Update your login password" icon="🔒">
               <div style={{ display:'flex', flexDirection:'column', gap:12 }}>
-                {pwError && <div style={{ padding:'10px 14px', borderRadius:10, background:'rgba(147,51,234,0.08)', border:'1px solid rgba(147,51,234,0.2)', color:'#9333ea', fontSize:13, fontFamily:'var(--font-geist-sans)' }}>{pwError}</div>}
+                {pwError && <div style={{ padding:'10px 14px', borderRadius:10, background:'rgba(var(--accent-rgb),0.08)', border:'1px solid rgba(var(--accent-rgb),0.2)', color:'var(--accent)', fontSize:13, fontFamily:'var(--font-geist-sans)' }}>{pwError}</div>}
                 <div>
                   <div style={{ fontSize:10, fontWeight:700, color:'#444', textTransform:'uppercase', letterSpacing:'0.08em', marginBottom:6, fontFamily:'var(--font-geist-sans)' }}>Current Password</div>
                   {pwInput('current', 'Enter current password')}
@@ -412,7 +450,7 @@ export default function SettingsPage() {
                   <div style={{ fontSize:10, fontWeight:700, color:'#444', textTransform:'uppercase', letterSpacing:'0.08em', marginBottom:6, fontFamily:'var(--font-geist-sans)' }}>Confirm New Password</div>
                   {pwInput('confirm', 'Repeat new password')}
                 </div>
-                <button type="button" disabled={pwLoading || !pwForm.current || !pwForm.next || !pwForm.confirm} style={{ display:'flex', alignItems:'center', justifyContent:'center', gap:8, padding:'11px 20px', borderRadius:10, background:'rgba(147,51,234,0.1)', border:'1px solid rgba(147,51,234,0.3)', color:'#9333ea', fontFamily:'var(--font-geist-sans)', fontSize:14, fontWeight:700, cursor:'pointer', opacity: (!pwForm.current||!pwForm.next||!pwForm.confirm) ? 0.4 : 1 }}>
+                <button type="button" disabled={pwLoading || !pwForm.current || !pwForm.next || !pwForm.confirm} style={{ display:'flex', alignItems:'center', justifyContent:'center', gap:8, padding:'11px 20px', borderRadius:10, background:'rgba(var(--accent-rgb),0.1)', border:'1px solid rgba(var(--accent-rgb),0.3)', color:'var(--accent)', fontFamily:'var(--font-geist-sans)', fontSize:14, fontWeight:700, cursor:'pointer', opacity: (!pwForm.current||!pwForm.next||!pwForm.confirm) ? 0.4 : 1 }}>
                   {pwLoading ? 'Updating...' : <><IconCheck />Update Password</>}
                 </button>
               </div>
@@ -426,7 +464,7 @@ export default function SettingsPage() {
                     <div style={{ fontFamily:'var(--font-geist-sans)', fontSize:13, fontWeight:700, color:'#ccc' }}>Export as CSV</div>
                     <div style={{ fontFamily:'var(--font-geist-sans)', fontSize:11, color:'#555', marginTop:2 }}>Compatible with Excel, Google Sheets, and import back into TopLoad</div>
                   </div>
-                  <button onClick={exportCSV} disabled={!cards.length} style={{ display:'flex', alignItems:'center', gap:6, padding:'8px 16px', borderRadius:10, background:'rgba(147,51,234,0.08)', border:'1px solid rgba(147,51,234,0.2)', color:'#9333ea', fontFamily:'var(--font-geist-sans)', fontSize:13, fontWeight:600, cursor:'pointer', flexShrink:0, opacity:cards.length?1:0.4 }}>
+                  <button onClick={exportCSV} disabled={!cards.length} style={{ display:'flex', alignItems:'center', gap:6, padding:'8px 16px', borderRadius:10, background:'rgba(var(--accent-rgb),0.08)', border:'1px solid rgba(var(--accent-rgb),0.2)', color:'var(--accent)', fontFamily:'var(--font-geist-sans)', fontSize:13, fontWeight:600, cursor:'pointer', flexShrink:0, opacity:cards.length?1:0.4 }}>
                     <IconDownload />CSV
                   </button>
                 </div>
@@ -449,19 +487,19 @@ export default function SettingsPage() {
             <Section title="Danger Zone" subtitle="These actions are permanent and cannot be undone" icon="⚠️" danger>
 
               {/* Delete All Cards */}
-              <div style={{ borderRadius:12, border:'1px solid rgba(147,51,234,0.2)', overflow:'hidden', marginBottom:12 }}>
+              <div style={{ borderRadius:12, border:'1px solid rgba(var(--accent-rgb),0.2)', overflow:'hidden', marginBottom:12 }}>
                 <div style={{ padding:'14px 16px', display:'flex', alignItems:'center', justifyContent:'space-between', gap:12 }}>
                   <div>
                     <div style={{ fontFamily:'var(--font-geist-sans)', fontSize:13, fontWeight:700, color:'#ccc' }}>Delete All Cards</div>
                     <div style={{ fontFamily:'var(--font-geist-sans)', fontSize:11, color:'#555', marginTop:2 }}>Permanently removes all {cards.length} cards from your collection</div>
                   </div>
-                  <button onClick={() => setShowDeleteCards(!showDeleteCards)} disabled={!cards.length} style={{ padding:'8px 14px', borderRadius:10, background:'rgba(147,51,234,0.08)', border:'1px solid rgba(147,51,234,0.25)', color:'#9333ea', fontFamily:'var(--font-geist-sans)', fontSize:13, fontWeight:600, cursor:'pointer', flexShrink:0, opacity:cards.length?1:0.4 }}>
+                  <button onClick={() => setShowDeleteCards(!showDeleteCards)} disabled={!cards.length} style={{ padding:'8px 14px', borderRadius:10, background:'rgba(var(--accent-rgb),0.08)', border:'1px solid rgba(var(--accent-rgb),0.25)', color:'var(--accent)', fontFamily:'var(--font-geist-sans)', fontSize:13, fontWeight:600, cursor:'pointer', flexShrink:0, opacity:cards.length?1:0.4 }}>
                     {showDeleteCards ? 'Cancel' : 'Delete All'}
                   </button>
                 </div>
                 {showDeleteCards && (
-                  <div style={{ padding:'14px 16px', borderTop:'1px solid rgba(147,51,234,0.15)', background:'rgba(147,51,234,0.04)' }}>
-                    <p style={{ fontFamily:'var(--font-geist-sans)', fontSize:13, color:'#9333ea', marginBottom:12, display:'flex', alignItems:'center', gap:6 }}>
+                  <div style={{ padding:'14px 16px', borderTop:'1px solid rgba(var(--accent-rgb),0.15)', background:'rgba(var(--accent-rgb),0.04)' }}>
+                    <p style={{ fontFamily:'var(--font-geist-sans)', fontSize:13, color:'var(--accent)', marginBottom:12, display:'flex', alignItems:'center', gap:6 }}>
                       <IconAlert />Type <strong>DELETE</strong> to confirm
                     </p>
                     <div style={{ display:'flex', gap:10 }}>
@@ -469,9 +507,9 @@ export default function SettingsPage() {
                         value={deleteCardsConfirm}
                         onChange={e => setDeleteCardsConfirm(e.target.value)}
                         placeholder="Type DELETE"
-                        style={{ flex:1, padding:'9px 14px', borderRadius:10, background:'#111', border:'1px solid rgba(147,51,234,0.3)', color:'#f0f0f0', fontSize:14, outline:'none', fontFamily:'var(--font-geist-sans)' }}
+                        style={{ flex:1, padding:'9px 14px', borderRadius:10, background:'#111', border:'1px solid rgba(var(--accent-rgb),0.3)', color:'#f0f0f0', fontSize:14, outline:'none', fontFamily:'var(--font-geist-sans)' }}
                       />
-                      <button onClick={handleDeleteAllCards} disabled={deleteCardsConfirm!=='DELETE'||deleteCardsLoading} style={{ padding:'9px 16px', borderRadius:10, background: deleteCardsConfirm==='DELETE' ? 'rgba(147,51,234,0.15)' : 'rgba(255,255,255,0.04)', border:'1px solid rgba(147,51,234,0.3)', color: deleteCardsConfirm==='DELETE' ? '#9333ea' : '#444', fontFamily:'var(--font-geist-sans)', fontSize:13, fontWeight:700, cursor:'pointer', flexShrink:0 }}>
+                      <button onClick={handleDeleteAllCards} disabled={deleteCardsConfirm!=='DELETE'||deleteCardsLoading} style={{ padding:'9px 16px', borderRadius:10, background: deleteCardsConfirm==='DELETE' ? 'rgba(var(--accent-rgb),0.15)' : 'rgba(255,255,255,0.04)', border:'1px solid rgba(var(--accent-rgb),0.3)', color: deleteCardsConfirm==='DELETE' ? 'var(--accent)' : '#444', fontFamily:'var(--font-geist-sans)', fontSize:13, fontWeight:700, cursor:'pointer', flexShrink:0 }}>
                         {deleteCardsLoading ? 'Deleting...' : <><IconTrash />Confirm</>}
                       </button>
                     </div>
@@ -480,19 +518,19 @@ export default function SettingsPage() {
               </div>
 
               {/* Delete Account */}
-              <div style={{ borderRadius:12, border:'1px solid rgba(147,51,234,0.2)', overflow:'hidden' }}>
+              <div style={{ borderRadius:12, border:'1px solid rgba(var(--accent-rgb),0.2)', overflow:'hidden' }}>
                 <div style={{ padding:'14px 16px', display:'flex', alignItems:'center', justifyContent:'space-between', gap:12 }}>
                   <div>
-                    <div style={{ fontFamily:'var(--font-geist-sans)', fontSize:13, fontWeight:700, color:'#9333ea' }}>Delete Account</div>
+                    <div style={{ fontFamily:'var(--font-geist-sans)', fontSize:13, fontWeight:700, color:'var(--accent)' }}>Delete Account</div>
                     <div style={{ fontFamily:'var(--font-geist-sans)', fontSize:11, color:'#555', marginTop:2 }}>Permanently deletes your account and all data. Cannot be undone.</div>
                   </div>
-                  <button onClick={() => setShowDeleteAccount(!showDeleteAccount)} style={{ padding:'8px 14px', borderRadius:10, background:'rgba(147,51,234,0.15)', border:'1px solid rgba(147,51,234,0.4)', color:'#9333ea', fontFamily:'var(--font-geist-sans)', fontSize:13, fontWeight:700, cursor:'pointer', flexShrink:0 }}>
+                  <button onClick={() => setShowDeleteAccount(!showDeleteAccount)} style={{ padding:'8px 14px', borderRadius:10, background:'rgba(var(--accent-rgb),0.15)', border:'1px solid rgba(var(--accent-rgb),0.4)', color:'var(--accent)', fontFamily:'var(--font-geist-sans)', fontSize:13, fontWeight:700, cursor:'pointer', flexShrink:0 }}>
                     {showDeleteAccount ? 'Cancel' : 'Delete Account'}
                   </button>
                 </div>
                 {showDeleteAccount && (
-                  <div style={{ padding:'14px 16px', borderTop:'1px solid rgba(147,51,234,0.15)', background:'rgba(147,51,234,0.04)' }}>
-                    <p style={{ fontFamily:'var(--font-geist-sans)', fontSize:13, color:'#9333ea', marginBottom:12, display:'flex', alignItems:'center', gap:6 }}>
+                  <div style={{ padding:'14px 16px', borderTop:'1px solid rgba(var(--accent-rgb),0.15)', background:'rgba(var(--accent-rgb),0.04)' }}>
+                    <p style={{ fontFamily:'var(--font-geist-sans)', fontSize:13, color:'var(--accent)', marginBottom:12, display:'flex', alignItems:'center', gap:6 }}>
                       <IconAlert />Type your username <strong>@{user?.username}</strong> to confirm
                     </p>
                     <div style={{ display:'flex', gap:10 }}>
@@ -500,9 +538,9 @@ export default function SettingsPage() {
                         value={deleteAccountConfirm}
                         onChange={e => setDeleteAccountConfirm(e.target.value)}
                         placeholder={user?.username}
-                        style={{ flex:1, padding:'9px 14px', borderRadius:10, background:'#111', border:'1px solid rgba(147,51,234,0.3)', color:'#f0f0f0', fontSize:14, outline:'none', fontFamily:'var(--font-geist-sans)' }}
+                        style={{ flex:1, padding:'9px 14px', borderRadius:10, background:'#111', border:'1px solid rgba(var(--accent-rgb),0.3)', color:'#f0f0f0', fontSize:14, outline:'none', fontFamily:'var(--font-geist-sans)' }}
                       />
-                      <button onClick={handleDeleteAccount} disabled={deleteAccountConfirm!==user?.username||deleteAccountLoading} style={{ padding:'9px 16px', borderRadius:10, background: deleteAccountConfirm===user?.username ? 'rgba(147,51,234,0.2)' : 'rgba(255,255,255,0.04)', border:'1px solid rgba(147,51,234,0.4)', color: deleteAccountConfirm===user?.username ? '#9333ea' : '#444', fontFamily:'var(--font-geist-sans)', fontSize:13, fontWeight:700, cursor:'pointer', flexShrink:0 }}>
+                      <button onClick={handleDeleteAccount} disabled={deleteAccountConfirm!==user?.username||deleteAccountLoading} style={{ padding:'9px 16px', borderRadius:10, background: deleteAccountConfirm===user?.username ? 'rgba(var(--accent-rgb),0.2)' : 'rgba(255,255,255,0.04)', border:'1px solid rgba(var(--accent-rgb),0.4)', color: deleteAccountConfirm===user?.username ? 'var(--accent)' : '#444', fontFamily:'var(--font-geist-sans)', fontSize:13, fontWeight:700, cursor:'pointer', flexShrink:0 }}>
                         {deleteAccountLoading ? 'Deleting...' : <><IconTrash />Confirm</>}
                       </button>
                     </div>

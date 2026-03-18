@@ -29,7 +29,7 @@ function ToastContainer() {
         <div key={t.id} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 18px', borderRadius: 12, background: '#1a1a1a', border: `1px solid ${colors[t.type]}40`, boxShadow: `0 8px 24px rgba(0,0,0,0.5)`, fontFamily: 'var(--font-geist-sans)', fontSize: 13, fontWeight: 600, color: '#f0f0f0', pointerEvents: 'auto', animation: 'toastIn 0.2s ease', whiteSpace: 'nowrap' }}>
           <span style={{ color: colors[t.type] }}>{icons[t.type]}</span>
           {t.msg}
-          {t.onUndo && <button onClick={t.onUndo} style={{ marginLeft: 4, padding: '2px 8px', borderRadius: 6, background: 'rgba(255,255,255,0.08)', border: 'none', color: '#9333ea', fontFamily: 'var(--font-geist-sans)', fontSize: 12, fontWeight: 700, cursor: 'pointer', pointerEvents: 'auto' }}>Undo</button>}
+          {t.onUndo && <button onClick={t.onUndo} style={{ marginLeft: 4, padding: '2px 8px', borderRadius: 6, background: 'rgba(255,255,255,0.08)', border: 'none', color: 'var(--accent)', fontFamily: 'var(--font-geist-sans)', fontSize: 12, fontWeight: 700, cursor: 'pointer', pointerEvents: 'auto' }}>Undo</button>}
         </div>
       ))}
     </div>
@@ -127,10 +127,10 @@ function Sidebar({ user, onLogout, cardCount = 0, active = "" }) {
           const Icon = navIcons[label]
           if (!Icon) return null
           return (
-            <Link key={label} href={href} style={{ display:'flex', alignItems:'center', gap:10, padding:'9px 12px', borderRadius:10, marginBottom:2, textDecoration:'none', color: isActive ? '#fff' : '#555', background: isActive ? '#9333ea' : 'transparent', fontSize:13, fontWeight: isActive ? 700 : 500, transition:'all 0.15s', letterSpacing:'0.01em' }}>
+            <Link key={label} href={href} style={{ display:'flex', alignItems:'center', gap:10, padding:'9px 12px', borderRadius:10, marginBottom:2, textDecoration:'none', color: isActive ? '#fff' : '#555', background: isActive ? 'var(--accent)' : 'transparent', fontSize:13, fontWeight: isActive ? 700 : 500, transition:'all 0.15s', letterSpacing:'0.01em' }}>
               <Icon />
               <span style={{flex:1}}>{label}</span>
-              {label === 'Collection' && cardCount > 0 && <span style={{ fontSize:9, fontWeight:800, background: isActive ? 'rgba(255,255,255,0.2)' : 'rgba(147,51,234,0.2)', color: isActive ? '#fff' : '#a855f7', borderRadius:5, padding:'1px 6px' }}>{cardCount}</span>}
+              {label === 'Collection' && cardCount > 0 && <span style={{ fontSize:9, fontWeight:800, background: isActive ? 'rgba(255,255,255,0.2)' : 'rgba(var(--accent-rgb),0.2)', color: isActive ? '#fff' : 'var(--accent-light)', borderRadius:5, padding:'1px 6px' }}>{cardCount}</span>}
             </Link>
           )
         })}
@@ -139,7 +139,7 @@ function Sidebar({ user, onLogout, cardCount = 0, active = "" }) {
         <Link href="/settings" style={{ display:'flex', alignItems:'center', gap:10, padding:'9px 12px', borderRadius:10, marginBottom:2, textDecoration:'none', color:'#555', fontSize:13, fontWeight:500 }}><IconSettings /><span>Settings</span></Link>
         <button onClick={onLogout} style={{ display:'flex', alignItems:'center', gap:10, padding:'9px 12px', borderRadius:10, width:'100%', background:'transparent', border:'none', cursor:'pointer', color:'#555', fontSize:13, fontWeight:500 }}><IconLogout /><span>Sign Out</span></button>
         {user && <div style={{ display:'flex', alignItems:'center', gap:8, padding:'8px 10px', marginTop:4, borderRadius:10, background:'#111' }}>
-          <div style={{ width:28, height:28, borderRadius:8, background:'#9333ea', display:'flex', alignItems:'center', justifyContent:'center', fontSize:12, fontWeight:900, color:'#fff', flexShrink:0 }}>{user.username?.[0]?.toUpperCase()||'A'}</div>
+          <div style={{ width:28, height:28, borderRadius:8, background:'var(--accent)', display:'flex', alignItems:'center', justifyContent:'center', fontSize:12, fontWeight:900, color:'#fff', flexShrink:0 }}>{user.username?.[0]?.toUpperCase()||'A'}</div>
           <div style={{overflow:'hidden'}}><div style={{ fontSize:11, fontWeight:700, color:'#ccc', overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>@{user.username}</div><div style={{ fontSize:9, color:'#555', marginTop:1 }}>{user.email}</div></div>
         </div>}
       </div>
@@ -157,8 +157,8 @@ function BottomNav({ active = "" }) {
         if (!Icon) return null
         return (
           <Link key={label} href={href} style={{ flex:1, display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', gap:3, textDecoration:'none', paddingBottom:4 }}>
-            <div style={{ width:32, height:32, borderRadius:9, display:'flex', alignItems:'center', justifyContent:'center', background: isActive ? '#9333ea' : 'transparent', color: isActive ? '#fff' : '#444', transition:'all 0.15s' }}><Icon /></div>
-            <span style={{ fontSize:10, fontWeight:800, color: isActive ? '#9333ea' : '#444', letterSpacing:'0.06em', textTransform:'uppercase' }}>{SHORT[label]||label}</span>
+            <div style={{ width:32, height:32, borderRadius:9, display:'flex', alignItems:'center', justifyContent:'center', background: isActive ? 'var(--accent)' : 'transparent', color: isActive ? '#fff' : '#444', transition:'all 0.15s' }}><Icon /></div>
+            <span style={{ fontSize:10, fontWeight:800, color: isActive ? 'var(--accent)' : '#444', letterSpacing:'0.06em', textTransform:'uppercase' }}>{SHORT[label]||label}</span>
           </Link>
         )
       })}
@@ -170,8 +170,8 @@ function PortfolioHero({ currentValue, gainLoss, portfolioReturn }) {
   const gainPos = gainLoss >= 0
   const glColor = gainPos ? '#22c55e' : '#ef4444'
   return (
-    <div style={{ background:'#0e0c1a', border:'1px solid rgba(147,51,234,0.28)', boxShadow:'0 4px 24px rgba(147,51,234,0.1), 0 2px 8px rgba(0,0,0,0.4)', borderRadius:16, padding:'28px 32px', marginBottom:22, position:'relative', overflow:'hidden' }}>
-      <div style={{ position:'absolute', top:0, left:0, right:0, height:2, background:'linear-gradient(90deg,#9333ea,#a855f7,transparent)' }} />
+    <div style={{ background:'#0e0c1a', border:'1px solid rgba(var(--accent-rgb),0.28)', boxShadow:'0 4px 24px rgba(var(--accent-rgb),0.1), 0 2px 8px rgba(0,0,0,0.4)', borderRadius:16, padding:'28px 32px', marginBottom:22, position:'relative', overflow:'hidden' }}>
+      <div style={{ position:'absolute', top:0, left:0, right:0, height:2, background:'linear-gradient(90deg,var(--accent),var(--accent-light),transparent)' }} />
       <div style={{ display:'flex', alignItems:'stretch', gap:0 }}>
         {/* Total Portfolio Value */}
         <div style={{ flex:1, paddingRight:32 }}>
@@ -180,7 +180,7 @@ function PortfolioHero({ currentValue, gainLoss, portfolioReturn }) {
           <div style={{ fontSize:10, color:'#333', marginTop:10 }}>current value of active cards</div>
         </div>
         {/* Divider */}
-        <div style={{ width:1, background:'rgba(147,51,234,0.2)', flexShrink:0 }} />
+        <div style={{ width:1, background:'rgba(var(--accent-rgb),0.2)', flexShrink:0 }} />
         {/* G/L */}
         <div style={{ flex:1, paddingLeft:32 }}>
           <div style={{ display:'flex', alignItems:'center', gap:6, marginBottom:12 }}>
@@ -226,12 +226,12 @@ function QuickValueRow({ card, onUpdate }) {
       </div>
       {editing ? (
         <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
-          <input type="number" value={val} onChange={e => setVal(e.target.value)} autoFocus style={{ width: 90, padding: '5px 8px', borderRadius: 7, background: '#1a1a1a', border: '1px solid #9333ea', color: '#f0f0f0', fontSize: 13, outline: 'none', fontFamily: 'var(--font-geist-sans)', textAlign: 'right' }} onKeyDown={e => { if(e.key==='Enter') handleSave(); if(e.key==='Escape') setEditing(false) }} />
-          <button onClick={handleSave} disabled={saving} style={{ padding: '5px 8px', borderRadius: 7, background: 'rgba(147,51,234,0.15)', border: 'none', color: '#9333ea', cursor: 'pointer' }}><IconCheck /></button>
+          <input type="number" value={val} onChange={e => setVal(e.target.value)} autoFocus style={{ width: 90, padding: '5px 8px', borderRadius: 7, background: '#1a1a1a', border: '1px solid var(--accent)', color: '#f0f0f0', fontSize: 13, outline: 'none', fontFamily: 'var(--font-geist-sans)', textAlign: 'right' }} onKeyDown={e => { if(e.key==='Enter') handleSave(); if(e.key==='Escape') setEditing(false) }} />
+          <button onClick={handleSave} disabled={saving} style={{ padding: '5px 8px', borderRadius: 7, background: 'rgba(var(--accent-rgb),0.15)', border: 'none', color: 'var(--accent)', cursor: 'pointer' }}><IconCheck /></button>
         </div>
       ) : (
         <div onClick={() => setEditing(true)} style={{ fontFamily: 'var(--font-geist-sans)', fontSize: 14, fontWeight: 700, color: '#f0f0f0', cursor: 'pointer', padding: '4px 8px', borderRadius: 7, border: '1px solid transparent', transition: 'all 0.15s' }}
-          onMouseEnter={e => { e.currentTarget.style.borderColor='rgba(147,51,234,0.4)'; e.currentTarget.style.background='rgba(147,51,234,0.06)' }}
+          onMouseEnter={e => { e.currentTarget.style.borderColor='rgba(var(--accent-rgb),0.4)'; e.currentTarget.style.background='rgba(var(--accent-rgb),0.06)' }}
           onMouseLeave={e => { e.currentTarget.style.borderColor='transparent'; e.currentTarget.style.background='transparent' }}>
           {fmt(current)}
         </div>
@@ -247,7 +247,7 @@ function TopMovers({ cards }) {
   if (!withGL.length) return null
   const MoverRow = ({ card, isGainer }) => (
     <Link href={`/collection?search=${encodeURIComponent(card.player)}`} style={{ textDecoration:'none', display:'flex', alignItems:'center', justifyContent:'space-between', padding:'10px 12px', borderRadius:10, marginBottom:4, border:'1px solid transparent', transition:'all 0.15s', cursor:'pointer' }}
-      onMouseEnter={e => { e.currentTarget.style.background='rgba(255,255,255,0.03)'; e.currentTarget.style.borderColor='rgba(147,51,234,0.2)' }}
+      onMouseEnter={e => { e.currentTarget.style.background='rgba(255,255,255,0.03)'; e.currentTarget.style.borderColor='rgba(var(--accent-rgb),0.2)' }}
       onMouseLeave={e => { e.currentTarget.style.background='transparent'; e.currentTarget.style.borderColor='transparent' }}>
       <div style={{ flex:1, minWidth:0 }}>
         <div style={{ fontSize:12, fontWeight:700, color:'#ccc', whiteSpace:'nowrap', overflow:'hidden', textOverflow:'ellipsis' }}>{card.player}</div>
@@ -261,11 +261,11 @@ function TopMovers({ cards }) {
   )
   return (
     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 22 }}>
-      <div style={{ background: '#0e0c1a', border: '1px solid rgba(147,51,234,0.28)', boxShadow: '0 4px 20px rgba(147,51,234,0.08), 0 2px 8px rgba(0,0,0,0.4)', borderRadius: 16, padding: '16px 18px' }}>
-        <div style={{ fontFamily: 'var(--font-geist-sans)', fontSize: 12, fontWeight: 700, color: '#a855f7', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 10 }}>🚀 Top Gainers</div>
+      <div style={{ background: '#0e0c1a', border: '1px solid rgba(var(--accent-rgb),0.28)', boxShadow: '0 4px 20px rgba(var(--accent-rgb),0.08), 0 2px 8px rgba(0,0,0,0.4)', borderRadius: 16, padding: '16px 18px' }}>
+        <div style={{ fontFamily: 'var(--font-geist-sans)', fontSize: 12, fontWeight: 700, color: 'var(--accent-light)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 10 }}>🚀 Top Gainers</div>
         {gainers.length ? gainers.map(c=><MoverRow key={c.id} card={c} isGainer={true}/>) : <div style={{ color:'#333',fontSize:12 }}>No gainers yet</div>}
       </div>
-      <div style={{ background: '#0e0c1a', border: '1px solid rgba(147,51,234,0.28)', boxShadow: '0 4px 20px rgba(147,51,234,0.08), 0 2px 8px rgba(0,0,0,0.4)', borderRadius: 16, padding: '16px 18px' }}>
+      <div style={{ background: '#0e0c1a', border: '1px solid rgba(var(--accent-rgb),0.28)', boxShadow: '0 4px 20px rgba(var(--accent-rgb),0.08), 0 2px 8px rgba(0,0,0,0.4)', borderRadius: 16, padding: '16px 18px' }}>
         <div style={{ fontFamily: 'var(--font-geist-sans)', fontSize: 12, fontWeight: 700, color: '#6d4a9e', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 10 }}>📉 Top Losers</div>
         {losers.length ? losers.map(c=><MoverRow key={c.id} card={c} isGainer={false}/>) : <div style={{ color:'#333',fontSize:12 }}>No losers yet</div>}
       </div>
@@ -274,9 +274,9 @@ function TopMovers({ cards }) {
 }
 
 function StatCard({ label, value, sub, positive, style = {} }) {
-  const accent = positive === true ? '#22c55e' : positive === false ? '#ef4444' : '#9333ea'
+  const accent = positive === true ? '#22c55e' : positive === false ? '#ef4444' : 'var(--accent)'
   return (
-    <div style={{ background: '#0e0c1a', border: '1px solid rgba(147,51,234,0.28)', boxShadow: '0 4px 20px rgba(147,51,234,0.08), 0 2px 8px rgba(0,0,0,0.4)', borderRadius: 12, padding: '14px 16px', position: 'relative', overflow: 'hidden', ...style }}>
+    <div style={{ background: '#0e0c1a', border: '1px solid rgba(var(--accent-rgb),0.28)', boxShadow: '0 4px 20px rgba(var(--accent-rgb),0.08), 0 2px 8px rgba(0,0,0,0.4)', borderRadius: 12, padding: '14px 16px', position: 'relative', overflow: 'hidden', ...style }}>
       <div style={{ position:'absolute', top:0, left:0, right:0, height:2, background:`linear-gradient(90deg,${accent},transparent)` }} />
       <div style={{ fontSize: 9, fontWeight: 700, color: '#555', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 8, fontFamily:'var(--font-geist-sans)' }}>{label}</div>
       <div style={{ fontFamily: 'var(--font-geist-mono)', fontSize: 18, fontWeight: 800, color: positive===true?'#22c55e':positive===false?'#ef4444':'#f0f0f0', letterSpacing: '-0.5px', lineHeight: 1 }}>{value}</div>
@@ -466,15 +466,15 @@ export default function DashboardPage() {
           </div>
 
           {/* ── Mobile: Portfolio Hero ── */}
-          <div className="mob-chart" style={{ background:'#0e0c1a', border:'1px solid rgba(147,51,234,0.28)', borderRadius:16, padding:'24px 20px', marginBottom:14, position:'relative', overflow:'hidden' }}>
-            <div style={{ position:'absolute', top:0, left:0, right:0, height:2, background:'linear-gradient(90deg,#9333ea,#a855f7,transparent)' }} />
+          <div className="mob-chart" style={{ background:'#0e0c1a', border:'1px solid rgba(var(--accent-rgb),0.28)', borderRadius:16, padding:'24px 20px', marginBottom:14, position:'relative', overflow:'hidden' }}>
+            <div style={{ position:'absolute', top:0, left:0, right:0, height:2, background:'linear-gradient(90deg,var(--accent),var(--accent-light),transparent)' }} />
             <div style={{ display:'flex', alignItems:'stretch', gap:0 }}>
               <div style={{ flex:1, paddingRight:20 }}>
                 <div style={{ fontSize:8, color:'#555', fontWeight:700, textTransform:'uppercase', letterSpacing:'0.12em', marginBottom:10 }}>Total Portfolio Value</div>
                 <div style={{ fontSize:22, fontWeight:800, color:'#f0f0f0', lineHeight:1, letterSpacing:'-0.5px' }}>{fmt(currentValue)}</div>
                 <div style={{ fontSize:9, color:'#333', marginTop:8 }}>current value of active cards</div>
               </div>
-              <div style={{ width:1, background:'rgba(147,51,234,0.2)', flexShrink:0 }} />
+              <div style={{ width:1, background:'rgba(var(--accent-rgb),0.2)', flexShrink:0 }} />
               <div style={{ flex:1, paddingLeft:20 }}>
                 <div style={{ display:'flex', alignItems:'center', gap:5, marginBottom:10 }}>
                   <div style={{ fontSize:8, fontWeight:700, color:'#555', textTransform:'uppercase', letterSpacing:'0.12em' }}>Total G/L</div>
@@ -505,13 +505,13 @@ export default function DashboardPage() {
           </div>
           <div className="hide-mobile" style={{ display:'flex',alignItems:'flex-end',justifyContent:'space-between',flexWrap:'wrap',gap:12,marginBottom:24 }}>
             <div>
-              <p style={{ fontSize:13,fontWeight:700,color:'#a855f7',margin:'0 0 6px',letterSpacing:'0.02em' }}>Hello, {user?.username ? user.username[0].toUpperCase() + user.username.slice(1) : ''} 👋</p>
+              <p style={{ fontSize:13,fontWeight:700,color:'var(--accent-light)',margin:'0 0 6px',letterSpacing:'0.02em' }}>Hello, {user?.username ? user.username[0].toUpperCase() + user.username.slice(1) : ''} 👋</p>
               <h1 style={{ fontSize:36,fontWeight:900,color:'#fff',letterSpacing:'-1.5px',margin:0,textTransform:'uppercase',lineHeight:1,fontFamily:'var(--font-geist-pixel-square)' }}>DASHBOARD</h1>
               <p style={{ fontSize:12,color:'#555',marginTop:6,fontWeight:500 }}>{activeCards.length===0?'Add your first card to get started':`Tracking ${activeCards.length} active card${activeCards.length!==1?'s':''}`}</p>
             </div>
             <div style={{ display:'flex',gap:8 }}>
 
-              <Link href="/collection" style={{ display:'flex',alignItems:'center',gap:7,padding:'9px 14px',background:'rgba(147,51,234,0.08)',border:'1px solid rgba(147,51,234,0.25)',borderRadius:10,color:'#9333ea',fontFamily:'var(--font-geist-sans)',fontSize:13,fontWeight:600,textDecoration:'none' }}>+ Add Card</Link>
+              <Link href="/collection" style={{ display:'flex',alignItems:'center',gap:7,padding:'9px 14px',background:'rgba(var(--accent-rgb),0.08)',border:'1px solid rgba(var(--accent-rgb),0.25)',borderRadius:10,color:'var(--accent)',fontFamily:'var(--font-geist-sans)',fontSize:13,fontWeight:600,textDecoration:'none' }}>+ Add Card</Link>
             </div>
           </div>
           {activeCards.length>0&&<div className="desk-chart"><PortfolioHero currentValue={currentValue} gainLoss={gainLoss} portfolioReturn={portfolioReturn} /></div>}
@@ -536,16 +536,16 @@ export default function DashboardPage() {
             const glPct = buy > 0 ? (gl / buy) * 100 : 0
             return (
               <Link href={`/collection?search=${encodeURIComponent(spotlight.player)}`} style={{ textDecoration:'none', display:'block', marginTop:20 }}>
-              <div style={{ animation:'scaleIn 0.3s ease', background:'#0e0c1a', border:'1px solid rgba(147,51,234,0.28)', boxShadow:'0 4px 24px rgba(147,51,234,0.1), 0 2px 8px rgba(0,0,0,0.4)', borderRadius:14, padding:'18px 22px', position:'relative', overflow:'hidden', cursor:'pointer', transition:'border-color 0.15s, box-shadow 0.15s' }}
-                onMouseEnter={e=>{ e.currentTarget.style.borderColor='rgba(147,51,234,0.5)'; e.currentTarget.style.boxShadow='0 6px 32px rgba(147,51,234,0.18), 0 2px 8px rgba(0,0,0,0.4)' }}
-                onMouseLeave={e=>{ e.currentTarget.style.borderColor='rgba(147,51,234,0.28)'; e.currentTarget.style.boxShadow='0 4px 24px rgba(147,51,234,0.1), 0 2px 8px rgba(0,0,0,0.4)' }}>
+              <div style={{ animation:'scaleIn 0.3s ease', background:'#0e0c1a', border:'1px solid rgba(var(--accent-rgb),0.28)', boxShadow:'0 4px 24px rgba(var(--accent-rgb),0.1), 0 2px 8px rgba(0,0,0,0.4)', borderRadius:14, padding:'18px 22px', position:'relative', overflow:'hidden', cursor:'pointer', transition:'border-color 0.15s, box-shadow 0.15s' }}
+                onMouseEnter={e=>{ e.currentTarget.style.borderColor='rgba(var(--accent-rgb),0.5)'; e.currentTarget.style.boxShadow='0 6px 32px rgba(var(--accent-rgb),0.18), 0 2px 8px rgba(0,0,0,0.4)' }}
+                onMouseLeave={e=>{ e.currentTarget.style.borderColor='rgba(var(--accent-rgb),0.28)'; e.currentTarget.style.boxShadow='0 4px 24px rgba(var(--accent-rgb),0.1), 0 2px 8px rgba(0,0,0,0.4)' }}>
                 {/* top accent */}
-                <div style={{ position:'absolute', top:0, left:0, right:0, height:2, background:'linear-gradient(90deg,#9333ea,#a855f7,transparent)' }} />
+                <div style={{ position:'absolute', top:0, left:0, right:0, height:2, background:'linear-gradient(90deg,var(--accent),var(--accent-light),transparent)' }} />
                 {/* Header row */}
                 <div style={{ display:'flex', alignItems:'center', gap:6, marginBottom:10 }}>
-                  <div style={{ width:6, height:6, borderRadius:'50%', background:'#9333ea', boxShadow:'0 0 6px rgba(147,51,234,0.5)' }} />
-                  <div style={{ fontFamily:'var(--font-geist-sans)', fontSize:9, fontWeight:800, color:'#a855f7', textTransform:'uppercase', letterSpacing:'0.12em' }}>Spotlight</div>
-                  <div style={{ marginLeft:'auto', fontSize:10, color:'#a855f7', fontFamily:'var(--font-geist-sans)', fontWeight:700 }}>View →</div>
+                  <div style={{ width:6, height:6, borderRadius:'50%', background:'var(--accent)', boxShadow:'0 0 6px rgba(var(--accent-rgb),0.5)' }} />
+                  <div style={{ fontFamily:'var(--font-geist-sans)', fontSize:9, fontWeight:800, color:'var(--accent-light)', textTransform:'uppercase', letterSpacing:'0.12em' }}>Spotlight</div>
+                  <div style={{ marginLeft:'auto', fontSize:10, color:'var(--accent-light)', fontFamily:'var(--font-geist-sans)', fontWeight:700 }}>View →</div>
                 </div>
                 {/* Name + stats on same row */}
                 <div style={{ display:'flex', alignItems:'center', gap:16 }}>
@@ -582,7 +582,7 @@ export default function DashboardPage() {
             const TYPE_CONFIG = {
               added:        { label:'Added',        color:'#22c55e',  icon:'＋' },
               deleted:      { label:'Deleted',      color:'#ef4444',  icon:'✕' },
-              price_update: { label:'Price Update', color:'#a855f7',  icon:'↑' },
+              price_update: { label:'Price Update', color:'var(--accent-light)',  icon:'↑' },
               sold:         { label:'Sold',         color:'#ffbe2e',  icon:'$' },
               edited:       { label:'Edited',       color:'#888',     icon:'✎' },
             }
@@ -592,8 +592,8 @@ export default function DashboardPage() {
               <div style={{ marginTop:20, background:'#111', border:'1px solid #1e1e1e', borderRadius:14, overflow:'hidden' }}>
                 <div style={{ padding:'14px 16px 10px', borderBottom:'1px solid #1a1a1a', display:'flex', alignItems:'center', justifyContent:'space-between' }}>
                   <div style={{ display:'flex', alignItems:'center', gap:6 }}>
-                    <div style={{ width:6, height:6, borderRadius:'50%', background:'#9333ea' }} />
-                    <span style={{ fontSize:9, fontWeight:800, color:'#a855f7', textTransform:'uppercase', letterSpacing:'0.12em' }}>Recent Activity</span>
+                    <div style={{ width:6, height:6, borderRadius:'50%', background:'var(--accent)' }} />
+                    <span style={{ fontSize:9, fontWeight:800, color:'var(--accent-light)', textTransform:'uppercase', letterSpacing:'0.12em' }}>Recent Activity</span>
                   </div>
                 </div>
                 {feed.length === 0 ? (
@@ -636,12 +636,12 @@ export default function DashboardPage() {
       {showInstallModal&&(
         <div style={{ position:'fixed',inset:0,background:'rgba(0,0,0,0.85)',zIndex:200,display:'flex',alignItems:'center',justifyContent:'center',padding:16 }}>
           <div style={{ background:'#111',border:'1px solid #2a2a2a',borderRadius:16,padding:28,maxWidth:360,width:'100%',textAlign:'center' }}>
-            <img src={LOGO} alt="TopLoad" style={{ width:100,marginBottom:16,filter:'drop-shadow(0 0 8px rgba(147,51,234,0.4))' }} />
+            <img src={LOGO} alt="TopLoad" style={{ width:100,marginBottom:16,filter:'drop-shadow(0 0 8px rgba(var(--accent-rgb),0.4))' }} />
             <h3 style={{ fontFamily:'var(--font-geist-sans)',fontSize:18,fontWeight:700,color:'#f0f0f0',marginBottom:8 }}>Install TopLoad</h3>
             <p style={{ fontSize:13,color:'#666',marginBottom:20,lineHeight:1.6 }}>Add to your home screen for the full app experience.</p>
             <div style={{ textAlign:'left',display:'flex',flexDirection:'column',gap:10,marginBottom:24 }}>
               <div style={{ padding:'12px 14px',borderRadius:10,background:'#1a1a1a',border:'1px solid #2a2a2a' }}>
-                <div style={{ fontSize:11,fontWeight:700,color:'#9333ea',marginBottom:4,textTransform:'uppercase',letterSpacing:'0.08em' }}>📱 iPhone · Safari</div>
+                <div style={{ fontSize:11,fontWeight:700,color:'var(--accent)',marginBottom:4,textTransform:'uppercase',letterSpacing:'0.08em' }}>📱 iPhone · Safari</div>
                 <div style={{ fontSize:12,color:'#777',lineHeight:1.6 }}>Tap <strong style={{ color:'#ccc' }}>Share</strong> → <strong style={{ color:'#ccc' }}>Add to Home Screen</strong></div>
               </div>
               <div style={{ padding:'12px 14px',borderRadius:10,background:'#1a1a1a',border:'1px solid #2a2a2a' }}>
@@ -649,7 +649,7 @@ export default function DashboardPage() {
                 <div style={{ fontSize:12,color:'#777',lineHeight:1.6 }}>Tap <strong style={{ color:'#ccc' }}>⋮ menu</strong> → <strong style={{ color:'#ccc' }}>Add to Home Screen</strong></div>
               </div>
             </div>
-            <button onClick={()=>setShowInstallModal(false)} style={{ width:'100%',padding:12,borderRadius:10,background:'linear-gradient(135deg,#9333ea,#a855f7)',border:'none',color:'#fff',fontFamily:'var(--font-geist-sans)',fontSize:14,fontWeight:700,cursor:'pointer' }}>Got it!</button>
+            <button onClick={()=>setShowInstallModal(false)} style={{ width:'100%',padding:12,borderRadius:10,background:'linear-gradient(135deg,var(--accent),var(--accent-light))',border:'none',color:'#fff',fontFamily:'var(--font-geist-sans)',fontSize:14,fontWeight:700,cursor:'pointer' }}>Got it!</button>
           </div>
         </div>
       )}
