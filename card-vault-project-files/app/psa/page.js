@@ -262,7 +262,7 @@ export default function PSALookupPage() {
       year: result.year || '',
       sport: result.sport || '',
       brand: result.brand || '',
-      name: result.set || '',
+      name: result.variety || result.set || '',
       grade: result.grade || '',
       gradingCo: 'PSA',
       autoGrade: '',
