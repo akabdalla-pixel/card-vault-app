@@ -1,6 +1,6 @@
 'use client'
 import { useState, useEffect, useCallback } from 'react'
-import { THEMES, applyTheme } from '@/app/components/ThemeProvider'
+import { THEMES, applyTheme, saveThemeToServer } from '@/app/components/ThemeProvider'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 
@@ -163,6 +163,7 @@ export default function SettingsPage() {
     setActiveTheme(theme.name)
     applyTheme(theme)
     try { localStorage.setItem('topload-theme', theme.name) } catch {}
+    saveThemeToServer(theme.name)
   }
 
   const load = useCallback(async () => {

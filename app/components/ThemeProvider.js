@@ -17,7 +17,6 @@ export function applyTheme(theme) {
   root.style.setProperty('--accent', theme.accent)
   root.style.setProperty('--accent-light', theme.accentLight)
   root.style.setProperty('--accent-rgb', theme.rgb)
-  // also update the PWA theme-color meta tag
   const meta = document.querySelector('meta[name="theme-color"]')
   if (meta) meta.setAttribute('content', theme.accent)
 }
@@ -29,9 +28,37 @@ export function getSavedTheme() {
   } catch { return THEMES[0] }
 }
 
+export async function saveThemeToServer(themeName) {
+  try {
+    await fetch('/api/user/theme', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ theme: themeName }),
+    })
+  } catch { /* non-critical */ }
+}
+
 export default function ThemeProvider({ children }) {
   useEffect(() => {
+    // Apply localStorage theme immediately (no flash)
     applyTheme(getSavedTheme())
+
+    // Then fetch server-saved theme and sync (handles cross-device / fresh browser)
+    fetch('/api/user/theme')
+      .then(r => r.ok ? r.json() : null)
+      .then(data => {
+        if (!data?.theme) return
+        const serverTheme = THEMES.find(t => t.name === data.theme)
+        if (!serverTheme) return
+        // Only override if different from what localStorage has
+        const localName = localStorage.getItem('topload-theme')
+        if (data.theme !== localName) {
+          localStorage.setItem('topload-theme', data.theme)
+          applyTheme(serverTheme)
+        }
+      })
+      .catch(() => { /* non-critical */ })
   }, [])
+
   return children
 }
