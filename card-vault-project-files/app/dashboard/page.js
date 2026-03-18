@@ -541,12 +541,10 @@ export default function DashboardPage() {
                 onMouseLeave={e=>{ e.currentTarget.style.borderColor='rgba(147,51,234,0.28)'; e.currentTarget.style.boxShadow='0 4px 24px rgba(147,51,234,0.1), 0 2px 8px rgba(0,0,0,0.4)' }}>
                 {/* top accent */}
                 <div style={{ position:'absolute', top:0, left:0, right:0, height:2, background:'linear-gradient(90deg,#9333ea,#a855f7,transparent)' }} />
-                {/* watermark emoji */}
-                <div style={{ position:'absolute', right:18, top:'50%', transform:'translateY(-50%)', fontSize:48, opacity:0.06, pointerEvents:'none' }}>🃏</div>
                 {/* Header row */}
                 <div style={{ display:'flex', alignItems:'center', gap:6, marginBottom:10 }}>
                   <div style={{ width:6, height:6, borderRadius:'50%', background:'#9333ea', boxShadow:'0 0 6px rgba(147,51,234,0.5)' }} />
-                  <div style={{ fontFamily:"'Unbounded',sans-serif", fontSize:9, fontWeight:800, color:'#a855f7', textTransform:'uppercase', letterSpacing:'0.12em' }}>✨ Spotlight</div>
+                  <div style={{ fontFamily:"'Unbounded',sans-serif", fontSize:9, fontWeight:800, color:'#a855f7', textTransform:'uppercase', letterSpacing:'0.12em' }}>Spotlight</div>
                   <div style={{ marginLeft:'auto', fontSize:10, color:'#a855f7', fontFamily:"'Unbounded',sans-serif", fontWeight:700 }}>View →</div>
                 </div>
                 {/* Name + stats on same row */}
