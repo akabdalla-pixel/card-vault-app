@@ -32,26 +32,30 @@ export async function GET(req) {
 
     const certPageUrl = `https://www.psacard.com/cert/${cert}/psa`
 
-    // Try to get image URLs from PSA image endpoint
-    let frontImage = null
-    let backImage = null
-    try {
-      const imgRes = await fetch(`https://api.psacard.com/publicapi/cert/GetImageByCertNumber/${cert}`, {
-        headers: {
-          'Authorization': `bearer ${PSA_TOKEN}`,
-          'Content-Type': 'application/json',
-        }
-      })
-      if (imgRes.ok) {
-        const imgData = await imgRes.json()
-        frontImage = imgData.FrontImageURL || imgData.frontImageURL || imgData.front_image_url || null
-        backImage = imgData.BackImageURL || imgData.backImageURL || imgData.back_image_url || null
-      }
-    } catch {}
+    // Check for image URLs directly in cert data first
+    let frontImage = cert_data.FrontImageURL || cert_data.frontImageURL || cert_data.ImageFront || cert_data.CardImageFront || null
+    let backImage = cert_data.BackImageURL || cert_data.backImageURL || cert_data.ImageBack || cert_data.CardImageBack || null
 
-    // Fallback to cloudfront pattern
-    if (!frontImage) frontImage = `https://d1htnxwo4o0jhw.cloudfront.net/cert/${cert}/front.jpg`
-    if (!backImage) backImage = `https://d1htnxwo4o0jhw.cloudfront.net/cert/${cert}/back.jpg`
+    // Try PSA image endpoint if not in cert data
+    if (!frontImage) {
+      try {
+        const imgRes = await fetch(`https://api.psacard.com/publicapi/cert/GetImageByCertNumber/${cert}`, {
+          headers: {
+            'Authorization': `bearer ${PSA_TOKEN}`,
+            'Content-Type': 'application/json',
+          }
+        })
+        if (imgRes.ok) {
+          const imgData = await imgRes.json()
+          frontImage = imgData.FrontImageURL || imgData.frontImageURL || imgData.front || null
+          backImage = imgData.BackImageURL || imgData.backImageURL || imgData.back || null
+        }
+      } catch {}
+    }
+
+    // Log what fields are available for debugging
+    console.log('PSA cert_data keys:', Object.keys(cert_data))
+    console.log('frontImage resolved:', frontImage)
 
     return NextResponse.json({
       valid: true,
