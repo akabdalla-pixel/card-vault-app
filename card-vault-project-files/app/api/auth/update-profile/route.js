@@ -5,8 +5,8 @@ const prisma = new PrismaClient()
 
 export async function POST(req) {
   try {
-    const user = await getUser(req)
-    if (!user) return Response.json({ error: 'Unauthorized' }, { status: 401 })
+    const userId = await getUser()
+    if (!userId) return Response.json({ error: 'Unauthorized' }, { status: 401 })
 
     const { name } = await req.json()
     const trimmed = name?.trim()
@@ -18,11 +18,11 @@ export async function POST(req) {
 
     // Check uniqueness (ignore own record)
     const existing = await prisma.user.findUnique({ where: { username: sanitized } })
-    if (existing && existing.id !== user.id) {
+    if (existing && existing.id !== userId) {
       return Response.json({ error: 'That name is already taken' }, { status: 400 })
     }
 
-    await prisma.user.update({ where: { id: user.id }, data: { username: sanitized } })
+    await prisma.user.update({ where: { id: userId }, data: { username: sanitized } })
 
     return Response.json({ success: true, username: sanitized })
   } catch (e) {
