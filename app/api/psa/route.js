@@ -39,9 +39,17 @@ export async function GET(req) {
 
     // Detect auto cards — PSA encodes autos as "AUTOGEM MT 10" in CardGrade.
     // AutoGrade is a separate field PSA rarely populates (only when the auto
-    // itself gets its own grade). We derive isAuto + autoGrade from CardGrade.
+    // itself gets its own grade). We also detect from brand/variety/set keywords
+    // for cards like "SP SIGNATURE SCRIPTED IN TIME" where CardGrade is plain "MINT 9".
     const cardGradeRaw = cert_data.CardGrade || ''
-    const isAuto = /^AUTO/i.test(cardGradeRaw) || !!cert_data.AutoGrade
+    const autoKeyword = /\b(auto|autograph|signature|signed)\b/i
+    const isAuto =
+      /^AUTO/i.test(cardGradeRaw) ||
+      !!cert_data.AutoGrade ||
+      autoKeyword.test(cert_data.Brand || '') ||
+      autoKeyword.test(cert_data.Variety || '') ||
+      autoKeyword.test(cert_data.CardName || '') ||
+      autoKeyword.test(cert_data.GradeDescription || '')
     // Extract numeric grade — works for both "AUTOGEM MT 10" and plain "GEM MT 10"
     const gradeNumeric = cardGradeRaw.replace(/[^0-9.]/g, '').trim() || null
     // Separate auto grade (PSA-assigned auto-only grade) — numeric only
