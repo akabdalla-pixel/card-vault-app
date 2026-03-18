@@ -743,7 +743,7 @@ function CollectionPage() {
   const searchParams = useSearchParams()
   const [search, setSearch] = useState(() => searchParams.get('search') || '')
   const [filterSport, setFilterSport] = useState('')
-  const [sportTab, setSportTab] = useState('all') // 'all' | 'sports' | 'tcg' | specific sport
+  const [sportTab, setSportTab] = useState(() => searchParams.get('sport') || 'all') // 'all' | 'sports' | 'tcg' | specific sport
   const [filterStatus, setFilterStatus] = useState('active')
   const [filterGraded, setFilterGraded] = useState('')
   const [sortBy, setSortBy] = useState('date_desc')

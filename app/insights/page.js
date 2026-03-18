@@ -282,7 +282,7 @@ function PersonalRecords({ cards, soldCards }) {
   const records = [
     { icon:'👑', label:'Most Valuable',  value: byVal[0]?.player||'—',  sub: byVal[0] ? fmtC(parseFloat(byVal[0].val)||0) : '',  subColor:'#22c55e', card: byVal[0] },
     { icon:'📈', label:'Biggest Win %',  value: byPct[0]?.player||'—',  sub: byPct[0] ? `+${byPct[0].pct.toFixed(0)}%` : '—',  subColor:'#a855f7', card: byPct[0] },
-    { icon:'🏆', label:'Top Sport',      value: topSport?.[0]||'—',     sub: topSport ? `${topSport[1]} card${topSport[1]>1?'s':''}` : '—', subColor:'#ffbe2e', card: null },
+    { icon:'🏆', label:'Top Sport',      value: topSport?.[0]||'—',     sub: topSport ? `${topSport[1]} card${topSport[1]>1?'s':''}` : '—', subColor:'#ffbe2e', card: null, href: topSport ? `/collection?sport=${encodeURIComponent(topSport[0])}` : null },
     { icon:'💸', label:'Most Expensive Purchase', value: byBuy[0]?.player||'—',  sub: byBuy[0] ? fmtC(parseFloat(byBuy[0].buy)||0) : '',  subColor:'#888',    card: byBuy[0] },
     ...(bestFlip ? [{ icon:'🔥', label:'Best Flip', value: bestFlip.player, sub:`+${fmtC((parseFloat(bestFlip.soldPrice)||0)-(parseFloat(bestFlip.buy)||0))}`, subColor:'#22c55e', card: bestFlip }] : []),
     { icon:'🆕', label:'Latest Add',     value: newest?.player||'—',    sub: newest ? new Date(newest.createdAt).toLocaleDateString('en-US',{month:'short',day:'numeric'}) : '', subColor:'#555', card: newest },
@@ -294,7 +294,7 @@ function PersonalRecords({ cards, soldCards }) {
       <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:8 }}>
         {records.map((r, i) => {
           const isLastOdd = i === records.length-1 && records.length % 2 !== 0
-          const href = r.card?.player ? `/collection?search=${encodeURIComponent(r.card.player)}` : null
+          const href = r.href !== undefined ? r.href : (r.card?.player ? `/collection?search=${encodeURIComponent(r.card.player)}` : null)
           const inner = (
             <div style={{ background:'#181818', border:'1px solid #1e1e1e', borderRadius:10, padding:'10px 12px', cursor:href?'pointer':'default', transition:'background 0.12s', height:'100%' }}
               onMouseEnter={e => { if(href) e.currentTarget.style.background='#222' }}
