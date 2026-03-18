@@ -8,45 +8,48 @@ datasource db {
 }
 
 model User {
-  id         String     @id @default(cuid())
-  email      String     @unique
-  username   String     @unique
+  id         String              @id @default(cuid())
+  email      String              @unique
+  username   String              @unique
   password   String
   cards      Card[]
   wishes     Wish[]
   activities Activity[]
-  createdAt  DateTime   @default(now())
-  updatedAt  DateTime   @updatedAt
+  snapshots  PortfolioSnapshot[]
+  createdAt  DateTime            @default(now())
+  updatedAt  DateTime            @updatedAt
 }
 
 model Card {
-  id        String   @id @default(cuid())
-  sport     String?
-  year      String?
-  player    String
-  name      String?
-  brand     String?
-  num       String?
-  cond      String?
-  grade     String?
-  qty       Int      @default(1)
-  date      String?
-  buy       Float    @default(0)
-  val       Float    @default(0)
-  notes     String?
-  sold      Boolean  @default(false)
-  soldPrice Float?
-  soldDate  String?
-  rarity    String?
-  edition   String?
-  language  String?
-  auto      Boolean  @default(false)
-  gradingCo String?
-  autoGrade String?
-  userId    String
-  user      User     @relation(fields: [userId], references: [id])
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id           String   @id @default(cuid())
+  sport        String?
+  year         String?
+  player       String
+  name         String?
+  brand        String?
+  num          String?
+  cond         String?
+  grade        String?
+  qty          Int      @default(1)
+  date         String?
+  buy          Float    @default(0)
+  val          Float    @default(0)
+  notes        String?
+  sold         Boolean  @default(false)
+  soldPrice    Float?
+  soldDate     String?
+  purchaseDate String?
+  rarity       String?
+  edition      String?
+  language     String?
+  auto         Boolean  @default(false)
+  gradingCo    String?
+  autoGrade    String?
+  imageUrl     String?
+  userId       String
+  user         User     @relation(fields: [userId], references: [id])
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 }
 
 model Activity {
@@ -57,6 +60,21 @@ model Activity {
   player    String
   sport     String?
   detail    String?
+  createdAt DateTime @default(now())
+}
+
+model PSACache {
+  cert      String   @id
+  data      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model PortfolioSnapshot {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  value     Float
   createdAt DateTime @default(now())
 }
 

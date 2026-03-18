@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Font Preview – TopLoad Cards</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,300;400;500;600;700;800&family=Syne:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Unbounded:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #0a0a0a; color: #f0f0f0; padding: 32px 24px; }
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; max-width: 1100px; margin: 0 auto; }
+  .card {
+    background: #0e0c1a;
+    border: 1px solid rgba(147,51,234,0.28);
+    box-shadow: 0 4px 24px rgba(147,51,234,0.1);
+    border-radius: 16px;
+    padding: 24px;
+    position: relative;
+    overflow: hidden;
+  }
+  .card::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0; height: 2px;
+    background: linear-gradient(90deg, #9333ea, #a855f7, transparent);
+  }
+  .font-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px; font-weight: 700; color: #a855f7;
+    text-transform: uppercase; letter-spacing: 0.15em;
+    margin-bottom: 20px;
+    padding: 4px 10px;
+    background: rgba(147,51,234,0.12);
+    border: 1px solid rgba(147,51,234,0.25);
+    border-radius: 6px;
+    display: inline-block;
+  }
+
+  /* ── Bricolage ── */
+  .f-bri { font-family: 'Bricolage Grotesque', sans-serif; }
+  /* ── Syne ── */
+  .f-syne { font-family: 'Syne', sans-serif; }
+  /* ── Plus Jakarta ── */
+  .f-jak { font-family: 'Plus Jakarta Sans', sans-serif; }
+  /* ── Unbounded ── */
+  .f-unb { font-family: 'Unbounded', sans-serif; }
+
+  .greeting { font-size: 13px; font-weight: 700; color: #a855f7; margin-bottom: 6px; }
+  .title { font-size: 32px; font-weight: 900; color: #fff; letter-spacing: -1px; text-transform: uppercase; line-height: 1; margin-bottom: 6px; }
+  .subtitle { font-size: 12px; color: #555; font-weight: 500; margin-bottom: 20px; }
+
+  .stat-row { display: flex; gap: 12px; margin-bottom: 16px; }
+  .stat { flex: 1; background: #111; border: 1px solid #1e1e1e; border-radius: 10px; padding: 12px 14px; }
+  .stat-label { font-size: 8px; font-weight: 700; color: #444; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 6px; }
+  .stat-value { font-family: 'JetBrains Mono', monospace; font-size: 16px; font-weight: 800; color: #f0f0f0; }
+
+  .pill-row { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
+  .pill { padding: 6px 12px; border-radius: 20px; font-size: 11px; font-weight: 600; cursor: pointer; }
+  .pill-active { background: #9333ea; color: #fff; }
+  .pill-inactive { background: rgba(147,51,234,0.1); border: 1px solid rgba(147,51,234,0.2); color: #9333ea; }
+
+  .nav-row { display: flex; gap: 4px; margin-bottom: 16px; }
+  .nav-item { padding: 7px 12px; border-radius: 8px; font-size: 12px; font-weight: 600; }
+  .nav-active { background: #9333ea; color: #fff; }
+  .nav-inactive { color: #555; }
+
+  .spotlight { background: #111; border: 1px solid rgba(147,51,234,0.2); border-radius: 10px; padding: 14px; }
+  .spot-label { font-size: 8px; font-weight: 800; color: #a855f7; text-transform: uppercase; letter-spacing: 0.15em; margin-bottom: 8px; }
+  .spot-name { font-size: 15px; font-weight: 800; color: #f5f5f5; margin-bottom: 3px; }
+  .spot-sub { font-size: 10px; color: #555; }
+
+  .gain { color: #22c55e; }
+  .loss { color: #ef4444; }
+
+  h2 { font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 700; color: #555; text-align: center; margin-bottom: 24px; letter-spacing: 0.1em; text-transform: uppercase; }
+</style>
+</head>
+<body>
+  <h2 style="font-family:'JetBrains Mono',monospace;margin-bottom:32px;color:#444;">TopLoad Cards — Font Preview · Pick your favourite</h2>
+  <div class="grid">
+
+    <!-- BRICOLAGE GROTESQUE -->
+    <div class="card">
+      <div class="font-label">Bricolage Grotesque</div>
+      <div class="f-bri">
+        <div class="greeting">Hello, Ahmed 👋</div>
+        <div class="title">Dashboard</div>
+        <div class="subtitle">Tracking 42 active cards</div>
+        <div class="nav-row">
+          <div class="nav-item nav-active f-bri">Dashboard</div>
+          <div class="nav-item nav-inactive f-bri">Collection</div>
+          <div class="nav-item nav-inactive f-bri">Insights</div>
+        </div>
+        <div class="stat-row">
+          <div class="stat"><div class="stat-label f-bri">Active Cards</div><div class="stat-value">42</div></div>
+          <div class="stat"><div class="stat-label f-bri">Invested</div><div class="stat-value">$9,200</div></div>
+          <div class="stat"><div class="stat-label f-bri">Value</div><div class="stat-value gain">$12,450</div></div>
+        </div>
+        <div class="pill-row">
+          <div class="pill pill-active f-bri">All</div>
+          <div class="pill pill-inactive f-bri">⚾ Baseball</div>
+          <div class="pill pill-inactive f-bri">🏀 Basketball</div>
+          <div class="pill pill-inactive f-bri">🏈 Football</div>
+        </div>
+        <div class="spotlight">
+          <div class="spot-label f-bri">✨ Spotlight</div>
+          <div class="spot-name f-bri">Mike Trout</div>
+          <div class="spot-sub f-bri">2011 · Baseball · Topps · Grade 9</div>
+          <div style="margin-top:8px;font-size:11px;font-weight:700;color:#a855f7;" class="f-bri">View in Collection →</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SYNE -->
+    <div class="card">
+      <div class="font-label">Syne</div>
+      <div class="f-syne">
+        <div class="greeting">Hello, Ahmed 👋</div>
+        <div class="title">Dashboard</div>
+        <div class="subtitle">Tracking 42 active cards</div>
+        <div class="nav-row">
+          <div class="nav-item nav-active f-syne">Dashboard</div>
+          <div class="nav-item nav-inactive f-syne">Collection</div>
+          <div class="nav-item nav-inactive f-syne">Insights</div>
+        </div>
+        <div class="stat-row">
+          <div class="stat"><div class="stat-label f-syne">Active Cards</div><div class="stat-value">42</div></div>
+          <div class="stat"><div class="stat-label f-syne">Invested</div><div class="stat-value">$9,200</div></div>
+          <div class="stat"><div class="stat-label f-syne">Value</div><div class="stat-value gain">$12,450</div></div>
+        </div>
+        <div class="pill-row">
+          <div class="pill pill-active f-syne">All</div>
+          <div class="pill pill-inactive f-syne">⚾ Baseball</div>
+          <div class="pill pill-inactive f-syne">🏀 Basketball</div>
+          <div class="pill pill-inactive f-syne">🏈 Football</div>
+        </div>
+        <div class="spotlight">
+          <div class="spot-label f-syne">✨ Spotlight</div>
+          <div class="spot-name f-syne">Mike Trout</div>
+          <div class="spot-sub f-syne">2011 · Baseball · Topps · Grade 9</div>
+          <div style="margin-top:8px;font-size:11px;font-weight:700;color:#a855f7;" class="f-syne">View in Collection →</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PLUS JAKARTA SANS -->
+    <div class="card">
+      <div class="font-label">Plus Jakarta Sans</div>
+      <div class="f-jak">
+        <div class="greeting">Hello, Ahmed 👋</div>
+        <div class="title">Dashboard</div>
+        <div class="subtitle">Tracking 42 active cards</div>
+        <div class="nav-row">
+          <div class="nav-item nav-active f-jak">Dashboard</div>
+          <div class="nav-item nav-inactive f-jak">Collection</div>
+          <div class="nav-item nav-inactive f-jak">Insights</div>
+        </div>
+        <div class="stat-row">
+          <div class="stat"><div class="stat-label f-jak">Active Cards</div><div class="stat-value">42</div></div>
+          <div class="stat"><div class="stat-label f-jak">Invested</div><div class="stat-value">$9,200</div></div>
+          <div class="stat"><div class="stat-label f-jak">Value</div><div class="stat-value gain">$12,450</div></div>
+        </div>
+        <div class="pill-row">
+          <div class="pill pill-active f-jak">All</div>
+          <div class="pill pill-inactive f-jak">⚾ Baseball</div>
+          <div class="pill pill-inactive f-jak">🏀 Basketball</div>
+          <div class="pill pill-inactive f-jak">🏈 Football</div>
+        </div>
+        <div class="spotlight">
+          <div class="spot-label f-jak">✨ Spotlight</div>
+          <div class="spot-name f-jak">Mike Trout</div>
+          <div class="spot-sub f-jak">2011 · Baseball · Topps · Grade 9</div>
+          <div style="margin-top:8px;font-size:11px;font-weight:700;color:#a855f7;" class="f-jak">View in Collection →</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- UNBOUNDED -->
+    <div class="card">
+      <div class="font-label">Unbounded</div>
+      <div class="f-unb">
+        <div class="greeting" style="font-size:11px;">Hello, Ahmed 👋</div>
+        <div class="title" style="font-size:22px;letter-spacing:-0.5px;">Dashboard</div>
+        <div class="subtitle" style="font-size:10px;">Tracking 42 active cards</div>
+        <div class="nav-row">
+          <div class="nav-item nav-active f-unb" style="font-size:10px;">Dashboard</div>
+          <div class="nav-item nav-inactive f-unb" style="font-size:10px;">Collection</div>
+          <div class="nav-item nav-inactive f-unb" style="font-size:10px;">Insights</div>
+        </div>
+        <div class="stat-row">
+          <div class="stat"><div class="stat-label f-unb" style="font-size:7px;">Active Cards</div><div class="stat-value">42</div></div>
+          <div class="stat"><div class="stat-label f-unb" style="font-size:7px;">Invested</div><div class="stat-value">$9,200</div></div>
+          <div class="stat"><div class="stat-label f-unb" style="font-size:7px;">Value</div><div class="stat-value gain">$12,450</div></div>
+        </div>
+        <div class="pill-row">
+          <div class="pill pill-active f-unb" style="font-size:9px;">All</div>
+          <div class="pill pill-inactive f-unb" style="font-size:9px;">⚾ Baseball</div>
+          <div class="pill pill-inactive f-unb" style="font-size:9px;">🏀 Basketball</div>
+        </div>
+        <div class="spotlight">
+          <div class="spot-label f-unb" style="font-size:7px;">✨ Spotlight</div>
+          <div class="spot-name f-unb" style="font-size:13px;">Mike Trout</div>
+          <div class="spot-sub f-unb" style="font-size:9px;">2011 · Baseball · Grade 9</div>
+          <div style="margin-top:8px;font-size:10px;font-weight:700;color:#a855f7;" class="f-unb">View in Collection →</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+  <div style="text-align:center;margin-top:32px;font-family:'JetBrains Mono',monospace;font-size:10px;color:#333;">Numbers use JetBrains Mono regardless of choice</div>
+</body>
+</html>
