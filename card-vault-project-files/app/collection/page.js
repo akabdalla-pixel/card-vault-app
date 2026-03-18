@@ -47,6 +47,25 @@ const SPORTS = [
 
 const TCG_LIST = ['Pokémon', 'Magic: The Gathering', 'Yu-Gi-Oh!', 'Lorcana', 'One Piece', 'Dragon Ball Super', 'Digimon']
 
+const SPORT_EMOJI = {
+  'Baseball': '⚾',
+  'Basketball': '🏀',
+  'Football': '🏈',
+  'Soccer': '⚽',
+  'Hockey': '🏒',
+  'Tennis': '🎾',
+  'Golf': '⛳',
+  'F1': '🏎️',
+  'Pokémon': '🎴',
+  'Magic: The Gathering': '🔮',
+  'Yu-Gi-Oh!': '🎴',
+  'Lorcana': '✨',
+  'One Piece': '⚓',
+  'Dragon Ball Super': '🐉',
+  'Digimon': '👾',
+  'Other': '🃏',
+}
+
 // TCG-specific rarities
 const TCG_RARITIES = ['Common', 'Uncommon', 'Rare', 'Holo Rare', 'Reverse Holo', 'Ultra Rare', 'Secret Rare', 'Full Art', 'Rainbow Rare', 'Alt Art', 'Gold Rare', 'Promo']
 const EDITIONS = ['1st Edition', 'Unlimited', 'Shadowless', 'Limited', 'First Print']
@@ -967,7 +986,7 @@ function CollectionPage() {
               { val: 'all', label: 'All', emoji: '🃏' },
               ...(hasSports ? [{ val: 'sports', label: 'Sports Cards', emoji: '🏆' }] : []),
               ...(hasTCG ? [{ val: 'tcg', label: 'TCG', emoji: '✨' }] : []),
-              ...uniqueSports.map(s => ({ val: s, label: s, emoji: TCG_LIST.includes(s) ? '🎴' : '🏅' }))
+              ...uniqueSports.map(s => ({ val: s, label: s, emoji: SPORT_EMOJI[s] || (TCG_LIST.includes(s) ? '🎴' : '🏅') }))
             ]
             return (
               <div className="hide-mob-flex" style={{ gap:6, marginBottom:14, overflowX:'auto', flexWrap:'nowrap', paddingBottom:4, WebkitOverflowScrolling:'touch', scrollbarWidth:'none' }}>
