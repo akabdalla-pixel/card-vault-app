@@ -30,11 +30,28 @@ export async function GET(req) {
 
     const cert_data = data.PSACert
 
-    // PSA blocks server-side image fetching - provide the cert page URL for users to view images
     const certPageUrl = `https://www.psacard.com/cert/${cert}/psa`
-    // Try standard cloudfront URL pattern (works for some certs)
-    const frontImage = `https://d1htnxwo4o0jhw.cloudfront.net/cert/${cert}/front.jpg`
-    const backImage = `https://d1htnxwo4o0jhw.cloudfront.net/cert/${cert}/back.jpg`
+
+    // Try to get image URLs from PSA image endpoint
+    let frontImage = null
+    let backImage = null
+    try {
+      const imgRes = await fetch(`https://api.psacard.com/publicapi/cert/GetImageByCertNumber/${cert}`, {
+        headers: {
+          'Authorization': `bearer ${PSA_TOKEN}`,
+          'Content-Type': 'application/json',
+        }
+      })
+      if (imgRes.ok) {
+        const imgData = await imgRes.json()
+        frontImage = imgData.FrontImageURL || imgData.frontImageURL || imgData.front_image_url || null
+        backImage = imgData.BackImageURL || imgData.backImageURL || imgData.back_image_url || null
+      }
+    } catch {}
+
+    // Fallback to cloudfront pattern
+    if (!frontImage) frontImage = `https://d1htnxwo4o0jhw.cloudfront.net/cert/${cert}/front.jpg`
+    if (!backImage) backImage = `https://d1htnxwo4o0jhw.cloudfront.net/cert/${cert}/back.jpg`
 
     return NextResponse.json({
       valid: true,
