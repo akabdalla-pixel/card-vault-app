@@ -43,7 +43,7 @@ export default function LandingPage() {
         {/* Hero */}
         <div style={{ minHeight:'100vh', display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', textAlign:'center', padding:'100px 24px 40px', position:'relative', overflow:'hidden' }}>
           <div style={{ position:'absolute', top:'30%', left:'50%', transform:'translate(-50%,-50%)', width:700, height:700, background:'radial-gradient(circle, rgba(147,51,234,0.1) 0%, transparent 70%)', pointerEvents:'none' }} />
-          <img className="fade1" src="/logo-transparent.png" alt="TopLoad" style={{ height:60, filter:'brightness(0) invert(1)', marginBottom:16, animation:'float 4s ease-in-out infinite' }} />
+          <img className="fade1" src="/logo-transparent.png" alt="TopLoad" style={{ height:140, filter:'brightness(0) invert(1)', marginBottom:24, animation:'float 4s ease-in-out infinite' }} />
           <h1 className="fade2" style={{ fontSize:'clamp(36px,6vw,64px)', fontWeight:900, lineHeight:1.05, letterSpacing:'-2.5px', marginBottom:20, maxWidth:800 }}>
             Every card.<br /><span style={{ color:'#9333ea' }}>Every dollar.</span><br />One place.
           </h1>
