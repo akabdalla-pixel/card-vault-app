@@ -44,38 +44,40 @@ export async function GET(req) {
     const cert_data = data.PSACert
     const certPageUrl = `https://www.psacard.com/cert/${cert}/psa`
 
-    let frontImage = cert_data.FrontImageURL || cert_data.frontImageURL || cert_data.ImageFront || cert_data.CardImageFront || null
-    let backImage = cert_data.BackImageURL || cert_data.backImageURL || cert_data.ImageBack || cert_data.CardImageBack || null
+    // Log raw cert data to identify correct field names
+    console.log('PSA raw cert_data keys:', Object.keys(cert_data))
+    console.log('PSA CardGrade:', cert_data.CardGrade)
+    console.log('PSA GradeDescription:', cert_data.GradeDescription)
 
-    // Try to get image from PSA cert page HTML (og:image meta tag)
-    if (!frontImage) {
-      try {
-        const pageRes = await fetch(`https://www.psacard.com/cert/${cert}/psa`, {
-          headers: {
-            'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-            'Accept': 'text/html',
-          }
-        })
-        if (pageRes.ok) {
-          const html = await pageRes.text()
-          const ogMatch = html.match(/<meta[^>]*property=["']og:image["'][^>]*content=["']([^"']+)["']/i)
-            || html.match(/<meta[^>]*content=["']([^"']+)["'][^>]*property=["']og:image["']/i)
-          if (ogMatch?.[1]) {
-            frontImage = ogMatch[1]
-          }
-        }
-      } catch (e) {}
+    // Extract auto grade - try multiple possible field names
+    const autoGradeRaw =
+      cert_data.AutoGrade ||
+      cert_data.AutoGradeCode ||
+      cert_data.AutographGrade ||
+      cert_data.AuthGrade ||
+      null
+
+    // Also try parsing from CardGrade (e.g. "10/A10")
+    let autoGradeFromCardGrade = null
+    if (cert_data.CardGrade) {
+      const autoMatch = cert_data.CardGrade.match(/A(\d+(?:\.\d+)?)/i)
+      if (autoMatch) autoGradeFromCardGrade = autoMatch[1]
     }
 
-    // Final fallback to cloudfront pattern
-    if (!frontImage) frontImage = `https://d1htnxwo4o0jhw.cloudfront.net/cert/${cert}/front.jpg`
-    if (!backImage) backImage = `https://d1htnxwo4o0jhw.cloudfront.net/cert/${cert}/back.jpg`
+    // Also try parsing from GradeDescription (e.g. "GEM MT 10 A10")
+    let autoGradeFromDesc = null
+    if (cert_data.GradeDescription) {
+      const autoMatch = cert_data.GradeDescription.match(/A(\d+(?:\.\d+)?)/i)
+      if (autoMatch) autoGradeFromDesc = autoMatch[1]
+    }
+
+    const resolvedAutoGrade = autoGradeRaw || autoGradeFromCardGrade || autoGradeFromDesc
 
     const result = {
       valid: true,
       cert: cert_data.CertNumber,
       grade: cert_data.CardGrade ? cert_data.CardGrade.replace(/[^0-9.]/g, '').trim() : null,
-      autoGrade: cert_data.AutoGrade || null,
+      autoGrade: resolvedAutoGrade,
       gradeDescription: cert_data.GradeDescription || null,
       player: cert_data.Subject || null,
       year: cert_data.Year || null,
@@ -87,8 +89,6 @@ export async function GET(req) {
       labelType: cert_data.LabelType || null,
       isCancelled: cert_data.IsCancelled || false,
       reverse: cert_data.ReverseBarCode || null,
-      frontImage: frontImage,
-      backImage: backImage,
       certPageUrl: certPageUrl,
       totalPop: cert_data.TotalPopulation || 0,
       totalPopWithQualifier: cert_data.TotalPopulationWithQualifier || 0,
@@ -96,7 +96,6 @@ export async function GET(req) {
       raw: cert_data,
     }
 
-    // Save to database cache
     try {
       await prisma.pSACache.upsert({
         where: { cert },
