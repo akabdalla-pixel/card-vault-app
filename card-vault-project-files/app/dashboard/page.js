@@ -510,7 +510,7 @@ export default function DashboardPage() {
               <p style={{ fontSize:12,color:'#555',marginTop:6,fontWeight:500 }}>{activeCards.length===0?'Add your first card to get started':`Tracking ${activeCards.length} active card${activeCards.length!==1?'s':''}`}</p>
             </div>
             <div style={{ display:'flex',gap:8 }}>
-              {!installed && <button onClick={installPrompt?handleInstall:()=>setShowInstallModal(true)} style={{ display:'flex',alignItems:'center',gap:7,padding:'9px 14px',background:'rgba(147,51,234,0.08)',border:'1px solid rgba(147,51,234,0.2)',borderRadius:10,color:'#9333ea',fontFamily:"'Unbounded',sans-serif",fontSize:13,fontWeight:600,cursor:'pointer' }}>📲 Install App</button>}
+
               <Link href="/collection" style={{ display:'flex',alignItems:'center',gap:7,padding:'9px 14px',background:'rgba(147,51,234,0.08)',border:'1px solid rgba(147,51,234,0.25)',borderRadius:10,color:'#9333ea',fontFamily:"'Unbounded',sans-serif",fontSize:13,fontWeight:600,textDecoration:'none' }}>+ Add Card</Link>
             </div>
           </div>
