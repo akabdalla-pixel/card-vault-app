@@ -208,18 +208,21 @@ function TopCardsRank({ cards }) {
   return (
     <div style={{ background: '#111', border: '1px solid #1e1e1e', borderRadius: 14, padding: '16px' }}>
       <div style={{ fontFamily: "'Outfit',sans-serif", fontSize: 13, fontWeight: 700, color: '#ccc', marginBottom: 18, display: 'flex', alignItems: 'center', gap: 8 }}><IconTrophy /><span>Top 5 Most Valuable</span></div>
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-        {top.map((card, i) => { // stagger
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+        {top.map((card, i) => {
           const val = parseFloat(card.val) || parseFloat(card.buy) || 0
           const buy = parseFloat(card.buy) || 0
           const gl = val - buy
           const glPos = gl >= 0
+          const href = `/collection?search=${encodeURIComponent(card.player)}`
           return (
-            <div key={card.id} style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+            <Link key={card.id} href={href} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '8px 10px', borderRadius: 10, textDecoration: 'none', transition: 'background 0.12s' }}
+              onMouseEnter={e => e.currentTarget.style.background = '#1a1a1a'}
+              onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
               <div style={{ width: 24, height: 24, borderRadius: 8, background: i === 0 ? 'rgba(147,51,234,0.2)' : '#1a1a1a', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: "'JetBrains Mono',monospace", fontSize: 11, fontWeight: 700, color: i === 0 ? '#9333ea' : '#555', flexShrink: 0 }}>{i + 1}</div>
               <div style={{ flex: 1, minWidth: 0 }}>
                 <div style={{ fontFamily: "'Outfit',sans-serif", fontSize: 13, fontWeight: 700, color: '#ccc', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{card.player}</div>
-                <div style={{ position: 'relative', height: 4, background: '#1a1a1a', borderRadius: 4, marginTop: 6, overflow: 'hidden' }}>
+                <div style={{ position: 'relative', height: 4, background: '#1e1e1e', borderRadius: 4, marginTop: 6, overflow: 'hidden' }}>
                   <div style={{ height: '100%', width: `${(val / max) * 100}%`, background: i === 0 ? 'linear-gradient(90deg,#9333ea,#a855f7)' : '#333', borderRadius: 4, transition: 'width 0.5s ease' }} />
                 </div>
               </div>
@@ -227,7 +230,8 @@ function TopCardsRank({ cards }) {
                 <div style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: 14, fontWeight: 700, color: '#f0f0f0' }}>{fmt(val)}</div>
                 <div style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: 11, color: glPos ? '#22c55e' : '#ef4444', marginTop: 2 }}>{glPos ? '+' : ''}{fmt(gl)}</div>
               </div>
-            </div>
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#333" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}><polyline points="9 18 15 12 9 6"/></svg>
+            </Link>
           )
         })}
       </div>
@@ -279,7 +283,7 @@ function PersonalRecords({ cards, soldCards }) {
     { icon:'👑', label:'Most Valuable',  value: byVal[0]?.player||'—',  sub: byVal[0] ? fmtC(parseFloat(byVal[0].val)||0) : '',  subColor:'#22c55e', card: byVal[0] },
     { icon:'📈', label:'Biggest Win %',  value: byPct[0]?.player||'—',  sub: byPct[0] ? `+${byPct[0].pct.toFixed(0)}%` : '—',  subColor:'#a855f7', card: byPct[0] },
     { icon:'🏆', label:'Top Sport',      value: topSport?.[0]||'—',     sub: topSport ? `${topSport[1]} card${topSport[1]>1?'s':''}` : '—', subColor:'#ffbe2e', card: null },
-    { icon:'💸', label:'Most Expensive', value: byBuy[0]?.player||'—',  sub: byBuy[0] ? fmtC(parseFloat(byBuy[0].buy)||0) : '',  subColor:'#888',    card: byBuy[0] },
+    { icon:'💸', label:'Most Expensive Purchase', value: byBuy[0]?.player||'—',  sub: byBuy[0] ? fmtC(parseFloat(byBuy[0].buy)||0) : '',  subColor:'#888',    card: byBuy[0] },
     ...(bestFlip ? [{ icon:'🔥', label:'Best Flip', value: bestFlip.player, sub:`+${fmtC((parseFloat(bestFlip.soldPrice)||0)-(parseFloat(bestFlip.buy)||0))}`, subColor:'#22c55e', card: bestFlip }] : []),
     { icon:'🆕', label:'Latest Add',     value: newest?.player||'—',    sub: newest ? new Date(newest.createdAt).toLocaleDateString('en-US',{month:'short',day:'numeric'}) : '', subColor:'#555', card: newest },
   ]
