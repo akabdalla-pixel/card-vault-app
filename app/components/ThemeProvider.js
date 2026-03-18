@@ -41,7 +41,14 @@ export async function saveThemeToServer(themeName) {
 
 export default function ThemeProvider({ children }) {
   useEffect(() => {
+    // 1. Apply localStorage immediately — no flash, always takes priority
     applyTheme(getSavedTheme())
+
+    // 2. Only check server if localStorage has no saved choice (new device / cleared browser)
+    //    This prevents the server default ("Purple") from overwriting a real local preference
+    try {
+      if (localStorage.getItem('topload-theme')) return
+    } catch {}
 
     fetch('/api/user/theme')
       .then(r => r.ok ? r.json() : null)
@@ -49,11 +56,8 @@ export default function ThemeProvider({ children }) {
         if (!data?.theme) return
         const serverTheme = THEMES.find(t => t.name === data.theme)
         if (!serverTheme) return
-        const localName = localStorage.getItem('topload-theme')
-        if (data.theme !== localName) {
-          localStorage.setItem('topload-theme', data.theme)
-          applyTheme(serverTheme)
-        }
+        localStorage.setItem('topload-theme', data.theme)
+        applyTheme(serverTheme)
       })
       .catch(() => {})
   }, [])
