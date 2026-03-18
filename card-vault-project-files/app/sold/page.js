@@ -160,9 +160,8 @@ export default function SoldHistoryPage() {
   a.press:active{transform:scale(0.94)!important;opacity:0.85!important}
   .press{transition:transform 0.1s ease,opacity 0.1s ease!important}
   .press:active{transform:scale(0.93)!important;opacity:0.8!important}
-        @import url('https://fonts.googleapis.com/css2?family=Unbounded:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700;800&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Unbounded:wght@300;400;500;600;700;800;900&display=swap');
         *{font-family:'Unbounded',-apple-system,sans-serif!important}
-        [style*="JetBrains"],[style*="monospace"]{font-family:'JetBrains Mono',monospace!important}
         .sidebar-el{display:flex;flex-direction:column}.mobile-only{display:none!important}.mob-topbar{display:none}.main-wrap{margin-left:200px;min-height:100vh;width:calc(100% - 200px)}.sold-row:hover{background:rgba(255,255,255,0.02)!important}
         @media(max-width:768px){.sidebar-el{display:none!important}.mobile-only{display:flex!important}.mob-topbar{display:flex}.main-wrap{margin-left:0!important;width:100%!important;padding-bottom:90px!important}}
       `}</style>
@@ -191,7 +190,7 @@ export default function SoldHistoryPage() {
               ].map(([label, value, color]) => (
                 <div key={label} style={{ padding: '12px 14px', borderRadius: 12, background: 'linear-gradient(135deg,#111,#0d0d0d)', border: '1px solid #1e1e1e' }}>
                   <div style={{ fontSize: 10, color: '#444', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 6 }}>{label}</div>
-                  <div style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: 16, fontWeight: 700, color }}>{value}</div>
+                  <div style={{ fontFamily: "'Unbounded',sans-serif", fontSize: 16, fontWeight: 700, color }}>{value}</div>
                 </div>
               ))}
             </div>
@@ -227,12 +226,12 @@ export default function SoldHistoryPage() {
                           </td>
                           <td style={{ padding: '12px 16px', textAlign: 'right', fontFamily: "'Unbounded',sans-serif", fontSize: 12, color: '#666' }}>{card.sport||'—'}</td>
                           <td style={{ padding: '12px 16px', textAlign: 'right' }}>{card.grade ? <span style={{ padding: '2px 8px', borderRadius: 6, background: 'rgba(147,51,234,0.1)', color: plPos ? '#22c55e' : '#ef4444', fontSize: 11, fontWeight: 700 }}>Grade {card.grade}</span> : <span style={{ color: '#444', fontSize: 12 }}>{card.cond||'Raw'}</span>}</td>
-                          <td style={{ padding: '12px 16px', textAlign: 'right', fontFamily: "'JetBrains Mono',monospace", fontSize: 13, color: '#666' }}>{fmt(buy)}</td>
-                          <td style={{ padding: '12px 16px', textAlign: 'right', fontFamily: "'JetBrains Mono',monospace", fontSize: 13, fontWeight: 700, color: '#f0f0f0' }}>{fmt(sold)}</td>
+                          <td style={{ padding: '12px 16px', textAlign: 'right', fontFamily: "'Unbounded',sans-serif", fontSize: 13, color: '#666' }}>{fmt(buy)}</td>
+                          <td style={{ padding: '12px 16px', textAlign: 'right', fontFamily: "'Unbounded',sans-serif", fontSize: 13, fontWeight: 700, color: '#f0f0f0' }}>{fmt(sold)}</td>
                           <td style={{ padding: '12px 16px', textAlign: 'right' }}>
-                            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 3, fontFamily: "'JetBrains Mono',monospace", fontSize: 13, fontWeight: 700, color: plPos?'#22c55e':'#ef4444' }}>{plPos?<IconUp />:<IconDown />}{plPos?'+':''}{fmt(pl)}</div>
+                            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 3, fontFamily: "'Unbounded',sans-serif", fontSize: 13, fontWeight: 700, color: plPos?'#22c55e':'#ef4444' }}>{plPos?<IconUp />:<IconDown />}{plPos?'+':''}{fmt(pl)}</div>
                           </td>
-                          <td style={{ padding: '12px 16px', textAlign: 'right', fontFamily: "'JetBrains Mono',monospace", fontSize: 12, fontWeight: 600, color: plPos?'#22c55e':'#ef4444' }}>{plPos?'+':''}{pct.toFixed(1)}%</td>
+                          <td style={{ padding: '12px 16px', textAlign: 'right', fontFamily: "'Unbounded',sans-serif", fontSize: 12, fontWeight: 600, color: plPos?'#22c55e':'#ef4444' }}>{plPos?'+':''}{pct.toFixed(1)}%</td>
                           <td style={{ padding: '12px 16px', textAlign: 'right', fontFamily: "'Unbounded',sans-serif", fontSize: 12, color: '#555' }}>{card.soldDate ? new Date(card.soldDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : '—'}</td>
                         </tr>
                       )

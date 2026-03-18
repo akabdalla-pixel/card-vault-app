@@ -292,9 +292,8 @@ export default function SettingsPage() {
       <style>{`
         @keyframes toastIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
         @keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
-        @import url('https://fonts.googleapis.com/css2?family=Unbounded:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700;800&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Unbounded:wght@300;400;500;600;700;800;900&display=swap');
         *{font-family:'Unbounded',-apple-system,sans-serif!important}
-        [style*="JetBrains"],[style*="monospace"]{font-family:'JetBrains Mono',monospace!important}
         .sidebar-el{display:flex;flex-direction:column}.mobile-only{display:none!important}.mob-topbar{display:none}.main-wrap{margin-left:200px;min-height:100vh;width:calc(100% - 200px)}
         button:not(:disabled):active{transform:scale(0.94)!important;opacity:0.85!important;transition:transform 0.1s ease,opacity 0.1s ease!important}
         @media(max-width:768px){.sidebar-el{display:none!important}.mobile-only{display:flex!important}.mob-topbar{display:flex}.main-wrap{margin-left:0!important;width:100%!important;padding-bottom:90px!important}}
@@ -328,7 +327,7 @@ export default function SettingsPage() {
                   Share your collection publicly — only card values are visible, not what you paid.
                 </div>
                 <div style={{ display:'flex', alignItems:'center', gap:8, padding:'10px 12px', background:'#0d0d0d', border:'1px solid #1a1a1a', borderRadius:8, marginBottom:12 }}>
-                  <div style={{ flex:1, fontSize:12, color:'#555', overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap', fontFamily:"'JetBrains Mono',monospace" }}>
+                  <div style={{ flex:1, fontSize:12, color:'#555', overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap', fontFamily:"'Unbounded',sans-serif" }}>
                     toploadcards.com/share/{user?.username}
                   </div>
                 </div>
@@ -367,7 +366,7 @@ export default function SettingsPage() {
                   ].map((s,i) => (
                     <div key={i} style={{ background:'#1a1a1a', borderRadius:10, padding:'12px 14px', animation:`fadeUp 0.3s ease ${i*0.06}s both` }}>
                       <div style={{ fontSize:9, color:'#444', fontWeight:700, textTransform:'uppercase', letterSpacing:'0.08em', marginBottom:4, fontFamily:"'Unbounded',sans-serif" }}>{s.label}</div>
-                      <div style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:13, fontWeight:700, color:s.color||'#f0f0f0' }}>{s.value}</div>
+                      <div style={{ fontFamily:"'Unbounded',sans-serif", fontSize:13, fontWeight:700, color:s.color||'#f0f0f0' }}>{s.value}</div>
                     </div>
                   ))}
                 </div>

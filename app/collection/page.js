@@ -548,7 +548,7 @@ function SoldModal({ card, onClose, onSave }) {
           {soldPrice && (
             <div style={{ padding: '12px 16px', borderRadius: 10, background: profit >= 0 ? 'rgba(34,211,167,0.08)' : 'rgba(168,85,247,0.08)', border: '1px solid ' + (profit >= 0 ? 'rgba(147,51,234,0.2)' : 'rgba(168,85,247,0.2)') }}>
               <div style={{ fontSize: 11, color: '#555', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 4 }}>Realized P&L</div>
-              <div style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: 20, fontWeight: 700, color: profit >= 0 ? '#22c55e' : '#ef4444' }}>{profit >= 0 ? '+' : ''}{fmt(profit)} <span style={{ fontSize: 13 }}>({profitPct >= 0 ? '+' : ''}{profitPct.toFixed(1)}%)</span></div>
+              <div style={{ fontFamily: "'Unbounded',sans-serif", fontSize: 20, fontWeight: 700, color: profit >= 0 ? '#22c55e' : '#ef4444' }}>{profit >= 0 ? '+' : ''}{fmt(profit)} <span style={{ fontSize: 13 }}>({profitPct >= 0 ? '+' : ''}{profitPct.toFixed(1)}%)</span></div>
               <div style={{ fontSize: 12, color: '#555', marginTop: 4 }}>Bought for {fmt(buy)}</div>
             </div>
           )}
@@ -643,7 +643,7 @@ function BreakEvenModal({ card, onClose }) {
 
   const fmt = n => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 2 }).format(n || 0)
 
-  const inputStyle = { width: '100%', padding: '9px 12px', borderRadius: 8, background: '#202020', border: '1px solid #2a2a2a', color: '#f0f0f0', fontSize: 14, outline: 'none', fontFamily: "'JetBrains Mono',monospace", boxSizing: 'border-box', transition: 'border-color 0.15s' }
+  const inputStyle = { width: '100%', padding: '9px 12px', borderRadius: 8, background: '#202020', border: '1px solid #2a2a2a', color: '#f0f0f0', fontSize: 14, outline: 'none', fontFamily: "'Unbounded',sans-serif", boxSizing: 'border-box', transition: 'border-color 0.15s' }
 
   return (
     <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.85)', zIndex: 200, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16 }}>
@@ -660,7 +660,7 @@ function BreakEvenModal({ card, onClose }) {
         {/* Buy price display */}
         <div style={{ padding: '12px 14px', borderRadius: 10, background: '#202020', border: '1px solid #2a2a2a', marginBottom: 18 }}>
           <div style={{ fontSize: 10, color: '#444', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 4, fontFamily: "'Unbounded',sans-serif" }}>Your Cost Basis</div>
-          <div style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: 22, fontWeight: 700, color: '#f0f0f0' }}>{fmt(buy)}</div>
+          <div style={{ fontFamily: "'Unbounded',sans-serif", fontSize: 22, fontWeight: 700, color: '#f0f0f0' }}>{fmt(buy)}</div>
           {parseInt(card.qty) > 1 && <div style={{ fontSize: 11, color: '#444', marginTop: 2, fontFamily: "'Unbounded',sans-serif" }}>{card.qty} × {fmt(parseFloat(card.buy))}</div>}
         </div>
 
@@ -683,7 +683,7 @@ function BreakEvenModal({ card, onClose }) {
         {/* Break even result */}
         <div style={{ padding: '14px 16px', borderRadius: 10, background: 'rgba(147,51,234,0.06)', border: '1px solid rgba(147,51,234,0.2)', marginBottom: 18 }}>
           <div style={{ fontSize: 10, color: '#9333ea', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 6, fontFamily: "'Unbounded',sans-serif" }}>Break Even Price</div>
-          <div style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: 26, fontWeight: 700, color: '#9333ea' }}>{fmt(breakEvenExact)}</div>
+          <div style={{ fontFamily: "'Unbounded',sans-serif", fontSize: 26, fontWeight: 700, color: '#9333ea' }}>{fmt(breakEvenExact)}</div>
           <div style={{ fontSize: 11, color: '#666', marginTop: 6, fontFamily: "'Unbounded',sans-serif", display: 'flex', flexDirection: 'column', gap: 2 }}>
             <span>Cost: {fmt(buy)} + eBay fee: {fmt(breakEvenExact * (parseFloat(ebayFee) / 100))} + Shipping: {fmt(shippingAmt)}</span>
           </div>
@@ -703,15 +703,15 @@ function BreakEvenModal({ card, onClose }) {
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 12 }}>
               <div>
                 <div style={{ fontSize: 10, color: '#444', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 4, fontFamily: "'Unbounded',sans-serif" }}>eBay Fee</div>
-                <div style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: 14, color: '#666' }}>-{fmt(targetEbayFee)}</div>
+                <div style={{ fontFamily: "'Unbounded',sans-serif", fontSize: 14, color: '#666' }}>-{fmt(targetEbayFee)}</div>
               </div>
               <div>
                 <div style={{ fontSize: 10, color: '#444', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 4, fontFamily: "'Unbounded',sans-serif" }}>Shipping</div>
-                <div style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: 14, color: '#666' }}>-{fmt(shippingAmt)}</div>
+                <div style={{ fontFamily: "'Unbounded',sans-serif", fontSize: 14, color: '#666' }}>-{fmt(shippingAmt)}</div>
               </div>
               <div>
                 <div style={{ fontSize: 10, color: '#444', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 4, fontFamily: "'Unbounded',sans-serif" }}>Net Profit</div>
-                <div style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: 14, fontWeight: 700, color: isProfit ? '#22c55e' : '#ef4444' }}>
+                <div style={{ fontFamily: "'Unbounded',sans-serif", fontSize: 14, fontWeight: 700, color: isProfit ? '#22c55e' : '#ef4444' }}>
                   {isProfit ? '+' : ''}{fmt(netProfit)}
                 </div>
               </div>
@@ -720,7 +720,7 @@ function BreakEvenModal({ card, onClose }) {
               <span style={{ fontFamily: "'Unbounded',sans-serif", fontSize: 13, color: '#666' }}>
                 {isProfit ? '✅ You make money at this price' : '❌ You lose money at this price'}
               </span>
-              <span style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: 14, fontWeight: 700, color: isProfit ? '#22c55e' : '#ef4444' }}>
+              <span style={{ fontFamily: "'Unbounded',sans-serif", fontSize: 14, fontWeight: 700, color: isProfit ? '#22c55e' : '#ef4444' }}>
                 {isProfit ? '+' : ''}{netProfitPct.toFixed(1)}%
               </span>
             </div>
@@ -867,9 +867,8 @@ function CollectionPage() {
   return (
     <>
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Unbounded:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700;800&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Unbounded:wght@300;400;500;600;700;800;900&display=swap');
         *{font-family:'Unbounded',-apple-system,sans-serif!important}
-        [style*="JetBrains"],[style*="monospace"]{font-family:'JetBrains Mono',monospace!important}
         .sidebar-el{display:flex;flex-direction:column}.mobile-only{display:none!important}.mob-topbar{display:none}.main-wrap{margin-left:200px;min-height:100vh;width:calc(100% - 200px)}.card-row:hover{background:rgba(255,255,255,0.02)!important}
         .mobile-cards{display:none!important}
         .desktop-table{display:block!important}
@@ -939,7 +938,7 @@ function CollectionPage() {
                   <div key={i} style={{ background:'#111', border:'1px solid #1a1a1a', borderRadius:12, padding:'16px', position:'relative', overflow:'hidden' }}>
                     <div style={{ position:'absolute', top:0, left:0, right:0, height:2, background:s.accent }} />
                     <div style={{ fontSize:9, fontWeight:700, color:'#555', textTransform:'uppercase', letterSpacing:'0.12em', marginBottom:10 }}>{s.label}</div>
-                    <div style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:s.big?28:18, fontWeight:900, color:s.valColor, letterSpacing:'-0.5px', lineHeight:1 }}>{s.value}</div>
+                    <div style={{ fontFamily:"'Unbounded',sans-serif", fontSize:s.big?28:18, fontWeight:900, color:s.valColor, letterSpacing:'-0.5px', lineHeight:1 }}>{s.value}</div>
                     <div style={{ fontSize:11, color:'#444', marginTop:5 }}>{s.sub}</div>
                   </div>
                 ))}
@@ -966,7 +965,7 @@ function CollectionPage() {
                 <div key={i} style={{ background:'#111', border:'1px solid #1a1a1a', borderRadius:10, padding:'12px 14px', position:'relative', overflow:'hidden' }}>
                   <div style={{ position:'absolute', top:0, left:0, right:0, height:2, background:s.accent }} />
                   <div style={{ fontSize:9, fontWeight:700, color:'#444', textTransform:'uppercase', letterSpacing:'0.1em', marginBottom:6 }}>{s.label}</div>
-                  <div style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:16, fontWeight:900, color:s.color, letterSpacing:'-0.5px' }}>{s.value}</div>
+                  <div style={{ fontFamily:"'Unbounded',sans-serif", fontSize:16, fontWeight:900, color:s.color, letterSpacing:'-0.5px' }}>{s.value}</div>
                 </div>
               ))}
             </div>
@@ -994,7 +993,7 @@ function CollectionPage() {
                   <button key={t.val} onClick={() => setSportTab(t.val)} style={{ display:'flex', alignItems:'center', gap:6, padding:'8px 16px', borderRadius:100, border: sportTab === t.val ? '1px solid #9333ea' : '1px solid #1e1e1e', background: sportTab === t.val ? '#9333ea' : '#111', color: sportTab === t.val ? '#fff' : '#555', fontSize:12, fontWeight: sportTab === t.val ? 900 : 600, textTransform:'uppercase', letterSpacing:'0.05em', cursor:'pointer', whiteSpace:'nowrap', flexShrink:0, transition:'all 0.15s' }}>
                     <span>{t.emoji}</span>{t.label}
                     {sportTab === t.val && t.val !== 'all' && (
-                      <span style={{ fontSize:10, background:'rgba(147,51,234,0.2)', borderRadius:10, padding:'1px 6px', fontFamily:"'JetBrains Mono',monospace" }}>
+                      <span style={{ fontSize:10, background:'rgba(147,51,234,0.2)', borderRadius:10, padding:'1px 6px', fontFamily:"'Unbounded',sans-serif" }}>
                         {statActive.length}
                       </span>
                     )}
@@ -1043,7 +1042,7 @@ function CollectionPage() {
                 placeholder="Min"
                 value={priceMin}
                 onChange={e => setPriceMin(e.target.value)}
-                style={{ width:60, padding:'8px 0', background:'transparent', border:'none', color:'#f0f0f0', fontSize:13, outline:'none', fontFamily:"'JetBrains Mono',monospace" }}
+                style={{ width:60, padding:'8px 0', background:'transparent', border:'none', color:'#f0f0f0', fontSize:13, outline:'none', fontFamily:"'Unbounded',sans-serif" }}
               />
               <span style={{ fontSize:11, color:'#333' }}>—</span>
               <input
@@ -1051,7 +1050,7 @@ function CollectionPage() {
                 placeholder="Max"
                 value={priceMax}
                 onChange={e => setPriceMax(e.target.value)}
-                style={{ width:60, padding:'8px 0', background:'transparent', border:'none', color:'#f0f0f0', fontSize:13, outline:'none', fontFamily:"'JetBrains Mono',monospace" }}
+                style={{ width:60, padding:'8px 0', background:'transparent', border:'none', color:'#f0f0f0', fontSize:13, outline:'none', fontFamily:"'Unbounded',sans-serif" }}
               />
             </div>
             {/* Active filter count */}
@@ -1268,11 +1267,11 @@ function CollectionPage() {
                           <div style={{ display:'flex', justifyContent:'space-between', alignItems:'flex-end', paddingTop:6, borderTop:'1px solid #1a1a1a' }}>
                             <div>
                               <div style={{ fontSize:9, color:'#444', fontWeight:700, textTransform:'uppercase', letterSpacing:'0.1em', marginBottom:3 }}>VALUE</div>
-                              <div style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:15, fontWeight:900, color:'#fff', letterSpacing:'-0.5px' }}>{fmt(val)}</div>
+                              <div style={{ fontFamily:"'Unbounded',sans-serif", fontSize:15, fontWeight:900, color:'#fff', letterSpacing:'-0.5px' }}>{fmt(val)}</div>
                             </div>
                             <div style={{ textAlign:'right' }}>
                               <div style={{ fontSize:9, color:'#444', fontWeight:700, textTransform:'uppercase', letterSpacing:'0.1em', marginBottom:3 }}>G/L</div>
-                              <div style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:13, fontWeight:800, color: glPos?'#22c55e':'#ef4444' }}>{glPos?'+':''}{glPct.toFixed(1)}%</div>
+                              <div style={{ fontFamily:"'Unbounded',sans-serif", fontSize:13, fontWeight:800, color: glPos?'#22c55e':'#ef4444' }}>{glPos?'+':''}{glPct.toFixed(1)}%</div>
                             </div>
                           </div>
                         </div>
@@ -1322,11 +1321,11 @@ function CollectionPage() {
                           <div style={{ display:'flex', justifyContent:'space-between', alignItems:'flex-end', paddingTop:12, borderTop:'1px solid #1a1a1a' }}>
                             <div>
                               <div style={{ fontSize:9, fontWeight:700, color:'#444', textTransform:'uppercase', letterSpacing:'0.1em', marginBottom:4 }}>PAID</div>
-                              <div style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:13, fontWeight:700, color:'#666' }}>{fmt(buy)}</div>
+                              <div style={{ fontFamily:"'Unbounded',sans-serif", fontSize:13, fontWeight:700, color:'#666' }}>{fmt(buy)}</div>
                             </div>
                             <div style={{ textAlign:'right' }}>
                               <div style={{ fontSize:9, fontWeight:700, color:'#444', textTransform:'uppercase', letterSpacing:'0.1em', marginBottom:4 }}>VALUE</div>
-                              <div style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:20, fontWeight:900, color:'#fff', letterSpacing:'-0.5px' }}>{fmt(displayVal)}</div>
+                              <div style={{ fontFamily:"'Unbounded',sans-serif", fontSize:20, fontWeight:900, color:'#fff', letterSpacing:'-0.5px' }}>{fmt(displayVal)}</div>
                             </div>
                           </div>
                           {/* Action buttons */}
@@ -1381,11 +1380,11 @@ function CollectionPage() {
                         <div style={{ display:'flex', justifyContent:'space-between', alignItems:'flex-end', paddingTop:6, borderTop:'1px solid #1a1a1a' }}>
                           <div>
                             <div style={{ fontSize:8, color:'#444', fontWeight:700, textTransform:'uppercase', letterSpacing:'0.1em', marginBottom:2 }}>VALUE</div>
-                            <div style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:14, fontWeight:900, color:'#fff' }}>{fmt(displayVal)}</div>
+                            <div style={{ fontFamily:"'Unbounded',sans-serif", fontSize:14, fontWeight:900, color:'#fff' }}>{fmt(displayVal)}</div>
                           </div>
                           <div style={{ textAlign:'right' }}>
                             <div style={{ fontSize:8, color:'#444', fontWeight:700, textTransform:'uppercase', letterSpacing:'0.1em', marginBottom:2 }}>G/L</div>
-                            <div style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:11, fontWeight:800, color: glPos?'#22c55e':'#ef4444' }}>{glPos?'+':''}{glPct.toFixed(1)}%</div>
+                            <div style={{ fontFamily:"'Unbounded',sans-serif", fontSize:11, fontWeight:800, color: glPos?'#22c55e':'#ef4444' }}>{glPos?'+':''}{glPct.toFixed(1)}%</div>
                           </div>
                         </div>
                       </div>
@@ -1416,15 +1415,15 @@ function CollectionPage() {
                       <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 12, padding: '10px 12px', borderRadius: 10, background: '#181818' }}>
                         <div style={{ flex: 1 }}>
                           <div style={{ fontSize: 10, color: '#444', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 3 }}>Buy Price</div>
-                          <div style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: 14, color: '#666' }}>{fmt(buy)}</div>
+                          <div style={{ fontFamily: "'Unbounded',sans-serif", fontSize: 14, color: '#666' }}>{fmt(buy)}</div>
                         </div>
                         <div style={{ flex: 1 }}>
                           <div style={{ fontSize: 10, color: '#444', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 3 }}>{card.sold ? 'Sold For' : 'Value'}</div>
-                          <div style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: 14, fontWeight: 700, color: '#f0f2ff' }}>{fmt(displayVal)}</div>
+                          <div style={{ fontFamily: "'Unbounded',sans-serif", fontSize: 14, fontWeight: 700, color: '#f0f2ff' }}>{fmt(displayVal)}</div>
                         </div>
                         <div style={{ flex: 1 }}>
                           <div style={{ fontSize: 10, color: '#444', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 3 }}>G/L</div>
-                          <div style={{ display: 'flex', alignItems: 'center', gap: 3, fontFamily: "'JetBrains Mono',monospace", fontSize: 14, fontWeight: 700, color: glPos ? '#22c55e' : '#ef4444' }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: 3, fontFamily: "'Unbounded',sans-serif", fontSize: 14, fontWeight: 700, color: glPos ? '#22c55e' : '#ef4444' }}>
                             {glPos ? <IconUp /> : <IconDown />}{glPos?'+':''}{glPct.toFixed(1)}%
                           </div>
                         </div>

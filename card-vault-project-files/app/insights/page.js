@@ -132,7 +132,7 @@ function DonutChart({ data, title }) {
         <div style={{ display:'flex', gap:8 }}>
           {data.map((d,i) => (
             <div key={i} style={{ flex:1, background: i===0?'rgba(147,51,234,0.1)':'rgba(255,255,255,0.04)', border: i===0?'1px solid rgba(147,51,234,0.2)':'1px solid #1e1e1e', borderRadius:9, padding:'10px 12px', textAlign:'center' }}>
-              <div style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:22, fontWeight:900, color: i===0?'#a855f7':'#888' }}>{d.value}</div>
+              <div style={{ fontFamily:"'Unbounded',sans-serif", fontSize:22, fontWeight:900, color: i===0?'#a855f7':'#888' }}>{d.value}</div>
               <div style={{ fontSize:9, fontWeight:700, color:'#555', textTransform:'uppercase', letterSpacing:'0.1em', marginTop:3 }}>{d.label}</div>
             </div>
           ))}
@@ -145,7 +145,7 @@ function DonutChart({ data, title }) {
               <div key={i}>
                 <div style={{ display:'flex', justifyContent:'space-between', marginBottom:4 }}>
                   <span style={{ fontSize:11, fontWeight:700, color:'#ccc' }}>{d.label}</span>
-                  <span style={{ fontSize:11, fontWeight:800, color:'#a855f7', fontFamily:"'JetBrains Mono',monospace" }}>{pct}%</span>
+                  <span style={{ fontSize:11, fontWeight:800, color:'#a855f7', fontFamily:"'Unbounded',sans-serif" }}>{pct}%</span>
                 </div>
                 <div style={{ height:4, borderRadius:100, background:'#1a1a1a', overflow:'hidden' }}>
                   <div style={{ height:'100%', width:pct+'%', borderRadius:100, background: CHART_COLORS[i % CHART_COLORS.length] }} />
@@ -175,7 +175,7 @@ function BarChart({ data, title, valuePrefix = '', valueSuffix = '', color = RED
             <div style={{ flex: 1, height: 28, background: '#1a1a1a', borderRadius: 6, overflow: 'hidden', position: 'relative' }}>
               <div style={{ height: '100%', width: `${(d.value / max) * 100}%`, background: hovered === i ? `${color}dd` : `${color}99`, borderRadius: 6, transition: 'all 0.3s ease', minWidth: d.value > 0 ? 4 : 0 }} />
             </div>
-            <div style={{ width: 60, fontFamily: "'JetBrains Mono',monospace", fontSize: 12, fontWeight: 700, color: hovered === i ? '#f0f0f0' : '#888', textAlign: 'right', flexShrink: 0 }}>{valuePrefix}{d.value}{valueSuffix}</div>
+            <div style={{ width: 60, fontFamily: "'Unbounded',sans-serif", fontSize: 12, fontWeight: 700, color: hovered === i ? '#f0f0f0' : '#888', textAlign: 'right', flexShrink: 0 }}>{valuePrefix}{d.value}{valueSuffix}</div>
           </div>
         ))}
       </div>
@@ -192,7 +192,7 @@ function StatCard({ label, value, sub, icon, positive, accent, style = {} }) {
         <div style={{ fontSize: 10, fontWeight: 700, color: '#333', letterSpacing: '0.12em', textTransform: 'uppercase', fontFamily: "'Unbounded',sans-serif" }}>{label}</div>
         {icon && <div style={{ fontSize: 16 }}>{icon}</div>}
       </div>
-      <div style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: 20, fontWeight: 700, color: '#f0f0f0', letterSpacing: '-0.5px', lineHeight: 1 }}>{value}</div>
+      <div style={{ fontFamily: "'Unbounded',sans-serif", fontSize: 20, fontWeight: 700, color: '#f0f0f0', letterSpacing: '-0.5px', lineHeight: 1 }}>{value}</div>
       {sub && <div style={{ marginTop: 8, fontSize: 11, color: positive === true ? '#22c55e' : positive === false ? '#ef4444' : '#555', fontFamily: "'Unbounded',sans-serif", fontWeight: 600, display: 'flex', alignItems: 'center', gap: 4 }}>
         {positive === true && <IconTrendUp />}{positive === false && <IconTrendDown />}{sub}
       </div>}
@@ -219,7 +219,7 @@ function TopCardsRank({ cards }) {
             <Link key={card.id} href={href} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '8px 10px', borderRadius: 10, textDecoration: 'none', transition: 'background 0.12s' }}
               onMouseEnter={e => e.currentTarget.style.background = '#1a1a1a'}
               onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
-              <div style={{ width: 24, height: 24, borderRadius: 8, background: i === 0 ? 'rgba(147,51,234,0.2)' : '#1a1a1a', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: "'JetBrains Mono',monospace", fontSize: 11, fontWeight: 700, color: i === 0 ? '#9333ea' : '#555', flexShrink: 0 }}>{i + 1}</div>
+              <div style={{ width: 24, height: 24, borderRadius: 8, background: i === 0 ? 'rgba(147,51,234,0.2)' : '#1a1a1a', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: "'Unbounded',sans-serif", fontSize: 11, fontWeight: 700, color: i === 0 ? '#9333ea' : '#555', flexShrink: 0 }}>{i + 1}</div>
               <div style={{ flex: 1, minWidth: 0 }}>
                 <div style={{ fontFamily: "'Unbounded',sans-serif", fontSize: 13, fontWeight: 700, color: '#ccc', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{card.player}</div>
                 <div style={{ position: 'relative', height: 4, background: '#1e1e1e', borderRadius: 4, marginTop: 6, overflow: 'hidden' }}>
@@ -227,8 +227,8 @@ function TopCardsRank({ cards }) {
                 </div>
               </div>
               <div style={{ textAlign: 'right', flexShrink: 0 }}>
-                <div style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: 14, fontWeight: 700, color: '#f0f0f0' }}>{fmt(val)}</div>
-                <div style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: 11, color: glPos ? '#22c55e' : '#ef4444', marginTop: 2 }}>{glPos ? '+' : ''}{fmt(gl)}</div>
+                <div style={{ fontFamily: "'Unbounded',sans-serif", fontSize: 14, fontWeight: 700, color: '#f0f0f0' }}>{fmt(val)}</div>
+                <div style={{ fontFamily: "'Unbounded',sans-serif", fontSize: 11, color: glPos ? '#22c55e' : '#ef4444', marginTop: 2 }}>{glPos ? '+' : ''}{fmt(gl)}</div>
               </div>
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#333" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}><polyline points="9 18 15 12 9 6"/></svg>
             </Link>
@@ -302,7 +302,7 @@ function PersonalRecords({ cards, soldCards }) {
               <div style={{ fontSize:18, marginBottom:5 }}>{r.icon}</div>
               <div style={{ fontSize:9, fontWeight:700, color:'#444', textTransform:'uppercase', letterSpacing:'0.08em', marginBottom:3 }}>{r.label}</div>
               <div style={{ fontSize:12, fontWeight:800, color:'#f0f0f0', overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap', marginBottom:2 }}>{r.value}</div>
-              <div style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:11, fontWeight:800, color:r.subColor }}>{r.sub}</div>
+              <div style={{ fontFamily:"'Unbounded',sans-serif", fontSize:11, fontWeight:800, color:r.subColor }}>{r.sub}</div>
             </div>
           )
           return href
@@ -413,9 +413,8 @@ export default function InsightsPage() {
   a.press:active{transform:scale(0.94)!important;opacity:0.85!important}
   .press{transition:transform 0.1s ease,opacity 0.1s ease!important}
   .press:active{transform:scale(0.93)!important;opacity:0.8!important}
-        @import url('https://fonts.googleapis.com/css2?family=Unbounded:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700;800&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Unbounded:wght@300;400;500;600;700;800;900&display=swap');
         *{font-family:'Unbounded',-apple-system,sans-serif!important}
-        [style*="JetBrains"],[style*="monospace"]{font-family:'JetBrains Mono',monospace!important}
         .sidebar-el{display:flex;flex-direction:column}.mobile-only{display:none!important}.mob-topbar{display:none}.main-wrap{margin-left:200px;min-height:100vh;width:calc(100% - 200px)}
         .insights-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
         .insights-grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}

@@ -196,10 +196,10 @@ function SparklineChart({ cards, snapshots }) {
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 }}>
         <div>
           <div style={{ fontFamily: "'Unbounded',sans-serif", fontSize: 13, fontWeight: 700, color: '#999' }}>Portfolio Value</div>
-          <div style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: 26, fontWeight: 700, color: '#f0f0f0', marginTop: 2 }}>{fmt(totalVal)}</div>
+          <div style={{ fontFamily: "'Unbounded',sans-serif", fontSize: 26, fontWeight: 700, color: '#f0f0f0', marginTop: 2 }}>{fmt(totalVal)}</div>
         </div>
         <div style={{ textAlign: 'right' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 4, justifyContent: 'flex-end', fontFamily: "'JetBrains Mono',monospace", fontSize: 14, fontWeight: 700, color: isUp ? '#22c55e' : '#ef4444' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 4, justifyContent: 'flex-end', fontFamily: "'Unbounded',sans-serif", fontSize: 14, fontWeight: 700, color: isUp ? '#22c55e' : '#ef4444' }}>
             {isUp ? <IconTrendUp /> : <IconTrendDown />}{isUp?'+':''}{fmt(totalVal-totalCost)}
           </div>
           <div style={{ fontSize: 11, color: '#444', marginTop: 2 }}>vs cost basis</div>
@@ -247,11 +247,11 @@ function QuickValueRow({ card, onUpdate }) {
       </div>
       {editing ? (
         <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
-          <input type="number" value={val} onChange={e => setVal(e.target.value)} autoFocus style={{ width: 90, padding: '5px 8px', borderRadius: 7, background: '#1a1a1a', border: '1px solid #9333ea', color: '#f0f0f0', fontSize: 13, outline: 'none', fontFamily: "'JetBrains Mono',monospace", textAlign: 'right' }} onKeyDown={e => { if(e.key==='Enter') handleSave(); if(e.key==='Escape') setEditing(false) }} />
+          <input type="number" value={val} onChange={e => setVal(e.target.value)} autoFocus style={{ width: 90, padding: '5px 8px', borderRadius: 7, background: '#1a1a1a', border: '1px solid #9333ea', color: '#f0f0f0', fontSize: 13, outline: 'none', fontFamily: "'Unbounded',sans-serif", textAlign: 'right' }} onKeyDown={e => { if(e.key==='Enter') handleSave(); if(e.key==='Escape') setEditing(false) }} />
           <button onClick={handleSave} disabled={saving} style={{ padding: '5px 8px', borderRadius: 7, background: 'rgba(147,51,234,0.15)', border: 'none', color: '#9333ea', cursor: 'pointer' }}><IconCheck /></button>
         </div>
       ) : (
-        <div onClick={() => setEditing(true)} style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: 14, fontWeight: 700, color: '#f0f0f0', cursor: 'pointer', padding: '4px 8px', borderRadius: 7, border: '1px solid transparent', transition: 'all 0.15s' }}
+        <div onClick={() => setEditing(true)} style={{ fontFamily: "'Unbounded',sans-serif", fontSize: 14, fontWeight: 700, color: '#f0f0f0', cursor: 'pointer', padding: '4px 8px', borderRadius: 7, border: '1px solid transparent', transition: 'all 0.15s' }}
           onMouseEnter={e => { e.currentTarget.style.borderColor='rgba(147,51,234,0.4)'; e.currentTarget.style.background='rgba(147,51,234,0.06)' }}
           onMouseLeave={e => { e.currentTarget.style.borderColor='transparent'; e.currentTarget.style.background='transparent' }}>
           {fmt(current)}
@@ -275,8 +275,8 @@ function TopMovers({ cards }) {
         <div style={{ fontSize:10, color:'#444', marginTop:1 }}>{[card.year, card.sport, card.grade ? 'PSA ' + card.grade : null].filter(Boolean).join(' · ')}</div>
       </div>
       <div style={{ textAlign:'right', marginLeft:12, flexShrink:0 }}>
-        <div style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:13, fontWeight:700, color: isGainer ? '#22c55e' : '#ef4444' }}>{isGainer?'+':''}{card.pct.toFixed(1)}%</div>
-        <div style={{ fontSize:10, color:'#555', fontFamily:"'JetBrains Mono',monospace" }}>{isGainer?'+':''}{fmt(card.gl)}</div>
+        <div style={{ fontFamily:"'Unbounded',sans-serif", fontSize:13, fontWeight:700, color: isGainer ? '#22c55e' : '#ef4444' }}>{isGainer?'+':''}{card.pct.toFixed(1)}%</div>
+        <div style={{ fontSize:10, color:'#555', fontFamily:"'Unbounded',sans-serif" }}>{isGainer?'+':''}{fmt(card.gl)}</div>
       </div>
     </Link>
   )
@@ -300,7 +300,7 @@ function StatCard({ label, value, sub, positive, style = {} }) {
     <div style={{ background: '#0e0c1a', border: '1px solid rgba(147,51,234,0.28)', boxShadow: '0 4px 20px rgba(147,51,234,0.08), 0 2px 8px rgba(0,0,0,0.4)', borderRadius: 12, padding: '14px 16px', position: 'relative', overflow: 'hidden', ...style }}>
       <div style={{ position:'absolute', top:0, left:0, right:0, height:2, background:`linear-gradient(90deg,${accent},transparent)` }} />
       <div style={{ fontSize: 9, fontWeight: 700, color: '#555', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 8, fontFamily:"'Unbounded',sans-serif" }}>{label}</div>
-      <div style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: 18, fontWeight: 800, color: positive===true?'#22c55e':positive===false?'#ef4444':'#f0f0f0', letterSpacing: '-0.5px', lineHeight: 1 }}>{value}</div>
+      <div style={{ fontFamily: "'Unbounded',sans-serif", fontSize: 18, fontWeight: 800, color: positive===true?'#22c55e':positive===false?'#ef4444':'#f0f0f0', letterSpacing: '-0.5px', lineHeight: 1 }}>{value}</div>
       {sub && <div style={{ display: 'flex', alignItems: 'center', gap: 4, marginTop: 6, fontSize: 10, fontFamily: "'Unbounded',sans-serif", fontWeight: 600, color: positive===true?'#22c55e':positive===false?'#ef4444':'#444' }}>
         {positive===true&&<IconTrendUp />}{positive===false&&<IconTrendDown />}{sub}
       </div>}
@@ -445,9 +445,8 @@ export default function DashboardPage() {
   return (
     <>
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Unbounded:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700;800&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Unbounded:wght@300;400;500;600;700;800;900&display=swap');
         *{font-family:'Unbounded',-apple-system,sans-serif!important}
-        [style*="JetBrains"],[style*="monospace"]{font-family:'JetBrains Mono',monospace!important}
         @keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
         @keyframes toastIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
         @keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
@@ -489,24 +488,24 @@ export default function DashboardPage() {
           <div className="mob-chart" style={{ background:'#111', border:'1px solid #1e1e1e', borderRadius:16, padding:'28px 20px', marginBottom:14, position:'relative', overflow:'hidden' }}>
             <div style={{ position:'absolute', top:0, left:0, right:0, height:3, background: gainPos ? '#22c55e' : '#ef4444' }} />
             <div style={{ fontSize:10, color:'#555', fontWeight:700, textTransform:'uppercase', letterSpacing:'0.12em', marginBottom:8 }}>Portfolio Value</div>
-            <div style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:42, fontWeight:900, color:'#fff', letterSpacing:'-2px', lineHeight:1, marginBottom:10 }}>{fmt(currentValue)}</div>
+            <div style={{ fontFamily:"'Unbounded',sans-serif", fontSize:42, fontWeight:900, color:'#fff', letterSpacing:'-2px', lineHeight:1, marginBottom:10 }}>{fmt(currentValue)}</div>
             <div style={{ display:'flex', alignItems:'center', gap:8, marginBottom:16 }}>
-              <span style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:16, fontWeight:800, color: gainPos?'#22c55e':'#ef4444' }}>{gainPos?'▲':'▼'} {gainPos?'+':''}{fmt(gainLoss)}</span>
+              <span style={{ fontFamily:"'Unbounded',sans-serif", fontSize:16, fontWeight:800, color: gainPos?'#22c55e':'#ef4444' }}>{gainPos?'▲':'▼'} {gainPos?'+':''}{fmt(gainLoss)}</span>
               <span style={{ fontSize:13, color:'#555' }}>{gainPos?'+':''}{portfolioReturn.toFixed(1)}%</span>
             </div>
             <MobileSparkline snapshots={snapshots} color={gainPos ? '#22c55e' : '#ef4444'} />
             <div style={{ display:'flex', gap:0, paddingTop:16, borderTop:'1px solid #1a1a1a' }}>
               <div style={{ flex:1 }}>
                 <div style={{ fontSize:9, color:'#444', fontWeight:700, textTransform:'uppercase', letterSpacing:'0.1em', marginBottom:4 }}>Invested</div>
-                <div style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:15, fontWeight:700, color:'#888' }}>{fmt(totalInvested)}</div>
+                <div style={{ fontFamily:"'Unbounded',sans-serif", fontSize:15, fontWeight:700, color:'#888' }}>{fmt(totalInvested)}</div>
               </div>
               <div style={{ flex:1 }}>
                 <div style={{ fontSize:9, color:'#444', fontWeight:700, textTransform:'uppercase', letterSpacing:'0.1em', marginBottom:4 }}>Cards</div>
-                <div style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:15, fontWeight:700, color:'#888' }}>{activeCards.length}</div>
+                <div style={{ fontFamily:"'Unbounded',sans-serif", fontSize:15, fontWeight:700, color:'#888' }}>{activeCards.length}</div>
               </div>
               <div style={{ flex:1 }}>
                 <div style={{ fontSize:9, color:'#444', fontWeight:700, textTransform:'uppercase', letterSpacing:'0.1em', marginBottom:4 }}>Realized</div>
-                <div style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:15, fontWeight:700, color: realizedPL>=0?'#22c55e':realizedPL<0?'#ef4444':'#888' }}>{realizedPL>=0?'+':''}{fmt(realizedPL)}</div>
+                <div style={{ fontFamily:"'Unbounded',sans-serif", fontSize:15, fontWeight:700, color: realizedPL>=0?'#22c55e':realizedPL<0?'#ef4444':'#888' }}>{realizedPL>=0?'+':''}{fmt(realizedPL)}</div>
               </div>
             </div>
           </div>
@@ -523,7 +522,7 @@ export default function DashboardPage() {
             ].map((s,i) => (
               <div key={i} style={{ flexShrink:0,background:'#111',border:'1px solid #1e1e1e',borderRadius:12,padding:'12px 14px',minWidth:130 }}>
                 <div style={{ fontSize:9,color:'#444',fontWeight:700,textTransform:'uppercase',letterSpacing:'0.1em',marginBottom:6,fontFamily:"'Unbounded',sans-serif" }}>{s.label}</div>
-                <div style={{ fontFamily:"'JetBrains Mono',monospace",fontSize:15,fontWeight:700,color:s.color||'#f0f0f0' }}>{s.value}</div>
+                <div style={{ fontFamily:"'Unbounded',sans-serif",fontSize:15,fontWeight:700,color:s.color||'#f0f0f0' }}>{s.value}</div>
               </div>
             ))}
           </div>
@@ -584,15 +583,15 @@ export default function DashboardPage() {
                   <div style={{ display:'flex', gap:16, flexShrink:0, flexWrap:'wrap' }}>
                     <div style={{ textAlign:'right' }}>
                       <div style={{ fontSize:9, color:'#444', fontWeight:700, textTransform:'uppercase', letterSpacing:'0.08em', marginBottom:4, fontFamily:"'Unbounded',sans-serif" }}>Buy</div>
-                      <div style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:13, color:'#666' }}>{fmt(buy)}</div>
+                      <div style={{ fontFamily:"'Unbounded',sans-serif", fontSize:13, color:'#666' }}>{fmt(buy)}</div>
                     </div>
                     <div style={{ textAlign:'right' }}>
                       <div style={{ fontSize:9, color:'#444', fontWeight:700, textTransform:'uppercase', letterSpacing:'0.08em', marginBottom:4, fontFamily:"'Unbounded',sans-serif" }}>Value</div>
-                      <div style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:13, fontWeight:700, color:'#f0f0f0' }}>{fmt(val)}</div>
+                      <div style={{ fontFamily:"'Unbounded',sans-serif", fontSize:13, fontWeight:700, color:'#f0f0f0' }}>{fmt(val)}</div>
                     </div>
                     <div style={{ textAlign:'right' }}>
                       <div style={{ fontSize:9, color:'#444', fontWeight:700, textTransform:'uppercase', letterSpacing:'0.08em', marginBottom:4, fontFamily:"'Unbounded',sans-serif" }}>G/L</div>
-                      <div style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:13, fontWeight:700, color: glPos?'#22c55e':'#ef4444' }}>{glPos?'+':''}{glPct.toFixed(1)}%</div>
+                      <div style={{ fontFamily:"'Unbounded',sans-serif", fontSize:13, fontWeight:700, color: glPos?'#22c55e':'#ef4444' }}>{glPos?'+':''}{glPct.toFixed(1)}%</div>
                     </div>
                   </div>
                 </div>

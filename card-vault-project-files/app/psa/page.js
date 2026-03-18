@@ -478,7 +478,7 @@ export default function PSALookupPage() {
   return (
     <>
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Unbounded:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700;800&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Unbounded:wght@300;400;500;600;700;800;900&display=swap');
         *{font-family:'Unbounded',-apple-system,sans-serif!important}
         .sidebar-el{display:flex;flex-direction:column}.mobile-only{display:none!important}.mob-topbar{display:none}.main-wrap{margin-left:200px;min-height:100vh;width:calc(100% - 200px)}
         @media(max-width:768px){.sidebar-el{display:none!important}.mobile-only{display:flex!important}.mob-topbar{display:flex}.main-wrap{margin-left:0!important;width:100%!important;padding:16px 16px 90px!important}}
@@ -510,7 +510,7 @@ export default function PSALookupPage() {
                 <div style={{ fontSize:9, fontWeight:800, color:'#555', textTransform:'uppercase', letterSpacing:'0.1em', marginBottom:10 }}>Cert Number</div>
                 <div className="psa-search-row" style={{ display:'flex', gap:10 }}>
                   <input value={cert} onChange={e => setCert(e.target.value)} onKeyDown={e => e.key==='Enter' && handleLookup()} placeholder="e.g. 12345678"
-                    style={{ flex:1, minWidth:0, padding:'11px 14px', borderRadius:10, background:'#1a1a1a', border:'1px solid #2a2a2a', color:'#f0f0f0', fontSize:16, fontFamily:"'JetBrains Mono',monospace", letterSpacing:'0.05em', transition:'border-color 0.15s', boxSizing:'border-box' }} />
+                    style={{ flex:1, minWidth:0, padding:'11px 14px', borderRadius:10, background:'#1a1a1a', border:'1px solid #2a2a2a', color:'#f0f0f0', fontSize:16, fontFamily:"'Unbounded',sans-serif", letterSpacing:'0.05em', transition:'border-color 0.15s', boxSizing:'border-box' }} />
                   <button onClick={handleLookup} disabled={searching || !cert.trim()} style={{ padding:'11px 20px', borderRadius:10, background: searching||!cert.trim() ? '#1a1a1a' : '#9333ea', border:'none', color: searching||!cert.trim() ? '#555' : '#fff', fontSize:14, fontWeight:800, cursor: searching||!cert.trim() ? 'not-allowed' : 'pointer', whiteSpace:'nowrap', flexShrink:0 }}>
                     {searching ? 'Looking up...' : 'Verify'}
                   </button>
@@ -542,7 +542,7 @@ export default function PSALookupPage() {
                     <div style={{ flex:1, minWidth:0 }}>
                       <div style={{ display:'flex', alignItems:'center', gap:12, marginBottom:16 }}>
                         <div style={{ width:56, height:56, borderRadius:10, background:`${gradeColor}18`, border:`2px solid ${gradeColor}`, display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', flexShrink:0 }}>
-                          <div style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:26, fontWeight:900, color:gradeColor, lineHeight:1 }}>{result.grade}</div>
+                          <div style={{ fontFamily:"'Unbounded',sans-serif", fontSize:26, fontWeight:900, color:gradeColor, lineHeight:1 }}>{result.grade}</div>
                           {result.autoGrade && <div style={{ fontSize:9, fontWeight:700, color:'#ffbe2e', marginTop:2 }}>A{result.autoGrade}</div>}
                         </div>
                         <div>
@@ -578,7 +578,7 @@ export default function PSALookupPage() {
                               { label:'Total Pop', value: result.totalPop, color:'#888' },
                             ].map((p,i) => (
                               <div key={i} style={{ textAlign:'center' }}>
-                                <div style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:16, fontWeight:900, color:p.color }}>{p.value.toLocaleString()}</div>
+                                <div style={{ fontFamily:"'Unbounded',sans-serif", fontSize:16, fontWeight:900, color:p.color }}>{p.value.toLocaleString()}</div>
                                 <div style={{ fontSize:9, fontWeight:700, color:'#444', textTransform:'uppercase', letterSpacing:'0.08em', marginTop:3 }}>{p.label}</div>
                               </div>
                             ))}
@@ -604,10 +604,10 @@ export default function PSALookupPage() {
                   <div style={{ fontSize:9, fontWeight:800, color:'#555', textTransform:'uppercase', letterSpacing:'0.1em', marginBottom:12 }}>Recent Lookups</div>
                   {history.map((h, i) => (
                     <div key={i} className="hist-item" onClick={() => setCert(h.cert)} style={{ display:'flex', alignItems:'center', gap:10, padding:'9px 10px', borderRadius:8, cursor:'pointer', background:'transparent', transition:'background 0.1s', marginBottom: i<history.length-1?4:0 }}>
-                      <div style={{ width:32, height:32, borderRadius:7, background:'rgba(147,51,234,0.1)', border:'1px solid rgba(147,51,234,0.2)', display:'flex', alignItems:'center', justifyContent:'center', fontFamily:"'JetBrains Mono',monospace", fontSize:13, fontWeight:900, color:'#a855f7', flexShrink:0 }}>{h.grade}</div>
+                      <div style={{ width:32, height:32, borderRadius:7, background:'rgba(147,51,234,0.1)', border:'1px solid rgba(147,51,234,0.2)', display:'flex', alignItems:'center', justifyContent:'center', fontFamily:"'Unbounded',sans-serif", fontSize:13, fontWeight:900, color:'#a855f7', flexShrink:0 }}>{h.grade}</div>
                       <div style={{ minWidth:0 }}>
                         <div style={{ fontSize:12, fontWeight:700, color:'#ccc', overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>{h.player}</div>
-                        <div style={{ fontSize:10, color:'#444', fontFamily:"'JetBrains Mono',monospace" }}>#{h.cert}</div>
+                        <div style={{ fontSize:10, color:'#444', fontFamily:"'Unbounded',sans-serif" }}>#{h.cert}</div>
                       </div>
                     </div>
                   ))}
@@ -638,7 +638,7 @@ export default function PSALookupPage() {
                   { grade:'PSA 5', label:'Excellent', color:'#ef4444' },
                 ].map((g,i) => (
                   <div key={i} style={{ display:'flex', alignItems:'center', justifyContent:'space-between', padding:'6px 0', borderBottom: i<5?'1px solid #141414':'none' }}>
-                    <div style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:12, fontWeight:800, color:g.color }}>{g.grade}</div>
+                    <div style={{ fontFamily:"'Unbounded',sans-serif", fontSize:12, fontWeight:800, color:g.color }}>{g.grade}</div>
                     <div style={{ fontSize:11, color:'#555' }}>{g.label}</div>
                   </div>
                 ))}

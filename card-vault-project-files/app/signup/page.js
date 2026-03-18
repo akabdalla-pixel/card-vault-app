@@ -30,9 +30,8 @@ export default function SignupPage() {
   return (
     <>
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Unbounded:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700;800&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Unbounded:wght@300;400;500;600;700;800;900&display=swap');
         *{font-family:'Unbounded',-apple-system,sans-serif!important}
-        [style*="JetBrains"],[style*="monospace"]{font-family:'JetBrains Mono',monospace!important}
         @keyframes fadeUp { from { opacity:0; transform:translateY(16px) } to { opacity:1; transform:translateY(0) } }
         @keyframes float { 0%,100% { transform:translateY(0px) } 50% { transform:translateY(-8px) } }
         .su-input { width:100%; padding:11px 14px; border-radius:10px; background:#1a1a1a; border:1px solid #2a2a2a; color:#f0f0f0; font-size:15px; outline:none; transition:border-color 0.15s; box-sizing:border-box; font-family:inherit; }
