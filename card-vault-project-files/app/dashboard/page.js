@@ -166,55 +166,34 @@ function BottomNav({ active = "" }) {
   )
 }
 
-function SparklineChart({ cards, snapshots }) {
-  if (!cards.length) return null
-  const activeCards = cards.filter(c => !c.sold)
-  const totalVal = activeCards.reduce((s,c) => s+(parseFloat(c.val)||parseFloat(c.buy)||0)*(parseInt(c.qty)||1),0)
-  const totalCost = activeCards.reduce((s,c) => s+(parseFloat(c.buy)||0)*(parseInt(c.qty)||1),0)
-
-  const sorted = [...activeCards].sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt))
-  let points = []
-  let cumValue = 0, cumCost = 0
-  sorted.forEach(c => {
-    cumCost += (parseFloat(c.buy)||0)*(parseInt(c.qty)||1)
-    cumValue += (parseFloat(c.val)||parseFloat(c.buy)||0)*(parseInt(c.qty)||1)
-    points.push({ value: cumValue, cost: cumCost })
-  })
-  if (points.length < 2) points.unshift({ value: 0, cost: 0 })
-  points.push({ value: totalVal, cost: totalCost })
-  const W=600, H=100
-  const maxV = Math.max(...points.map(p=>p.value))*1.1||100
-  const toX = i => (i/(points.length-1))*W
-  const toY = v => H-((v)/(maxV))*H
-  const valuePath = points.map((p,i) => `${i===0?'M':'L'} ${toX(i)} ${toY(p.value)}`).join(' ')
-  const costPath = points.map((p,i) => `${i===0?'M':'L'} ${toX(i)} ${toY(p.cost)}`).join(' ')
-  const areaPath = `${valuePath} L ${W} ${H} L 0 ${H} Z`
-  const isUp = totalVal >= totalCost
-  const lineColor = isUp ? '#22c55e' : '#ef4444'
+function PortfolioHero({ totalInvested, gainLoss, portfolioReturn }) {
+  const gainPos = gainLoss >= 0
+  const glColor = gainPos ? '#22c55e' : '#ef4444'
   return (
-    <div style={{ background: '#0e0c1a', border: '1px solid rgba(147,51,234,0.28)', boxShadow: '0 4px 24px rgba(147,51,234,0.1), 0 2px 8px rgba(0,0,0,0.4)', borderRadius: 16, padding: '18px 20px', marginBottom: 22 }}>
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 }}>
-        <div>
-          <div style={{ fontFamily: "'Unbounded',sans-serif", fontSize: 13, fontWeight: 700, color: '#999' }}>Portfolio Value</div>
-          <div style={{ fontFamily: "'Unbounded',sans-serif", fontSize: 26, fontWeight: 700, color: '#f0f0f0', marginTop: 2 }}>{fmt(totalVal)}</div>
+    <div style={{ background:'#0e0c1a', border:'1px solid rgba(147,51,234,0.28)', boxShadow:'0 4px 24px rgba(147,51,234,0.1), 0 2px 8px rgba(0,0,0,0.4)', borderRadius:16, padding:'28px 32px', marginBottom:22, position:'relative', overflow:'hidden' }}>
+      <div style={{ position:'absolute', top:0, left:0, right:0, height:2, background:'linear-gradient(90deg,#9333ea,#a855f7,transparent)' }} />
+      <div style={{ display:'flex', alignItems:'stretch', gap:0 }}>
+        {/* Invested */}
+        <div style={{ flex:1, paddingRight:32 }}>
+          <div style={{ fontSize:9, fontWeight:700, color:'#555', textTransform:'uppercase', letterSpacing:'0.14em', marginBottom:12 }}>Total Invested</div>
+          <div style={{ fontSize:30, fontWeight:800, color:'#f0f0f0', lineHeight:1, letterSpacing:'-1px' }}>{fmt(totalInvested)}</div>
+          <div style={{ fontSize:10, color:'#333', marginTop:10 }}>cost basis</div>
         </div>
-        <div style={{ textAlign: 'right' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 4, justifyContent: 'flex-end', fontFamily: "'Unbounded',sans-serif", fontSize: 14, fontWeight: 700, color: isUp ? '#22c55e' : '#ef4444' }}>
-            {isUp ? <IconTrendUp /> : <IconTrendDown />}{isUp?'+':''}{fmt(totalVal-totalCost)}
+        {/* Divider */}
+        <div style={{ width:1, background:'rgba(147,51,234,0.2)', flexShrink:0 }} />
+        {/* G/L */}
+        <div style={{ flex:1, paddingLeft:32 }}>
+          <div style={{ display:'flex', alignItems:'center', gap:6, marginBottom:12 }}>
+            <div style={{ fontSize:9, fontWeight:700, color:'#555', textTransform:'uppercase', letterSpacing:'0.14em' }}>Total G/L</div>
+            <div style={{ fontSize:8, fontWeight:700, color:glColor, background:`${glColor}18`, border:`1px solid ${glColor}30`, borderRadius:4, padding:'1px 6px', textTransform:'uppercase', letterSpacing:'0.1em' }}>Unrealized</div>
           </div>
-          <div style={{ fontSize: 11, color: '#444', marginTop: 2 }}>vs cost basis</div>
+          <div style={{ fontSize:30, fontWeight:800, color:glColor, lineHeight:1, letterSpacing:'-1px' }}>{gainPos?'+':''}{fmt(gainLoss)}</div>
+          <div style={{ display:'flex', alignItems:'center', gap:5, marginTop:10 }}>
+            <span style={{ color:glColor, display:'flex', alignItems:'center' }}>{gainPos ? <IconTrendUp /> : <IconTrendDown />}</span>
+            <span style={{ fontSize:11, fontWeight:700, color:glColor }}>{gainPos?'+':''}{portfolioReturn.toFixed(1)}%</span>
+            <span style={{ fontSize:10, color:'#333' }}>on investment</span>
+          </div>
         </div>
-      </div>
-      <svg viewBox={`0 0 ${W} ${H}`} style={{ width: '100%', height: 70, overflow: 'visible' }}>
-        <defs><linearGradient id="ag" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stopColor={lineColor} stopOpacity="0.2"/><stop offset="100%" stopColor={lineColor} stopOpacity="0.02"/></linearGradient></defs>
-        <path d={areaPath} fill="url(#ag)" />
-        <path d={costPath} stroke="#333" strokeWidth="1.5" fill="none" strokeDasharray="4 4" />
-        <path d={valuePath} stroke={lineColor} strokeWidth="2.5" fill="none" strokeLinecap="round" strokeLinejoin="round" />
-        <circle cx={toX(points.length-1)} cy={toY(points[points.length-1].value)} r="4" fill={lineColor} />
-      </svg>
-      <div style={{ display: 'flex', gap: 16, marginTop: 8 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 11, color: '#555' }}><div style={{ width: 20, height: 2, background: lineColor, borderRadius: 1 }} />Portfolio Value</div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 11, color: '#555' }}><div style={{ width: 20, height: 2, background: '#333', borderRadius: 1 }} />Cost Basis</div>
       </div>
     </div>
   )
@@ -484,28 +463,26 @@ export default function DashboardPage() {
             <img src={LOGO} alt="TopLoad" style={{ height:36,width:'auto',objectFit:'contain',filter:'brightness(0) invert(1)' }} />
           </div>
 
-          {/* ── Mobile: Big Value Hero ── */}
-          <div className="mob-chart" style={{ background:'#111', border:'1px solid #1e1e1e', borderRadius:16, padding:'28px 20px', marginBottom:14, position:'relative', overflow:'hidden' }}>
-            <div style={{ position:'absolute', top:0, left:0, right:0, height:3, background: gainPos ? '#22c55e' : '#ef4444' }} />
-            <div style={{ fontSize:10, color:'#555', fontWeight:700, textTransform:'uppercase', letterSpacing:'0.12em', marginBottom:8 }}>Portfolio Value</div>
-            <div style={{ fontFamily:"'Unbounded',sans-serif", fontSize:42, fontWeight:900, color:'#fff', letterSpacing:'-2px', lineHeight:1, marginBottom:10 }}>{fmt(currentValue)}</div>
-            <div style={{ display:'flex', alignItems:'center', gap:8, marginBottom:16 }}>
-              <span style={{ fontFamily:"'Unbounded',sans-serif", fontSize:16, fontWeight:800, color: gainPos?'#22c55e':'#ef4444' }}>{gainPos?'▲':'▼'} {gainPos?'+':''}{fmt(gainLoss)}</span>
-              <span style={{ fontSize:13, color:'#555' }}>{gainPos?'+':''}{portfolioReturn.toFixed(1)}%</span>
-            </div>
-            <MobileSparkline snapshots={snapshots} color={gainPos ? '#22c55e' : '#ef4444'} />
-            <div style={{ display:'flex', gap:0, paddingTop:16, borderTop:'1px solid #1a1a1a' }}>
-              <div style={{ flex:1 }}>
-                <div style={{ fontSize:9, color:'#444', fontWeight:700, textTransform:'uppercase', letterSpacing:'0.1em', marginBottom:4 }}>Invested</div>
-                <div style={{ fontFamily:"'Unbounded',sans-serif", fontSize:15, fontWeight:700, color:'#888' }}>{fmt(totalInvested)}</div>
+          {/* ── Mobile: Portfolio Hero ── */}
+          <div className="mob-chart" style={{ background:'#0e0c1a', border:'1px solid rgba(147,51,234,0.28)', borderRadius:16, padding:'24px 20px', marginBottom:14, position:'relative', overflow:'hidden' }}>
+            <div style={{ position:'absolute', top:0, left:0, right:0, height:2, background:'linear-gradient(90deg,#9333ea,#a855f7,transparent)' }} />
+            <div style={{ display:'flex', alignItems:'stretch', gap:0 }}>
+              <div style={{ flex:1, paddingRight:20 }}>
+                <div style={{ fontSize:8, color:'#555', fontWeight:700, textTransform:'uppercase', letterSpacing:'0.12em', marginBottom:10 }}>Total Invested</div>
+                <div style={{ fontSize:22, fontWeight:800, color:'#f0f0f0', lineHeight:1, letterSpacing:'-0.5px' }}>{fmt(totalInvested)}</div>
+                <div style={{ fontSize:9, color:'#333', marginTop:8 }}>cost basis</div>
               </div>
-              <div style={{ flex:1 }}>
-                <div style={{ fontSize:9, color:'#444', fontWeight:700, textTransform:'uppercase', letterSpacing:'0.1em', marginBottom:4 }}>Cards</div>
-                <div style={{ fontFamily:"'Unbounded',sans-serif", fontSize:15, fontWeight:700, color:'#888' }}>{activeCards.length}</div>
-              </div>
-              <div style={{ flex:1 }}>
-                <div style={{ fontSize:9, color:'#444', fontWeight:700, textTransform:'uppercase', letterSpacing:'0.1em', marginBottom:4 }}>Realized</div>
-                <div style={{ fontFamily:"'Unbounded',sans-serif", fontSize:15, fontWeight:700, color: realizedPL>=0?'#22c55e':realizedPL<0?'#ef4444':'#888' }}>{realizedPL>=0?'+':''}{fmt(realizedPL)}</div>
+              <div style={{ width:1, background:'rgba(147,51,234,0.2)', flexShrink:0 }} />
+              <div style={{ flex:1, paddingLeft:20 }}>
+                <div style={{ display:'flex', alignItems:'center', gap:5, marginBottom:10 }}>
+                  <div style={{ fontSize:8, fontWeight:700, color:'#555', textTransform:'uppercase', letterSpacing:'0.12em' }}>Total G/L</div>
+                  <div style={{ fontSize:7, fontWeight:700, color: gainPos?'#22c55e':'#ef4444', background: gainPos?'rgba(34,197,94,0.12)':'rgba(239,68,68,0.12)', border:`1px solid ${gainPos?'rgba(34,197,94,0.3)':'rgba(239,68,68,0.3)'}`, borderRadius:3, padding:'1px 5px', textTransform:'uppercase', letterSpacing:'0.08em' }}>Unrealized</div>
+                </div>
+                <div style={{ fontSize:22, fontWeight:800, color: gainPos?'#22c55e':'#ef4444', lineHeight:1, letterSpacing:'-0.5px' }}>{gainPos?'+':''}{fmt(gainLoss)}</div>
+                <div style={{ display:'flex', alignItems:'center', gap:4, marginTop:8 }}>
+                  <span style={{ color: gainPos?'#22c55e':'#ef4444', display:'flex' }}>{gainPos?<IconTrendUp />:<IconTrendDown />}</span>
+                  <span style={{ fontSize:10, fontWeight:700, color: gainPos?'#22c55e':'#ef4444' }}>{gainPos?'+':''}{portfolioReturn.toFixed(1)}%</span>
+                </div>
               </div>
             </div>
           </div>
@@ -537,7 +514,7 @@ export default function DashboardPage() {
               <Link href="/collection" style={{ display:'flex',alignItems:'center',gap:7,padding:'9px 14px',background:'rgba(147,51,234,0.08)',border:'1px solid rgba(147,51,234,0.25)',borderRadius:10,color:'#9333ea',fontFamily:"'Unbounded',sans-serif",fontSize:13,fontWeight:600,textDecoration:'none' }}>+ Add Card</Link>
             </div>
           </div>
-          {cards.length>0&&<div className="desk-chart"><SparklineChart cards={cards} snapshots={snapshots} /></div>}
+          {activeCards.length>0&&<div className="desk-chart"><PortfolioHero totalInvested={totalInvested} gainLoss={gainLoss} portfolioReturn={portfolioReturn} /></div>}
           <div className="desk-stats">
           <div className="stat-grid">
             <StatCard style={{animation:"fadeUp 0.45s ease 0s both"}} label="Active Cards" value={activeCards.length} />
