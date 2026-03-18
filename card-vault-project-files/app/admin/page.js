@@ -23,6 +23,9 @@ export default function AdminPage() {
   const [loading, setLoading] = useState(true)
   const [expanded, setExpanded] = useState(null)
   const [search, setSearch] = useState('')
+  const [psaCache, setPsaCache] = useState(null)
+  const [psaSearch, setPsaSearch] = useState('')
+  const [psaLoading, setPsaLoading] = useState(false)
   const router = useRouter()
 
   useEffect(() => {
@@ -34,6 +37,14 @@ export default function AdminPage() {
       .then(d => { if (d) { setData(d); setLoading(false) } })
       .catch(() => router.push('/dashboard'))
   }, [router])
+
+  useEffect(() => {
+    setPsaLoading(true)
+    fetch('/api/admin/psa-cache')
+      .then(r => r.ok ? r.json() : null)
+      .then(d => { if (d) setPsaCache(d) })
+      .finally(() => setPsaLoading(false))
+  }, [])
 
   if (loading) return (
     <div style={{ minHeight:'100vh', background:'#0a0a0a', display:'flex', alignItems:'center', justifyContent:'center' }}>
@@ -87,6 +98,7 @@ export default function AdminPage() {
               { label:'Total Invested',  value: fmt(stats.totalInvested),                   accent:'#333' },
               { label:'Cards This Week', value: stats.cardsThisWeek,                        accent:'#a855f7' },
               { label:'Most Active',     value: '@'+stats.mostActiveUser,                   accent:'#9333ea', small:true },
+              { label:'PSA Lookups',     value: psaCache?.total ?? '—',                     accent:'#9333ea' },
             ].map((s,i) => (
               <div key={i} style={{ background:'#111', border:'1px solid #1a1a1a', borderRadius:12, padding:'14px 16px', position:'relative', overflow:'hidden' }}>
                 <div style={{ position:'absolute', top:0, left:0, right:0, height:2, background:s.accent }} />
@@ -103,7 +115,6 @@ export default function AdminPage() {
           </div>
 
           <div style={{ background:'#0d0d0d', border:'1px solid #1a1a1a', borderRadius:14, overflow:'hidden' }}>
-            {/* Table header */}
             <div style={{ display:'grid', gridTemplateColumns:'1fr 1.5fr 60px 60px 80px 100px 100px 32px', gap:0, padding:'10px 16px', background:'#000', borderBottom:'1px solid #111' }}>
               {['User','Email','Cards','Sold','Wishes','Value','Joined',''].map((h,i) => (
                 <div key={i} style={{ fontSize:9, fontWeight:700, color:'#333', textTransform:'uppercase', letterSpacing:'0.1em', textAlign: i>1?'right':'left' }}>{h}</div>
@@ -116,7 +127,6 @@ export default function AdminPage() {
 
             {filteredUsers.map((user, ui) => (
               <div key={user.id}>
-                {/* User row */}
                 <div className="user-row" style={{ display:'grid', gridTemplateColumns:'1fr 1.5fr 60px 60px 80px 100px 100px 32px', gap:0, padding:'13px 16px', borderTop: ui>0?'1px solid #111':'none', cursor:'pointer', transition:'background 0.1s' }}
                   onClick={() => setExpanded(expanded===user.id ? null : user.id)}>
                   <div>
@@ -132,10 +142,8 @@ export default function AdminPage() {
                   <div style={{ textAlign:'right', alignSelf:'center', fontSize:12, color: expanded===user.id?'#9333ea':'#333', transition:'transform 0.15s', transform: expanded===user.id?'rotate(90deg)':'rotate(0deg)' }}>▶</div>
                 </div>
 
-                {/* Expanded card list */}
                 {expanded === user.id && (
                   <div style={{ background:'#080808', borderTop:'1px solid #111', borderBottom:'1px solid #111' }}>
-                    {/* User summary bar */}
                     <div style={{ display:'flex', gap:20, padding:'10px 16px 10px 32px', borderBottom:'1px solid #111' }}>
                       {[
                         { label:'Portfolio', value: fmt(user.portfolioValue), color:'#22c55e' },
@@ -151,7 +159,6 @@ export default function AdminPage() {
                       ))}
                     </div>
 
-                    {/* Card table header */}
                     {user.cards.length > 0 ? (
                       <>
                         <div style={{ display:'grid', gridTemplateColumns:'1.5fr 80px 60px 80px 80px 80px 70px', padding:'8px 16px 8px 32px', background:'#050505' }}>
@@ -198,6 +205,87 @@ export default function AdminPage() {
               </div>
             ))}
           </div>
+
+          {/* PSA Cache Section */}
+          <div style={{ marginTop:40 }}>
+            <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:12 }}>
+              <div style={{ display:'flex', alignItems:'center', gap:10 }}>
+                <h2 style={{ fontSize:14, fontWeight:900, color:'#fff', textTransform:'uppercase', letterSpacing:'0.05em', margin:0 }}>PSA Lookup Cache ({psaCache?.total ?? 0})</h2>
+                <div style={{ padding:'2px 8px', background:'rgba(147,51,234,0.1)', border:'1px solid rgba(147,51,234,0.25)', borderRadius:4, fontSize:9, fontWeight:800, color:'#a855f7', letterSpacing:'0.1em' }}>24H CACHE</div>
+              </div>
+              <div style={{ display:'flex', gap:8 }}>
+                <input value={psaSearch} onChange={e => setPsaSearch(e.target.value)} placeholder="Search certs..." style={{ padding:'7px 12px', borderRadius:8, background:'#111', border:'1px solid #1e1e1e', color:'#f0f0f0', fontSize:12, outline:'none', width:200 }} />
+                <button onClick={() => { setPsaLoading(true); fetch('/api/admin/psa-cache').then(r=>r.json()).then(d=>setPsaCache(d)).finally(()=>setPsaLoading(false)) }}
+                  style={{ padding:'7px 14px', borderRadius:8, background:'#111', border:'1px solid #1e1e1e', color:'#555', fontSize:12, fontWeight:700, cursor:'pointer' }}>
+                  {psaLoading ? '...' : '↻ Refresh'}
+                </button>
+              </div>
+            </div>
+
+            <div style={{ background:'#0d0d0d', border:'1px solid #1a1a1a', borderRadius:14, overflow:'hidden' }}>
+              <div style={{ display:'grid', gridTemplateColumns:'60px 1.5fr 60px 80px 60px 80px 80px 80px 100px', gap:0, padding:'10px 16px', background:'#000', borderBottom:'1px solid #111' }}>
+                {['Img','Player','Cert','Grade','Sport','Year','Brand','Pop','Updated'].map((h,i) => (
+                  <div key={i} style={{ fontSize:9, fontWeight:700, color:'#333', textTransform:'uppercase', letterSpacing:'0.1em', textAlign:i>1?'right':'left' }}>{h}</div>
+                ))}
+              </div>
+
+              {psaLoading && !psaCache && (
+                <div style={{ padding:'32px', textAlign:'center', fontSize:13, color:'#444' }}>Loading...</div>
+              )}
+
+              {psaCache?.entries?.length === 0 && (
+                <div style={{ padding:'32px', textAlign:'center', fontSize:13, color:'#444' }}>No PSA lookups yet</div>
+              )}
+
+              {(psaCache?.entries || [])
+                .filter(e => !psaSearch || e.player.toLowerCase().includes(psaSearch.toLowerCase()) || e.cert.includes(psaSearch) || e.sport.toLowerCase().includes(psaSearch.toLowerCase()))
+                .map((entry, i) => {
+                  const ageHours = (Date.now() - new Date(entry.updatedAt).getTime()) / (1000 * 60 * 60)
+                  const isFresh = ageHours < 24
+                  return (
+                    <div key={entry.cert} className="card-row" style={{ display:'grid', gridTemplateColumns:'60px 1.5fr 60px 80px 60px 80px 80px 80px 100px', gap:0, padding:'10px 16px', borderTop: i>0?'1px solid #111':'none', alignItems:'center', transition:'background 0.1s' }}>
+                      <div>
+                        {entry.frontImage
+                          ? <img src={entry.frontImage} alt="" style={{ width:36, height:50, objectFit:'cover', borderRadius:4, border:'1px solid #222' }} onError={e => e.target.style.display='none'} />
+                          : <div style={{ width:36, height:50, background:'#111', borderRadius:4, border:'1px solid #1a1a1a', display:'flex', alignItems:'center', justifyContent:'center', fontSize:10, color:'#333' }}>—</div>
+                        }
+                      </div>
+                      <div>
+                        <div style={{ fontSize:12, fontWeight:800, color: entry.isCancelled?'#ef4444':'#e0e0e0', letterSpacing:'-0.2px' }}>{entry.player}</div>
+                        <div style={{ fontSize:10, color:'#444', marginTop:1 }}>{entry.set !== '—' ? entry.set : ''}</div>
+                        {entry.isCancelled && <span style={{ fontSize:8, fontWeight:800, color:'#ef4444', background:'rgba(239,68,68,0.1)', padding:'1px 5px', borderRadius:3 }}>CANCELLED</span>}
+                      </div>
+                      <div style={{ textAlign:'right' }}>
+                        {entry.certPageUrl
+                          ? <a href={entry.certPageUrl} target="_blank" rel="noreferrer" style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:10, color:'#a855f7', textDecoration:'none' }}>{entry.cert}</a>
+                          : <span style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:10, color:'#555' }}>{entry.cert}</span>
+                        }
+                      </div>
+                      <div style={{ textAlign:'right' }}>
+                        {entry.grade !== '—'
+                          ? <span style={{ fontSize:10, fontWeight:800, color:'#a855f7', background:'rgba(147,51,234,0.1)', padding:'2px 6px', borderRadius:4 }}>PSA {entry.grade}</span>
+                          : <span style={{ fontSize:10, color:'#333' }}>—</span>
+                        }
+                      </div>
+                      <div style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:11, color:'#555', textAlign:'right' }}>{entry.sport}</div>
+                      <div style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:11, color:'#555', textAlign:'right' }}>{entry.year}</div>
+                      <div style={{ fontSize:11, color:'#555', textAlign:'right', overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>{entry.brand}</div>
+                      <div style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:11, color:'#fff', textAlign:'right', fontWeight:700 }}>{entry.totalPop}</div>
+                      <div style={{ textAlign:'right' }}>
+                        <div style={{ fontSize:10, color:'#444' }}>{fmtTime(entry.updatedAt)}</div>
+                        <div style={{ marginTop:2 }}>
+                          <span style={{ fontSize:8, fontWeight:800, padding:'1px 5px', borderRadius:3, background: isFresh?'rgba(34,197,94,0.1)':'rgba(255,190,46,0.1)', color: isFresh?'#22c55e':'#ffbe2e' }}>
+                            {isFresh ? 'FRESH' : 'STALE'}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  )
+                })
+              }
+            </div>
+          </div>
+
         </div>
       </div>
     </>

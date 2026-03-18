@@ -53,6 +53,7 @@ const TCG_RARITIES = ['Common', 'Uncommon', 'Rare', 'Holo Rare', 'Reverse Holo',
 const EDITIONS = ['1st Edition', 'Unlimited', 'Shadowless', 'Limited', 'First Print']
 
 const CONDS = ['Mint', 'Near Mint', 'Excellent', 'Very Good', 'Good', 'Poor']
+const AUTO_GRADES = ['AUTO10','AUTO9.5','AUTO9','AUTO8.5','AUTO8','AUTO7.5','AUTO7','AUTO6.5','AUTO6','AUTO5','AUTO4','AUTO3','AUTO2','AUTO1']
 
 function CardModal({ card, onClose, onSave }) {
   const isEdit = !!card?.id
@@ -153,6 +154,16 @@ function CardModal({ card, onClose, onSave }) {
             </div>
           </label>
 
+          {/* ── 4b. Auto Grade ── */}
+          <div>
+            <div style={{ fontSize:10, fontWeight:700, color:'#555', textTransform:'uppercase', letterSpacing:'0.08em', marginBottom:4, fontFamily:"'Unbounded',sans-serif" }}>Auto Grade</div>
+            <select value={form.autoGrade||''} onChange={e => set('autoGrade', e.target.value)}
+              style={{ width:'100%', padding:'8px 12px', borderRadius:9, background:'#202020', border: form.autoGrade ? '1px solid rgba(255,190,46,0.3)' : '1px solid #2a2a2a', color: form.autoGrade ? '#ffbe2e' : '#555', fontSize:14, outline:'none', fontFamily:"'Unbounded',sans-serif" }}>
+              <option value="">No auto grade</option>
+              {AUTO_GRADES.map(g => <option key={g} value={g}>{g}</option>)}
+            </select>
+          </div>
+
           {/* ── 5. Buy Price + Value ── */}
           <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:10 }}>
             <div>{lbl('Buy Price ($)')}{inp('buy', '0.00', 'number')}</div>
@@ -173,25 +184,15 @@ function CardModal({ card, onClose, onSave }) {
               <div>{lbl('Year')}{inp('year', 'e.g. 2023')}</div>
               <div>{lbl('Numbering (e.g. 10/50)')}{inp('num', 'e.g. 10/50')}</div>
             </div>
-            <div>
-              {lbl('Auto Grade')}
-              <select value={form.autoGrade||''} onChange={e => set('autoGrade', e.target.value)}
-                style={{ width:'100%', padding:'8px 12px', borderRadius:9, background:'#202020', border:'1px solid #2a2a2a', color: form.autoGrade?'#f0f0f0':'#555', fontSize:14, outline:'none', fontFamily:"'Unbounded',sans-serif" }}>
-                <option value="">No auto grade</option>
-                {['10','9.5','9','8.5','8','7','6','5'].map(g => <option key={g} value={g}>{g}</option>)}
-              </select>
-            </div>
             <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:10 }}>
               <div>{lbl(isTCG ? 'Set / Expansion' : 'Set')}{inp('name', isTCG ? 'e.g. Base Set' : 'e.g. Topps Chrome')}</div>
               <div>{lbl(isTCG ? 'Publisher' : 'Brand')}{inp('brand', isTCG ? 'e.g. Wizards' : 'e.g. Topps')}</div>
             </div>
-            {isTCG ? (
+            {isTCG && (
               <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:10 }}>
                 <div>{lbl('Rarity')}<select value={form.rarity||''} onChange={e => set('rarity', e.target.value)} style={{ width:'100%', padding:'11px 14px', borderRadius:10, background:'#202020', border:'1px solid #2a2a2a', color: form.rarity?'#f0f0f0':'#555', fontSize:14, outline:'none', fontFamily:"'Unbounded',sans-serif" }}><option value="">Select...</option>{TCG_RARITIES.map(r=><option key={r} value={r}>{r}</option>)}</select></div>
                 <div>{lbl('Edition')}<select value={form.edition||''} onChange={e => set('edition', e.target.value)} style={{ width:'100%', padding:'11px 14px', borderRadius:10, background:'#202020', border:'1px solid #2a2a2a', color: form.edition?'#f0f0f0':'#555', fontSize:14, outline:'none', fontFamily:"'Unbounded',sans-serif" }}><option value="">Select...</option>{EDITIONS.map(e=><option key={e} value={e}>{e}</option>)}</select></div>
               </div>
-            ) : (
-              <div>{lbl('Condition')}<select value={form.cond||''} onChange={e => set('cond', e.target.value)} style={{ width:'100%', padding:'11px 14px', borderRadius:10, background:'#202020', border:'1px solid #2a2a2a', color: form.cond?'#f0f0f0':'#555', fontSize:14, outline:'none', fontFamily:"'Unbounded',sans-serif" }}><option value="">Select...</option>{CONDS.map(c=><option key={c} value={c}>{c}</option>)}</select></div>
             )}
             <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:10 }}>
               <div>{lbl('Quantity')}{inp('qty', '1', 'number')}</div>
@@ -461,6 +462,7 @@ export default function PSALookupPage() {
       grade: result.grade || '',
       gradingCo: 'PSA',
       autoGrade: result.autoGrade || '',
+      auto: !!result.autoGrade,
       cond: 'Graded',
       qty: 1,
       buy: 0,
@@ -543,7 +545,6 @@ export default function PSALookupPage() {
                       <div style={{ display:'flex', alignItems:'center', gap:12, marginBottom:16 }}>
                         <div style={{ width:56, height:56, borderRadius:10, background:`${gradeColor}18`, border:`2px solid ${gradeColor}`, display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', flexShrink:0 }}>
                           <div style={{ fontFamily:"'Unbounded',sans-serif", fontSize:26, fontWeight:900, color:gradeColor, lineHeight:1 }}>{result.grade}</div>
-                          {result.autoGrade && <div style={{ fontSize:9, fontWeight:700, color:'#ffbe2e', marginTop:2 }}>A{result.autoGrade}</div>}
                         </div>
                         <div>
                           <div style={{ fontSize:18, fontWeight:900, color:'#fff', letterSpacing:'-0.5px', lineHeight:1.1 }}>{result.player || '—'}</div>
