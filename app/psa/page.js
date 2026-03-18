@@ -549,6 +549,7 @@ export default function PSALookupPage() {
                         <div>
                           <div style={{ fontSize:18, fontWeight:900, color:'#fff', letterSpacing:'-0.5px', lineHeight:1.1 }}>{result.player || '—'}</div>
                           {result.gradeDescription && <div style={{ fontSize:12, color:'#555', marginTop:3 }}>{result.gradeDescription}</div>}
+                        </div>
                       </div>
                       <div className="psa-details-grid" style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:8, marginBottom:14 }}>
                         {[
