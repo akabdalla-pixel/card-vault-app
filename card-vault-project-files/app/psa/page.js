@@ -352,16 +352,18 @@ export default function PSALookupPage() {
                         </div>
                         <div style={{ flex:1, minWidth:0 }}>
                           <div style={{ fontSize:18, fontWeight:900, color:'#fff', letterSpacing:'-0.5px', lineHeight:1.1 }}>{result.player || '—'}</div>
-                          {result.gradeDescription && (
-                            <div style={{ display:'inline-flex', alignItems:'center', marginTop:6, padding:'3px 9px', borderRadius:6, background:`${gradeColor}18`, border:`1px solid ${gradeColor}40` }}>
-                              <span style={{ fontFamily:'var(--font-geist-mono)', fontSize:11, fontWeight:800, color:gradeColor, letterSpacing:'0.06em' }}>{result.gradeDescription}</span>
-                            </div>
-                          )}
-                          {result.autoGrade && (
-                            <div style={{ display:'inline-flex', alignItems:'center', marginTop:4, marginLeft:6, padding:'3px 9px', borderRadius:6, background:'rgba(255,190,46,0.1)', border:'1px solid rgba(255,190,46,0.3)' }}>
-                              <span style={{ fontFamily:'var(--font-geist-mono)', fontSize:11, fontWeight:800, color:'#ffbe2e', letterSpacing:'0.06em' }}>✍️ {result.autoGrade}</span>
-                            </div>
-                          )}
+                          <div style={{ display:'flex', flexWrap:'wrap', gap:6, marginTop:7 }}>
+                            {result.gradeDescription && (
+                              <div style={{ display:'inline-flex', alignItems:'center', padding:'3px 9px', borderRadius:6, background:`${gradeColor}18`, border:`1px solid ${gradeColor}40` }}>
+                                <span style={{ fontFamily:'var(--font-geist-mono)', fontSize:11, fontWeight:800, color:gradeColor, letterSpacing:'0.06em' }}>{result.gradeDescription}</span>
+                              </div>
+                            )}
+                            {result.autoGrade && (
+                              <div style={{ display:'inline-flex', alignItems:'center', padding:'3px 9px', borderRadius:6, background:'rgba(255,190,46,0.1)', border:'1px solid rgba(255,190,46,0.3)' }}>
+                                <span style={{ fontFamily:'var(--font-geist-mono)', fontSize:11, fontWeight:800, color:'#ffbe2e', letterSpacing:'0.06em' }}>✍️ AUTO {result.autoGrade}</span>
+                              </div>
+                            )}
+                          </div>
                         </div>
                       </div>
                       <div className="psa-details-grid" style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:8, marginBottom:14 }}>

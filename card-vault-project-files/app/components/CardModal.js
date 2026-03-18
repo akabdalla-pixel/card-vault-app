@@ -140,23 +140,20 @@ export default function CardModal({ card, onClose, onSave }) {
     <div
       style={{
         position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.85)',
-        zIndex: 200, display: 'flex', alignItems: 'flex-end', justifyContent: 'center',
+        zIndex: 200, display: 'flex', alignItems: 'center', justifyContent: 'center',
+        padding: '16px',
       }}
       onClick={e => { if (e.target === e.currentTarget) onClose() }}
     >
       <div style={{
-        background: '#111', borderRadius: '20px 20px 0 0',
-        width: '100%', maxWidth: 560, maxHeight: '94vh',
-        overflowY: 'auto', paddingBottom: 40,
+        background: '#111', borderRadius: 18,
+        width: '100%', maxWidth: 560, maxHeight: '92vh',
+        overflowY: 'auto', paddingBottom: 32,
+        boxShadow: '0 24px 80px rgba(0,0,0,0.7)',
       }}>
 
-        {/* Drag handle */}
-        <div style={{ display: 'flex', justifyContent: 'center', padding: '12px 0 0' }}>
-          <div style={{ width: 36, height: 4, borderRadius: 2, background: '#2a2a2a' }} />
-        </div>
-
         {/* Header */}
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 16px 14px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '18px 18px 14px' }}>
           <h2 style={{ fontFamily: 'var(--font-geist-sans)', fontSize: 18, fontWeight: 800, color: '#f0f0f0', margin: 0 }}>
             {isEdit ? 'Edit Card' : 'Add to Collection'}
           </h2>
@@ -164,12 +161,12 @@ export default function CardModal({ card, onClose, onSave }) {
         </div>
 
         {error && (
-          <div style={{ margin: '0 16px 12px', padding: '10px 14px', borderRadius: 10, background: 'rgba(239,68,68,0.08)', color: '#ef4444', fontSize: 13, border: '1px solid rgba(239,68,68,0.2)', fontFamily: 'var(--font-geist-sans)' }}>
+          <div style={{ margin: '0 18px 12px', padding: '10px 14px', borderRadius: 10, background: 'rgba(239,68,68,0.08)', color: '#ef4444', fontSize: 13, border: '1px solid rgba(239,68,68,0.2)', fontFamily: 'var(--font-geist-sans)' }}>
             {error}
           </div>
         )}
 
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 10, padding: '0 16px' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 10, padding: '0 18px' }}>
 
           {/* ── PLAYER / CARD NAME ─────────────────────────────────── */}
           <div>
@@ -285,20 +282,25 @@ export default function CardModal({ card, onClose, onSave }) {
           {form.auto && (
             <div>
               {lbl('Auto Grade')}
-              <select
+              <input
+                list="auto-grade-opts"
+                placeholder="e.g. GEM MT 10 or 10"
                 value={form.autoGrade || ''}
                 onChange={e => set('autoGrade', e.target.value)}
                 style={{
                   ...INP,
-                  color: form.autoGrade ? '#ffbe2e' : '#555',
-                  borderColor: form.autoGrade ? 'rgba(255,190,46,0.35)' : '#252525',
+                  color: form.autoGrade ? '#ffbe2e' : '#f0f0f0',
+                  borderColor: form.autoGrade ? 'rgba(255,190,46,0.4)' : '#252525',
                   background: form.autoGrade ? 'rgba(255,190,46,0.06)' : '#191919',
                   fontWeight: form.autoGrade ? 700 : 400,
                 }}
-              >
-                <option value="">No auto grade</option>
-                {AUTO_GRADES.map(g => <option key={g} value={`AUTO${g}`}>{`AUTO ${g}`}</option>)}
-              </select>
+              />
+              <datalist id="auto-grade-opts">
+                {['GEM MT 10','MINT 9','NM-MT 8','NM 7','EX-MT 6','EX 5','VG-EX 4','VG 3','GOOD 2','FR 1',
+                  '10','9.5','9','8.5','8','7.5','7','6.5','6','5','4','3','2','1'].map(g => (
+                  <option key={g} value={g} />
+                ))}
+              </datalist>
             </div>
           )}
 
@@ -417,7 +419,7 @@ export default function CardModal({ card, onClose, onSave }) {
         </div>
 
         {/* Save button */}
-        <div style={{ padding: '16px 16px 0' }}>
+        <div style={{ padding: '16px 18px 0' }}>
           <button
             onClick={handleSave}
             disabled={saving || !form.player}

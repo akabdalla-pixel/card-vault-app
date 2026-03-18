@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server'
+import prisma from '@/lib/prisma'
 
 const PSA_TOKEN = process.env.PSA_TOKEN
 
@@ -36,7 +37,7 @@ export async function GET(req) {
     const frontImage = `https://d1htnxwo4o0jhw.cloudfront.net/cert/${cert}/front.jpg`
     const backImage = `https://d1htnxwo4o0jhw.cloudfront.net/cert/${cert}/back.jpg`
 
-    return NextResponse.json({
+    const payload = {
       valid: true,
       cert: cert_data.CertNumber,
       grade: cert_data.CardGrade ? cert_data.CardGrade.replace(/[^0-9.]/g, '').trim() : null,
@@ -59,7 +60,18 @@ export async function GET(req) {
       totalPopWithQualifier: cert_data.TotalPopulationWithQualifier || 0,
       popHigher: cert_data.PopulationHigher || 0,
       raw: cert_data,
-    })
+    }
+
+    // Save / update PSA cache in DB for admin visibility
+    try {
+      await prisma.pSACache.upsert({
+        where: { cert: String(cert_data.CertNumber) },
+        update: { data: JSON.stringify(payload) },
+        create: { cert: String(cert_data.CertNumber), data: JSON.stringify(payload) },
+      })
+    } catch (_) { /* non-critical — don't fail the lookup if cache write fails */ }
+
+    return NextResponse.json(payload)
 
   } catch (e) {
     return NextResponse.json({ error: e.message }, { status: 500 })
