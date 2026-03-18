@@ -61,9 +61,8 @@ export default function AdminPage() {
   return (
     <>
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800;900&display=swap');
-        *{ font-family:'Space Grotesk',-apple-system,sans-serif!important }
-        *[style*="JetBrains"],*[style*="monospace"]{ font-family:'JetBrains Mono',monospace!important }
+        *{ font-family:var(--font-geist-sans),-apple-system,sans-serif!important }
+        *[style*="monospace"]{ font-family:var(--font-geist-mono),monospace!important }
         ::-webkit-scrollbar{ width:4px } ::-webkit-scrollbar-thumb{ background:#333; border-radius:4px }
         .user-row:hover{ background:rgba(255,255,255,0.02) }
         .card-row:hover{ background:rgba(255,255,255,0.015) }
@@ -103,7 +102,7 @@ export default function AdminPage() {
               <div key={i} style={{ background:'#111', border:'1px solid #1a1a1a', borderRadius:12, padding:'14px 16px', position:'relative', overflow:'hidden' }}>
                 <div style={{ position:'absolute', top:0, left:0, right:0, height:2, background:s.accent }} />
                 <div style={{ fontSize:9, fontWeight:700, color:'#444', textTransform:'uppercase', letterSpacing:'0.1em', marginBottom:8 }}>{s.label}</div>
-                <div style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:s.small?14:20, fontWeight:900, color:'#fff', letterSpacing:'-0.5px', overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>{s.value}</div>
+                <div style={{ fontFamily:'var(--font-geist-mono)', fontSize:s.small?14:20, fontWeight:900, color:'#fff', letterSpacing:'-0.5px', overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>{s.value}</div>
               </div>
             ))}
           </div>
@@ -134,10 +133,10 @@ export default function AdminPage() {
                     <div style={{ fontSize:10, color:'#444', marginTop:1 }}>{fmtTime(user.createdAt)}</div>
                   </div>
                   <div style={{ fontSize:12, color:'#666', textAlign:'left', alignSelf:'center', overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>{user.email}</div>
-                  <div style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:13, fontWeight:700, color:'#fff', textAlign:'right', alignSelf:'center' }}>{user.cardCount}</div>
-                  <div style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:13, color:'#555', textAlign:'right', alignSelf:'center' }}>{user.soldCount}</div>
-                  <div style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:13, color:'#555', textAlign:'right', alignSelf:'center' }}>{user.wishCount}</div>
-                  <div style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:13, fontWeight:700, color:'#22c55e', textAlign:'right', alignSelf:'center' }}>{fmt(user.portfolioValue)}</div>
+                  <div style={{ fontFamily:'var(--font-geist-mono)', fontSize:13, fontWeight:700, color:'#fff', textAlign:'right', alignSelf:'center' }}>{user.cardCount}</div>
+                  <div style={{ fontFamily:'var(--font-geist-mono)', fontSize:13, color:'#555', textAlign:'right', alignSelf:'center' }}>{user.soldCount}</div>
+                  <div style={{ fontFamily:'var(--font-geist-mono)', fontSize:13, color:'#555', textAlign:'right', alignSelf:'center' }}>{user.wishCount}</div>
+                  <div style={{ fontFamily:'var(--font-geist-mono)', fontSize:13, fontWeight:700, color:'#22c55e', textAlign:'right', alignSelf:'center' }}>{fmt(user.portfolioValue)}</div>
                   <div style={{ fontSize:11, color:'#444', textAlign:'right', alignSelf:'center' }}>{fmtDate(user.createdAt)}</div>
                   <div style={{ textAlign:'right', alignSelf:'center', fontSize:12, color: expanded===user.id?'#9333ea':'#333', transition:'transform 0.15s', transform: expanded===user.id?'rotate(90deg)':'rotate(0deg)' }}>▶</div>
                 </div>
@@ -154,7 +153,7 @@ export default function AdminPage() {
                       ].map((s,i) => (
                         <div key={i}>
                           <div style={{ fontSize:8, fontWeight:700, color:'#444', textTransform:'uppercase', letterSpacing:'0.1em', marginBottom:2 }}>{s.label}</div>
-                          <div style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:13, fontWeight:800, color:s.color }}>{s.value}</div>
+                          <div style={{ fontFamily:'var(--font-geist-mono)', fontSize:13, fontWeight:800, color:s.color }}>{s.value}</div>
                         </div>
                       ))}
                     </div>
@@ -183,16 +182,16 @@ export default function AdminPage() {
                                 </div>
                               </div>
                               <div style={{ fontSize:11, color:'#555', alignSelf:'center' }}>{card.sport ? <SportEmoji sport={card.sport} /> : '—'} {card.sport||'—'}</div>
-                              <div style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:11, color:'#555', textAlign:'right', alignSelf:'center' }}>{card.year||'—'}</div>
+                              <div style={{ fontFamily:'var(--font-geist-mono)', fontSize:11, color:'#555', textAlign:'right', alignSelf:'center' }}>{card.year||'—'}</div>
                               <div style={{ textAlign:'right', alignSelf:'center' }}>
                                 {card.grade
                                   ? <span style={{ fontSize:10, fontWeight:800, color:'#a855f7', background:'rgba(147,51,234,0.1)', padding:'2px 6px', borderRadius:4 }}>{card.gradingCo?card.gradingCo+' ':''}{card.grade}</span>
                                   : <span style={{ fontSize:10, color:'#333' }}>Raw</span>
                                 }
                               </div>
-                              <div style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:12, color:'#555', textAlign:'right', alignSelf:'center' }}>{fmt(buy)}</div>
-                              <div style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:12, fontWeight:700, color:'#f0f0f0', textAlign:'right', alignSelf:'center' }}>{fmt(val)}</div>
-                              <div style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:11, fontWeight:800, color:glPos?'#22c55e':'#ef4444', textAlign:'right', alignSelf:'center' }}>{glPos?'+':''}{glPct.toFixed(0)}%</div>
+                              <div style={{ fontFamily:'var(--font-geist-mono)', fontSize:12, color:'#555', textAlign:'right', alignSelf:'center' }}>{fmt(buy)}</div>
+                              <div style={{ fontFamily:'var(--font-geist-mono)', fontSize:12, fontWeight:700, color:'#f0f0f0', textAlign:'right', alignSelf:'center' }}>{fmt(val)}</div>
+                              <div style={{ fontFamily:'var(--font-geist-mono)', fontSize:11, fontWeight:800, color:glPos?'#22c55e':'#ef4444', textAlign:'right', alignSelf:'center' }}>{glPos?'+':''}{glPct.toFixed(0)}%</div>
                             </div>
                           )
                         })}
@@ -257,8 +256,8 @@ export default function AdminPage() {
                       </div>
                       <div style={{ textAlign:'right' }}>
                         {entry.certPageUrl
-                          ? <a href={entry.certPageUrl} target="_blank" rel="noreferrer" style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:10, color:'#a855f7', textDecoration:'none' }}>{entry.cert}</a>
-                          : <span style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:10, color:'#555' }}>{entry.cert}</span>
+                          ? <a href={entry.certPageUrl} target="_blank" rel="noreferrer" style={{ fontFamily:'var(--font-geist-mono)', fontSize:10, color:'#a855f7', textDecoration:'none' }}>{entry.cert}</a>
+                          : <span style={{ fontFamily:'var(--font-geist-mono)', fontSize:10, color:'#555' }}>{entry.cert}</span>
                         }
                       </div>
                       <div style={{ textAlign:'right' }}>
@@ -267,10 +266,10 @@ export default function AdminPage() {
                           : <span style={{ fontSize:10, color:'#333' }}>—</span>
                         }
                       </div>
-                      <div style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:11, color:'#555', textAlign:'right' }}>{entry.sport}</div>
-                      <div style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:11, color:'#555', textAlign:'right' }}>{entry.year}</div>
+                      <div style={{ fontFamily:'var(--font-geist-mono)', fontSize:11, color:'#555', textAlign:'right' }}>{entry.sport}</div>
+                      <div style={{ fontFamily:'var(--font-geist-mono)', fontSize:11, color:'#555', textAlign:'right' }}>{entry.year}</div>
                       <div style={{ fontSize:11, color:'#555', textAlign:'right', overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>{entry.brand}</div>
-                      <div style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:11, color:'#fff', textAlign:'right', fontWeight:700 }}>{entry.totalPop}</div>
+                      <div style={{ fontFamily:'var(--font-geist-mono)', fontSize:11, color:'#fff', textAlign:'right', fontWeight:700 }}>{entry.totalPop}</div>
                       <div style={{ textAlign:'right' }}>
                         <div style={{ fontSize:10, color:'#444' }}>{fmtTime(entry.updatedAt)}</div>
                         <div style={{ marginTop:2 }}>

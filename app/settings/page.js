@@ -48,7 +48,7 @@ function ToastContainer() {
   return (
     <div style={{ position:'fixed', bottom:88, left:'50%', transform:'translateX(-50%)', zIndex:9999, display:'flex', flexDirection:'column', gap:8, alignItems:'center', pointerEvents:'none' }}>
       {toasts.map(t => (
-        <div key={t.id} style={{ display:'flex', alignItems:'center', gap:10, padding:'10px 18px', borderRadius:12, background:'#1e1e1e', border:`1px solid ${colors[t.type]}50`, boxShadow:'0 8px 28px rgba(0,0,0,0.6)', fontFamily:"'Geist',sans-serif", fontSize:13, fontWeight:600, color:'#f0f0f0', animation:'toastIn 0.2s ease', whiteSpace:'nowrap' }}>
+        <div key={t.id} style={{ display:'flex', alignItems:'center', gap:10, padding:'10px 18px', borderRadius:12, background:'#1e1e1e', border:`1px solid ${colors[t.type]}50`, boxShadow:'0 8px 28px rgba(0,0,0,0.6)', fontFamily:'var(--font-geist-sans)', fontSize:13, fontWeight:600, color:'#f0f0f0', animation:'toastIn 0.2s ease', whiteSpace:'nowrap' }}>
           <span style={{ color:colors[t.type] }}>{icons[t.type]}</span>{t.msg}
         </div>
       ))}
@@ -94,7 +94,7 @@ function BottomNav() {
       {[...NAV, { label:'Settings', href:'/settings' }].slice(0,4).map(({ label, href }) => {
         const Icon = navIcons[label] || IconSettings
         const isActive = label === 'Settings'
-        return <Link key={label} href={href} style={{ flex:1, display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', gap:4, textDecoration:'none', color:isActive?'#9333ea':'#555', fontFamily:"'Geist',sans-serif", fontSize:9, fontWeight:isActive?700:500, letterSpacing:'0.04em', textTransform:'uppercase', paddingBottom:4 }}><Icon />{label==='Sold History'?'Sold':label}</Link>
+        return <Link key={label} href={href} style={{ flex:1, display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', gap:4, textDecoration:'none', color:isActive?'#9333ea':'#555', fontFamily:'var(--font-geist-sans)', fontSize:9, fontWeight:isActive?700:500, letterSpacing:'0.04em', textTransform:'uppercase', paddingBottom:4 }}><Icon />{label==='Sold History'?'Sold':label}</Link>
       })}
     </nav>
   )
@@ -108,8 +108,8 @@ function Section({ title, subtitle, icon, children, danger = false }) {
       <div style={{ display:'flex', alignItems:'center', gap:10, marginBottom:16 }}>
         {icon && <span style={{ fontSize:18 }}>{icon}</span>}
         <div>
-          <h2 style={{ fontFamily:"'Geist',sans-serif", fontSize:14, fontWeight:700, color: danger ? '#a855f7' : '#ccc', margin:0 }}>{title}</h2>
-          {subtitle && <p style={{ fontSize:12, color:'#444', margin:'3px 0 0', fontFamily:"'Geist',sans-serif" }}>{subtitle}</p>}
+          <h2 style={{ fontFamily:'var(--font-geist-sans)', fontSize:14, fontWeight:700, color: danger ? '#a855f7' : '#ccc', margin:0 }}>{title}</h2>
+          {subtitle && <p style={{ fontSize:12, color:'#444', margin:'3px 0 0', fontFamily:'var(--font-geist-sans)' }}>{subtitle}</p>}
         </div>
       </div>
       {children}
@@ -279,7 +279,7 @@ export default function SettingsPage() {
         placeholder={placeholder}
         value={pwForm[key]}
         onChange={e => setPwForm(p => ({...p, [key]: e.target.value}))}
-        style={{ width:'100%', padding:'10px 40px 10px 14px', borderRadius:10, background:'#202020', border:'1px solid #2a2a2a', color:'#f0f0f0', fontSize:14, outline:'none', fontFamily:"'Geist',sans-serif", boxSizing:'border-box' }}
+        style={{ width:'100%', padding:'10px 40px 10px 14px', borderRadius:10, background:'#202020', border:'1px solid #2a2a2a', color:'#f0f0f0', fontSize:14, outline:'none', fontFamily:'var(--font-geist-sans)', boxSizing:'border-box' }}
       />
       <button type="button" onClick={() => setShowPw(p => ({...p, [key]: !p[key]}))} style={{ position:'absolute', right:12, top:'50%', transform:'translateY(-50%)', background:'none', border:'none', color:'#555', cursor:'pointer', padding:0, display:'flex' }}>
         {showPw[key] ? <IconEyeOff /> : <IconEye />}
@@ -293,7 +293,7 @@ export default function SettingsPage() {
         @keyframes toastIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
         @keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
         @import url('https://fonts.googleapis.com/css2?family=Geist:wght@100;200;300;400;500;600;700;800;900&family=Geist+Mono:wght@100;200;300;400;500;600;700;800;900&display=swap');
-        *{font-family:'Geist',-apple-system,sans-serif!important}
+        *{font-family:var(--font-geist-sans),-apple-system,sans-serif!important}
         .sidebar-el{display:flex;flex-direction:column}.mobile-only{display:none!important}.mob-topbar{display:none}.main-wrap{margin-left:200px;min-height:100vh;width:calc(100% - 200px)}
         button:not(:disabled):active{transform:scale(0.94)!important;opacity:0.85!important;transition:transform 0.1s ease,opacity 0.1s ease!important}
         @media(max-width:768px){.sidebar-el{display:none!important}.mobile-only{display:flex!important}.mob-topbar{display:flex}.main-wrap{margin-left:0!important;width:100%!important;padding-bottom:90px!important}}
@@ -306,7 +306,7 @@ export default function SettingsPage() {
           {/* Mobile topbar */}
           <div className="mob-topbar" style={{ alignItems:'center', justifyContent:'space-between', marginBottom:20 }}>
             <img src={LOGO} alt="TopLoad" style={{ height:32, filter:'drop-shadow(0 0 8px rgba(147,51,234,0.4))' }} />
-            <div style={{ fontFamily:"'Geist',sans-serif", fontSize:16, fontWeight:800, color:'#f0f0f0' }}>Settings</div>
+            <div style={{ fontFamily:'var(--font-geist-sans)', fontSize:16, fontWeight:800, color:'#f0f0f0' }}>Settings</div>
             <div style={{ width:32 }} />
           </div>
 
@@ -327,7 +327,7 @@ export default function SettingsPage() {
                   Share your collection publicly — only card values are visible, not what you paid.
                 </div>
                 <div style={{ display:'flex', alignItems:'center', gap:8, padding:'10px 12px', background:'#0d0d0d', border:'1px solid #1a1a1a', borderRadius:8, marginBottom:12 }}>
-                  <div style={{ flex:1, fontSize:12, color:'#555', overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap', fontFamily:"'Geist',sans-serif" }}>
+                  <div style={{ flex:1, fontSize:12, color:'#555', overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap', fontFamily:'var(--font-geist-sans)' }}>
                     toploadcards.com/share/{user?.username}
                   </div>
                 </div>
@@ -345,8 +345,8 @@ export default function SettingsPage() {
               <div style={{ display:'flex', flexDirection:'column', gap:10 }}>
                 {[['Username', `@${user?.username}`], ['Email', user?.email]].map(([label, val]) => (
                   <div key={label}>
-                    <div style={{ fontSize:10, fontWeight:700, color:'#444', textTransform:'uppercase', letterSpacing:'0.08em', marginBottom:4, fontFamily:"'Geist',sans-serif" }}>{label}</div>
-                    <div style={{ padding:'10px 14px', borderRadius:10, background:'#202020', border:'1px solid #2a2a2a', fontFamily:"'Geist',sans-serif", fontSize:14, color:'#888' }}>{val}</div>
+                    <div style={{ fontSize:10, fontWeight:700, color:'#444', textTransform:'uppercase', letterSpacing:'0.08em', marginBottom:4, fontFamily:'var(--font-geist-sans)' }}>{label}</div>
+                    <div style={{ padding:'10px 14px', borderRadius:10, background:'#202020', border:'1px solid #2a2a2a', fontFamily:'var(--font-geist-sans)', fontSize:14, color:'#888' }}>{val}</div>
                   </div>
                 ))}
               </div>
@@ -365,8 +365,8 @@ export default function SettingsPage() {
                     { label:'Realized P&L', value: `${realizedPL>=0?'+':''}${fmt(realizedPL)}`, color: realizedPL>=0?'#4ade80':'#f87171' },
                   ].map((s,i) => (
                     <div key={i} style={{ background:'#1a1a1a', borderRadius:10, padding:'12px 14px', animation:`fadeUp 0.3s ease ${i*0.06}s both` }}>
-                      <div style={{ fontSize:9, color:'#444', fontWeight:700, textTransform:'uppercase', letterSpacing:'0.08em', marginBottom:4, fontFamily:"'Geist',sans-serif" }}>{s.label}</div>
-                      <div style={{ fontFamily:"'Geist',sans-serif", fontSize:13, fontWeight:700, color:s.color||'#f0f0f0' }}>{s.value}</div>
+                      <div style={{ fontSize:9, color:'#444', fontWeight:700, textTransform:'uppercase', letterSpacing:'0.08em', marginBottom:4, fontFamily:'var(--font-geist-sans)' }}>{s.label}</div>
+                      <div style={{ fontFamily:'var(--font-geist-sans)', fontSize:13, fontWeight:700, color:s.color||'#f0f0f0' }}>{s.value}</div>
                     </div>
                   ))}
                 </div>
@@ -376,21 +376,21 @@ export default function SettingsPage() {
             {/* ── Change Name ── */}
             <Section title="Change Name" subtitle="Update your display name" icon="✏️">
               <div style={{ display:'flex', flexDirection:'column', gap:12 }}>
-                <div style={{ fontSize:12, color:'#555', fontFamily:"'Geist',sans-serif", lineHeight:1.5 }}>
+                <div style={{ fontSize:12, color:'#555', fontFamily:'var(--font-geist-sans)', lineHeight:1.5 }}>
                   Current name: <span style={{ color:'#a855f7', fontWeight:700 }}>{user?.username ? user.username[0].toUpperCase() + user.username.slice(1) : ''}</span>
                 </div>
-                {nameError && <div style={{ padding:'10px 14px', borderRadius:10, background:'rgba(147,51,234,0.08)', border:'1px solid rgba(147,51,234,0.2)', color:'#9333ea', fontSize:13, fontFamily:"'Geist',sans-serif" }}>{nameError}</div>}
+                {nameError && <div style={{ padding:'10px 14px', borderRadius:10, background:'rgba(147,51,234,0.08)', border:'1px solid rgba(147,51,234,0.2)', color:'#9333ea', fontSize:13, fontFamily:'var(--font-geist-sans)' }}>{nameError}</div>}
                 <div>
-                  <div style={{ fontSize:10, fontWeight:700, color:'#444', textTransform:'uppercase', letterSpacing:'0.08em', marginBottom:6, fontFamily:"'Geist',sans-serif" }}>New Name</div>
+                  <div style={{ fontSize:10, fontWeight:700, color:'#444', textTransform:'uppercase', letterSpacing:'0.08em', marginBottom:6, fontFamily:'var(--font-geist-sans)' }}>New Name</div>
                   <input
                     type="text"
                     value={nameVal}
                     onChange={e => setNameVal(e.target.value)}
                     placeholder="Enter new name"
-                    style={{ width:'100%', padding:'10px 14px', borderRadius:10, background:'#202020', border:'1px solid #2a2a2a', color:'#f0f0f0', fontSize:14, outline:'none', fontFamily:"'Geist',sans-serif", boxSizing:'border-box' }}
+                    style={{ width:'100%', padding:'10px 14px', borderRadius:10, background:'#202020', border:'1px solid #2a2a2a', color:'#f0f0f0', fontSize:14, outline:'none', fontFamily:'var(--font-geist-sans)', boxSizing:'border-box' }}
                   />
                 </div>
-                <button type="button" onClick={handleChangeName} disabled={nameLoading || !nameVal.trim()} style={{ display:'flex', alignItems:'center', justifyContent:'center', gap:8, padding:'11px 20px', borderRadius:10, background:'rgba(147,51,234,0.1)', border:'1px solid rgba(147,51,234,0.3)', color:'#9333ea', fontFamily:"'Geist',sans-serif", fontSize:14, fontWeight:700, cursor:'pointer', opacity: !nameVal.trim() ? 0.4 : 1 }}>
+                <button type="button" onClick={handleChangeName} disabled={nameLoading || !nameVal.trim()} style={{ display:'flex', alignItems:'center', justifyContent:'center', gap:8, padding:'11px 20px', borderRadius:10, background:'rgba(147,51,234,0.1)', border:'1px solid rgba(147,51,234,0.3)', color:'#9333ea', fontFamily:'var(--font-geist-sans)', fontSize:14, fontWeight:700, cursor:'pointer', opacity: !nameVal.trim() ? 0.4 : 1 }}>
                   {nameLoading ? 'Saving...' : <><IconCheck />Save Name</>}
                 </button>
               </div>
@@ -399,20 +399,20 @@ export default function SettingsPage() {
             {/* ── Change Password ── */}
             <Section title="Change Password" subtitle="Update your login password" icon="🔒">
               <div style={{ display:'flex', flexDirection:'column', gap:12 }}>
-                {pwError && <div style={{ padding:'10px 14px', borderRadius:10, background:'rgba(147,51,234,0.08)', border:'1px solid rgba(147,51,234,0.2)', color:'#9333ea', fontSize:13, fontFamily:"'Geist',sans-serif" }}>{pwError}</div>}
+                {pwError && <div style={{ padding:'10px 14px', borderRadius:10, background:'rgba(147,51,234,0.08)', border:'1px solid rgba(147,51,234,0.2)', color:'#9333ea', fontSize:13, fontFamily:'var(--font-geist-sans)' }}>{pwError}</div>}
                 <div>
-                  <div style={{ fontSize:10, fontWeight:700, color:'#444', textTransform:'uppercase', letterSpacing:'0.08em', marginBottom:6, fontFamily:"'Geist',sans-serif" }}>Current Password</div>
+                  <div style={{ fontSize:10, fontWeight:700, color:'#444', textTransform:'uppercase', letterSpacing:'0.08em', marginBottom:6, fontFamily:'var(--font-geist-sans)' }}>Current Password</div>
                   {pwInput('current', 'Enter current password')}
                 </div>
                 <div>
-                  <div style={{ fontSize:10, fontWeight:700, color:'#444', textTransform:'uppercase', letterSpacing:'0.08em', marginBottom:6, fontFamily:"'Geist',sans-serif" }}>New Password</div>
+                  <div style={{ fontSize:10, fontWeight:700, color:'#444', textTransform:'uppercase', letterSpacing:'0.08em', marginBottom:6, fontFamily:'var(--font-geist-sans)' }}>New Password</div>
                   {pwInput('next', 'At least 8 characters')}
                 </div>
                 <div>
-                  <div style={{ fontSize:10, fontWeight:700, color:'#444', textTransform:'uppercase', letterSpacing:'0.08em', marginBottom:6, fontFamily:"'Geist',sans-serif" }}>Confirm New Password</div>
+                  <div style={{ fontSize:10, fontWeight:700, color:'#444', textTransform:'uppercase', letterSpacing:'0.08em', marginBottom:6, fontFamily:'var(--font-geist-sans)' }}>Confirm New Password</div>
                   {pwInput('confirm', 'Repeat new password')}
                 </div>
-                <button type="button" disabled={pwLoading || !pwForm.current || !pwForm.next || !pwForm.confirm} style={{ display:'flex', alignItems:'center', justifyContent:'center', gap:8, padding:'11px 20px', borderRadius:10, background:'rgba(147,51,234,0.1)', border:'1px solid rgba(147,51,234,0.3)', color:'#9333ea', fontFamily:"'Geist',sans-serif", fontSize:14, fontWeight:700, cursor:'pointer', opacity: (!pwForm.current||!pwForm.next||!pwForm.confirm) ? 0.4 : 1 }}>
+                <button type="button" disabled={pwLoading || !pwForm.current || !pwForm.next || !pwForm.confirm} style={{ display:'flex', alignItems:'center', justifyContent:'center', gap:8, padding:'11px 20px', borderRadius:10, background:'rgba(147,51,234,0.1)', border:'1px solid rgba(147,51,234,0.3)', color:'#9333ea', fontFamily:'var(--font-geist-sans)', fontSize:14, fontWeight:700, cursor:'pointer', opacity: (!pwForm.current||!pwForm.next||!pwForm.confirm) ? 0.4 : 1 }}>
                   {pwLoading ? 'Updating...' : <><IconCheck />Update Password</>}
                 </button>
               </div>
@@ -423,23 +423,23 @@ export default function SettingsPage() {
               <div style={{ display:'flex', flexDirection:'column', gap:10 }}>
                 <div style={{ padding:'14px 16px', background:'#1a1a1a', borderRadius:10, display:'flex', alignItems:'center', justifyContent:'space-between' }}>
                   <div>
-                    <div style={{ fontFamily:"'Geist',sans-serif", fontSize:13, fontWeight:700, color:'#ccc' }}>Export as CSV</div>
-                    <div style={{ fontFamily:"'Geist',sans-serif", fontSize:11, color:'#555', marginTop:2 }}>Compatible with Excel, Google Sheets, and import back into TopLoad</div>
+                    <div style={{ fontFamily:'var(--font-geist-sans)', fontSize:13, fontWeight:700, color:'#ccc' }}>Export as CSV</div>
+                    <div style={{ fontFamily:'var(--font-geist-sans)', fontSize:11, color:'#555', marginTop:2 }}>Compatible with Excel, Google Sheets, and import back into TopLoad</div>
                   </div>
-                  <button onClick={exportCSV} disabled={!cards.length} style={{ display:'flex', alignItems:'center', gap:6, padding:'8px 16px', borderRadius:10, background:'rgba(147,51,234,0.08)', border:'1px solid rgba(147,51,234,0.2)', color:'#9333ea', fontFamily:"'Geist',sans-serif", fontSize:13, fontWeight:600, cursor:'pointer', flexShrink:0, opacity:cards.length?1:0.4 }}>
+                  <button onClick={exportCSV} disabled={!cards.length} style={{ display:'flex', alignItems:'center', gap:6, padding:'8px 16px', borderRadius:10, background:'rgba(147,51,234,0.08)', border:'1px solid rgba(147,51,234,0.2)', color:'#9333ea', fontFamily:'var(--font-geist-sans)', fontSize:13, fontWeight:600, cursor:'pointer', flexShrink:0, opacity:cards.length?1:0.4 }}>
                     <IconDownload />CSV
                   </button>
                 </div>
                 <div style={{ padding:'14px 16px', background:'#1a1a1a', borderRadius:10, display:'flex', alignItems:'center', justifyContent:'space-between' }}>
                   <div>
-                    <div style={{ fontFamily:"'Geist',sans-serif", fontSize:13, fontWeight:700, color:'#ccc' }}>Export as JSON</div>
-                    <div style={{ fontFamily:"'Geist',sans-serif", fontSize:11, color:'#555', marginTop:2 }}>Full data backup including all fields and metadata</div>
+                    <div style={{ fontFamily:'var(--font-geist-sans)', fontSize:13, fontWeight:700, color:'#ccc' }}>Export as JSON</div>
+                    <div style={{ fontFamily:'var(--font-geist-sans)', fontSize:11, color:'#555', marginTop:2 }}>Full data backup including all fields and metadata</div>
                   </div>
-                  <button onClick={exportJSON} disabled={!cards.length} style={{ display:'flex', alignItems:'center', gap:6, padding:'8px 16px', borderRadius:10, background:'rgba(255,255,255,0.05)', border:'1px solid #2a2a2a', color:'#888', fontFamily:"'Geist',sans-serif", fontSize:13, fontWeight:600, cursor:'pointer', flexShrink:0, opacity:cards.length?1:0.4 }}>
+                  <button onClick={exportJSON} disabled={!cards.length} style={{ display:'flex', alignItems:'center', gap:6, padding:'8px 16px', borderRadius:10, background:'rgba(255,255,255,0.05)', border:'1px solid #2a2a2a', color:'#888', fontFamily:'var(--font-geist-sans)', fontSize:13, fontWeight:600, cursor:'pointer', flexShrink:0, opacity:cards.length?1:0.4 }}>
                     <IconDownload />JSON
                   </button>
                 </div>
-                <div style={{ fontSize:11, color:'#444', fontFamily:"'Geist',sans-serif", textAlign:'center' }}>
+                <div style={{ fontSize:11, color:'#444', fontFamily:'var(--font-geist-sans)', textAlign:'center' }}>
                   {cards.length} card{cards.length!==1?'s':''} in your collection
                 </div>
               </div>
@@ -452,16 +452,16 @@ export default function SettingsPage() {
               <div style={{ borderRadius:12, border:'1px solid rgba(147,51,234,0.2)', overflow:'hidden', marginBottom:12 }}>
                 <div style={{ padding:'14px 16px', display:'flex', alignItems:'center', justifyContent:'space-between', gap:12 }}>
                   <div>
-                    <div style={{ fontFamily:"'Geist',sans-serif", fontSize:13, fontWeight:700, color:'#ccc' }}>Delete All Cards</div>
-                    <div style={{ fontFamily:"'Geist',sans-serif", fontSize:11, color:'#555', marginTop:2 }}>Permanently removes all {cards.length} cards from your collection</div>
+                    <div style={{ fontFamily:'var(--font-geist-sans)', fontSize:13, fontWeight:700, color:'#ccc' }}>Delete All Cards</div>
+                    <div style={{ fontFamily:'var(--font-geist-sans)', fontSize:11, color:'#555', marginTop:2 }}>Permanently removes all {cards.length} cards from your collection</div>
                   </div>
-                  <button onClick={() => setShowDeleteCards(!showDeleteCards)} disabled={!cards.length} style={{ padding:'8px 14px', borderRadius:10, background:'rgba(147,51,234,0.08)', border:'1px solid rgba(147,51,234,0.25)', color:'#9333ea', fontFamily:"'Geist',sans-serif", fontSize:13, fontWeight:600, cursor:'pointer', flexShrink:0, opacity:cards.length?1:0.4 }}>
+                  <button onClick={() => setShowDeleteCards(!showDeleteCards)} disabled={!cards.length} style={{ padding:'8px 14px', borderRadius:10, background:'rgba(147,51,234,0.08)', border:'1px solid rgba(147,51,234,0.25)', color:'#9333ea', fontFamily:'var(--font-geist-sans)', fontSize:13, fontWeight:600, cursor:'pointer', flexShrink:0, opacity:cards.length?1:0.4 }}>
                     {showDeleteCards ? 'Cancel' : 'Delete All'}
                   </button>
                 </div>
                 {showDeleteCards && (
                   <div style={{ padding:'14px 16px', borderTop:'1px solid rgba(147,51,234,0.15)', background:'rgba(147,51,234,0.04)' }}>
-                    <p style={{ fontFamily:"'Geist',sans-serif", fontSize:13, color:'#9333ea', marginBottom:12, display:'flex', alignItems:'center', gap:6 }}>
+                    <p style={{ fontFamily:'var(--font-geist-sans)', fontSize:13, color:'#9333ea', marginBottom:12, display:'flex', alignItems:'center', gap:6 }}>
                       <IconAlert />Type <strong>DELETE</strong> to confirm
                     </p>
                     <div style={{ display:'flex', gap:10 }}>
@@ -469,9 +469,9 @@ export default function SettingsPage() {
                         value={deleteCardsConfirm}
                         onChange={e => setDeleteCardsConfirm(e.target.value)}
                         placeholder="Type DELETE"
-                        style={{ flex:1, padding:'9px 14px', borderRadius:10, background:'#111', border:'1px solid rgba(147,51,234,0.3)', color:'#f0f0f0', fontSize:14, outline:'none', fontFamily:"'Geist',sans-serif" }}
+                        style={{ flex:1, padding:'9px 14px', borderRadius:10, background:'#111', border:'1px solid rgba(147,51,234,0.3)', color:'#f0f0f0', fontSize:14, outline:'none', fontFamily:'var(--font-geist-sans)' }}
                       />
-                      <button onClick={handleDeleteAllCards} disabled={deleteCardsConfirm!=='DELETE'||deleteCardsLoading} style={{ padding:'9px 16px', borderRadius:10, background: deleteCardsConfirm==='DELETE' ? 'rgba(147,51,234,0.15)' : 'rgba(255,255,255,0.04)', border:'1px solid rgba(147,51,234,0.3)', color: deleteCardsConfirm==='DELETE' ? '#9333ea' : '#444', fontFamily:"'Geist',sans-serif", fontSize:13, fontWeight:700, cursor:'pointer', flexShrink:0 }}>
+                      <button onClick={handleDeleteAllCards} disabled={deleteCardsConfirm!=='DELETE'||deleteCardsLoading} style={{ padding:'9px 16px', borderRadius:10, background: deleteCardsConfirm==='DELETE' ? 'rgba(147,51,234,0.15)' : 'rgba(255,255,255,0.04)', border:'1px solid rgba(147,51,234,0.3)', color: deleteCardsConfirm==='DELETE' ? '#9333ea' : '#444', fontFamily:'var(--font-geist-sans)', fontSize:13, fontWeight:700, cursor:'pointer', flexShrink:0 }}>
                         {deleteCardsLoading ? 'Deleting...' : <><IconTrash />Confirm</>}
                       </button>
                     </div>
@@ -483,16 +483,16 @@ export default function SettingsPage() {
               <div style={{ borderRadius:12, border:'1px solid rgba(147,51,234,0.2)', overflow:'hidden' }}>
                 <div style={{ padding:'14px 16px', display:'flex', alignItems:'center', justifyContent:'space-between', gap:12 }}>
                   <div>
-                    <div style={{ fontFamily:"'Geist',sans-serif", fontSize:13, fontWeight:700, color:'#9333ea' }}>Delete Account</div>
-                    <div style={{ fontFamily:"'Geist',sans-serif", fontSize:11, color:'#555', marginTop:2 }}>Permanently deletes your account and all data. Cannot be undone.</div>
+                    <div style={{ fontFamily:'var(--font-geist-sans)', fontSize:13, fontWeight:700, color:'#9333ea' }}>Delete Account</div>
+                    <div style={{ fontFamily:'var(--font-geist-sans)', fontSize:11, color:'#555', marginTop:2 }}>Permanently deletes your account and all data. Cannot be undone.</div>
                   </div>
-                  <button onClick={() => setShowDeleteAccount(!showDeleteAccount)} style={{ padding:'8px 14px', borderRadius:10, background:'rgba(147,51,234,0.15)', border:'1px solid rgba(147,51,234,0.4)', color:'#9333ea', fontFamily:"'Geist',sans-serif", fontSize:13, fontWeight:700, cursor:'pointer', flexShrink:0 }}>
+                  <button onClick={() => setShowDeleteAccount(!showDeleteAccount)} style={{ padding:'8px 14px', borderRadius:10, background:'rgba(147,51,234,0.15)', border:'1px solid rgba(147,51,234,0.4)', color:'#9333ea', fontFamily:'var(--font-geist-sans)', fontSize:13, fontWeight:700, cursor:'pointer', flexShrink:0 }}>
                     {showDeleteAccount ? 'Cancel' : 'Delete Account'}
                   </button>
                 </div>
                 {showDeleteAccount && (
                   <div style={{ padding:'14px 16px', borderTop:'1px solid rgba(147,51,234,0.15)', background:'rgba(147,51,234,0.04)' }}>
-                    <p style={{ fontFamily:"'Geist',sans-serif", fontSize:13, color:'#9333ea', marginBottom:12, display:'flex', alignItems:'center', gap:6 }}>
+                    <p style={{ fontFamily:'var(--font-geist-sans)', fontSize:13, color:'#9333ea', marginBottom:12, display:'flex', alignItems:'center', gap:6 }}>
                       <IconAlert />Type your username <strong>@{user?.username}</strong> to confirm
                     </p>
                     <div style={{ display:'flex', gap:10 }}>
@@ -500,9 +500,9 @@ export default function SettingsPage() {
                         value={deleteAccountConfirm}
                         onChange={e => setDeleteAccountConfirm(e.target.value)}
                         placeholder={user?.username}
-                        style={{ flex:1, padding:'9px 14px', borderRadius:10, background:'#111', border:'1px solid rgba(147,51,234,0.3)', color:'#f0f0f0', fontSize:14, outline:'none', fontFamily:"'Geist',sans-serif" }}
+                        style={{ flex:1, padding:'9px 14px', borderRadius:10, background:'#111', border:'1px solid rgba(147,51,234,0.3)', color:'#f0f0f0', fontSize:14, outline:'none', fontFamily:'var(--font-geist-sans)' }}
                       />
-                      <button onClick={handleDeleteAccount} disabled={deleteAccountConfirm!==user?.username||deleteAccountLoading} style={{ padding:'9px 16px', borderRadius:10, background: deleteAccountConfirm===user?.username ? 'rgba(147,51,234,0.2)' : 'rgba(255,255,255,0.04)', border:'1px solid rgba(147,51,234,0.4)', color: deleteAccountConfirm===user?.username ? '#9333ea' : '#444', fontFamily:"'Geist',sans-serif", fontSize:13, fontWeight:700, cursor:'pointer', flexShrink:0 }}>
+                      <button onClick={handleDeleteAccount} disabled={deleteAccountConfirm!==user?.username||deleteAccountLoading} style={{ padding:'9px 16px', borderRadius:10, background: deleteAccountConfirm===user?.username ? 'rgba(147,51,234,0.2)' : 'rgba(255,255,255,0.04)', border:'1px solid rgba(147,51,234,0.4)', color: deleteAccountConfirm===user?.username ? '#9333ea' : '#444', fontFamily:'var(--font-geist-sans)', fontSize:13, fontWeight:700, cursor:'pointer', flexShrink:0 }}>
                         {deleteAccountLoading ? 'Deleting...' : <><IconTrash />Confirm</>}
                       </button>
                     </div>
@@ -514,7 +514,7 @@ export default function SettingsPage() {
 
             {/* Sign Out */}
             <div style={{ paddingBottom:8 }}>
-              <button onClick={handleLogout} style={{ display:'flex', alignItems:'center', gap:8, padding:'11px 20px', borderRadius:10, background:'rgba(255,255,255,0.04)', border:'1px solid #2a2a2a', color:'#555', fontFamily:"'Geist',sans-serif", fontSize:14, fontWeight:600, cursor:'pointer' }}>
+              <button onClick={handleLogout} style={{ display:'flex', alignItems:'center', gap:8, padding:'11px 20px', borderRadius:10, background:'rgba(255,255,255,0.04)', border:'1px solid #2a2a2a', color:'#555', fontFamily:'var(--font-geist-sans)', fontSize:14, fontWeight:600, cursor:'pointer' }}>
                 <IconLogout />Sign Out
               </button>
             </div>

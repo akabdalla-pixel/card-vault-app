@@ -77,8 +77,8 @@ export default function SharedCollectionPage() {
   return (
     <>
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;700;900&display=swap');
-        *{box-sizing:border-box;margin:0;padding:0;font-family:'Space Grotesk',-apple-system,sans-serif}
+        
+        *{box-sizing:border-box;margin:0;padding:0;font-family:var(--font-geist-sans),-apple-system,sans-serif}
         body{background:#0a0a0a}
         @keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
         @keyframes pulse{0%,100%{opacity:0.2}50%{opacity:0.5}}
@@ -110,7 +110,7 @@ export default function SharedCollectionPage() {
             </div>
             <div style={{ background:'#111', border:'1px solid #1e1e1e', borderRadius:12, padding:'12px 18px', textAlign:'right' }}>
               <div style={{ fontSize:9, fontWeight:700, color:'#555', textTransform:'uppercase', letterSpacing:'0.1em', marginBottom:3 }}>{filtered.length < cards.length ? 'Filtered Value' : 'Collection Value'}</div>
-              <div style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:22, fontWeight:900, color:'#fff' }}>{fmt(filteredValue)}</div>
+              <div style={{ fontFamily:'var(--font-geist-mono)', fontSize:22, fontWeight:900, color:'#fff' }}>{fmt(filteredValue)}</div>
               {filtered.length < cards.length && <div style={{ fontSize:10, color:'#444', marginTop:2 }}>{filtered.length} of {cards.length} cards</div>}
             </div>
           </div>
@@ -178,7 +178,7 @@ export default function SharedCollectionPage() {
                       </div>
                     )}
                     {!c.grade && c.cond && <div style={{ fontSize:10, color:'#555', marginBottom:3 }}>{c.cond}</div>}
-                    <div style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:14, fontWeight:900, color:'#fff' }}>{fmt(c.val)}</div>
+                    <div style={{ fontFamily:'var(--font-geist-mono)', fontSize:14, fontWeight:900, color:'#fff' }}>{fmt(c.val)}</div>
                     {c.qty > 1 && <div style={{ fontSize:10, color:'#444', marginTop:1 }}>×{c.qty}</div>}
                   </div>
                 </div>

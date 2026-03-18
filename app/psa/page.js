@@ -79,9 +79,9 @@ function CardModal({ card, onClose, onSave }) {
 
   const inp = (key, placeholder, type = 'text', autoFocus = false) => (
     <input type={type} placeholder={placeholder} value={form[key]||''} onChange={e => set(key, e.target.value)} autoFocus={autoFocus}
-      style={{ width:'100%', padding:'8px 12px', borderRadius:9, background:'#202020', border:'1px solid #2a2a2a', color:'#f0f0f0', fontSize:14, outline:'none', fontFamily:"'Geist',sans-serif", boxSizing:'border-box' }} />
+      style={{ width:'100%', padding:'8px 12px', borderRadius:9, background:'#202020', border:'1px solid #2a2a2a', color:'#f0f0f0', fontSize:14, outline:'none', fontFamily:'var(--font-geist-sans)', boxSizing:'border-box' }} />
   )
-  const lbl = t => <div style={{ fontSize:10, fontWeight:700, color:'#555', textTransform:'uppercase', letterSpacing:'0.08em', marginBottom:4, fontFamily:"'Geist',sans-serif" }}>{t}</div>
+  const lbl = t => <div style={{ fontSize:10, fontWeight:700, color:'#555', textTransform:'uppercase', letterSpacing:'0.08em', marginBottom:4, fontFamily:'var(--font-geist-sans)' }}>{t}</div>
 
   return (
     <div style={{ position:'fixed', inset:0, background:'rgba(0,0,0,0.8)', zIndex:200, display:'flex', alignItems:'flex-end', justifyContent:'center' }}
@@ -90,13 +90,13 @@ function CardModal({ card, onClose, onSave }) {
 
         {/* Header */}
         <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:18 }}>
-          <h2 style={{ fontFamily:"'Geist',sans-serif", fontSize:20, fontWeight:800, color:'#f0f0f0', margin:0 }}>
+          <h2 style={{ fontFamily:'var(--font-geist-sans)', fontSize:20, fontWeight:800, color:'#f0f0f0', margin:0 }}>
             {isEdit ? 'Edit Card' : 'Quick Add'}
           </h2>
           <button onClick={onClose} style={{ background:'none', border:'none', color:'#555', cursor:'pointer', padding:4, fontSize:22, lineHeight:1 }}>×</button>
         </div>
 
-        {error && <div style={{ marginBottom:14, padding:'10px 14px', borderRadius:10, background:'rgba(147,51,234,0.08)', color:'#9333ea', fontSize:13, border:'1px solid rgba(147,51,234,0.2)', fontFamily:"'Geist',sans-serif" }}>{error}</div>}
+        {error && <div style={{ marginBottom:14, padding:'10px 14px', borderRadius:10, background:'rgba(147,51,234,0.08)', color:'#9333ea', fontSize:13, border:'1px solid rgba(147,51,234,0.2)', fontFamily:'var(--font-geist-sans)' }}>{error}</div>}
 
         <div style={{ display:'flex', flexDirection:'column', gap:11 }}>
 
@@ -114,12 +114,12 @@ function CardModal({ card, onClose, onSave }) {
                 <button key={s.label} onClick={() => set('sport', form.sport === s.label ? '' : s.label)}
                   style={{ padding:'8px 4px', borderRadius:9, border: form.sport === s.label ? '2px solid rgba(147,51,234,0.6)' : '1px solid #2a2a2a', background: form.sport === s.label ? 'rgba(147,51,234,0.12)' : '#1a1a1a', cursor:'pointer', display:'flex', flexDirection:'column', alignItems:'center', gap:3 }}>
                   <span style={{ fontSize:20 }}>{s.emoji}</span>
-                  <span style={{ fontFamily:"'Geist',sans-serif", fontSize:10, fontWeight:700, color: form.sport === s.label ? '#9333ea' : '#555' }}>{s.label}</span>
+                  <span style={{ fontFamily:'var(--font-geist-sans)', fontSize:10, fontWeight:700, color: form.sport === s.label ? '#9333ea' : '#555' }}>{s.label}</span>
                 </button>
               ))}
             </div>
             <select value={isMoreSport ? form.sport : ''} onChange={e => set('sport', e.target.value)}
-              style={{ width:'100%', padding:'8px 12px', borderRadius:9, background: isMoreSport ? 'rgba(147,51,234,0.08)' : '#1a1a1a', border: isMoreSport ? '1px solid rgba(147,51,234,0.3)' : '1px solid #2a2a2a', color: isMoreSport ? '#9333ea' : '#555', fontSize:14, outline:'none', fontFamily:"'Geist',sans-serif" }}>
+              style={{ width:'100%', padding:'8px 12px', borderRadius:9, background: isMoreSport ? 'rgba(147,51,234,0.08)' : '#1a1a1a', border: isMoreSport ? '1px solid rgba(147,51,234,0.3)' : '1px solid #2a2a2a', color: isMoreSport ? '#9333ea' : '#555', fontSize:14, outline:'none', fontFamily:'var(--font-geist-sans)' }}>
               <option value="">More sports / TCG...</option>
               {MORE_SPORTS.map(s => <option key={s} value={s}>{s}</option>)}
             </select>
@@ -130,7 +130,7 @@ function CardModal({ card, onClose, onSave }) {
             <div>
               {lbl('Grade')}
               <select value={form.grade||''} onChange={e => set('grade', e.target.value)}
-                style={{ width:'100%', padding:'8px 12px', borderRadius:9, background:'#202020', border:'1px solid #2a2a2a', color: form.grade ? '#f0f0f0' : '#555', fontSize:14, outline:'none', fontFamily:"'Geist',sans-serif" }}>
+                style={{ width:'100%', padding:'8px 12px', borderRadius:9, background:'#202020', border:'1px solid #2a2a2a', color: form.grade ? '#f0f0f0' : '#555', fontSize:14, outline:'none', fontFamily:'var(--font-geist-sans)' }}>
                 <option value="">Raw / No grade</option>
                 {['10','9.5','9','8.5','8','7.5','7','6.5','6','5','4','3','2','1'].map(g => <option key={g} value={g}>{g}</option>)}
               </select>
@@ -138,7 +138,7 @@ function CardModal({ card, onClose, onSave }) {
             <div>
               {lbl('Grading Co.')}
               <select value={form.gradingCo||''} onChange={e => set('gradingCo', e.target.value)}
-                style={{ width:'100%', padding:'8px 12px', borderRadius:9, background:'#202020', border:'1px solid #2a2a2a', color: form.gradingCo ? '#f0f0f0' : '#555', fontSize:14, outline:'none', fontFamily:"'Geist',sans-serif" }}>
+                style={{ width:'100%', padding:'8px 12px', borderRadius:9, background:'#202020', border:'1px solid #2a2a2a', color: form.gradingCo ? '#f0f0f0' : '#555', fontSize:14, outline:'none', fontFamily:'var(--font-geist-sans)' }}>
                 <option value="">No grading co.</option>
                 {['PSA','BGS','SGC','CGC','HGA','CSG','GAI','Other'].map(g => <option key={g} value={g}>{g}</option>)}
               </select>
@@ -149,16 +149,16 @@ function CardModal({ card, onClose, onSave }) {
           <label style={{ display:'flex', alignItems:'center', gap:12, padding:'8px 12px', borderRadius:9, background:'#1a1a1a', border: form.auto ? '1px solid rgba(255,190,46,0.3)' : '1px solid #2a2a2a', cursor:'pointer' }}>
             <input type="checkbox" checked={!!form.auto} onChange={e => set('auto', e.target.checked)} style={{ accentColor:'#ffbe2e', width:18, height:18, cursor:'pointer' }} />
             <div>
-              <div style={{ fontFamily:"'Geist',sans-serif", fontSize:13, fontWeight:700, color: form.auto ? '#ffbe2e' : '#ccc' }}>Autograph ✍️</div>
-              <div style={{ fontFamily:"'Geist',sans-serif", fontSize:10, color:'#555' }}>This card has an auto</div>
+              <div style={{ fontFamily:'var(--font-geist-sans)', fontSize:13, fontWeight:700, color: form.auto ? '#ffbe2e' : '#ccc' }}>Autograph ✍️</div>
+              <div style={{ fontFamily:'var(--font-geist-sans)', fontSize:10, color:'#555' }}>This card has an auto</div>
             </div>
           </label>
 
           {/* ── 4b. Auto Grade ── */}
           <div>
-            <div style={{ fontSize:10, fontWeight:700, color:'#555', textTransform:'uppercase', letterSpacing:'0.08em', marginBottom:4, fontFamily:"'Geist',sans-serif" }}>Auto Grade</div>
+            <div style={{ fontSize:10, fontWeight:700, color:'#555', textTransform:'uppercase', letterSpacing:'0.08em', marginBottom:4, fontFamily:'var(--font-geist-sans)' }}>Auto Grade</div>
             <select value={form.autoGrade||''} onChange={e => set('autoGrade', e.target.value)}
-              style={{ width:'100%', padding:'8px 12px', borderRadius:9, background:'#202020', border: form.autoGrade ? '1px solid rgba(255,190,46,0.3)' : '1px solid #2a2a2a', color: form.autoGrade ? '#ffbe2e' : '#555', fontSize:14, outline:'none', fontFamily:"'Geist',sans-serif" }}>
+              style={{ width:'100%', padding:'8px 12px', borderRadius:9, background:'#202020', border: form.autoGrade ? '1px solid rgba(255,190,46,0.3)' : '1px solid #2a2a2a', color: form.autoGrade ? '#ffbe2e' : '#555', fontSize:14, outline:'none', fontFamily:'var(--font-geist-sans)' }}>
               <option value="">No auto grade</option>
               {AUTO_GRADES.map(g => <option key={g} value={g}>{g}</option>)}
             </select>
@@ -173,7 +173,7 @@ function CardModal({ card, onClose, onSave }) {
           {/* ── 6. More Details toggle ── */}
           {!isEdit && (
             <button onClick={() => setShowDetails(v => !v)}
-              style={{ width:'100%', padding:'10px', borderRadius:10, background:'transparent', border:'1px solid #2a2a2a', color:'#555', fontFamily:"'Geist',sans-serif", fontSize:13, fontWeight:600, cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'center', gap:6 }}>
+              style={{ width:'100%', padding:'10px', borderRadius:10, background:'transparent', border:'1px solid #2a2a2a', color:'#555', fontFamily:'var(--font-geist-sans)', fontSize:13, fontWeight:600, cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'center', gap:6 }}>
               {showDetails ? '↑ Hide details' : '↓ More details (year, set, brand, numbering...)'}
             </button>
           )}
@@ -190,22 +190,22 @@ function CardModal({ card, onClose, onSave }) {
             </div>
             {isTCG && (
               <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:10 }}>
-                <div>{lbl('Rarity')}<select value={form.rarity||''} onChange={e => set('rarity', e.target.value)} style={{ width:'100%', padding:'11px 14px', borderRadius:10, background:'#202020', border:'1px solid #2a2a2a', color: form.rarity?'#f0f0f0':'#555', fontSize:14, outline:'none', fontFamily:"'Geist',sans-serif" }}><option value="">Select...</option>{TCG_RARITIES.map(r=><option key={r} value={r}>{r}</option>)}</select></div>
-                <div>{lbl('Edition')}<select value={form.edition||''} onChange={e => set('edition', e.target.value)} style={{ width:'100%', padding:'11px 14px', borderRadius:10, background:'#202020', border:'1px solid #2a2a2a', color: form.edition?'#f0f0f0':'#555', fontSize:14, outline:'none', fontFamily:"'Geist',sans-serif" }}><option value="">Select...</option>{EDITIONS.map(e=><option key={e} value={e}>{e}</option>)}</select></div>
+                <div>{lbl('Rarity')}<select value={form.rarity||''} onChange={e => set('rarity', e.target.value)} style={{ width:'100%', padding:'11px 14px', borderRadius:10, background:'#202020', border:'1px solid #2a2a2a', color: form.rarity?'#f0f0f0':'#555', fontSize:14, outline:'none', fontFamily:'var(--font-geist-sans)' }}><option value="">Select...</option>{TCG_RARITIES.map(r=><option key={r} value={r}>{r}</option>)}</select></div>
+                <div>{lbl('Edition')}<select value={form.edition||''} onChange={e => set('edition', e.target.value)} style={{ width:'100%', padding:'11px 14px', borderRadius:10, background:'#202020', border:'1px solid #2a2a2a', color: form.edition?'#f0f0f0':'#555', fontSize:14, outline:'none', fontFamily:'var(--font-geist-sans)' }}><option value="">Select...</option>{EDITIONS.map(e=><option key={e} value={e}>{e}</option>)}</select></div>
               </div>
             )}
             <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:10 }}>
               <div>{lbl('Quantity')}{inp('qty', '1', 'number')}</div>
               <div>{lbl('Purchase Date')}{inp('date', '', 'date')}</div>
             </div>
-            <div>{lbl('Notes')}<textarea value={form.notes||''} onChange={e => set('notes', e.target.value)} rows={2} placeholder="Any extra details..." style={{ width:'100%', padding:'11px 14px', borderRadius:10, background:'#202020', border:'1px solid #2a2a2a', color:'#f0f0f0', fontSize:14, outline:'none', resize:'none', fontFamily:"'Geist',sans-serif", boxSizing:'border-box' }} /></div>
+            <div>{lbl('Notes')}<textarea value={form.notes||''} onChange={e => set('notes', e.target.value)} rows={2} placeholder="Any extra details..." style={{ width:'100%', padding:'11px 14px', borderRadius:10, background:'#202020', border:'1px solid #2a2a2a', color:'#f0f0f0', fontSize:14, outline:'none', resize:'none', fontFamily:'var(--font-geist-sans)', boxSizing:'border-box' }} /></div>
           </>}
 
           {/* Sold toggle (edit only) */}
           {isEdit && <>
             <label style={{ display:'flex', alignItems:'center', gap:12, padding:'11px 14px', borderRadius:10, background:'#202020', border:'1px solid #2a2a2a', cursor:'pointer' }}>
               <input type="checkbox" checked={!!form.sold} onChange={e => set('sold', e.target.checked)} style={{ accentColor:'#9333ea', width:18, height:18 }} />
-              <div style={{ fontFamily:"'Geist',sans-serif", fontSize:14, fontWeight:600, color:'#ccc' }}>Mark as Sold 💰</div>
+              <div style={{ fontFamily:'var(--font-geist-sans)', fontSize:14, fontWeight:600, color:'#ccc' }}>Mark as Sold 💰</div>
             </label>
             {form.sold && <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:10 }}>
               <div>{lbl('Sold Price ($)')}{inp('soldPrice', '0.00', 'number')}</div>
@@ -217,7 +217,7 @@ function CardModal({ card, onClose, onSave }) {
 
         {/* Save button */}
         <button onClick={handleSave} disabled={saving || !form.player}
-          style={{ width:'100%', padding:'12px', borderRadius:11, marginTop:14, background: (!form.player||saving) ? '#1a1a1a' : 'linear-gradient(135deg,#9333ea,#a855f7)', border: (!form.player||saving) ? '1px solid #2a2a2a' : 'none', color: (!form.player||saving) ? '#444' : '#fff', fontFamily:"'Geist',sans-serif", fontSize:15, fontWeight:800, cursor: (!form.player||saving) ? 'not-allowed' : 'pointer', letterSpacing:'-0.3px' }}>
+          style={{ width:'100%', padding:'12px', borderRadius:11, marginTop:14, background: (!form.player||saving) ? '#1a1a1a' : 'linear-gradient(135deg,#9333ea,#a855f7)', border: (!form.player||saving) ? '1px solid #2a2a2a' : 'none', color: (!form.player||saving) ? '#444' : '#fff', fontFamily:'var(--font-geist-sans)', fontSize:15, fontWeight:800, cursor: (!form.player||saving) ? 'not-allowed' : 'pointer', letterSpacing:'-0.3px' }}>
           {saving ? 'Saving...' : (isEdit ? 'Save Changes' : '+ Add Card')}
         </button>
 
@@ -481,7 +481,7 @@ export default function PSALookupPage() {
     <>
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Geist:wght@100;200;300;400;500;600;700;800;900&family=Geist+Mono:wght@100;200;300;400;500;600;700;800;900&display=swap');
-        *{font-family:'Geist',-apple-system,sans-serif!important}
+        *{font-family:var(--font-geist-sans),-apple-system,sans-serif!important}
         .sidebar-el{display:flex;flex-direction:column}.mobile-only{display:none!important}.mob-topbar{display:none}.main-wrap{margin-left:200px;min-height:100vh;width:calc(100% - 200px)}
         @media(max-width:768px){.sidebar-el{display:none!important}.mobile-only{display:flex!important}.mob-topbar{display:flex}.main-wrap{margin-left:0!important;width:100%!important;padding:16px 16px 90px!important}}
         input:focus,select:focus,textarea:focus{border-color:#9333ea!important;outline:none}
@@ -512,7 +512,7 @@ export default function PSALookupPage() {
                 <div style={{ fontSize:9, fontWeight:800, color:'#555', textTransform:'uppercase', letterSpacing:'0.1em', marginBottom:10 }}>Cert Number</div>
                 <div className="psa-search-row" style={{ display:'flex', gap:10 }}>
                   <input value={cert} onChange={e => setCert(e.target.value)} onKeyDown={e => e.key==='Enter' && handleLookup()} placeholder="e.g. 12345678"
-                    style={{ flex:1, minWidth:0, padding:'11px 14px', borderRadius:10, background:'#1a1a1a', border:'1px solid #2a2a2a', color:'#f0f0f0', fontSize:16, fontFamily:"'Geist',sans-serif", letterSpacing:'0.05em', transition:'border-color 0.15s', boxSizing:'border-box' }} />
+                    style={{ flex:1, minWidth:0, padding:'11px 14px', borderRadius:10, background:'#1a1a1a', border:'1px solid #2a2a2a', color:'#f0f0f0', fontSize:16, fontFamily:'var(--font-geist-sans)', letterSpacing:'0.05em', transition:'border-color 0.15s', boxSizing:'border-box' }} />
                   <button onClick={handleLookup} disabled={searching || !cert.trim()} style={{ padding:'11px 20px', borderRadius:10, background: searching||!cert.trim() ? '#1a1a1a' : '#9333ea', border:'none', color: searching||!cert.trim() ? '#555' : '#fff', fontSize:14, fontWeight:800, cursor: searching||!cert.trim() ? 'not-allowed' : 'pointer', whiteSpace:'nowrap', flexShrink:0 }}>
                     {searching ? 'Looking up...' : 'Verify'}
                   </button>
@@ -544,7 +544,7 @@ export default function PSALookupPage() {
                     <div style={{ flex:1, minWidth:0 }}>
                       <div style={{ display:'flex', alignItems:'center', gap:12, marginBottom:16 }}>
                         <div style={{ width:56, height:56, borderRadius:10, background:`${gradeColor}18`, border:`2px solid ${gradeColor}`, display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', flexShrink:0 }}>
-                          <div style={{ fontFamily:"'Geist',sans-serif", fontSize:26, fontWeight:900, color:gradeColor, lineHeight:1 }}>{result.grade}</div>
+                          <div style={{ fontFamily:'var(--font-geist-sans)', fontSize:26, fontWeight:900, color:gradeColor, lineHeight:1 }}>{result.grade}</div>
                         </div>
                         <div>
                           <div style={{ fontSize:18, fontWeight:900, color:'#fff', letterSpacing:'-0.5px', lineHeight:1.1 }}>{result.player || '—'}</div>
@@ -580,7 +580,7 @@ export default function PSALookupPage() {
                               { label:'Total Pop', value: result.totalPop, color:'#888' },
                             ].map((p,i) => (
                               <div key={i} style={{ textAlign:'center' }}>
-                                <div style={{ fontFamily:"'Geist',sans-serif", fontSize:16, fontWeight:900, color:p.color }}>{p.value.toLocaleString()}</div>
+                                <div style={{ fontFamily:'var(--font-geist-sans)', fontSize:16, fontWeight:900, color:p.color }}>{p.value.toLocaleString()}</div>
                                 <div style={{ fontSize:9, fontWeight:700, color:'#444', textTransform:'uppercase', letterSpacing:'0.08em', marginTop:3 }}>{p.label}</div>
                               </div>
                             ))}
@@ -606,10 +606,10 @@ export default function PSALookupPage() {
                   <div style={{ fontSize:9, fontWeight:800, color:'#555', textTransform:'uppercase', letterSpacing:'0.1em', marginBottom:12 }}>Recent Lookups</div>
                   {history.map((h, i) => (
                     <div key={i} className="hist-item" onClick={() => setCert(h.cert)} style={{ display:'flex', alignItems:'center', gap:10, padding:'9px 10px', borderRadius:8, cursor:'pointer', background:'transparent', transition:'background 0.1s', marginBottom: i<history.length-1?4:0 }}>
-                      <div style={{ width:32, height:32, borderRadius:7, background:'rgba(147,51,234,0.1)', border:'1px solid rgba(147,51,234,0.2)', display:'flex', alignItems:'center', justifyContent:'center', fontFamily:"'Geist',sans-serif", fontSize:13, fontWeight:900, color:'#a855f7', flexShrink:0 }}>{h.grade}</div>
+                      <div style={{ width:32, height:32, borderRadius:7, background:'rgba(147,51,234,0.1)', border:'1px solid rgba(147,51,234,0.2)', display:'flex', alignItems:'center', justifyContent:'center', fontFamily:'var(--font-geist-sans)', fontSize:13, fontWeight:900, color:'#a855f7', flexShrink:0 }}>{h.grade}</div>
                       <div style={{ minWidth:0 }}>
                         <div style={{ fontSize:12, fontWeight:700, color:'#ccc', overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>{h.player}</div>
-                        <div style={{ fontSize:10, color:'#444', fontFamily:"'Geist',sans-serif" }}>#{h.cert}</div>
+                        <div style={{ fontSize:10, color:'#444', fontFamily:'var(--font-geist-sans)' }}>#{h.cert}</div>
                       </div>
                     </div>
                   ))}
@@ -640,7 +640,7 @@ export default function PSALookupPage() {
                   { grade:'PSA 5', label:'Excellent', color:'#ef4444' },
                 ].map((g,i) => (
                   <div key={i} style={{ display:'flex', alignItems:'center', justifyContent:'space-between', padding:'6px 0', borderBottom: i<5?'1px solid #141414':'none' }}>
-                    <div style={{ fontFamily:"'Geist',sans-serif", fontSize:12, fontWeight:800, color:g.color }}>{g.grade}</div>
+                    <div style={{ fontFamily:'var(--font-geist-sans)', fontSize:12, fontWeight:800, color:g.color }}>{g.grade}</div>
                     <div style={{ fontSize:11, color:'#555' }}>{g.label}</div>
                   </div>
                 ))}

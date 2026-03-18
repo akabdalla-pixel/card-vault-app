@@ -93,10 +93,10 @@ function ToastContainer() {
   return (
     <div style={{ position:'fixed', bottom:88, left:'50%', transform:'translateX(-50%)', zIndex:9999, display:'flex', flexDirection:'column', gap:8, alignItems:'center', pointerEvents:'none' }}>
       {toasts.map(t => (
-        <div key={t.id} style={{ display:'flex', alignItems:'center', gap:10, padding:'10px 18px', borderRadius:12, background:'#1e1e1e', border:`1px solid ${colors[t.type]}50`, boxShadow:'0 8px 28px rgba(0,0,0,0.6)', fontFamily:"'Geist',sans-serif", fontSize:13, fontWeight:600, color:'#f0f0f0', pointerEvents:'auto', animation:'toastIn 0.2s ease', whiteSpace:'nowrap' }}>
+        <div key={t.id} style={{ display:'flex', alignItems:'center', gap:10, padding:'10px 18px', borderRadius:12, background:'#1e1e1e', border:`1px solid ${colors[t.type]}50`, boxShadow:'0 8px 28px rgba(0,0,0,0.6)', fontFamily:'var(--font-geist-sans)', fontSize:13, fontWeight:600, color:'#f0f0f0', pointerEvents:'auto', animation:'toastIn 0.2s ease', whiteSpace:'nowrap' }}>
           <span style={{ color:colors[t.type] }}>{icons[t.type]}</span>
           {t.msg}
-          {t.onUndo && <button onClick={t.onUndo} style={{ marginLeft:6, padding:'2px 10px', borderRadius:6, background:'rgba(255,255,255,0.08)', border:'none', color:'#9333ea', fontFamily:"'Geist',sans-serif", fontSize:12, fontWeight:700, cursor:'pointer', pointerEvents:'auto' }}>Undo</button>}
+          {t.onUndo && <button onClick={t.onUndo} style={{ marginLeft:6, padding:'2px 10px', borderRadius:6, background:'rgba(255,255,255,0.08)', border:'none', color:'#9333ea', fontFamily:'var(--font-geist-sans)', fontSize:12, fontWeight:700, cursor:'pointer', pointerEvents:'auto' }}>Undo</button>}
         </div>
       ))}
     </div>
@@ -188,7 +188,7 @@ function usePullToRefresh(onRefresh) {
 function PullIndicator({pullY}) {
   if (!pullY) return null
   const ready = pullY >= 60
-  return <div style={{position:'fixed',top:0,left:'50%',transform:'translateX(-50%)',zIndex:999,padding:'8px 16px',borderRadius:'0 0 12px 12px',background:'#1a1a1a',border:'1px solid #2a2a2a',borderTop:'none',fontFamily:"'Geist',sans-serif",fontSize:12,color:ready?'#4ade80':'#555',fontWeight:600,display:'flex',alignItems:'center',gap:6}}><span style={{display:'inline-block',animation:ready?'spin 0.5s linear infinite':'none'}}>↓</span>{ready?'Release to refresh':'Pull to refresh'}</div>
+  return <div style={{position:'fixed',top:0,left:'50%',transform:'translateX(-50%)',zIndex:999,padding:'8px 16px',borderRadius:'0 0 12px 12px',background:'#1a1a1a',border:'1px solid #2a2a2a',borderTop:'none',fontFamily:'var(--font-geist-sans)',fontSize:12,color:ready?'#4ade80':'#555',fontWeight:600,display:'flex',alignItems:'center',gap:6}}><span style={{display:'inline-block',animation:ready?'spin 0.5s linear infinite':'none'}}>↓</span>{ready?'Release to refresh':'Pull to refresh'}</div>
 }
 
 function getPriceLinks(card) {
@@ -340,9 +340,9 @@ function CardModal({ card, onClose, onSave }) {
 
   const inp = (key, placeholder, type = 'text', autoFocus = false) => (
     <input type={type} placeholder={placeholder} value={form[key]||''} onChange={e => set(key, e.target.value)} autoFocus={autoFocus}
-      style={{ width:'100%', padding:'8px 12px', borderRadius:9, background:'#202020', border:'1px solid #2a2a2a', color:'#f0f0f0', fontSize:14, outline:'none', fontFamily:"'Geist',sans-serif", boxSizing:'border-box' }} />
+      style={{ width:'100%', padding:'8px 12px', borderRadius:9, background:'#202020', border:'1px solid #2a2a2a', color:'#f0f0f0', fontSize:14, outline:'none', fontFamily:'var(--font-geist-sans)', boxSizing:'border-box' }} />
   )
-  const lbl = t => <div style={{ fontSize:10, fontWeight:700, color:'#555', textTransform:'uppercase', letterSpacing:'0.08em', marginBottom:4, fontFamily:"'Geist',sans-serif" }}>{t}</div>
+  const lbl = t => <div style={{ fontSize:10, fontWeight:700, color:'#555', textTransform:'uppercase', letterSpacing:'0.08em', marginBottom:4, fontFamily:'var(--font-geist-sans)' }}>{t}</div>
 
   return (
     <div style={{ position:'fixed', inset:0, background:'rgba(0,0,0,0.8)', zIndex:200, display:'flex', alignItems:'flex-end', justifyContent:'center' }}
@@ -351,13 +351,13 @@ function CardModal({ card, onClose, onSave }) {
 
         {/* Header */}
         <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:18 }}>
-          <h2 style={{ fontFamily:"'Geist',sans-serif", fontSize:20, fontWeight:800, color:'#f0f0f0', margin:0 }}>
+          <h2 style={{ fontFamily:'var(--font-geist-sans)', fontSize:20, fontWeight:800, color:'#f0f0f0', margin:0 }}>
             {isEdit ? 'Edit Card' : 'Quick Add'}
           </h2>
           <button onClick={onClose} style={{ background:'none', border:'none', color:'#555', cursor:'pointer', padding:4, fontSize:22, lineHeight:1 }}>×</button>
         </div>
 
-        {error && <div style={{ marginBottom:14, padding:'10px 14px', borderRadius:10, background:'rgba(147,51,234,0.08)', color:'#9333ea', fontSize:13, border:'1px solid rgba(147,51,234,0.2)', fontFamily:"'Geist',sans-serif" }}>{error}</div>}
+        {error && <div style={{ marginBottom:14, padding:'10px 14px', borderRadius:10, background:'rgba(147,51,234,0.08)', color:'#9333ea', fontSize:13, border:'1px solid rgba(147,51,234,0.2)', fontFamily:'var(--font-geist-sans)' }}>{error}</div>}
 
         <div style={{ display:'flex', flexDirection:'column', gap:11 }}>
 
@@ -375,12 +375,12 @@ function CardModal({ card, onClose, onSave }) {
                 <button key={s.label} onClick={() => set('sport', form.sport === s.label ? '' : s.label)}
                   style={{ padding:'8px 4px', borderRadius:9, border: form.sport === s.label ? '2px solid rgba(147,51,234,0.6)' : '1px solid #2a2a2a', background: form.sport === s.label ? 'rgba(147,51,234,0.12)' : '#1a1a1a', cursor:'pointer', display:'flex', flexDirection:'column', alignItems:'center', gap:3 }}>
                   <span style={{ fontSize:20 }}>{s.emoji}</span>
-                  <span style={{ fontFamily:"'Geist',sans-serif", fontSize:10, fontWeight:700, color: form.sport === s.label ? '#9333ea' : '#555' }}>{s.label}</span>
+                  <span style={{ fontFamily:'var(--font-geist-sans)', fontSize:10, fontWeight:700, color: form.sport === s.label ? '#9333ea' : '#555' }}>{s.label}</span>
                 </button>
               ))}
             </div>
             <select value={isMoreSport ? form.sport : ''} onChange={e => set('sport', e.target.value)}
-              style={{ width:'100%', padding:'8px 12px', borderRadius:9, background: isMoreSport ? 'rgba(147,51,234,0.08)' : '#1a1a1a', border: isMoreSport ? '1px solid rgba(147,51,234,0.3)' : '1px solid #2a2a2a', color: isMoreSport ? '#9333ea' : '#555', fontSize:14, outline:'none', fontFamily:"'Geist',sans-serif" }}>
+              style={{ width:'100%', padding:'8px 12px', borderRadius:9, background: isMoreSport ? 'rgba(147,51,234,0.08)' : '#1a1a1a', border: isMoreSport ? '1px solid rgba(147,51,234,0.3)' : '1px solid #2a2a2a', color: isMoreSport ? '#9333ea' : '#555', fontSize:14, outline:'none', fontFamily:'var(--font-geist-sans)' }}>
               <option value="">More sports / TCG...</option>
               {MORE_SPORTS.map(s => <option key={s} value={s}>{s}</option>)}
             </select>
@@ -391,7 +391,7 @@ function CardModal({ card, onClose, onSave }) {
             <div>
               {lbl('Grade')}
               <select value={form.grade||''} onChange={e => set('grade', e.target.value)}
-                style={{ width:'100%', padding:'8px 12px', borderRadius:9, background:'#202020', border:'1px solid #2a2a2a', color: form.grade ? '#f0f0f0' : '#555', fontSize:14, outline:'none', fontFamily:"'Geist',sans-serif" }}>
+                style={{ width:'100%', padding:'8px 12px', borderRadius:9, background:'#202020', border:'1px solid #2a2a2a', color: form.grade ? '#f0f0f0' : '#555', fontSize:14, outline:'none', fontFamily:'var(--font-geist-sans)' }}>
                 <option value="">Raw / No grade</option>
                 {['10','9.5','9','8.5','8','7.5','7','6.5','6','5','4','3','2','1'].map(g => <option key={g} value={g}>{g}</option>)}
               </select>
@@ -399,7 +399,7 @@ function CardModal({ card, onClose, onSave }) {
             <div>
               {lbl('Grading Co.')}
               <select value={form.gradingCo||''} onChange={e => set('gradingCo', e.target.value)}
-                style={{ width:'100%', padding:'8px 12px', borderRadius:9, background:'#202020', border:'1px solid #2a2a2a', color: form.gradingCo ? '#f0f0f0' : '#555', fontSize:14, outline:'none', fontFamily:"'Geist',sans-serif" }}>
+                style={{ width:'100%', padding:'8px 12px', borderRadius:9, background:'#202020', border:'1px solid #2a2a2a', color: form.gradingCo ? '#f0f0f0' : '#555', fontSize:14, outline:'none', fontFamily:'var(--font-geist-sans)' }}>
                 <option value="">No grading co.</option>
                 {['PSA','BGS','SGC','CGC','HGA','CSG','GAI','Other'].map(g => <option key={g} value={g}>{g}</option>)}
               </select>
@@ -410,16 +410,16 @@ function CardModal({ card, onClose, onSave }) {
           <label style={{ display:'flex', alignItems:'center', gap:12, padding:'8px 12px', borderRadius:9, background:'#1a1a1a', border: form.auto ? '1px solid rgba(255,190,46,0.3)' : '1px solid #2a2a2a', cursor:'pointer' }}>
             <input type="checkbox" checked={!!form.auto} onChange={e => set('auto', e.target.checked)} style={{ accentColor:'#ffbe2e', width:18, height:18, cursor:'pointer' }} />
             <div>
-              <div style={{ fontFamily:"'Geist',sans-serif", fontSize:13, fontWeight:700, color: form.auto ? '#ffbe2e' : '#ccc' }}>Autograph ✍️</div>
-              <div style={{ fontFamily:"'Geist',sans-serif", fontSize:10, color:'#555' }}>This card has an auto</div>
+              <div style={{ fontFamily:'var(--font-geist-sans)', fontSize:13, fontWeight:700, color: form.auto ? '#ffbe2e' : '#ccc' }}>Autograph ✍️</div>
+              <div style={{ fontFamily:'var(--font-geist-sans)', fontSize:10, color:'#555' }}>This card has an auto</div>
             </div>
           </label>
 
           {/* ── 4b. Auto Grade ── */}
           <div>
-            <div style={{ fontSize:10, fontWeight:700, color:'#555', textTransform:'uppercase', letterSpacing:'0.08em', marginBottom:4, fontFamily:"'Geist',sans-serif" }}>Auto Grade</div>
+            <div style={{ fontSize:10, fontWeight:700, color:'#555', textTransform:'uppercase', letterSpacing:'0.08em', marginBottom:4, fontFamily:'var(--font-geist-sans)' }}>Auto Grade</div>
             <select value={form.autoGrade||''} onChange={e => set('autoGrade', e.target.value)}
-              style={{ width:'100%', padding:'8px 12px', borderRadius:9, background:'#202020', border: form.autoGrade ? '1px solid rgba(255,190,46,0.3)' : '1px solid #2a2a2a', color: form.autoGrade ? '#ffbe2e' : '#555', fontSize:14, outline:'none', fontFamily:"'Geist',sans-serif" }}>
+              style={{ width:'100%', padding:'8px 12px', borderRadius:9, background:'#202020', border: form.autoGrade ? '1px solid rgba(255,190,46,0.3)' : '1px solid #2a2a2a', color: form.autoGrade ? '#ffbe2e' : '#555', fontSize:14, outline:'none', fontFamily:'var(--font-geist-sans)' }}>
               <option value="">No auto grade</option>
               {AUTO_GRADES.map(g => <option key={g} value={g}>{g}</option>)}
             </select>
@@ -434,7 +434,7 @@ function CardModal({ card, onClose, onSave }) {
           {/* ── 6. More Details toggle ── */}
           {!isEdit && (
             <button onClick={() => setShowDetails(v => !v)}
-              style={{ width:'100%', padding:'10px', borderRadius:10, background:'transparent', border:'1px solid #2a2a2a', color:'#555', fontFamily:"'Geist',sans-serif", fontSize:13, fontWeight:600, cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'center', gap:6 }}>
+              style={{ width:'100%', padding:'10px', borderRadius:10, background:'transparent', border:'1px solid #2a2a2a', color:'#555', fontFamily:'var(--font-geist-sans)', fontSize:13, fontWeight:600, cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'center', gap:6 }}>
               {showDetails ? '↑ Hide details' : '↓ More details (year, set, brand, numbering...)'}
             </button>
           )}
@@ -451,22 +451,22 @@ function CardModal({ card, onClose, onSave }) {
             </div>
             {isTCG && (
               <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:10 }}>
-                <div>{lbl('Rarity')}<select value={form.rarity||''} onChange={e => set('rarity', e.target.value)} style={{ width:'100%', padding:'11px 14px', borderRadius:10, background:'#202020', border:'1px solid #2a2a2a', color: form.rarity?'#f0f0f0':'#555', fontSize:14, outline:'none', fontFamily:"'Geist',sans-serif" }}><option value="">Select...</option>{TCG_RARITIES.map(r=><option key={r} value={r}>{r}</option>)}</select></div>
-                <div>{lbl('Edition')}<select value={form.edition||''} onChange={e => set('edition', e.target.value)} style={{ width:'100%', padding:'11px 14px', borderRadius:10, background:'#202020', border:'1px solid #2a2a2a', color: form.edition?'#f0f0f0':'#555', fontSize:14, outline:'none', fontFamily:"'Geist',sans-serif" }}><option value="">Select...</option>{EDITIONS.map(e=><option key={e} value={e}>{e}</option>)}</select></div>
+                <div>{lbl('Rarity')}<select value={form.rarity||''} onChange={e => set('rarity', e.target.value)} style={{ width:'100%', padding:'11px 14px', borderRadius:10, background:'#202020', border:'1px solid #2a2a2a', color: form.rarity?'#f0f0f0':'#555', fontSize:14, outline:'none', fontFamily:'var(--font-geist-sans)' }}><option value="">Select...</option>{TCG_RARITIES.map(r=><option key={r} value={r}>{r}</option>)}</select></div>
+                <div>{lbl('Edition')}<select value={form.edition||''} onChange={e => set('edition', e.target.value)} style={{ width:'100%', padding:'11px 14px', borderRadius:10, background:'#202020', border:'1px solid #2a2a2a', color: form.edition?'#f0f0f0':'#555', fontSize:14, outline:'none', fontFamily:'var(--font-geist-sans)' }}><option value="">Select...</option>{EDITIONS.map(e=><option key={e} value={e}>{e}</option>)}</select></div>
               </div>
             )}
             <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:10 }}>
               <div>{lbl('Quantity')}{inp('qty', '1', 'number')}</div>
               <div>{lbl('Purchase Date')}{inp('date', '', 'date')}</div>
             </div>
-            <div>{lbl('Notes')}<textarea value={form.notes||''} onChange={e => set('notes', e.target.value)} rows={2} placeholder="Any extra details..." style={{ width:'100%', padding:'11px 14px', borderRadius:10, background:'#202020', border:'1px solid #2a2a2a', color:'#f0f0f0', fontSize:14, outline:'none', resize:'none', fontFamily:"'Geist',sans-serif", boxSizing:'border-box' }} /></div>
+            <div>{lbl('Notes')}<textarea value={form.notes||''} onChange={e => set('notes', e.target.value)} rows={2} placeholder="Any extra details..." style={{ width:'100%', padding:'11px 14px', borderRadius:10, background:'#202020', border:'1px solid #2a2a2a', color:'#f0f0f0', fontSize:14, outline:'none', resize:'none', fontFamily:'var(--font-geist-sans)', boxSizing:'border-box' }} /></div>
           </>}
 
           {/* Sold toggle (edit only) */}
           {isEdit && <>
             <label style={{ display:'flex', alignItems:'center', gap:12, padding:'11px 14px', borderRadius:10, background:'#202020', border:'1px solid #2a2a2a', cursor:'pointer' }}>
               <input type="checkbox" checked={!!form.sold} onChange={e => set('sold', e.target.checked)} style={{ accentColor:'#9333ea', width:18, height:18 }} />
-              <div style={{ fontFamily:"'Geist',sans-serif", fontSize:14, fontWeight:600, color:'#ccc' }}>Mark as Sold 💰</div>
+              <div style={{ fontFamily:'var(--font-geist-sans)', fontSize:14, fontWeight:600, color:'#ccc' }}>Mark as Sold 💰</div>
             </label>
             {form.sold && <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:10 }}>
               <div>{lbl('Sold Price ($)')}{inp('soldPrice', '0.00', 'number')}</div>
@@ -478,7 +478,7 @@ function CardModal({ card, onClose, onSave }) {
 
         {/* Save button */}
         <button onClick={handleSave} disabled={saving || !form.player}
-          style={{ width:'100%', padding:'12px', borderRadius:11, marginTop:14, background: (!form.player||saving) ? '#1a1a1a' : 'linear-gradient(135deg,#9333ea,#a855f7)', border: (!form.player||saving) ? '1px solid #2a2a2a' : 'none', color: (!form.player||saving) ? '#444' : '#fff', fontFamily:"'Geist',sans-serif", fontSize:15, fontWeight:800, cursor: (!form.player||saving) ? 'not-allowed' : 'pointer', letterSpacing:'-0.3px' }}>
+          style={{ width:'100%', padding:'12px', borderRadius:11, marginTop:14, background: (!form.player||saving) ? '#1a1a1a' : 'linear-gradient(135deg,#9333ea,#a855f7)', border: (!form.player||saving) ? '1px solid #2a2a2a' : 'none', color: (!form.player||saving) ? '#444' : '#fff', fontFamily:'var(--font-geist-sans)', fontSize:15, fontWeight:800, cursor: (!form.player||saving) ? 'not-allowed' : 'pointer', letterSpacing:'-0.3px' }}>
           {saving ? 'Saving...' : (isEdit ? 'Save Changes' : '+ Add Card')}
         </button>
 
@@ -494,19 +494,19 @@ function PriceLookupModal({ card, onClose }) {
     <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.7)', zIndex: 200, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16 }}>
       <div style={{ background: '#181818', border: '1px solid #2a2a2a', borderRadius: 16, width: '100%', maxWidth: 420, padding: 24 }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 6 }}>
-          <h2 style={{ fontFamily: "'Geist',sans-serif", fontSize: 17, fontWeight: 700, color: '#f0f2ff', margin: 0 }}>Check Prices</h2>
+          <h2 style={{ fontFamily: 'var(--font-geist-sans)', fontSize: 17, fontWeight: 700, color: '#f0f2ff', margin: 0 }}>Check Prices</h2>
           <button onClick={onClose} style={{ background: 'none', border: 'none', color: '#555', cursor: 'pointer', padding: 4 }}><IconClose /></button>
         </div>
-        <p style={{ fontSize: 13, color: '#555', marginBottom: 18, fontFamily: "'Geist',sans-serif" }}>{card.player}{card.year ? ' · ' + card.year : ''}{card.grade ? ' · Grade ' + card.grade : ''}</p>
+        <p style={{ fontSize: 13, color: '#555', marginBottom: 18, fontFamily: 'var(--font-geist-sans)' }}>{card.player}{card.year ? ' · ' + card.year : ''}{card.grade ? ' · Grade ' + card.grade : ''}</p>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
           {links.map(({ label, color, url }) => (
             <a key={label} href={url} target="_blank" rel="noopener noreferrer" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 16px', borderRadius: 10, background: color + '18', border: '1px solid ' + color + '40', textDecoration: 'none' }}>
-              <span style={{ fontFamily: "'Geist',sans-serif", fontSize: 14, fontWeight: 600, color: '#f0f2ff' }}>{label}</span>
+              <span style={{ fontFamily: 'var(--font-geist-sans)', fontSize: 14, fontWeight: 600, color: '#f0f2ff' }}>{label}</span>
               <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, color, fontWeight: 600 }}>Search <IconExternalLink /></div>
             </a>
           ))}
         </div>
-        <p style={{ fontSize: 11, color: '#333', marginTop: 14, textAlign: 'center', fontFamily: "'Geist',sans-serif" }}>Opens each platform in a new tab with your card pre-searched</p>
+        <p style={{ fontSize: 11, color: '#333', marginTop: 14, textAlign: 'center', fontFamily: 'var(--font-geist-sans)' }}>Opens each platform in a new tab with your card pre-searched</p>
       </div>
     </div>
   )
@@ -533,10 +533,10 @@ function SoldModal({ card, onClose, onSave }) {
     <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.7)', zIndex: 200, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16 }}>
       <div style={{ background: '#181818', border: '1px solid #2a2a2a', borderRadius: 16, width: '100%', maxWidth: 380, padding: 24 }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
-          <h2 style={{ fontFamily: "'Geist',sans-serif", fontSize: 17, fontWeight: 700, color: '#f0f2ff', margin: 0 }}>Mark as Sold</h2>
+          <h2 style={{ fontFamily: 'var(--font-geist-sans)', fontSize: 17, fontWeight: 700, color: '#f0f2ff', margin: 0 }}>Mark as Sold</h2>
           <button onClick={onClose} style={{ background: 'none', border: 'none', color: '#555', cursor: 'pointer', padding: 4 }}><IconClose /></button>
         </div>
-        <p style={{ fontSize: 13, color: '#555', marginBottom: 18, fontFamily: "'Geist',sans-serif" }}>{card.player}{card.year ? ' · ' + card.year : ''}</p>
+        <p style={{ fontSize: 13, color: '#555', marginBottom: 18, fontFamily: 'var(--font-geist-sans)' }}>{card.player}{card.year ? ' · ' + card.year : ''}</p>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
           <div>
             <label style={{ display: 'block', fontSize: 11, fontWeight: 600, color: '#555', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 6 }}>Sold Price ($)</label>
@@ -549,14 +549,14 @@ function SoldModal({ card, onClose, onSave }) {
           {soldPrice && (
             <div style={{ padding: '12px 16px', borderRadius: 10, background: profit >= 0 ? 'rgba(34,211,167,0.08)' : 'rgba(168,85,247,0.08)', border: '1px solid ' + (profit >= 0 ? 'rgba(147,51,234,0.2)' : 'rgba(168,85,247,0.2)') }}>
               <div style={{ fontSize: 11, color: '#555', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 4 }}>Realized P&L</div>
-              <div style={{ fontFamily: "'Geist',sans-serif", fontSize: 20, fontWeight: 700, color: profit >= 0 ? '#22c55e' : '#ef4444' }}>{profit >= 0 ? '+' : ''}{fmt(profit)} <span style={{ fontSize: 13 }}>({profitPct >= 0 ? '+' : ''}{profitPct.toFixed(1)}%)</span></div>
+              <div style={{ fontFamily: 'var(--font-geist-sans)', fontSize: 20, fontWeight: 700, color: profit >= 0 ? '#22c55e' : '#ef4444' }}>{profit >= 0 ? '+' : ''}{fmt(profit)} <span style={{ fontSize: 13 }}>({profitPct >= 0 ? '+' : ''}{profitPct.toFixed(1)}%)</span></div>
               <div style={{ fontSize: 12, color: '#555', marginTop: 4 }}>Bought for {fmt(buy)}</div>
             </div>
           )}
         </div>
         <div style={{ display: 'flex', gap: 10, marginTop: 20 }}>
-          <button onClick={onClose} style={{ flex: 1, padding: 11, borderRadius: 10, background: '#202020', border: '1px solid #2a2a2a', color: '#666', fontFamily: "'Geist',sans-serif", fontSize: 14, fontWeight: 600, cursor: 'pointer' }}>Cancel</button>
-          <button onClick={handleSave} disabled={saving || !soldPrice} style={{ flex: 1, padding: 11, borderRadius: 10, background: 'linear-gradient(135deg,#9333ea,#a855f7)', border: 'none', color: '#000', fontFamily: "'Geist',sans-serif", fontSize: 14, fontWeight: 700, cursor: 'pointer', opacity: (saving || !soldPrice) ? 0.5 : 1 }}>{saving ? 'Saving...' : 'Mark Sold'}</button>
+          <button onClick={onClose} style={{ flex: 1, padding: 11, borderRadius: 10, background: '#202020', border: '1px solid #2a2a2a', color: '#666', fontFamily: 'var(--font-geist-sans)', fontSize: 14, fontWeight: 600, cursor: 'pointer' }}>Cancel</button>
+          <button onClick={handleSave} disabled={saving || !soldPrice} style={{ flex: 1, padding: 11, borderRadius: 10, background: 'linear-gradient(135deg,#9333ea,#a855f7)', border: 'none', color: '#000', fontFamily: 'var(--font-geist-sans)', fontSize: 14, fontWeight: 700, cursor: 'pointer', opacity: (saving || !soldPrice) ? 0.5 : 1 }}>{saving ? 'Saving...' : 'Mark Sold'}</button>
         </div>
       </div>
     </div>
@@ -596,25 +596,25 @@ function ImportModal({ onClose, onImport }) {
     <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.7)', zIndex: 200, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16 }}>
       <div style={{ background: '#181818', border: '1px solid #2a2a2a', borderRadius: 16, width: '100%', maxWidth: 460, padding: 24 }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
-          <h2 style={{ fontFamily: "'Geist',sans-serif", fontSize: 17, fontWeight: 700, color: '#f0f2ff', margin: 0 }}>Import CSV</h2>
+          <h2 style={{ fontFamily: 'var(--font-geist-sans)', fontSize: 17, fontWeight: 700, color: '#f0f2ff', margin: 0 }}>Import CSV</h2>
           <button onClick={onClose} style={{ background: 'none', border: 'none', color: '#555', cursor: 'pointer', padding: 4 }}><IconClose /></button>
         </div>
-        <p style={{ fontSize: 13, color: '#555', marginBottom: 16, lineHeight: 1.6, fontFamily: "'Geist',sans-serif" }}>Upload a CSV with your cards. Required column: <strong style={{ color: '#ccc' }}>Player</strong>. Optional: Sport, Year, Card Name, Brand, Grade, Qty, Buy Price, Current Value.</p>
+        <p style={{ fontSize: 13, color: '#555', marginBottom: 16, lineHeight: 1.6, fontFamily: 'var(--font-geist-sans)' }}>Upload a CSV with your cards. Required column: <strong style={{ color: '#ccc' }}>Player</strong>. Optional: Sport, Year, Card Name, Brand, Grade, Qty, Buy Price, Current Value.</p>
         {error && <div style={{ marginBottom: 14, padding: '10px 14px', borderRadius: 10, background: 'rgba(168,85,247,0.1)', color: '#a855f7', fontSize: 13 }}>{error}</div>}
         <div style={{ border: '2px dashed rgba(255,255,255,0.1)', borderRadius: 12, padding: '28px 20px', textAlign: 'center', marginBottom: 16, cursor: 'pointer' }} onClick={() => fileRef.current?.click()}>
           <div style={{ fontSize: 28, marginBottom: 8 }}>📄</div>
-          <div style={{ fontFamily: "'Geist',sans-serif", fontSize: 14, color: '#666' }}>{cards.length ? cards.length + ' cards ready to import' : 'Click to select a CSV file'}</div>
+          <div style={{ fontFamily: 'var(--font-geist-sans)', fontSize: 14, color: '#666' }}>{cards.length ? cards.length + ' cards ready to import' : 'Click to select a CSV file'}</div>
           <input ref={fileRef} type="file" accept=".csv" onChange={handleFile} style={{ display: 'none' }} />
         </div>
         {cards.length > 0 && (
           <div style={{ maxHeight: 160, overflowY: 'auto', marginBottom: 16, borderRadius: 10, background: '#0a0a0a', border: '1px solid #2a2a2a' }}>
-            {cards.slice(0, 5).map((c, i) => <div key={i} style={{ padding: '8px 14px', borderBottom: '1px solid rgba(255,255,255,0.04)', fontFamily: "'Geist',sans-serif", fontSize: 13, color: '#ccc' }}>{c.player}{c.year ? ' · ' + c.year : ''}{c.sport ? ' · ' + c.sport : ''}</div>)}
-            {cards.length > 5 && <div style={{ padding: '8px 14px', fontSize: 12, color: '#555', fontFamily: "'Geist',sans-serif" }}>...and {cards.length - 5} more</div>}
+            {cards.slice(0, 5).map((c, i) => <div key={i} style={{ padding: '8px 14px', borderBottom: '1px solid rgba(255,255,255,0.04)', fontFamily: 'var(--font-geist-sans)', fontSize: 13, color: '#ccc' }}>{c.player}{c.year ? ' · ' + c.year : ''}{c.sport ? ' · ' + c.sport : ''}</div>)}
+            {cards.length > 5 && <div style={{ padding: '8px 14px', fontSize: 12, color: '#555', fontFamily: 'var(--font-geist-sans)' }}>...and {cards.length - 5} more</div>}
           </div>
         )}
         <div style={{ display: 'flex', gap: 10 }}>
-          <button onClick={onClose} style={{ flex: 1, padding: 11, borderRadius: 10, background: '#202020', border: '1px solid #2a2a2a', color: '#666', fontFamily: "'Geist',sans-serif", fontSize: 14, fontWeight: 600, cursor: 'pointer' }}>Cancel</button>
-          <button onClick={handleImport} disabled={!cards.length || importing} style={{ flex: 1, padding: 11, borderRadius: 10, background: 'linear-gradient(135deg,#9333ea,#a855f7)', border: 'none', color: '#000', fontFamily: "'Geist',sans-serif", fontSize: 14, fontWeight: 700, cursor: 'pointer', opacity: (!cards.length || importing) ? 0.5 : 1 }}>{importing ? 'Importing...' : 'Import ' + cards.length + ' Cards'}</button>
+          <button onClick={onClose} style={{ flex: 1, padding: 11, borderRadius: 10, background: '#202020', border: '1px solid #2a2a2a', color: '#666', fontFamily: 'var(--font-geist-sans)', fontSize: 14, fontWeight: 600, cursor: 'pointer' }}>Cancel</button>
+          <button onClick={handleImport} disabled={!cards.length || importing} style={{ flex: 1, padding: 11, borderRadius: 10, background: 'linear-gradient(135deg,#9333ea,#a855f7)', border: 'none', color: '#000', fontFamily: 'var(--font-geist-sans)', fontSize: 14, fontWeight: 700, cursor: 'pointer', opacity: (!cards.length || importing) ? 0.5 : 1 }}>{importing ? 'Importing...' : 'Import ' + cards.length + ' Cards'}</button>
         </div>
       </div>
     </div>
@@ -644,7 +644,7 @@ function BreakEvenModal({ card, onClose }) {
 
   const fmt = n => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 2 }).format(n || 0)
 
-  const inputStyle = { width: '100%', padding: '9px 12px', borderRadius: 8, background: '#202020', border: '1px solid #2a2a2a', color: '#f0f0f0', fontSize: 14, outline: 'none', fontFamily: "'Geist',sans-serif", boxSizing: 'border-box', transition: 'border-color 0.15s' }
+  const inputStyle = { width: '100%', padding: '9px 12px', borderRadius: 8, background: '#202020', border: '1px solid #2a2a2a', color: '#f0f0f0', fontSize: 14, outline: 'none', fontFamily: 'var(--font-geist-sans)', boxSizing: 'border-box', transition: 'border-color 0.15s' }
 
   return (
     <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.85)', zIndex: 200, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16 }}>
@@ -652,29 +652,29 @@ function BreakEvenModal({ card, onClose }) {
         {/* Header */}
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
           <div>
-            <h3 style={{ fontFamily: "'Geist',sans-serif", fontSize: 17, fontWeight: 700, color: '#f0f0f0', margin: 0 }}>Break Even Calculator</h3>
-            <p style={{ fontSize: 12, color: '#555', marginTop: 3, fontFamily: "'Geist',sans-serif" }}>{card.player} {card.year && `· ${card.year}`} {card.grade && `· Grade ${card.grade}`}</p>
+            <h3 style={{ fontFamily: 'var(--font-geist-sans)', fontSize: 17, fontWeight: 700, color: '#f0f0f0', margin: 0 }}>Break Even Calculator</h3>
+            <p style={{ fontSize: 12, color: '#555', marginTop: 3, fontFamily: 'var(--font-geist-sans)' }}>{card.player} {card.year && `· ${card.year}`} {card.grade && `· Grade ${card.grade}`}</p>
           </div>
           <button onClick={onClose} style={{ background: 'none', border: 'none', color: '#555', cursor: 'pointer', padding: 4 }}><IconClose /></button>
         </div>
 
         {/* Buy price display */}
         <div style={{ padding: '12px 14px', borderRadius: 10, background: '#202020', border: '1px solid #2a2a2a', marginBottom: 18 }}>
-          <div style={{ fontSize: 10, color: '#444', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 4, fontFamily: "'Geist',sans-serif" }}>Your Cost Basis</div>
-          <div style={{ fontFamily: "'Geist',sans-serif", fontSize: 22, fontWeight: 700, color: '#f0f0f0' }}>{fmt(buy)}</div>
-          {parseInt(card.qty) > 1 && <div style={{ fontSize: 11, color: '#444', marginTop: 2, fontFamily: "'Geist',sans-serif" }}>{card.qty} × {fmt(parseFloat(card.buy))}</div>}
+          <div style={{ fontSize: 10, color: '#444', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 4, fontFamily: 'var(--font-geist-sans)' }}>Your Cost Basis</div>
+          <div style={{ fontFamily: 'var(--font-geist-sans)', fontSize: 22, fontWeight: 700, color: '#f0f0f0' }}>{fmt(buy)}</div>
+          {parseInt(card.qty) > 1 && <div style={{ fontSize: 11, color: '#444', marginTop: 2, fontFamily: 'var(--font-geist-sans)' }}>{card.qty} × {fmt(parseFloat(card.buy))}</div>}
         </div>
 
         {/* Inputs */}
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 18 }}>
           <div>
-            <label style={{ display: 'block', fontSize: 11, fontWeight: 600, color: '#555', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 6, fontFamily: "'Geist',sans-serif" }}>eBay Fee %</label>
+            <label style={{ display: 'block', fontSize: 11, fontWeight: 600, color: '#555', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 6, fontFamily: 'var(--font-geist-sans)' }}>eBay Fee %</label>
             <input type="number" value={ebayFee} onChange={e => setEbayFee(e.target.value)} style={inputStyle} step="0.01"
               onFocus={e => e.target.style.borderColor = '#9333ea'}
               onBlur={e => e.target.style.borderColor = '#2a2a2a'} />
           </div>
           <div>
-            <label style={{ display: 'block', fontSize: 11, fontWeight: 600, color: '#555', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 6, fontFamily: "'Geist',sans-serif" }}>Shipping ($)</label>
+            <label style={{ display: 'block', fontSize: 11, fontWeight: 600, color: '#555', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 6, fontFamily: 'var(--font-geist-sans)' }}>Shipping ($)</label>
             <input type="number" value={shipping} onChange={e => setShipping(e.target.value)} style={inputStyle} step="0.01"
               onFocus={e => e.target.style.borderColor = '#9333ea'}
               onBlur={e => e.target.style.borderColor = '#2a2a2a'} />
@@ -683,16 +683,16 @@ function BreakEvenModal({ card, onClose }) {
 
         {/* Break even result */}
         <div style={{ padding: '14px 16px', borderRadius: 10, background: 'rgba(147,51,234,0.06)', border: '1px solid rgba(147,51,234,0.2)', marginBottom: 18 }}>
-          <div style={{ fontSize: 10, color: '#9333ea', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 6, fontFamily: "'Geist',sans-serif" }}>Break Even Price</div>
-          <div style={{ fontFamily: "'Geist',sans-serif", fontSize: 26, fontWeight: 700, color: '#9333ea' }}>{fmt(breakEvenExact)}</div>
-          <div style={{ fontSize: 11, color: '#666', marginTop: 6, fontFamily: "'Geist',sans-serif", display: 'flex', flexDirection: 'column', gap: 2 }}>
+          <div style={{ fontSize: 10, color: '#9333ea', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 6, fontFamily: 'var(--font-geist-sans)' }}>Break Even Price</div>
+          <div style={{ fontFamily: 'var(--font-geist-sans)', fontSize: 26, fontWeight: 700, color: '#9333ea' }}>{fmt(breakEvenExact)}</div>
+          <div style={{ fontSize: 11, color: '#666', marginTop: 6, fontFamily: 'var(--font-geist-sans)', display: 'flex', flexDirection: 'column', gap: 2 }}>
             <span>Cost: {fmt(buy)} + eBay fee: {fmt(breakEvenExact * (parseFloat(ebayFee) / 100))} + Shipping: {fmt(shippingAmt)}</span>
           </div>
         </div>
 
         {/* Target sell price */}
         <div style={{ marginBottom: 18 }}>
-          <label style={{ display: 'block', fontSize: 11, fontWeight: 600, color: '#555', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 6, fontFamily: "'Geist',sans-serif" }}>My Target Sell Price ($)</label>
+          <label style={{ display: 'block', fontSize: 11, fontWeight: 600, color: '#555', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 6, fontFamily: 'var(--font-geist-sans)' }}>My Target Sell Price ($)</label>
           <input type="number" value={targetSell} onChange={e => setTargetSell(e.target.value)} placeholder="Enter your target price..." style={{ ...inputStyle, fontSize: 16 }} step="0.01"
             onFocus={e => e.target.style.borderColor = '#9333ea'}
             onBlur={e => e.target.style.borderColor = '#2a2a2a'} />
@@ -703,25 +703,25 @@ function BreakEvenModal({ card, onClose }) {
           <div style={{ padding: '14px 16px', borderRadius: 10, background: isProfit ? 'rgba(147,51,234,0.06)' : 'rgba(97,97,97,0.08)', border: `1px solid ${isProfit ? 'rgba(147,51,234,0.2)' : 'rgba(97,97,97,0.2)'}` }}>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 12 }}>
               <div>
-                <div style={{ fontSize: 10, color: '#444', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 4, fontFamily: "'Geist',sans-serif" }}>eBay Fee</div>
-                <div style={{ fontFamily: "'Geist',sans-serif", fontSize: 14, color: '#666' }}>-{fmt(targetEbayFee)}</div>
+                <div style={{ fontSize: 10, color: '#444', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 4, fontFamily: 'var(--font-geist-sans)' }}>eBay Fee</div>
+                <div style={{ fontFamily: 'var(--font-geist-sans)', fontSize: 14, color: '#666' }}>-{fmt(targetEbayFee)}</div>
               </div>
               <div>
-                <div style={{ fontSize: 10, color: '#444', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 4, fontFamily: "'Geist',sans-serif" }}>Shipping</div>
-                <div style={{ fontFamily: "'Geist',sans-serif", fontSize: 14, color: '#666' }}>-{fmt(shippingAmt)}</div>
+                <div style={{ fontSize: 10, color: '#444', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 4, fontFamily: 'var(--font-geist-sans)' }}>Shipping</div>
+                <div style={{ fontFamily: 'var(--font-geist-sans)', fontSize: 14, color: '#666' }}>-{fmt(shippingAmt)}</div>
               </div>
               <div>
-                <div style={{ fontSize: 10, color: '#444', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 4, fontFamily: "'Geist',sans-serif" }}>Net Profit</div>
-                <div style={{ fontFamily: "'Geist',sans-serif", fontSize: 14, fontWeight: 700, color: isProfit ? '#22c55e' : '#ef4444' }}>
+                <div style={{ fontSize: 10, color: '#444', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 4, fontFamily: 'var(--font-geist-sans)' }}>Net Profit</div>
+                <div style={{ fontFamily: 'var(--font-geist-sans)', fontSize: 14, fontWeight: 700, color: isProfit ? '#22c55e' : '#ef4444' }}>
                   {isProfit ? '+' : ''}{fmt(netProfit)}
                 </div>
               </div>
             </div>
             <div style={{ marginTop: 12, paddingTop: 10, borderTop: '1px solid #1e1e1e', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-              <span style={{ fontFamily: "'Geist',sans-serif", fontSize: 13, color: '#666' }}>
+              <span style={{ fontFamily: 'var(--font-geist-sans)', fontSize: 13, color: '#666' }}>
                 {isProfit ? '✅ You make money at this price' : '❌ You lose money at this price'}
               </span>
-              <span style={{ fontFamily: "'Geist',sans-serif", fontSize: 14, fontWeight: 700, color: isProfit ? '#22c55e' : '#ef4444' }}>
+              <span style={{ fontFamily: 'var(--font-geist-sans)', fontSize: 14, fontWeight: 700, color: isProfit ? '#22c55e' : '#ef4444' }}>
                 {isProfit ? '+' : ''}{netProfitPct.toFixed(1)}%
               </span>
             </div>
@@ -869,7 +869,7 @@ function CollectionPage() {
     <>
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Geist:wght@100;200;300;400;500;600;700;800;900&family=Geist+Mono:wght@100;200;300;400;500;600;700;800;900&display=swap');
-        *{font-family:'Geist',-apple-system,sans-serif!important}
+        *{font-family:var(--font-geist-sans),-apple-system,sans-serif!important}
         .sidebar-el{display:flex;flex-direction:column}.mobile-only{display:none!important}.mob-topbar{display:none}.main-wrap{margin-left:200px;min-height:100vh;width:calc(100% - 200px)}.card-row:hover{background:rgba(255,255,255,0.02)!important}
         .mobile-cards{display:none!important}
         .desktop-table{display:block!important}
@@ -939,7 +939,7 @@ function CollectionPage() {
                   <div key={i} style={{ background:'#111', border:'1px solid #1a1a1a', borderRadius:12, padding:'16px', position:'relative', overflow:'hidden' }}>
                     <div style={{ position:'absolute', top:0, left:0, right:0, height:2, background:s.accent }} />
                     <div style={{ fontSize:9, fontWeight:700, color:'#555', textTransform:'uppercase', letterSpacing:'0.12em', marginBottom:10 }}>{s.label}</div>
-                    <div style={{ fontFamily:"'Geist',sans-serif", fontSize:s.big?28:18, fontWeight:900, color:s.valColor, letterSpacing:'-0.5px', lineHeight:1 }}>{s.value}</div>
+                    <div style={{ fontFamily:'var(--font-geist-sans)', fontSize:s.big?28:18, fontWeight:900, color:s.valColor, letterSpacing:'-0.5px', lineHeight:1 }}>{s.value}</div>
                     <div style={{ fontSize:11, color:'#444', marginTop:5 }}>{s.sub}</div>
                   </div>
                 ))}
@@ -949,7 +949,7 @@ function CollectionPage() {
 
           {importSuccess !== null && (
             <div style={{ marginBottom: 16, padding: '12px 16px', borderRadius: 10, background: 'rgba(147,51,234,0.1)', border: '1px solid rgba(147,51,234,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-              <span style={{ fontFamily: "'Geist',sans-serif", fontSize: 13, color: '#9333ea', fontWeight: 600 }}>✓ Successfully imported {importSuccess} cards</span>
+              <span style={{ fontFamily: 'var(--font-geist-sans)', fontSize: 13, color: '#9333ea', fontWeight: 600 }}>✓ Successfully imported {importSuccess} cards</span>
               <button onClick={() => setImportSuccess(null)} style={{ background: 'none', border: 'none', color: '#9333ea', cursor: 'pointer', fontSize: 18 }}>×</button>
             </div>
           )}
@@ -966,7 +966,7 @@ function CollectionPage() {
                 <div key={i} style={{ background:'#111', border:'1px solid #1a1a1a', borderRadius:10, padding:'12px 14px', position:'relative', overflow:'hidden' }}>
                   <div style={{ position:'absolute', top:0, left:0, right:0, height:2, background:s.accent }} />
                   <div style={{ fontSize:9, fontWeight:700, color:'#444', textTransform:'uppercase', letterSpacing:'0.1em', marginBottom:6 }}>{s.label}</div>
-                  <div style={{ fontFamily:"'Geist',sans-serif", fontSize:16, fontWeight:900, color:s.color, letterSpacing:'-0.5px' }}>{s.value}</div>
+                  <div style={{ fontFamily:'var(--font-geist-sans)', fontSize:16, fontWeight:900, color:s.color, letterSpacing:'-0.5px' }}>{s.value}</div>
                 </div>
               ))}
             </div>
@@ -994,7 +994,7 @@ function CollectionPage() {
                   <button key={t.val} onClick={() => setSportTab(t.val)} style={{ display:'flex', alignItems:'center', gap:6, padding:'8px 16px', borderRadius:100, border: sportTab === t.val ? '1px solid #9333ea' : '1px solid #1e1e1e', background: sportTab === t.val ? '#9333ea' : '#111', color: sportTab === t.val ? '#fff' : '#555', fontSize:12, fontWeight: sportTab === t.val ? 900 : 600, textTransform:'uppercase', letterSpacing:'0.05em', cursor:'pointer', whiteSpace:'nowrap', flexShrink:0, transition:'all 0.15s' }}>
                     <span>{t.emoji}</span>{t.label}
                     {sportTab === t.val && t.val !== 'all' && (
-                      <span style={{ fontSize:10, background:'rgba(147,51,234,0.2)', borderRadius:10, padding:'1px 6px', fontFamily:"'Geist',sans-serif" }}>
+                      <span style={{ fontSize:10, background:'rgba(147,51,234,0.2)', borderRadius:10, padding:'1px 6px', fontFamily:'var(--font-geist-sans)' }}>
                         {statActive.length}
                       </span>
                     )}
@@ -1005,8 +1005,8 @@ function CollectionPage() {
           })()}
 
           <div className="desk-filters" style={{ gap: 8, marginBottom: 8, flexWrap: 'wrap', alignItems: 'center' }}>
-            <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search player, brand, set..." style={{ flex: 1, minWidth: 220, padding: '9px 16px', borderRadius: 100, background: '#181818', border: '1px solid #2a2a2a', color: '#f0f0f0', fontSize: 13, outline: 'none', fontFamily: "'Geist',sans-serif" }} />
-            <select value={filterSport} onChange={e => setFilterSport(e.target.value)} style={{ padding: '8px 12px', borderRadius: 9, background: '#111', border: '1px solid #222', color: filterSport ? '#f0f0f0' : '#555', fontSize: 13, outline: 'none', fontFamily: "'Geist',sans-serif" }}>
+            <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search player, brand, set..." style={{ flex: 1, minWidth: 220, padding: '9px 16px', borderRadius: 100, background: '#181818', border: '1px solid #2a2a2a', color: '#f0f0f0', fontSize: 13, outline: 'none', fontFamily: 'var(--font-geist-sans)' }} />
+            <select value={filterSport} onChange={e => setFilterSport(e.target.value)} style={{ padding: '8px 12px', borderRadius: 9, background: '#111', border: '1px solid #222', color: filterSport ? '#f0f0f0' : '#555', fontSize: 13, outline: 'none', fontFamily: 'var(--font-geist-sans)' }}>
               <option value="">All Sports</option>
               {SPORTS.map(s => <option key={s} value={s}>{s}</option>)}
             </select>
@@ -1023,9 +1023,9 @@ function CollectionPage() {
                 <button key={val} onClick={() => setFilterGraded(val)} style={{ padding: '8px 12px', background: filterGraded===val ? '#9333ea' : '#111', border:'none', color: filterGraded===val ? '#fff' : '#555', fontSize:11, fontWeight:800, textTransform:'uppercase', letterSpacing:'0.06em', cursor: 'pointer', whiteSpace: 'nowrap' }}>{label}</button>
               ))}
             </div>
-            <button onClick={() => setFilterAuto(v => !v)} style={{ padding: '8px 14px', borderRadius: 10, background: filterAuto ? 'rgba(255,190,46,0.1)' : '#181818', border: filterAuto ? '1px solid rgba(255,190,46,0.35)' : '1px solid #2a2a2a', color: filterAuto ? '#ffbe2e' : '#555', fontFamily: "'Geist',sans-serif", fontSize: 12, fontWeight: filterAuto ? 700 : 500, cursor: 'pointer', whiteSpace: 'nowrap' }}>✍️ Autos Only</button>
+            <button onClick={() => setFilterAuto(v => !v)} style={{ padding: '8px 14px', borderRadius: 10, background: filterAuto ? 'rgba(255,190,46,0.1)' : '#181818', border: filterAuto ? '1px solid rgba(255,190,46,0.35)' : '1px solid #2a2a2a', color: filterAuto ? '#ffbe2e' : '#555', fontFamily: 'var(--font-geist-sans)', fontSize: 12, fontWeight: filterAuto ? 700 : 500, cursor: 'pointer', whiteSpace: 'nowrap' }}>✍️ Autos Only</button>
             {/* Sort */}
-            <select value={sortBy} onChange={e => setSortBy(e.target.value)} style={{ padding: '8px 14px', borderRadius: 10, background: '#181818', border: '1px solid #2a2a2a', color: '#f0f0f0', fontSize: 13, outline: 'none', fontFamily: "'Geist',sans-serif", cursor: 'pointer' }}>
+            <select value={sortBy} onChange={e => setSortBy(e.target.value)} style={{ padding: '8px 14px', borderRadius: 10, background: '#181818', border: '1px solid #2a2a2a', color: '#f0f0f0', fontSize: 13, outline: 'none', fontFamily: 'var(--font-geist-sans)', cursor: 'pointer' }}>
               <option value="date_desc">Date Added (Newest)</option>
               <option value="date_asc">Date Added (Oldest)</option>
               <option value="price_desc">Value (High to Low)</option>
@@ -1037,13 +1037,13 @@ function CollectionPage() {
             </select>
             {/* Price Range */}
             <div style={{ display:'flex', alignItems:'center', gap:6, background:'#181818', border:'1px solid #2a2a2a', borderRadius:10, padding:'0 10px' }}>
-              <span style={{ fontSize:11, color:'#444', fontWeight:700, fontFamily:"'Geist',sans-serif", whiteSpace:'nowrap' }}>$</span>
+              <span style={{ fontSize:11, color:'#444', fontWeight:700, fontFamily:'var(--font-geist-sans)', whiteSpace:'nowrap' }}>$</span>
               <input
                 type="number"
                 placeholder="Min"
                 value={priceMin}
                 onChange={e => setPriceMin(e.target.value)}
-                style={{ width:60, padding:'8px 0', background:'transparent', border:'none', color:'#f0f0f0', fontSize:13, outline:'none', fontFamily:"'Geist',sans-serif" }}
+                style={{ width:60, padding:'8px 0', background:'transparent', border:'none', color:'#f0f0f0', fontSize:13, outline:'none', fontFamily:'var(--font-geist-sans)' }}
               />
               <span style={{ fontSize:11, color:'#333' }}>—</span>
               <input
@@ -1051,12 +1051,12 @@ function CollectionPage() {
                 placeholder="Max"
                 value={priceMax}
                 onChange={e => setPriceMax(e.target.value)}
-                style={{ width:60, padding:'8px 0', background:'transparent', border:'none', color:'#f0f0f0', fontSize:13, outline:'none', fontFamily:"'Geist',sans-serif" }}
+                style={{ width:60, padding:'8px 0', background:'transparent', border:'none', color:'#f0f0f0', fontSize:13, outline:'none', fontFamily:'var(--font-geist-sans)' }}
               />
             </div>
             {/* Active filter count */}
             {(filterGraded || filterSport || sortBy !== 'date_desc' || priceMin || priceMax) && (
-              <button onClick={() => { setFilterGraded(''); setFilterSport(''); setSortBy('date_desc'); setPriceMin(''); setPriceMax(''); setSportTab('all'); setFilterAuto(false) }} style={{ padding: '8px 12px', borderRadius: 10, background: 'rgba(147,51,234,0.08)', border: '1px solid rgba(147,51,234,0.2)', color: '#9333ea', fontFamily: "'Geist',sans-serif", fontSize: 12, fontWeight: 600, cursor: 'pointer' }}>
+              <button onClick={() => { setFilterGraded(''); setFilterSport(''); setSortBy('date_desc'); setPriceMin(''); setPriceMax(''); setSportTab('all'); setFilterAuto(false) }} style={{ padding: '8px 12px', borderRadius: 10, background: 'rgba(147,51,234,0.08)', border: '1px solid rgba(147,51,234,0.2)', color: '#9333ea', fontFamily: 'var(--font-geist-sans)', fontSize: 12, fontWeight: 600, cursor: 'pointer' }}>
                 ✕ Clear Filters
               </button>
             )}
@@ -1182,10 +1182,10 @@ function CollectionPage() {
           {/* Bulk delete bar */}
           {selected.size > 0 && (
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 16px', marginBottom: 12, borderRadius: 10, background: 'rgba(147,51,234,0.08)', border: '1px solid rgba(147,51,234,0.2)' }}>
-              <span style={{ fontFamily: "'Geist',sans-serif", fontSize: 13, fontWeight: 600, color: '#9333ea' }}>{selected.size} card{selected.size !== 1 ? 's' : ''} selected</span>
+              <span style={{ fontFamily: 'var(--font-geist-sans)', fontSize: 13, fontWeight: 600, color: '#9333ea' }}>{selected.size} card{selected.size !== 1 ? 's' : ''} selected</span>
               <div style={{ display: 'flex', gap: 8 }}>
-                <button onClick={() => setSelected(new Set())} style={{ padding: '6px 12px', borderRadius: 8, background: 'rgba(255,255,255,0.05)', border: '1px solid #2a2a2a', color: '#666', fontFamily: "'Geist',sans-serif", fontSize: 12, fontWeight: 600, cursor: 'pointer' }}>Deselect All</button>
-                <button onClick={handleBulkDelete} disabled={bulkDeleting} style={{ padding: '6px 14px', borderRadius: 8, background: 'rgba(147,51,234,0.15)', border: '1px solid rgba(147,51,234,0.3)', color: '#9333ea', fontFamily: "'Geist',sans-serif", fontSize: 12, fontWeight: 700, cursor: 'pointer', opacity: bulkDeleting ? 0.6 : 1 }}>
+                <button onClick={() => setSelected(new Set())} style={{ padding: '6px 12px', borderRadius: 8, background: 'rgba(255,255,255,0.05)', border: '1px solid #2a2a2a', color: '#666', fontFamily: 'var(--font-geist-sans)', fontSize: 12, fontWeight: 600, cursor: 'pointer' }}>Deselect All</button>
+                <button onClick={handleBulkDelete} disabled={bulkDeleting} style={{ padding: '6px 14px', borderRadius: 8, background: 'rgba(147,51,234,0.15)', border: '1px solid rgba(147,51,234,0.3)', color: '#9333ea', fontFamily: 'var(--font-geist-sans)', fontSize: 12, fontWeight: 700, cursor: 'pointer', opacity: bulkDeleting ? 0.6 : 1 }}>
                   {bulkDeleting ? 'Deleting...' : `🗑️ Delete ${selected.size} Selected`}
                 </button>
               </div>
@@ -1197,8 +1197,8 @@ function CollectionPage() {
               // ── First-time empty state ──────────────────────────────────────
               <div style={{ textAlign:'center', padding:'48px 24px', animation:'scaleIn 0.3s ease' }}>
                 <div style={{ fontSize:56, marginBottom:16, opacity:0.7 }}>🃏</div>
-                <h2 style={{ fontFamily:"'Geist',sans-serif", fontSize:20, fontWeight:800, color:'#f0f0f0', margin:'0 0 8px' }}>Start Your Collection</h2>
-                <p style={{ color:'#555', fontFamily:"'Geist',sans-serif", fontSize:13, marginBottom:28, maxWidth:300, margin:'0 auto 28px' }}>Track every card you own — values, grades, profits, and more.</p>
+                <h2 style={{ fontFamily:'var(--font-geist-sans)', fontSize:20, fontWeight:800, color:'#f0f0f0', margin:'0 0 8px' }}>Start Your Collection</h2>
+                <p style={{ color:'#555', fontFamily:'var(--font-geist-sans)', fontSize:13, marginBottom:28, maxWidth:300, margin:'0 auto 28px' }}>Track every card you own — values, grades, profits, and more.</p>
                 <div style={{ display:'flex', flexDirection:'column', gap:10, maxWidth:300, margin:'0 auto 28px' }}>
                   {[
                     { icon:'➕', label:'Add your first card', sub:'Enter player, year, brand, and what you paid' },
@@ -1208,13 +1208,13 @@ function CollectionPage() {
                     <div key={i} style={{ display:'flex', alignItems:'center', gap:12, padding:'11px 14px', background:'#13131f', border:'1px solid rgba(147,51,234,0.15)', boxShadow:'0 4px 20px rgba(0,0,0,0.4)', borderRadius:12, textAlign:'left', animation:`fadeUp 0.45s ease ${i*0.12}s both` }}>
                       <div style={{ fontSize:20, flexShrink:0 }}>{s.icon}</div>
                       <div>
-                        <div style={{ fontFamily:"'Geist',sans-serif", fontSize:13, fontWeight:700, color:'#ccc' }}>{s.label}</div>
-                        <div style={{ fontFamily:"'Geist',sans-serif", fontSize:11, color:'#555', marginTop:2 }}>{s.sub}</div>
+                        <div style={{ fontFamily:'var(--font-geist-sans)', fontSize:13, fontWeight:700, color:'#ccc' }}>{s.label}</div>
+                        <div style={{ fontFamily:'var(--font-geist-sans)', fontSize:11, color:'#555', marginTop:2 }}>{s.sub}</div>
                       </div>
                     </div>
                   ))}
                 </div>
-                <button className="press" onClick={() => setModal('add')} style={{ padding:'12px 28px', borderRadius:12, background:'rgba(147,51,234,0.1)', border:'1px solid rgba(147,51,234,0.3)', color:'#9333ea', fontFamily:"'Geist',sans-serif", fontSize:15, fontWeight:700, cursor:'pointer' }}>
+                <button className="press" onClick={() => setModal('add')} style={{ padding:'12px 28px', borderRadius:12, background:'rgba(147,51,234,0.1)', border:'1px solid rgba(147,51,234,0.3)', color:'#9333ea', fontFamily:'var(--font-geist-sans)', fontSize:15, fontWeight:700, cursor:'pointer' }}>
                   + Add Your First Card
                 </button>
               </div>
@@ -1222,8 +1222,8 @@ function CollectionPage() {
               // ── No filter results ──────────────────────────────────────────
               <div style={{ textAlign:'center', padding:'60px 24px', animation:'fadeIn 0.2s ease' }}>
                 <div style={{ fontSize:36, marginBottom:12, opacity:0.2 }}>🔍</div>
-                <p style={{ color:'#444', fontFamily:"'Geist',sans-serif", fontSize:14, marginBottom:16 }}>No cards match your filters</p>
-                <button className="press" onClick={() => { setSearch(''); setFilterSport(''); setFilterGraded(''); setSortBy('date_desc'); setPriceMin(''); setPriceMax(''); setSportTab('all') }} style={{ padding:'8px 18px', borderRadius:10, background:'rgba(147,51,234,0.08)', border:'1px solid rgba(147,51,234,0.2)', color:'#9333ea', fontFamily:"'Geist',sans-serif", fontSize:13, fontWeight:600, cursor:'pointer' }}>Clear Filters</button>
+                <p style={{ color:'#444', fontFamily:'var(--font-geist-sans)', fontSize:14, marginBottom:16 }}>No cards match your filters</p>
+                <button className="press" onClick={() => { setSearch(''); setFilterSport(''); setFilterGraded(''); setSortBy('date_desc'); setPriceMin(''); setPriceMax(''); setSportTab('all') }} style={{ padding:'8px 18px', borderRadius:10, background:'rgba(147,51,234,0.08)', border:'1px solid rgba(147,51,234,0.2)', color:'#9333ea', fontFamily:'var(--font-geist-sans)', fontSize:13, fontWeight:600, cursor:'pointer' }}>Clear Filters</button>
               </div>
             )
           ) : (
@@ -1268,11 +1268,11 @@ function CollectionPage() {
                           <div style={{ display:'flex', justifyContent:'space-between', alignItems:'flex-end', paddingTop:6, borderTop:'1px solid #1a1a1a' }}>
                             <div>
                               <div style={{ fontSize:9, color:'#444', fontWeight:700, textTransform:'uppercase', letterSpacing:'0.1em', marginBottom:3 }}>VALUE</div>
-                              <div style={{ fontFamily:"'Geist',sans-serif", fontSize:15, fontWeight:900, color:'#fff', letterSpacing:'-0.5px' }}>{fmt(val)}</div>
+                              <div style={{ fontFamily:'var(--font-geist-sans)', fontSize:15, fontWeight:900, color:'#fff', letterSpacing:'-0.5px' }}>{fmt(val)}</div>
                             </div>
                             <div style={{ textAlign:'right' }}>
                               <div style={{ fontSize:9, color:'#444', fontWeight:700, textTransform:'uppercase', letterSpacing:'0.1em', marginBottom:3 }}>G/L</div>
-                              <div style={{ fontFamily:"'Geist',sans-serif", fontSize:13, fontWeight:800, color: glPos?'#22c55e':'#ef4444' }}>{glPos?'+':''}{glPct.toFixed(1)}%</div>
+                              <div style={{ fontFamily:'var(--font-geist-sans)', fontSize:13, fontWeight:800, color: glPos?'#22c55e':'#ef4444' }}>{glPos?'+':''}{glPct.toFixed(1)}%</div>
                             </div>
                           </div>
                         </div>
@@ -1322,11 +1322,11 @@ function CollectionPage() {
                           <div style={{ display:'flex', justifyContent:'space-between', alignItems:'flex-end', paddingTop:12, borderTop:'1px solid #1a1a1a' }}>
                             <div>
                               <div style={{ fontSize:9, fontWeight:700, color:'#444', textTransform:'uppercase', letterSpacing:'0.1em', marginBottom:4 }}>PAID</div>
-                              <div style={{ fontFamily:"'Geist',sans-serif", fontSize:13, fontWeight:700, color:'#666' }}>{fmt(buy)}</div>
+                              <div style={{ fontFamily:'var(--font-geist-sans)', fontSize:13, fontWeight:700, color:'#666' }}>{fmt(buy)}</div>
                             </div>
                             <div style={{ textAlign:'right' }}>
                               <div style={{ fontSize:9, fontWeight:700, color:'#444', textTransform:'uppercase', letterSpacing:'0.1em', marginBottom:4 }}>VALUE</div>
-                              <div style={{ fontFamily:"'Geist',sans-serif", fontSize:20, fontWeight:900, color:'#fff', letterSpacing:'-0.5px' }}>{fmt(displayVal)}</div>
+                              <div style={{ fontFamily:'var(--font-geist-sans)', fontSize:20, fontWeight:900, color:'#fff', letterSpacing:'-0.5px' }}>{fmt(displayVal)}</div>
                             </div>
                           </div>
                           {/* Action buttons */}
@@ -1381,11 +1381,11 @@ function CollectionPage() {
                         <div style={{ display:'flex', justifyContent:'space-between', alignItems:'flex-end', paddingTop:6, borderTop:'1px solid #1a1a1a' }}>
                           <div>
                             <div style={{ fontSize:8, color:'#444', fontWeight:700, textTransform:'uppercase', letterSpacing:'0.1em', marginBottom:2 }}>VALUE</div>
-                            <div style={{ fontFamily:"'Geist',sans-serif", fontSize:14, fontWeight:900, color:'#fff' }}>{fmt(displayVal)}</div>
+                            <div style={{ fontFamily:'var(--font-geist-sans)', fontSize:14, fontWeight:900, color:'#fff' }}>{fmt(displayVal)}</div>
                           </div>
                           <div style={{ textAlign:'right' }}>
                             <div style={{ fontSize:8, color:'#444', fontWeight:700, textTransform:'uppercase', letterSpacing:'0.1em', marginBottom:2 }}>G/L</div>
-                            <div style={{ fontFamily:"'Geist',sans-serif", fontSize:11, fontWeight:800, color: glPos?'#22c55e':'#ef4444' }}>{glPos?'+':''}{glPct.toFixed(1)}%</div>
+                            <div style={{ fontFamily:'var(--font-geist-sans)', fontSize:11, fontWeight:800, color: glPos?'#22c55e':'#ef4444' }}>{glPos?'+':''}{glPct.toFixed(1)}%</div>
                           </div>
                         </div>
                       </div>
@@ -1398,7 +1398,7 @@ function CollectionPage() {
                         <div style={{ display: 'flex', alignItems: 'flex-start', gap: 10, flex: 1, minWidth: 0 }}>
                           <input type="checkbox" checked={selected.has(card.id)} onChange={() => toggleSelect(card.id)} style={{ accentColor: '#9333ea', width: 16, height: 16, cursor: 'pointer', marginTop: 3, flexShrink: 0 }} />
                           <div style={{ minWidth: 0 }}>
-                            <div style={{ fontFamily: "'Geist',sans-serif", fontSize: 15, fontWeight: 700, color: '#f0f0f0' }}>{card.player}</div>
+                            <div style={{ fontFamily: 'var(--font-geist-sans)', fontSize: 15, fontWeight: 700, color: '#f0f0f0' }}>{card.player}</div>
                             <div style={{ fontSize: 12, color: '#555', marginTop: 2 }}>
                               {[card.year, card.sport, card.brand, card.grade ? `${card.gradingCo||''} ${card.grade}`.trim() : card.cond, card.auto ? '✍️ Auto' : null, card.num ? card.num : null].filter(Boolean).join(' · ')}
                             </div>
@@ -1416,15 +1416,15 @@ function CollectionPage() {
                       <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 12, padding: '10px 12px', borderRadius: 10, background: '#181818' }}>
                         <div style={{ flex: 1 }}>
                           <div style={{ fontSize: 10, color: '#444', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 3 }}>Buy Price</div>
-                          <div style={{ fontFamily: "'Geist',sans-serif", fontSize: 14, color: '#666' }}>{fmt(buy)}</div>
+                          <div style={{ fontFamily: 'var(--font-geist-sans)', fontSize: 14, color: '#666' }}>{fmt(buy)}</div>
                         </div>
                         <div style={{ flex: 1 }}>
                           <div style={{ fontSize: 10, color: '#444', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 3 }}>{card.sold ? 'Sold For' : 'Value'}</div>
-                          <div style={{ fontFamily: "'Geist',sans-serif", fontSize: 14, fontWeight: 700, color: '#f0f2ff' }}>{fmt(displayVal)}</div>
+                          <div style={{ fontFamily: 'var(--font-geist-sans)', fontSize: 14, fontWeight: 700, color: '#f0f2ff' }}>{fmt(displayVal)}</div>
                         </div>
                         <div style={{ flex: 1 }}>
                           <div style={{ fontSize: 10, color: '#444', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 3 }}>G/L</div>
-                          <div style={{ display: 'flex', alignItems: 'center', gap: 3, fontFamily: "'Geist',sans-serif", fontSize: 14, fontWeight: 700, color: glPos ? '#22c55e' : '#ef4444' }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: 3, fontFamily: 'var(--font-geist-sans)', fontSize: 14, fontWeight: 700, color: glPos ? '#22c55e' : '#ef4444' }}>
                             {glPos ? <IconUp /> : <IconDown />}{glPos?'+':''}{glPct.toFixed(1)}%
                           </div>
                         </div>
@@ -1432,21 +1432,21 @@ function CollectionPage() {
 
                       {/* Action buttons */}
                       <div style={{ display: 'flex', gap: 8 }}>
-                        <button onClick={() => window.open('https://www.ebay.com/sch/i.html?_nkw='+encodeURIComponent([card.year,card.player,card.brand,card.grade?'PSA '+card.grade:null].filter(Boolean).join(' '))+'&LH_Sold=1&LH_Complete=1&_sop=13', '_blank')} style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, padding: '9px 0', borderRadius: 9, background: 'rgba(124,92,252,0.1)', border: '1px solid rgba(124,92,252,0.2)', color: '#a78bfa', fontFamily: "'Geist',sans-serif", fontSize: 12, fontWeight: 600, cursor: 'pointer' }}>
+                        <button onClick={() => window.open('https://www.ebay.com/sch/i.html?_nkw='+encodeURIComponent([card.year,card.player,card.brand,card.grade?'PSA '+card.grade:null].filter(Boolean).join(' '))+'&LH_Sold=1&LH_Complete=1&_sop=13', '_blank')} style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, padding: '9px 0', borderRadius: 9, background: 'rgba(124,92,252,0.1)', border: '1px solid rgba(124,92,252,0.2)', color: '#a78bfa', fontFamily: 'var(--font-geist-sans)', fontSize: 12, fontWeight: 600, cursor: 'pointer' }}>
                           <IconSearch />Prices
                         </button>
                         {!card.sold && (
-                          <button onClick={() => setSoldCard(card)} style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, padding: '9px 0', borderRadius: 9, background: 'rgba(255,190,46,0.08)', border: '1px solid rgba(255,190,46,0.2)', color: '#ffbe2e', fontFamily: "'Geist',sans-serif", fontSize: 12, fontWeight: 600, cursor: 'pointer' }}>
+                          <button onClick={() => setSoldCard(card)} style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, padding: '9px 0', borderRadius: 9, background: 'rgba(255,190,46,0.08)', border: '1px solid rgba(255,190,46,0.2)', color: '#ffbe2e', fontFamily: 'var(--font-geist-sans)', fontSize: 12, fontWeight: 600, cursor: 'pointer' }}>
                             <IconTag />Sell
                           </button>
                         )}
-                        <button onClick={() => setBreakEvenCard(card)} style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, padding: '9px 0', borderRadius: 9, background: 'rgba(147,51,234,0.08)', border: '1px solid rgba(147,51,234,0.2)', color: '#9333ea', fontFamily: "'Geist',sans-serif", fontSize: 12, fontWeight: 600, cursor: 'pointer' }}>
+                        <button onClick={() => setBreakEvenCard(card)} style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, padding: '9px 0', borderRadius: 9, background: 'rgba(147,51,234,0.08)', border: '1px solid rgba(147,51,234,0.2)', color: '#9333ea', fontFamily: 'var(--font-geist-sans)', fontSize: 12, fontWeight: 600, cursor: 'pointer' }}>
                           <IconCalc />Calc
                         </button>
-                        <button onClick={() => setModal(card)} style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, padding: '9px 0', borderRadius: 9, background: 'rgba(255,255,255,0.05)', border: '1px solid #2a2a2a', color: '#666', fontFamily: "'Geist',sans-serif", fontSize: 12, fontWeight: 600, cursor: 'pointer' }}>
+                        <button onClick={() => setModal(card)} style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, padding: '9px 0', borderRadius: 9, background: 'rgba(255,255,255,0.05)', border: '1px solid #2a2a2a', color: '#666', fontFamily: 'var(--font-geist-sans)', fontSize: 12, fontWeight: 600, cursor: 'pointer' }}>
                           <IconEdit />Edit
                         </button>
-                        <button onClick={() => setDeleteId(card.id)} style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, padding: '9px 0', borderRadius: 9, background: 'rgba(168,85,247,0.08)', border: '1px solid rgba(168,85,247,0.2)', color: '#616161', fontFamily: "'Geist',sans-serif", fontSize: 12, fontWeight: 600, cursor: 'pointer' }}>
+                        <button onClick={() => setDeleteId(card.id)} style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, padding: '9px 0', borderRadius: 9, background: 'rgba(168,85,247,0.08)', border: '1px solid rgba(168,85,247,0.2)', color: '#616161', fontFamily: 'var(--font-geist-sans)', fontSize: 12, fontWeight: 600, cursor: 'pointer' }}>
                           <IconTrash />Delete
                         </button>
                       </div>
@@ -1470,11 +1470,11 @@ function CollectionPage() {
         <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.7)', zIndex: 200, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16 }}>
           <div style={{ background: '#181818', border: '1px solid #2a2a2a', borderRadius: 16, padding: 28, maxWidth: 360, width: '100%', textAlign: 'center' }}>
             <div style={{ fontSize: 28, marginBottom: 12 }}>🗑️</div>
-            <h3 style={{ fontFamily: "'Geist',sans-serif", fontSize: 17, fontWeight: 700, color: '#f0f2ff', marginBottom: 8 }}>Delete this card?</h3>
+            <h3 style={{ fontFamily: 'var(--font-geist-sans)', fontSize: 17, fontWeight: 700, color: '#f0f2ff', marginBottom: 8 }}>Delete this card?</h3>
             <p style={{ fontSize: 13, color: '#555', marginBottom: 20 }}>This action cannot be undone.</p>
             <div style={{ display: 'flex', gap: 10 }}>
-              <button onClick={() => setDeleteId(null)} style={{ flex: 1, padding: 11, borderRadius: 10, background: '#202020', border: '1px solid #2a2a2a', color: '#666', fontFamily: "'Geist',sans-serif", fontSize: 14, fontWeight: 600, cursor: 'pointer' }}>Cancel</button>
-              <button onClick={() => handleDelete(deleteId)} style={{ flex: 1, padding: 11, borderRadius: 10, background: 'rgba(168,85,247,0.15)', border: '1px solid rgba(168,85,247,0.3)', color: '#616161', fontFamily: "'Geist',sans-serif", fontSize: 14, fontWeight: 700, cursor: 'pointer' }}>Delete</button>
+              <button onClick={() => setDeleteId(null)} style={{ flex: 1, padding: 11, borderRadius: 10, background: '#202020', border: '1px solid #2a2a2a', color: '#666', fontFamily: 'var(--font-geist-sans)', fontSize: 14, fontWeight: 600, cursor: 'pointer' }}>Cancel</button>
+              <button onClick={() => handleDelete(deleteId)} style={{ flex: 1, padding: 11, borderRadius: 10, background: 'rgba(168,85,247,0.15)', border: '1px solid rgba(168,85,247,0.3)', color: '#616161', fontFamily: 'var(--font-geist-sans)', fontSize: 14, fontWeight: 700, cursor: 'pointer' }}>Delete</button>
             </div>
           </div>
         </div>

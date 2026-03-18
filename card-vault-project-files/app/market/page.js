@@ -278,7 +278,7 @@ export default function MarketPage() {
     <>
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Geist:wght@100;200;300;400;500;600;700;800;900&family=Geist+Mono:wght@100;200;300;400;500;600;700;800;900&display=swap');
-        *{font-family:'Geist',-apple-system,sans-serif!important}
+        *{font-family:var(--font-geist-sans),-apple-system,sans-serif!important}
         .sidebar-el{display:flex;flex-direction:column}.mobile-only{display:none!important}.mob-topbar{display:none}.main-wrap{margin-left:200px;min-height:100vh;width:calc(100% - 200px)}
         @media(max-width:768px){.sidebar-el{display:none!important}.mobile-only{display:flex!important}.mob-topbar{display:flex}.main-wrap{margin-left:0!important;width:100%!important;padding:16px 16px 90px!important}}
         .listing-card:hover{border-color:rgba(147,51,234,0.4)!important;transform:translateY(-2px)}
@@ -348,7 +348,7 @@ export default function MarketPage() {
                 <div key={i} style={{ background:'#111', border:'1px solid #1a1a1a', borderRadius:10, padding:'12px 14px', position:'relative', overflow:'hidden' }}>
                   <div style={{ position:'absolute', top:0, left:0, right:0, height:2, background: i===0?'#9333ea':i===2?'#ef4444':i===3?'#22c55e':'#333' }} />
                   <div style={{ fontSize:9, fontWeight:700, color:'#444', textTransform:'uppercase', letterSpacing:'0.1em', marginBottom:6 }}>{s.label}</div>
-                  <div style={{ fontFamily:"'Geist',sans-serif", fontSize:16, fontWeight:900, color:'#fff' }}>{s.value}</div>
+                  <div style={{ fontFamily:'var(--font-geist-sans)', fontSize:16, fontWeight:900, color:'#fff' }}>{s.value}</div>
                 </div>
               ))}
             </div>
@@ -383,7 +383,7 @@ export default function MarketPage() {
                   <div style={{ padding:'10px 12px' }}>
                     <div style={{ fontSize:11, color:'#888', marginBottom:8, overflow:'hidden', display:'-webkit-box', WebkitLineClamp:2, WebkitBoxOrient:'vertical', lineHeight:1.5 }}>{r.title}</div>
                     <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between' }}>
-                      <div style={{ fontFamily:"'Geist',sans-serif", fontSize:15, fontWeight:900, color:'#fff' }}>{fmt(r.price)}</div>
+                      <div style={{ fontFamily:'var(--font-geist-sans)', fontSize:15, fontWeight:900, color:'#fff' }}>{fmt(r.price)}</div>
                       {r.condition && <div style={{ fontSize:9, fontWeight:700, color:'#555', textTransform:'uppercase' }}>{r.condition}</div>}
                     </div>
                     <button onClick={e => { e.preventDefault(); e.stopPropagation(); openAddModal(r) }} style={{ marginTop:8, width:'100%', padding:'7px', borderRadius:8, background:'rgba(147,51,234,0.1)', border:'1px solid rgba(147,51,234,0.2)', color:'#a855f7', fontSize:11, fontWeight:800, cursor:'pointer', textTransform:'uppercase', letterSpacing:'0.06em' }}>
