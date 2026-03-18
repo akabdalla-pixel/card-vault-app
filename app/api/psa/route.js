@@ -47,6 +47,7 @@ export async function GET(req) {
     let frontImage = cert_data.FrontImageURL || cert_data.frontImageURL || cert_data.ImageFront || cert_data.CardImageFront || null
     let backImage = cert_data.BackImageURL || cert_data.backImageURL || cert_data.ImageBack || cert_data.CardImageBack || null
 
+    // Try to get image from PSA cert page HTML (og:image meta tag)
     if (!frontImage) {
       try {
         const pageRes = await fetch(`https://www.psacard.com/cert/${cert}/psa`, {
@@ -59,11 +60,14 @@ export async function GET(req) {
           const html = await pageRes.text()
           const ogMatch = html.match(/<meta[^>]*property=["']og:image["'][^>]*content=["']([^"']+)["']/i)
             || html.match(/<meta[^>]*content=["']([^"']+)["'][^>]*property=["']og:image["']/i)
-          if (ogMatch?.[1]) frontImage = ogMatch[1]
+          if (ogMatch?.[1]) {
+            frontImage = ogMatch[1]
+          }
         }
       } catch (e) {}
     }
 
+    // Final fallback to cloudfront pattern
     if (!frontImage) frontImage = `https://d1htnxwo4o0jhw.cloudfront.net/cert/${cert}/front.jpg`
     if (!backImage) backImage = `https://d1htnxwo4o0jhw.cloudfront.net/cert/${cert}/back.jpg`
 
@@ -92,6 +96,7 @@ export async function GET(req) {
       raw: cert_data,
     }
 
+    // Save to database cache
     try {
       await prisma.pSACache.upsert({
         where: { cert },
