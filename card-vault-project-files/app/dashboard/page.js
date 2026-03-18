@@ -166,18 +166,18 @@ function BottomNav({ active = "" }) {
   )
 }
 
-function PortfolioHero({ lifetimeInvested, gainLoss, portfolioReturn }) {
+function PortfolioHero({ currentValue, gainLoss, portfolioReturn }) {
   const gainPos = gainLoss >= 0
   const glColor = gainPos ? '#22c55e' : '#ef4444'
   return (
     <div style={{ background:'#0e0c1a', border:'1px solid rgba(147,51,234,0.28)', boxShadow:'0 4px 24px rgba(147,51,234,0.1), 0 2px 8px rgba(0,0,0,0.4)', borderRadius:16, padding:'28px 32px', marginBottom:22, position:'relative', overflow:'hidden' }}>
       <div style={{ position:'absolute', top:0, left:0, right:0, height:2, background:'linear-gradient(90deg,#9333ea,#a855f7,transparent)' }} />
       <div style={{ display:'flex', alignItems:'stretch', gap:0 }}>
-        {/* Lifetime Investment */}
+        {/* Total Portfolio Value */}
         <div style={{ flex:1, paddingRight:32 }}>
-          <div style={{ fontSize:9, fontWeight:700, color:'#555', textTransform:'uppercase', letterSpacing:'0.14em', marginBottom:12 }}>Lifetime Investment</div>
-          <div style={{ fontSize:30, fontWeight:800, color:'#f0f0f0', lineHeight:1, letterSpacing:'-1px' }}>{fmt(lifetimeInvested)}</div>
-          <div style={{ fontSize:10, color:'#333', marginTop:10 }}>active + sold cards</div>
+          <div style={{ fontSize:9, fontWeight:700, color:'#555', textTransform:'uppercase', letterSpacing:'0.14em', marginBottom:12 }}>Total Portfolio Value</div>
+          <div style={{ fontSize:30, fontWeight:800, color:'#f0f0f0', lineHeight:1, letterSpacing:'-1px' }}>{fmt(currentValue)}</div>
+          <div style={{ fontSize:10, color:'#333', marginTop:10 }}>current value of active cards</div>
         </div>
         {/* Divider */}
         <div style={{ width:1, background:'rgba(147,51,234,0.2)', flexShrink:0 }} />
@@ -470,9 +470,9 @@ export default function DashboardPage() {
             <div style={{ position:'absolute', top:0, left:0, right:0, height:2, background:'linear-gradient(90deg,#9333ea,#a855f7,transparent)' }} />
             <div style={{ display:'flex', alignItems:'stretch', gap:0 }}>
               <div style={{ flex:1, paddingRight:20 }}>
-                <div style={{ fontSize:8, color:'#555', fontWeight:700, textTransform:'uppercase', letterSpacing:'0.12em', marginBottom:10 }}>Lifetime Investment</div>
-                <div style={{ fontSize:22, fontWeight:800, color:'#f0f0f0', lineHeight:1, letterSpacing:'-0.5px' }}>{fmt(lifetimeInvested)}</div>
-                <div style={{ fontSize:9, color:'#333', marginTop:8 }}>active + sold cards</div>
+                <div style={{ fontSize:8, color:'#555', fontWeight:700, textTransform:'uppercase', letterSpacing:'0.12em', marginBottom:10 }}>Total Portfolio Value</div>
+                <div style={{ fontSize:22, fontWeight:800, color:'#f0f0f0', lineHeight:1, letterSpacing:'-0.5px' }}>{fmt(currentValue)}</div>
+                <div style={{ fontSize:9, color:'#333', marginTop:8 }}>current value of active cards</div>
               </div>
               <div style={{ width:1, background:'rgba(147,51,234,0.2)', flexShrink:0 }} />
               <div style={{ flex:1, paddingLeft:20 }}>
@@ -493,9 +493,7 @@ export default function DashboardPage() {
           <div className="mob-stat-scroll" style={{ gap:10,overflowX:'auto',marginBottom:14,paddingBottom:4,WebkitOverflowScrolling:'touch' }}>
             {[
               { label:'Active Cards', value: activeCards.length },
-              { label:'Total Invested', value: fmt(totalInvested) },
-              { label:'Current Value', value: fmt(currentValue) },
-              { label:'Unrealized G/L', value: `${gainPos?'+':''}${fmt(gainLoss)}`, color: gainPos?'#22c55e':'#ef4444' },
+              { label:'Total Current Investment', value: fmt(totalInvested) },
               { label:'Return', value: `${retPos?'+':''}${portfolioReturn.toFixed(1)}%`, color: retPos?'#22c55e':'#ef4444' },
               { label:'Realized P&L', value: `${realizedPL>=0?'+':''}${fmt(realizedPL)}`, color: realizedPL>=0?'#22c55e':'#ef4444' },
             ].map((s,i) => (
@@ -516,17 +514,15 @@ export default function DashboardPage() {
               <Link href="/collection" style={{ display:'flex',alignItems:'center',gap:7,padding:'9px 14px',background:'rgba(147,51,234,0.08)',border:'1px solid rgba(147,51,234,0.25)',borderRadius:10,color:'#9333ea',fontFamily:"'Unbounded',sans-serif",fontSize:13,fontWeight:600,textDecoration:'none' }}>+ Add Card</Link>
             </div>
           </div>
-          {activeCards.length>0&&<div className="desk-chart"><PortfolioHero lifetimeInvested={lifetimeInvested} gainLoss={gainLoss} portfolioReturn={portfolioReturn} /></div>}
+          {activeCards.length>0&&<div className="desk-chart"><PortfolioHero currentValue={currentValue} gainLoss={gainLoss} portfolioReturn={portfolioReturn} /></div>}
           <div className="desk-stats">
-          <div className="stat-grid">
+          <div className="stat-grid" style={{gridTemplateColumns:'repeat(2,1fr)'}}>
             <StatCard style={{animation:"fadeUp 0.45s ease 0s both"}} label="Active Cards" value={activeCards.length} />
-            <StatCard style={{animation:"fadeUp 0.45s ease 0.06s both"}} label="Total Invested" value={fmt(totalInvested)} />
-            <StatCard style={{animation:"fadeUp 0.45s ease 0.12s both"}} label="Current Value" value={fmt(currentValue)} />
+            <StatCard style={{animation:"fadeUp 0.45s ease 0.06s both"}} label="Total Current Investment" value={fmt(totalInvested)} />
           </div>
-          <div className="stat-grid2">
-            <StatCard style={{animation:"fadeUp 0.45s ease 0.04s both"}} label="Unrealized G/L" value={`${gainPos?'+':''}${fmt(gainLoss)}`} sub={`${retPos?'+':''}${portfolioReturn.toFixed(1)}% return`} positive={totalInvested>0?gainPos:undefined} />
-            <StatCard style={{animation:"fadeUp 0.45s ease 0.10s both"}} label="Portfolio Return" value={`${retPos?'+':''}${portfolioReturn.toFixed(1)}%`} sub={totalInvested>0?(retPos?'Above cost basis':'Below cost basis'):'No data'} positive={totalInvested>0?retPos:undefined} />
-            <StatCard style={{animation:"fadeUp 0.45s ease 0.16s both"}} label="Realized P&L" value={`${realizedPL>=0?'+':''}${fmt(realizedPL)}`} sub={`${soldCards.length} card${soldCards.length!==1?'s':''} sold`} positive={soldCards.length>0?realizedPL>=0:undefined} />
+          <div className="stat-grid2" style={{gridTemplateColumns:'repeat(2,1fr)'}}>
+            <StatCard style={{animation:"fadeUp 0.45s ease 0.04s both"}} label="Portfolio Return" value={`${retPos?'+':''}${portfolioReturn.toFixed(1)}%`} sub={totalInvested>0?(retPos?'Above cost basis':'Below cost basis'):'No data'} positive={totalInvested>0?retPos:undefined} />
+            <StatCard style={{animation:"fadeUp 0.45s ease 0.10s both"}} label="Realized P&L" value={`${realizedPL>=0?'+':''}${fmt(realizedPL)}`} sub={`${soldCards.length} card${soldCards.length!==1?'s':''} sold`} positive={soldCards.length>0?realizedPL>=0:undefined} />
           </div>
           </div>{/* end desk-stats */}
           {activeCards.length>1&&<div className="hide-mobile" style={{ marginTop:22 }}><TopMovers cards={activeCards} /></div>}
