@@ -158,28 +158,24 @@ export default function SharedCollectionPage() {
               <div key={c.id} className="card-item" style={{ animation:`fadeUp 0.25s ease ${Math.min(i*0.02,0.3)}s both` }}>
                 <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', gap:12 }}>
                   <div style={{ flex:1, minWidth:0 }}>
-                    <div style={{ display:'flex', alignItems:'center', gap:8, marginBottom:3, flexWrap:'wrap' }}>
+                    <div style={{ flex:1, minWidth:0 }}>
+                    <div style={{ display:'flex', alignItems:'center', gap:6, marginBottom:4, flexWrap:'wrap' }}>
                       <span style={{ fontSize:16, flexShrink:0 }}>{SPORT_EMOJI[c.sport]||'🃏'}</span>
                       <div style={{ fontSize:14, fontWeight:800, color:'#fff', overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>{c.player}</div>
-                      {c.auto && <span style={{ fontSize:9, fontWeight:800, color:'#ffbe2e', background:'rgba(255,190,46,0.1)', border:'1px solid rgba(255,190,46,0.2)', borderRadius:4, padding:'2px 5px', flexShrink:0 }}>AUTO</span>}
                     </div>
-                    <div style={{ fontSize:11, color:'#555', display:'flex', flexWrap:'wrap', gap:4 }}>
-                      {c.year && <span>{c.year}</span>}
-                      {c.brand && <span>· {c.brand}</span>}
-                      {c.name && <span>· {c.name}</span>}
-                      {c.num && <span>· #{c.num}</span>}
-                      {c.sport && <span>· {c.sport}</span>}
+                    <div style={{ display:'flex', alignItems:'center', gap:5, flexWrap:'wrap', marginBottom:4 }}>
+                      {c.grade && <span style={{ background:'rgba(var(--accent-rgb),0.15)', border:'1px solid rgba(var(--accent-rgb),0.3)', color:'var(--accent-light)', fontSize:9, fontWeight:900, padding:'2px 7px', borderRadius:5, letterSpacing:'0.08em' }}>{c.gradingCo?`${c.gradingCo} `:''}{c.grade}</span>}
+                      {c.auto && <span style={{ background:'rgba(255,190,46,0.1)', border:'1px solid rgba(255,190,46,0.25)', color:'#ffbe2e', fontSize:9, fontWeight:900, padding:'2px 7px', borderRadius:5 }}>AUTO{c.autoGrade ? ` ${c.autoGrade}` : ''}</span>}
+                      {c.num && String(c.num).includes('/') && <span style={{ background:'rgba(148,163,184,0.1)', border:'1px solid rgba(148,163,184,0.25)', color:'#94a3b8', fontSize:9, fontWeight:900, padding:'2px 7px', borderRadius:5, letterSpacing:'0.06em' }}>#{c.num}</span>}
+                      {!c.grade && c.cond && <span style={{ background:'rgba(255,255,255,0.05)', border:'1px solid #2a2a2a', color:'#666', fontSize:9, fontWeight:700, padding:'2px 7px', borderRadius:5 }}>{c.cond}</span>}
+                    </div>
+                    <div style={{ fontSize:11, color:'#555' }}>
+                      {[c.year, c.brand, c.name, c.sport].filter(Boolean).join(' · ')}
                     </div>
                   </div>
                   <div style={{ textAlign:'right', flexShrink:0 }}>
-                    {c.grade && (
-                      <div style={{ fontSize:11, fontWeight:800, color:'var(--accent-light)', marginBottom:3 }}>
-                        {c.gradingCo||'PSA'} {c.grade}
-                      </div>
-                    )}
-                    {!c.grade && c.cond && <div style={{ fontSize:10, color:'#555', marginBottom:3 }}>{c.cond}</div>}
-                    <div style={{ fontFamily:'var(--font-geist-mono)', fontSize:14, fontWeight:900, color:'#fff' }}>{fmt(c.val)}</div>
-                    {c.qty > 1 && <div style={{ fontSize:10, color:'#444', marginTop:1 }}>×{c.qty}</div>}
+                    <div style={{ fontFamily:'var(--font-geist-mono)', fontSize:15, fontWeight:900, color:'#fff' }}>{fmt(c.val)}</div>
+                    {c.qty > 1 && <div style={{ fontSize:10, color:'#444', marginTop:2 }}>×{c.qty}</div>}
                   </div>
                 </div>
               </div>
