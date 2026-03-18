@@ -36,13 +36,15 @@ model Card {
   notes     String?
   sold      Boolean  @default(false)
   soldPrice Float?
-  soldDate  String?
-  rarity    String?
+  soldDate      String?
+  purchaseDate  String?
+  rarity        String?
   edition   String?
   language  String?
   auto      Boolean  @default(false)
   gradingCo String?
   autoGrade String?
+  imageUrl  String?
   userId    String
   user      User     @relation(fields: [userId], references: [id])
   createdAt DateTime @default(now())
