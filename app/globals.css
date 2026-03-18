@@ -1,13 +1,12 @@
 @import "tailwindcss";
-@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Unbounded:wght@300;400;500;600;700;800;900&display=swap');
 
 :root {
   --bg:#0a0a0a; --surface:#111; --border:#1e1e1e; --text:#fff;
   --purple:#9333ea; --purple2:#a855f7; --gain:#22c55e; --loss:#ef4444;
   --cyan:#9333ea; --cyan2:#a855f7; --coral:#ef4444; --mint:#22c55e; --primary:#9333ea;
 }
-*{ -webkit-tap-highlight-color:transparent; font-family:'Space Grotesk',-apple-system,sans-serif !important }
-*[style*="JetBrains"],*[style*="monospace"]{ font-family:'JetBrains Mono',monospace !important }
+*{ -webkit-tap-highlight-color:transparent; font-family:'Unbounded',-apple-system,sans-serif !important }
 body{ background:#0a0a0a; color:#fff }
 ::-webkit-scrollbar{ width:4px; height:4px }
 ::-webkit-scrollbar-thumb{ background:#333; border-radius:100px }
