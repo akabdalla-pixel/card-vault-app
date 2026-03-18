@@ -166,18 +166,18 @@ function BottomNav({ active = "" }) {
   )
 }
 
-function PortfolioHero({ totalInvested, gainLoss, portfolioReturn }) {
+function PortfolioHero({ currentValue, gainLoss, portfolioReturn }) {
   const gainPos = gainLoss >= 0
   const glColor = gainPos ? '#22c55e' : '#ef4444'
   return (
     <div style={{ background:'#0e0c1a', border:'1px solid rgba(147,51,234,0.28)', boxShadow:'0 4px 24px rgba(147,51,234,0.1), 0 2px 8px rgba(0,0,0,0.4)', borderRadius:16, padding:'28px 32px', marginBottom:22, position:'relative', overflow:'hidden' }}>
       <div style={{ position:'absolute', top:0, left:0, right:0, height:2, background:'linear-gradient(90deg,#9333ea,#a855f7,transparent)' }} />
       <div style={{ display:'flex', alignItems:'stretch', gap:0 }}>
-        {/* Invested */}
+        {/* Portfolio Value */}
         <div style={{ flex:1, paddingRight:32 }}>
-          <div style={{ fontSize:9, fontWeight:700, color:'#555', textTransform:'uppercase', letterSpacing:'0.14em', marginBottom:12 }}>Total Invested</div>
-          <div style={{ fontSize:30, fontWeight:800, color:'#f0f0f0', lineHeight:1, letterSpacing:'-1px' }}>{fmt(totalInvested)}</div>
-          <div style={{ fontSize:10, color:'#333', marginTop:10 }}>cost basis</div>
+          <div style={{ fontSize:9, fontWeight:700, color:'#555', textTransform:'uppercase', letterSpacing:'0.14em', marginBottom:12 }}>Portfolio Value</div>
+          <div style={{ fontSize:30, fontWeight:800, color:'#f0f0f0', lineHeight:1, letterSpacing:'-1px' }}>{fmt(currentValue)}</div>
+          <div style={{ fontSize:10, color:'#333', marginTop:10 }}>current value</div>
         </div>
         {/* Divider */}
         <div style={{ width:1, background:'rgba(147,51,234,0.2)', flexShrink:0 }} />
@@ -468,9 +468,9 @@ export default function DashboardPage() {
             <div style={{ position:'absolute', top:0, left:0, right:0, height:2, background:'linear-gradient(90deg,#9333ea,#a855f7,transparent)' }} />
             <div style={{ display:'flex', alignItems:'stretch', gap:0 }}>
               <div style={{ flex:1, paddingRight:20 }}>
-                <div style={{ fontSize:8, color:'#555', fontWeight:700, textTransform:'uppercase', letterSpacing:'0.12em', marginBottom:10 }}>Total Invested</div>
-                <div style={{ fontSize:22, fontWeight:800, color:'#f0f0f0', lineHeight:1, letterSpacing:'-0.5px' }}>{fmt(totalInvested)}</div>
-                <div style={{ fontSize:9, color:'#333', marginTop:8 }}>cost basis</div>
+                <div style={{ fontSize:8, color:'#555', fontWeight:700, textTransform:'uppercase', letterSpacing:'0.12em', marginBottom:10 }}>Portfolio Value</div>
+                <div style={{ fontSize:22, fontWeight:800, color:'#f0f0f0', lineHeight:1, letterSpacing:'-0.5px' }}>{fmt(currentValue)}</div>
+                <div style={{ fontSize:9, color:'#333', marginTop:8 }}>current value</div>
               </div>
               <div style={{ width:1, background:'rgba(147,51,234,0.2)', flexShrink:0 }} />
               <div style={{ flex:1, paddingLeft:20 }}>
@@ -514,7 +514,7 @@ export default function DashboardPage() {
               <Link href="/collection" style={{ display:'flex',alignItems:'center',gap:7,padding:'9px 14px',background:'rgba(147,51,234,0.08)',border:'1px solid rgba(147,51,234,0.25)',borderRadius:10,color:'#9333ea',fontFamily:"'Unbounded',sans-serif",fontSize:13,fontWeight:600,textDecoration:'none' }}>+ Add Card</Link>
             </div>
           </div>
-          {activeCards.length>0&&<div className="desk-chart"><PortfolioHero totalInvested={totalInvested} gainLoss={gainLoss} portfolioReturn={portfolioReturn} /></div>}
+          {activeCards.length>0&&<div className="desk-chart"><PortfolioHero currentValue={currentValue} gainLoss={gainLoss} portfolioReturn={portfolioReturn} /></div>}
           <div className="desk-stats">
           <div className="stat-grid">
             <StatCard style={{animation:"fadeUp 0.45s ease 0s both"}} label="Active Cards" value={activeCards.length} />
