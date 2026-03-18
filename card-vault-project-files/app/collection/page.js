@@ -1048,63 +1048,9 @@ function CollectionPage() {
             )
           ) : (
             <>
-              {/* ── Grid View ── */}
+              {/* ── Grid / Tile View ── */}
               {viewMode === 'grid' && (
-                <div className="desktop-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(160px, 1fr))', gap: 12 }}>
-                  {filtered.map((card, idx) => {
-                    const qty = parseInt(card.qty)||1
-                    const buy = (parseFloat(card.buy)||0)*qty
-                    const val = card.sold ? (parseFloat(card.soldPrice)||0) : (parseFloat(card.val)||parseFloat(card.buy)||0)*qty
-                    const gl = val - buy
-                    const glPos = gl >= 0
-                    const glPct = buy > 0 ? (gl/buy)*100 : 0
-                    const isSelected = selected.has(card.id)
-                    return (
-                      <div key={card.id} style={{ background:'#111', border: isSelected ? '1px solid var(--accent)' : '1px solid #1a1a1a', borderRadius:12, overflow:'hidden', position:'relative', opacity: card.sold ? 0.65 : 1, animation:`fadeUp 0.25s ease ${Math.min(idx*0.04,0.3)}s both`, transition:'border-color 0.12s, transform 0.12s' }}
-                        onMouseEnter={e => { e.currentTarget.style.borderColor = isSelected ? 'var(--accent)' : '#333'; e.currentTarget.style.transform='translateY(-2px)' }}
-                        onMouseLeave={e => { e.currentTarget.style.borderColor = isSelected ? 'var(--accent)' : '#1a1a1a'; e.currentTarget.style.transform='translateY(0)' }}>
-                        <div style={{ height:2, background: glPos ? '#22c55e' : '#ef4444', opacity: buy===0?0.2:0.9 }} />
-                        <div style={{ padding:'10px 12px' }}>
-                          <div style={{ display:'flex', justifyContent:'space-between', alignItems:'flex-start', marginBottom:8 }}>
-                            <input type="checkbox" checked={isSelected} onChange={() => toggleSelect(card.id)} style={{ accentColor:'var(--accent)', width:13, height:13, cursor:'pointer', marginTop:2 }} />
-                            <div style={{ position:'relative' }}>
-                              <button onClick={e => { e.stopPropagation(); const m = e.currentTarget.nextSibling; m.style.display = m.style.display==='block'?'none':'block' }} style={{ width:22, height:22, borderRadius:6, background:'#1a1a1a', border:'1px solid #222', color:'#555', cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'center', fontSize:14, fontWeight:700 }}>⋯</button>
-                              <div style={{ display:'none', position:'absolute', right:0, top:26, background:'#1a1a1a', border:'1px solid #2a2a2a', borderRadius:10, padding:'4px', zIndex:50, minWidth:140, boxShadow:'0 8px 24px rgba(0,0,0,0.6)' }}
-                                onMouseLeave={e => e.currentTarget.style.display='none'}>
-                                {[
-    
-                                  ...(!card.sold ? [{ label:'🏷 Mark Sold', action:() => setSoldCard(card), color:'#ffbe2e' }] : []),
-                                  { label:'📊 Break Even', action:() => setBreakEvenCard(card), color:'#888' },
-                                  { label:'✏️ Edit', action:() => setModal(card), color:'#888' },
-                                  { label:'🗑 Delete', action:() => setDeleteId(card.id), color:'#ef4444' },
-                                ].map((item,i) => (
-                                  <button key={i} onClick={item.action} style={{ display:'block', width:'100%', padding:'7px 10px', background:'transparent', border:'none', color:item.color, fontSize:12, fontWeight:600, cursor:'pointer', textAlign:'left', borderRadius:7 }}>{item.label}</button>
-                                ))}
-                              </div>
-                            </div>
-                          </div>
-                          <div style={{ fontSize:13, fontWeight:900, color:'#fff', textTransform:'uppercase', letterSpacing:'-0.2px', lineHeight:1.1, marginBottom:2, overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>{card.player}</div>
-                          <div style={{ fontSize:9, color:'#555', marginBottom:8 }}>{[card.year, card.sport, card.grade ? `${card.gradingCo||''} ${card.grade}`.trim() : null].filter(Boolean).join(' · ')}</div>
-                          <div style={{ display:'flex', justifyContent:'space-between', alignItems:'flex-end', paddingTop:6, borderTop:'1px solid #1a1a1a' }}>
-                            <div>
-                              <div style={{ fontSize:9, color:'#444', fontWeight:700, textTransform:'uppercase', letterSpacing:'0.1em', marginBottom:3 }}>VALUE</div>
-                              <div style={{ fontFamily:'var(--font-geist-sans)', fontSize:15, fontWeight:900, color:'#fff', letterSpacing:'-0.5px' }}><span className="blur-val">{fmt(val)}</span></div>
-                            </div>
-                            <div style={{ textAlign:'right' }}>
-                              <div style={{ fontSize:9, color:'#444', fontWeight:700, textTransform:'uppercase', letterSpacing:'0.1em', marginBottom:3 }}>G/L</div>
-                              <div style={{ fontFamily:'var(--font-geist-sans)', fontSize:13, fontWeight:800, color: glPos?'#22c55e':'#ef4444' }}><span className="blur-val">{glPos?'+':''}{glPct.toFixed(1)}%</span></div>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    )
-                  })}
-                </div>
-              )}
-
-              {/* ── Desktop Card Grid — TRUE TILES ── */}
-              {viewMode === 'table' && <div className="desktop-table">
-                <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fill,minmax(280px,1fr))', gap:12 }}>
+                <div className="desktop-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: 12 }}>
                   {filtered.map((card, idx) => {
                     const qty = parseInt(card.qty)||1
                     const buy = (parseFloat(card.buy)||0)*qty
@@ -1119,10 +1065,8 @@ function CollectionPage() {
                       <div key={card.id} style={{ background:'#111', border: isSelected ? '1px solid var(--accent)' : '1px solid #1a1a1a', borderRadius:12, overflow:'hidden', position:'relative', opacity: card.sold ? 0.65 : 1, animation:`fadeUp 0.25s ease ${Math.min(idx*0.04,0.3)}s both`, transition:'border-color 0.12s, transform 0.12s' }}
                         onMouseEnter={e => { e.currentTarget.style.borderColor = isSelected ? 'var(--accent)' : '#333'; e.currentTarget.style.transform='translateY(-2px)' }}
                         onMouseLeave={e => { e.currentTarget.style.borderColor = isSelected ? 'var(--accent)' : '#1a1a1a'; e.currentTarget.style.transform='translateY(0)' }}>
-                        {/* Color bar top */}
                         <div style={{ height:3, background: card.sold ? '#ffbe2e' : barColor, opacity: buy===0 ? 0.3 : 0.9 }} />
                         <div style={{ padding:'14px 16px' }}>
-                          {/* Top row: sport icon + badges */}
                           <div style={{ display:'flex', justifyContent:'space-between', alignItems:'flex-start', marginBottom:12 }}>
                             <div style={{ display:'flex', alignItems:'center', gap:8 }}>
                               <input type="checkbox" checked={isSelected} onChange={() => toggleSelect(card.id)} style={{ accentColor:'var(--accent)', width:14, height:14, cursor:'pointer' }} />
@@ -1135,10 +1079,8 @@ function CollectionPage() {
                               {buy > 0 && <span style={{ background: glPos ? 'rgba(34,197,94,0.1)' : 'rgba(239,68,68,0.1)', border: `1px solid ${glPos?'rgba(34,197,94,0.25)':'rgba(239,68,68,0.25)'}`, color: glPos ? '#22c55e' : '#ef4444', fontSize:9, fontWeight:900, padding:'3px 8px', borderRadius:5 }}><span className="blur-val">{glPos?'+':''}{glPct.toFixed(0)}%</span></span>}
                             </div>
                           </div>
-                          {/* Player name */}
                           <div style={{ fontSize:16, fontWeight:900, color:'#fff', letterSpacing:'-0.4px', textTransform:'uppercase', marginBottom:4, lineHeight:1.1, overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>{card.player}</div>
                           <div style={{ fontSize:11, color:'#555', marginBottom:16 }}>{[card.year, card.sport, card.brand, card.name].filter(Boolean).join(' · ')}</div>
-                          {/* Price row */}
                           <div style={{ display:'flex', justifyContent:'space-between', alignItems:'flex-end', paddingTop:12, borderTop:'1px solid #1a1a1a' }}>
                             <div>
                               <div style={{ fontSize:9, fontWeight:700, color:'#444', textTransform:'uppercase', letterSpacing:'0.1em', marginBottom:4 }}>PAID</div>
@@ -1149,7 +1091,6 @@ function CollectionPage() {
                               <div style={{ fontFamily:'var(--font-geist-sans)', fontSize:20, fontWeight:900, color:'#fff', letterSpacing:'-0.5px' }}><span className="blur-val">{fmt(displayVal)}</span></div>
                             </div>
                           </div>
-                          {/* Action buttons */}
                           <div style={{ display:'flex', gap:5, marginTop:12 }}>
                             <button onClick={() => window.open('https://www.ebay.com/sch/i.html?_nkw='+encodeURIComponent([card.year,card.player,card.brand,card.grade?'PSA '+card.grade:null].filter(Boolean).join(' '))+'&LH_Sold=1&LH_Complete=1&_sop=13', '_blank')} title="Prices" style={{ flex:1, padding:'7px 0', borderRadius:7, background:'rgba(var(--accent-rgb),0.1)', border:'1px solid rgba(var(--accent-rgb),0.2)', color:'var(--accent-light)', cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'center' }}><IconSearch /></button>
                             {!card.sold && <button onClick={() => setSoldCard(card)} title="Sell" style={{ flex:1, padding:'7px 0', borderRadius:7, background:'rgba(255,190,46,0.08)', border:'1px solid rgba(255,190,46,0.15)', color:'#ffbe2e', cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'center' }}><IconTag /></button>}
@@ -1157,6 +1098,65 @@ function CollectionPage() {
                             <button onClick={() => setModal(card)} title="Edit" style={{ flex:1, padding:'7px 0', borderRadius:7, background:'rgba(255,255,255,0.04)', border:'1px solid #1e1e1e', color:'#555', cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'center' }}><IconEdit /></button>
                             <button onClick={() => setDeleteId(card.id)} title="Delete" style={{ flex:1, padding:'7px 0', borderRadius:7, background:'rgba(239,68,68,0.06)', border:'1px solid rgba(239,68,68,0.12)', color:'#555', cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'center' }}><IconTrash /></button>
                           </div>
+                        </div>
+                      </div>
+                    )
+                  })}
+                </div>
+              )}
+
+              {/* ── List View — Full Rows ── */}
+              {viewMode === 'table' && <div className="desktop-table">
+                <div style={{ display:'flex', flexDirection:'column', gap:4 }}>
+                  {filtered.map((card, idx) => {
+                    const qty = parseInt(card.qty)||1
+                    const buy = (parseFloat(card.buy)||0)*qty
+                    const displayVal = card.sold ? (parseFloat(card.soldPrice)||0) : (parseFloat(card.val)||parseFloat(card.buy)||0)*qty
+                    const gl = displayVal - buy
+                    const glPos = gl >= 0
+                    const glPct = buy > 0 ? (gl/buy)*100 : 0
+                    const sportEmoji = card.sport==='Basketball'?'🏀':card.sport==='Football'?'🏈':card.sport==='Baseball'?'⚾':card.sport==='Soccer'?'⚽':card.sport==='F1'?'🏎️':card.sport==='Hockey'?'🏒':card.sport==='Pokémon'?'🎴':card.sport==='Golf'?'⛳':card.sport==='Tennis'?'🎾':'🃏'
+                    const isSelected = selected.has(card.id)
+                    return (
+                      <div key={card.id} className="card-row" style={{ display:'flex', alignItems:'center', gap:12, padding:'10px 14px', background: isSelected ? 'rgba(var(--accent-rgb),0.06)' : '#111', border: isSelected ? '1px solid rgba(var(--accent-rgb),0.3)' : '1px solid #1a1a1a', borderRadius:10, opacity: card.sold ? 0.7 : 1, animation:`fadeUp 0.2s ease ${Math.min(idx*0.02,0.3)}s both`, transition:'background 0.1s, border-color 0.1s' }}
+                        onMouseEnter={e => { if(!isSelected) { e.currentTarget.style.background='#161616'; e.currentTarget.style.borderColor='#2a2a2a' }}}
+                        onMouseLeave={e => { if(!isSelected) { e.currentTarget.style.background='#111'; e.currentTarget.style.borderColor='#1a1a1a' }}}>
+                        {/* Checkbox */}
+                        <input type="checkbox" checked={isSelected} onChange={() => toggleSelect(card.id)} style={{ accentColor:'var(--accent)', width:14, height:14, cursor:'pointer', flexShrink:0 }} />
+                        {/* Sport emoji */}
+                        <div style={{ width:34, height:34, borderRadius:8, background:'#1a1a1a', border:'1px solid #222', display:'flex', alignItems:'center', justifyContent:'center', fontSize:17, flexShrink:0 }}>{sportEmoji}</div>
+                        {/* Card info — takes remaining space */}
+                        <div style={{ flex:'1 1 0', minWidth:0 }}>
+                          <div style={{ display:'flex', alignItems:'center', gap:5, marginBottom:2, flexWrap:'wrap' }}>
+                            <span style={{ fontSize:14, fontWeight:800, color:'#fff', letterSpacing:'-0.2px', overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>{card.player}</span>
+                            {card.grade && <span style={{ background:'rgba(var(--accent-rgb),0.15)', border:'1px solid rgba(var(--accent-rgb),0.3)', color:'var(--accent-light)', fontSize:9, fontWeight:900, padding:'2px 7px', borderRadius:5, letterSpacing:'0.08em', flexShrink:0 }}>{card.gradingCo?`${card.gradingCo} `:''}{card.grade}</span>}
+                            {card.auto && <span style={{ background:'rgba(255,190,46,0.1)', border:'1px solid rgba(255,190,46,0.25)', color:'#ffbe2e', fontSize:9, fontWeight:900, padding:'2px 7px', borderRadius:5, flexShrink:0 }}>AUTO{card.autoGrade ? ` ${card.autoGrade}` : ''}</span>}
+                            {card.sold && <span style={{ background:'rgba(255,190,46,0.1)', border:'1px solid rgba(255,190,46,0.25)', color:'#ffbe2e', fontSize:9, fontWeight:900, padding:'2px 7px', borderRadius:5, flexShrink:0 }}>SOLD</span>}
+                          </div>
+                          <div style={{ fontSize:11, color:'#555' }}>{[card.year, card.sport, card.brand, card.name].filter(Boolean).join(' · ')}</div>
+                        </div>
+                        {/* Paid */}
+                        <div style={{ textAlign:'right', flexShrink:0, minWidth:72 }}>
+                          <div style={{ fontSize:9, fontWeight:700, color:'#444', textTransform:'uppercase', letterSpacing:'0.1em', marginBottom:2 }}>PAID</div>
+                          <div style={{ fontFamily:'var(--font-geist-sans)', fontSize:13, fontWeight:700, color:'#666' }}><span className="blur-val">{fmt(buy)}</span></div>
+                        </div>
+                        {/* Value */}
+                        <div style={{ textAlign:'right', flexShrink:0, minWidth:90 }}>
+                          <div style={{ fontSize:9, fontWeight:700, color:'#444', textTransform:'uppercase', letterSpacing:'0.1em', marginBottom:2 }}>VALUE</div>
+                          <div style={{ fontFamily:'var(--font-geist-sans)', fontSize:17, fontWeight:900, color:'#fff', letterSpacing:'-0.5px' }}><span className="blur-val">{fmt(displayVal)}</span></div>
+                        </div>
+                        {/* G/L */}
+                        <div style={{ textAlign:'right', flexShrink:0, minWidth:64 }}>
+                          <div style={{ fontSize:9, fontWeight:700, color:'#444', textTransform:'uppercase', letterSpacing:'0.1em', marginBottom:2 }}>G/L</div>
+                          <div style={{ fontFamily:'var(--font-geist-sans)', fontSize:13, fontWeight:700, color: glPos ? '#22c55e' : '#ef4444' }}><span className="blur-val">{glPos?'+':''}{glPct.toFixed(1)}%</span></div>
+                        </div>
+                        {/* Actions */}
+                        <div style={{ display:'flex', gap:4, flexShrink:0 }}>
+                          <button onClick={() => window.open('https://www.ebay.com/sch/i.html?_nkw='+encodeURIComponent([card.year,card.player,card.brand,card.grade?'PSA '+card.grade:null].filter(Boolean).join(' '))+'&LH_Sold=1&LH_Complete=1&_sop=13', '_blank')} title="Prices" style={{ width:30, height:30, borderRadius:7, background:'rgba(var(--accent-rgb),0.1)', border:'1px solid rgba(var(--accent-rgb),0.2)', color:'var(--accent-light)', cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'center' }}><IconSearch /></button>
+                          {!card.sold && <button onClick={() => setSoldCard(card)} title="Sell" style={{ width:30, height:30, borderRadius:7, background:'rgba(255,190,46,0.08)', border:'1px solid rgba(255,190,46,0.15)', color:'#ffbe2e', cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'center' }}><IconTag /></button>}
+                          <button onClick={() => setBreakEvenCard(card)} title="Break Even" style={{ width:30, height:30, borderRadius:7, background:'rgba(255,255,255,0.04)', border:'1px solid #1e1e1e', color:'#555', cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'center' }}><IconCalc /></button>
+                          <button onClick={() => setModal(card)} title="Edit" style={{ width:30, height:30, borderRadius:7, background:'rgba(255,255,255,0.04)', border:'1px solid #1e1e1e', color:'#555', cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'center' }}><IconEdit /></button>
+                          <button onClick={() => setDeleteId(card.id)} title="Delete" style={{ width:30, height:30, borderRadius:7, background:'rgba(239,68,68,0.06)', border:'1px solid rgba(239,68,68,0.12)', color:'#555', cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'center' }}><IconTrash /></button>
                         </div>
                       </div>
                     )
