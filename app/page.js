@@ -5,8 +5,8 @@ export default function LandingPage() {
   return (
     <>
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Unbounded:wght@300;400;500;600;700;800;900&display=swap');
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Unbounded', -apple-system, sans-serif; }
+        @import url('https://fonts.googleapis.com/css2?family=Geist:wght@100;200;300;400;500;600;700;800;900&family=Geist+Mono:wght@100;200;300;400;500;600;700;800;900&display=swap');
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Geist', -apple-system, sans-serif; }
         body { background: #0a0a0a; }
         @keyframes fadeUp { from { opacity:0; transform:translateY(16px) } to { opacity:1; transform:translateY(0) } }
         @keyframes float { 0%,100% { transform:translateY(0px) } 50% { transform:translateY(-8px) } }
@@ -92,7 +92,7 @@ export default function LandingPage() {
                   <div key={i} style={{ background:'#111', border:'1px solid #1a1a1a', borderRadius:10, padding:'12px 14px', position:'relative', overflow:'hidden' }}>
                     <div style={{ position:'absolute', top:0, left:0, right:0, height:2, background:s.accent }} />
                     <div style={{ fontSize:8, color:'#444', fontWeight:700, textTransform:'uppercase', letterSpacing:'0.1em', marginBottom:6 }}>{s.label}</div>
-                    <div style={{ fontFamily:"'Unbounded',sans-serif", fontSize:18, fontWeight:900, color:s.color }}>{s.value}</div>
+                    <div style={{ fontFamily:"'Geist',sans-serif", fontSize:18, fontWeight:900, color:s.color }}>{s.value}</div>
                   </div>
                 ))}
               </div>
@@ -109,8 +109,8 @@ export default function LandingPage() {
                       <div style={{ fontSize:10, color:'#444', marginTop:2 }}>{c.sport} · <span style={{ color:'#a855f7' }}>{c.grade}</span></div>
                     </div>
                     <div style={{ textAlign:'right' }}>
-                      <div style={{ fontFamily:"'Unbounded',sans-serif", fontSize:13, fontWeight:800, color:'#fff' }}>{c.val}</div>
-                      <div style={{ fontFamily:"'Unbounded',sans-serif", fontSize:11, fontWeight:700, color:c.pos?'#22c55e':'#ef4444' }}>{c.gl}</div>
+                      <div style={{ fontFamily:"'Geist',sans-serif", fontSize:13, fontWeight:800, color:'#fff' }}>{c.val}</div>
+                      <div style={{ fontFamily:"'Geist',sans-serif", fontSize:11, fontWeight:700, color:c.pos?'#22c55e':'#ef4444' }}>{c.gl}</div>
                     </div>
                   </div>
                 ))}
@@ -132,7 +132,7 @@ export default function LandingPage() {
               { step:'03', title:'See your gains', desc:'View insights, personal records, top movers, and realized profit on every card you\'ve sold.' },
             ].map((s,i) => (
               <div key={i} className="step-card">
-                <div style={{ fontFamily:"'Unbounded',sans-serif", fontSize:11, fontWeight:900, color:'rgba(147,51,234,0.4)', marginBottom:14, letterSpacing:'0.1em' }}>{s.step}</div>
+                <div style={{ fontFamily:"'Geist',sans-serif", fontSize:11, fontWeight:900, color:'rgba(147,51,234,0.4)', marginBottom:14, letterSpacing:'0.1em' }}>{s.step}</div>
                 <div style={{ fontSize:15, fontWeight:900, color:'#fff', marginBottom:8, letterSpacing:'-0.3px' }}>{s.title}</div>
                 <div style={{ fontSize:12, color:'#555', lineHeight:1.5 }}>{s.desc}</div>
               </div>

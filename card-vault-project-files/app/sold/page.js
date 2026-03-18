@@ -44,10 +44,10 @@ function ToastContainer() {
   return (
     <div style={{position:'fixed',bottom:88,left:'50%',transform:'translateX(-50%)',zIndex:9999,display:'flex',flexDirection:'column',gap:8,alignItems:'center',pointerEvents:'none'}}>
       {toasts.map(t=>(
-        <div key={t.id} style={{display:'flex',alignItems:'center',gap:10,padding:'10px 18px',borderRadius:12,background:'#1e1e1e',border:`1px solid ${colors[t.type]}50`,boxShadow:'0 8px 28px rgba(0,0,0,0.6)',fontFamily:"'Unbounded',sans-serif",fontSize:13,fontWeight:600,color:'#f0f0f0',pointerEvents:'auto',animation:'toastIn 0.2s ease',whiteSpace:'nowrap'}}>
+        <div key={t.id} style={{display:'flex',alignItems:'center',gap:10,padding:'10px 18px',borderRadius:12,background:'#1e1e1e',border:`1px solid ${colors[t.type]}50`,boxShadow:'0 8px 28px rgba(0,0,0,0.6)',fontFamily:"'Geist',sans-serif",fontSize:13,fontWeight:600,color:'#f0f0f0',pointerEvents:'auto',animation:'toastIn 0.2s ease',whiteSpace:'nowrap'}}>
           <span style={{color:colors[t.type]}}>{icons[t.type]}</span>
           {t.msg}
-          {t.onUndo&&<button onClick={t.onUndo} style={{marginLeft:6,padding:'2px 10px',borderRadius:6,background:'rgba(255,255,255,0.08)',border:'none',color:'#9333ea',fontFamily:"'Unbounded',sans-serif",fontSize:12,fontWeight:700,cursor:'pointer',pointerEvents:'auto'}}>Undo</button>}
+          {t.onUndo&&<button onClick={t.onUndo} style={{marginLeft:6,padding:'2px 10px',borderRadius:6,background:'rgba(255,255,255,0.08)',border:'none',color:'#9333ea',fontFamily:"'Geist',sans-serif",fontSize:12,fontWeight:700,cursor:'pointer',pointerEvents:'auto'}}>Undo</button>}
         </div>
       ))}
     </div>
@@ -160,20 +160,20 @@ export default function SoldHistoryPage() {
   a.press:active{transform:scale(0.94)!important;opacity:0.85!important}
   .press{transition:transform 0.1s ease,opacity 0.1s ease!important}
   .press:active{transform:scale(0.93)!important;opacity:0.8!important}
-        @import url('https://fonts.googleapis.com/css2?family=Unbounded:wght@300;400;500;600;700;800;900&display=swap');
-        *{font-family:'Unbounded',-apple-system,sans-serif!important}
-        .sidebar-el{display:flex;flex-direction:column}.mobile-only{display:none!important}.mob-topbar{display:none}.main-wrap{margin-left:200px;min-height:100vh;width:calc(100% - 200px);max-width:1280px}.sold-row:hover{background:rgba(255,255,255,0.02)!important}
+        @import url('https://fonts.googleapis.com/css2?family=Geist:wght@100;200;300;400;500;600;700;800;900&family=Geist+Mono:wght@100;200;300;400;500;600;700;800;900&display=swap');
+        *{font-family:'Geist',-apple-system,sans-serif!important}
+        .sidebar-el{display:flex;flex-direction:column}.mobile-only{display:none!important}.mob-topbar{display:none}.main-wrap{margin-left:200px;min-height:100vh;width:calc(100% - 200px)}.sold-row:hover{background:rgba(255,255,255,0.02)!important}
         @media(max-width:768px){.sidebar-el{display:none!important}.mobile-only{display:flex!important}.mob-topbar{display:flex}.main-wrap{margin-left:0!important;width:100%!important;padding-bottom:90px!important}}
       `}</style>
       <div style={{ display: 'flex', minHeight: '100vh', background: '#0a0a0a' }}>        <div className="sidebar-el"><Sidebar user={user} onLogout={handleLogout} cardCount={cards.filter(c=>!c.sold).length} active="Sold History" /></div>
         <main className="main-wrap" style={{ padding: '28px 28px' }}>
           <div className="mob-topbar" style={{ alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
             <img src={LOGO} alt="TopLoad" style={{ height: 36, width: 'auto', objectFit: 'contain' }} />
-            <button onClick={handleLogout} style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '8px 14px', borderRadius: 10, background: '#1e1e1e', border: 'none', color: '#666', fontFamily: "'Unbounded',sans-serif", fontSize: 13, fontWeight: 600, cursor: 'pointer' }}><IconLogout />Sign Out</button>
+            <button onClick={handleLogout} style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '8px 14px', borderRadius: 10, background: '#1e1e1e', border: 'none', color: '#666', fontFamily: "'Geist',sans-serif", fontSize: 13, fontWeight: 600, cursor: 'pointer' }}><IconLogout />Sign Out</button>
           </div>
 
           <div style={{ marginBottom: 24 }}>
-            <h1 style={{ fontFamily: "'Unbounded',sans-serif", fontSize: 40, fontWeight: 900, letterSpacing: '-2px', margin: 0, background: 'linear-gradient(135deg,#f5f5f5 40%,#a855f7)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>Sold History</h1>
+            <h1 style={{ fontFamily: 'var(--font-geist-pixel-square)', fontSize: 40, fontWeight: 900, letterSpacing: '-2px', margin: 0, background: 'linear-gradient(135deg,#f5f5f5 40%,#a855f7)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>Sold History</h1>
             <p style={{ fontSize: 13, color: '#555', marginTop: 4, fontWeight: 500 }}>{cards.length} card{cards.length !== 1 ? 's' : ''} sold · complete transaction history</p>
           </div>
 
@@ -190,7 +190,7 @@ export default function SoldHistoryPage() {
               ].map(([label, value, color]) => (
                 <div key={label} style={{ padding: '12px 14px', borderRadius: 12, background: 'linear-gradient(135deg,#111,#0d0d0d)', border: '1px solid #1e1e1e' }}>
                   <div style={{ fontSize: 10, color: '#444', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 6 }}>{label}</div>
-                  <div style={{ fontFamily: "'Unbounded',sans-serif", fontSize: 16, fontWeight: 700, color }}>{value}</div>
+                  <div style={{ fontFamily: "'Geist',sans-serif", fontSize: 16, fontWeight: 700, color }}>{value}</div>
                 </div>
               ))}
             </div>
@@ -199,16 +199,16 @@ export default function SoldHistoryPage() {
           {cards.length === 0 ? (
             <div style={{ textAlign: 'center', padding: '80px 24px' }}>
               <div style={{ fontSize: 48, marginBottom: 16, opacity: 0.2 }}>💰</div>
-              <h3 style={{ fontFamily: "'Unbounded',sans-serif", fontSize: 18, fontWeight: 700, color: '#444', marginBottom: 8 }}>No sales yet</h3>
-              <p style={{ color: '#333', fontSize: 13, marginBottom: 20, fontFamily: "'Unbounded',sans-serif" }}>Mark cards as sold from your Collection to track your realized gains here.</p>
-              <Link href="/collection" style={{ padding: '10px 20px', borderRadius: 10, background: 'rgba(147,51,234,0.08)', border: '1px solid rgba(147,51,234,0.25)', color: '#9333ea', fontFamily: "'Unbounded',sans-serif", fontSize: 14, fontWeight: 600, textDecoration: 'none' }}>Go to Collection</Link>
+              <h3 style={{ fontFamily: "'Geist',sans-serif", fontSize: 18, fontWeight: 700, color: '#444', marginBottom: 8 }}>No sales yet</h3>
+              <p style={{ color: '#333', fontSize: 13, marginBottom: 20, fontFamily: "'Geist',sans-serif" }}>Mark cards as sold from your Collection to track your realized gains here.</p>
+              <Link href="/collection" style={{ padding: '10px 20px', borderRadius: 10, background: 'rgba(147,51,234,0.08)', border: '1px solid rgba(147,51,234,0.25)', color: '#9333ea', fontFamily: "'Geist',sans-serif", fontSize: 14, fontWeight: 600, textDecoration: 'none' }}>Go to Collection</Link>
             </div>
           ) : (
             <div style={{ background: 'linear-gradient(135deg,#111,#0d0d0d)', border: '1px solid #1e1e1e', borderRadius: 16, overflow: 'hidden' }}>
               <div style={{ overflowX: 'auto' }}>
                 <table style={{ width: '100%', borderCollapse: 'collapse' }}>
                   <thead>
-                    <tr>{['Card','Sport','Grade','Buy Price','Sold Price','Profit/Loss','Return','Sold Date'].map((h,i) => <th key={h} style={{ padding: '11px 16px', textAlign: i===0?'left':'right', fontFamily: "'Unbounded',sans-serif", fontSize: 10, fontWeight: 700, color: '#333', letterSpacing: '0.1em', textTransform: 'uppercase', whiteSpace: 'nowrap' }}>{h}</th>)}</tr>
+                    <tr>{['Card','Sport','Grade','Buy Price','Sold Price','Profit/Loss','Return','Sold Date'].map((h,i) => <th key={h} style={{ padding: '11px 16px', textAlign: i===0?'left':'right', fontFamily: "'Geist',sans-serif", fontSize: 10, fontWeight: 700, color: '#333', letterSpacing: '0.1em', textTransform: 'uppercase', whiteSpace: 'nowrap' }}>{h}</th>)}</tr>
                   </thead>
                   <tbody>
                     {[...cards].sort((a,b) => new Date(b.soldDate||b.updatedAt) - new Date(a.soldDate||a.updatedAt)).map((card, idx) => {
@@ -220,19 +220,19 @@ export default function SoldHistoryPage() {
                       return (
                         <tr key={card.id} className="sold-row" style={{ borderTop: '1px solid #1e1e1e', transition: 'background 0.15s', animation:`fadeUp 0.45s ease ${idx*0.1}s both` }}>
                           <td style={{ padding: '12px 16px' }}>
-                            <div style={{ fontFamily: "'Unbounded',sans-serif", fontSize: 13, fontWeight: 700, color: '#ccc' }}>{card.player}</div>
+                            <div style={{ fontFamily: "'Geist',sans-serif", fontSize: 13, fontWeight: 700, color: '#ccc' }}>{card.player}</div>
                             {card.name && <div style={{ fontSize: 11, color: '#444', marginTop: 1 }}>{card.name}</div>}
                             {card.year && <div style={{ fontSize: 11, color: '#444' }}>{card.year}</div>}
                           </td>
-                          <td style={{ padding: '12px 16px', textAlign: 'right', fontFamily: "'Unbounded',sans-serif", fontSize: 12, color: '#666' }}>{card.sport||'—'}</td>
+                          <td style={{ padding: '12px 16px', textAlign: 'right', fontFamily: "'Geist',sans-serif", fontSize: 12, color: '#666' }}>{card.sport||'—'}</td>
                           <td style={{ padding: '12px 16px', textAlign: 'right' }}>{card.grade ? <span style={{ padding: '2px 8px', borderRadius: 6, background: 'rgba(147,51,234,0.1)', color: plPos ? '#22c55e' : '#ef4444', fontSize: 11, fontWeight: 700 }}>Grade {card.grade}</span> : <span style={{ color: '#444', fontSize: 12 }}>{card.cond||'Raw'}</span>}</td>
-                          <td style={{ padding: '12px 16px', textAlign: 'right', fontFamily: "'Unbounded',sans-serif", fontSize: 13, color: '#666' }}>{fmt(buy)}</td>
-                          <td style={{ padding: '12px 16px', textAlign: 'right', fontFamily: "'Unbounded',sans-serif", fontSize: 13, fontWeight: 700, color: '#f0f0f0' }}>{fmt(sold)}</td>
+                          <td style={{ padding: '12px 16px', textAlign: 'right', fontFamily: "'Geist',sans-serif", fontSize: 13, color: '#666' }}>{fmt(buy)}</td>
+                          <td style={{ padding: '12px 16px', textAlign: 'right', fontFamily: "'Geist',sans-serif", fontSize: 13, fontWeight: 700, color: '#f0f0f0' }}>{fmt(sold)}</td>
                           <td style={{ padding: '12px 16px', textAlign: 'right' }}>
-                            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 3, fontFamily: "'Unbounded',sans-serif", fontSize: 13, fontWeight: 700, color: plPos?'#22c55e':'#ef4444' }}>{plPos?<IconUp />:<IconDown />}{plPos?'+':''}{fmt(pl)}</div>
+                            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 3, fontFamily: "'Geist',sans-serif", fontSize: 13, fontWeight: 700, color: plPos?'#22c55e':'#ef4444' }}>{plPos?<IconUp />:<IconDown />}{plPos?'+':''}{fmt(pl)}</div>
                           </td>
-                          <td style={{ padding: '12px 16px', textAlign: 'right', fontFamily: "'Unbounded',sans-serif", fontSize: 12, fontWeight: 600, color: plPos?'#22c55e':'#ef4444' }}>{plPos?'+':''}{pct.toFixed(1)}%</td>
-                          <td style={{ padding: '12px 16px', textAlign: 'right', fontFamily: "'Unbounded',sans-serif", fontSize: 12, color: '#555' }}>{card.soldDate ? new Date(card.soldDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : '—'}</td>
+                          <td style={{ padding: '12px 16px', textAlign: 'right', fontFamily: "'Geist',sans-serif", fontSize: 12, fontWeight: 600, color: plPos?'#22c55e':'#ef4444' }}>{plPos?'+':''}{pct.toFixed(1)}%</td>
+                          <td style={{ padding: '12px 16px', textAlign: 'right', fontFamily: "'Geist',sans-serif", fontSize: 12, color: '#555' }}>{card.soldDate ? new Date(card.soldDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : '—'}</td>
                         </tr>
                       )
                     })}
