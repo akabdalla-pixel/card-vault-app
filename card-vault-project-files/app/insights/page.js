@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
+import { togglePrivacy, isPrivacyOn } from '@/app/components/ThemeProvider'
 
 const LOGO = '/logo-transparent.png'
 const NAV = [
@@ -24,6 +25,8 @@ function IconTrendUp() { return <svg width="13" height="13" viewBox="0 0 24 24" 
 function IconTrendDown() { return <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="23 18 13.5 8.5 8.5 13.5 1 6"/><polyline points="17 18 23 18 23 12"/></svg> }
 function IconStar() { return <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" strokeWidth="1"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg> }
 function IconTrophy() { return <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2z"/></svg> }
+function IconEye() { return <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg> }
+function IconEyeOff() { return <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg> }
 
 const navIcons = { 'Dashboard': IconDashboard, 'Collection': IconCollection, 'Market': IconMarket, 'Insights': IconInsights, 'PSA Lookup': IconShield }
 
@@ -192,9 +195,9 @@ function StatCard({ label, value, sub, icon, positive, accent, style = {} }) {
         <div style={{ fontSize: 10, fontWeight: 700, color: '#333', letterSpacing: '0.12em', textTransform: 'uppercase', fontFamily: 'var(--font-geist-sans)' }}>{label}</div>
         {icon && <div style={{ fontSize: 16 }}>{icon}</div>}
       </div>
-      <div style={{ fontFamily: 'var(--font-geist-sans)', fontSize: 20, fontWeight: 700, color: '#f0f0f0', letterSpacing: '-0.5px', lineHeight: 1 }}>{value}</div>
+      <div style={{ fontFamily: 'var(--font-geist-sans)', fontSize: 20, fontWeight: 700, color: '#f0f0f0', letterSpacing: '-0.5px', lineHeight: 1 }}><span className="blur-val">{value}</span></div>
       {sub && <div style={{ marginTop: 8, fontSize: 11, color: positive === true ? '#22c55e' : positive === false ? '#ef4444' : '#555', fontFamily: 'var(--font-geist-sans)', fontWeight: 600, display: 'flex', alignItems: 'center', gap: 4 }}>
-        {positive === true && <IconTrendUp />}{positive === false && <IconTrendDown />}{sub}
+        {positive === true && <IconTrendUp />}{positive === false && <IconTrendDown />}<span className="blur-val">{sub}</span>
       </div>}
     </div>
   )
@@ -227,8 +230,8 @@ function TopCardsRank({ cards }) {
                 </div>
               </div>
               <div style={{ textAlign: 'right', flexShrink: 0 }}>
-                <div style={{ fontFamily: 'var(--font-geist-sans)', fontSize: 14, fontWeight: 700, color: '#f0f0f0' }}>{fmt(val)}</div>
-                <div style={{ fontFamily: 'var(--font-geist-sans)', fontSize: 11, color: glPos ? '#22c55e' : '#ef4444', marginTop: 2 }}>{glPos ? '+' : ''}{fmt(gl)}</div>
+                <div style={{ fontFamily: 'var(--font-geist-sans)', fontSize: 14, fontWeight: 700, color: '#f0f0f0' }}><span className="blur-val">{fmt(val)}</span></div>
+                <div style={{ fontFamily: 'var(--font-geist-sans)', fontSize: 11, color: glPos ? '#22c55e' : '#ef4444', marginTop: 2 }}><span className="blur-val">{glPos ? '+' : ''}{fmt(gl)}</span></div>
               </div>
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#333" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}><polyline points="9 18 15 12 9 6"/></svg>
             </Link>
@@ -302,7 +305,7 @@ function PersonalRecords({ cards, soldCards }) {
               <div style={{ fontSize:18, marginBottom:5 }}>{r.icon}</div>
               <div style={{ fontSize:9, fontWeight:700, color:'#444', textTransform:'uppercase', letterSpacing:'0.08em', marginBottom:3 }}>{r.label}</div>
               <div style={{ fontSize:12, fontWeight:800, color:'#f0f0f0', overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap', marginBottom:2 }}>{r.value}</div>
-              <div style={{ fontFamily:'var(--font-geist-sans)', fontSize:11, fontWeight:800, color:r.subColor }}>{r.sub}</div>
+              <div style={{ fontFamily:'var(--font-geist-sans)', fontSize:11, fontWeight:800, color:r.subColor }}><span className="blur-val">{r.sub}</span></div>
             </div>
           )
           return href
@@ -319,7 +322,11 @@ export default function InsightsPage() {
   const [cards, setCards] = useState([])
   const [user, setUser] = useState(null)
   const [loading, setLoading] = useState(true)
+  const [privacy, setPrivacy] = useState(false)
   const router = useRouter()
+
+  useEffect(() => { setPrivacy(isPrivacyOn()) }, [])
+  function handlePrivacy() { setPrivacy(togglePrivacy()) }
 
   useEffect(() => {
     Promise.all([
@@ -439,13 +446,18 @@ export default function InsightsPage() {
           <div className="mob-topbar" style={{ alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
             <img src={LOGO} alt="TopLoad" style={{ height: 32, filter: 'drop-shadow(0 0 8px rgba(var(--accent-rgb),0.4))' }} />
             <div style={{ fontFamily:'var(--font-geist-sans)', fontSize: 16, fontWeight: 800, color: '#f0f0f0' }}>Insights</div>
-            <div style={{ width: 32 }} />
+            <button onClick={handlePrivacy} title={privacy ? 'Show values' : 'Hide values'} style={{ width:34, height:34, borderRadius:8, background: privacy ? 'rgba(var(--accent-rgb),0.15)' : '#111', border: privacy ? '1px solid rgba(var(--accent-rgb),0.4)' : '1px solid #1e1e1e', color: privacy ? 'var(--accent)' : '#555', display:'flex', alignItems:'center', justifyContent:'center', cursor:'pointer' }}>{privacy ? <IconEyeOff /> : <IconEye />}</button>
           </div>
 
           {/* Desktop header */}
           <div className="hide-mobile" style={{ marginBottom: 28 }}>
-            <h1 style={{ fontFamily: 'var(--font-geist-pixel-square)', fontSize: 40, fontWeight: 900, letterSpacing: '-2px', margin: 0, textTransform: 'uppercase', background: 'linear-gradient(135deg,#f5f5f5 40%,var(--accent-light))', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>INSIGHTS</h1>
-            <p style={{ fontSize: 13, color: '#555', marginTop: 4, fontWeight: 500 }}>A deep look at your collection — updates automatically with every new card</p>
+            <div style={{ display:'flex', alignItems:'flex-start', justifyContent:'space-between' }}>
+              <div>
+                <h1 style={{ fontFamily: 'var(--font-geist-pixel-square)', fontSize: 40, fontWeight: 900, letterSpacing: '-2px', margin: 0, textTransform: 'uppercase', background: 'linear-gradient(135deg,#f5f5f5 40%,var(--accent-light))', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>INSIGHTS</h1>
+                <p style={{ fontSize: 13, color: '#555', marginTop: 4, fontWeight: 500 }}>A deep look at your collection — updates automatically with every new card</p>
+              </div>
+              <button onClick={handlePrivacy} title={privacy ? 'Show values' : 'Hide values'} style={{ width:38, height:38, borderRadius:10, background: privacy ? 'rgba(var(--accent-rgb),0.15)' : '#111', border: privacy ? '1px solid rgba(var(--accent-rgb),0.4)' : '1px solid #1e1e1e', color: privacy ? 'var(--accent)' : '#555', display:'flex', alignItems:'center', justifyContent:'center', cursor:'pointer', flexShrink:0 }}>{privacy ? <IconEyeOff /> : <IconEye />}</button>
+            </div>
           </div>
 
           {isEmpty ? (
