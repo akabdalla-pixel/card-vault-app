@@ -36,27 +36,32 @@ export async function GET(req) {
     let frontImage = cert_data.FrontImageURL || cert_data.frontImageURL || cert_data.ImageFront || cert_data.CardImageFront || null
     let backImage = cert_data.BackImageURL || cert_data.backImageURL || cert_data.ImageBack || cert_data.CardImageBack || null
 
-    // Try PSA image endpoint if not in cert data
+    // Try to get image from PSA cert page HTML (og:image meta tag)
     if (!frontImage) {
       try {
-        const imgRes = await fetch(`https://api.psacard.com/publicapi/cert/GetImageByCertNumber/${cert}`, {
+        const pageRes = await fetch(`https://www.psacard.com/cert/${cert}/psa`, {
           headers: {
-            'Authorization': `bearer ${PSA_TOKEN}`,
-            'Content-Type': 'application/json',
+            'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+            'Accept': 'text/html',
           }
         })
-        if (imgRes.ok) {
-          const imgData = await imgRes.json()
-          console.log('PSA imgData full:', JSON.stringify(imgData))
-          frontImage = imgData.FrontImageURL || imgData.frontImageURL || imgData.front_image_url || imgData.front || imgData.ImageFront || null
-          backImage = imgData.BackImageURL || imgData.backImageURL || imgData.back_image_url || imgData.back || imgData.ImageBack || null
-        } else {
-          console.log('PSA image endpoint status:', imgRes.status, await imgRes.text())
+        if (pageRes.ok) {
+          const html = await pageRes.text()
+          const ogMatch = html.match(/<meta[^>]*property=["']og:image["'][^>]*content=["']([^"']+)["']/i)
+            || html.match(/<meta[^>]*content=["']([^"']+)["'][^>]*property=["']og:image["']/i)
+          if (ogMatch?.[1]) {
+            frontImage = ogMatch[1]
+            console.log('Got image from og:image:', frontImage)
+          }
         }
       } catch (e) {
-        console.log('PSA image endpoint error:', e.message)
+        console.log('PSA page fetch error:', e.message)
       }
     }
+
+    // Final fallback to cloudfront pattern
+    if (!frontImage) frontImage = `https://d1htnxwo4o0jhw.cloudfront.net/cert/${cert}/front.jpg`
+    if (!backImage) backImage = `https://d1htnxwo4o0jhw.cloudfront.net/cert/${cert}/back.jpg`
 
     console.log('frontImage resolved:', frontImage)
 
