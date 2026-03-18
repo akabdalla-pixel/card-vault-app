@@ -415,7 +415,7 @@ export default function InsightsPage() {
   .press:active{transform:scale(0.93)!important;opacity:0.8!important}
         @import url('https://fonts.googleapis.com/css2?family=Unbounded:wght@300;400;500;600;700;800;900&display=swap');
         *{font-family:'Unbounded',-apple-system,sans-serif!important}
-        .sidebar-el{display:flex;flex-direction:column}.mobile-only{display:none!important}.mob-topbar{display:none}.main-wrap{margin-left:200px;min-height:100vh;width:calc(100% - 200px)}
+        .sidebar-el{display:flex;flex-direction:column}.mobile-only{display:none!important}.mob-topbar{display:none}.main-wrap{margin-left:200px;min-height:100vh;width:calc(100% - 200px);max-width:1280px}
         .insights-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
         .insights-grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
         .insights-grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}

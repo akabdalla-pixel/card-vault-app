@@ -870,7 +870,7 @@ function CollectionPage() {
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Unbounded:wght@300;400;500;600;700;800;900&display=swap');
         *{font-family:'Unbounded',-apple-system,sans-serif!important}
-        .sidebar-el{display:flex;flex-direction:column}.mobile-only{display:none!important}.mob-topbar{display:none}.main-wrap{margin-left:200px;min-height:100vh;width:calc(100% - 200px)}.card-row:hover{background:rgba(255,255,255,0.02)!important}
+        .sidebar-el{display:flex;flex-direction:column}.mobile-only{display:none!important}.mob-topbar{display:none}.main-wrap{margin-left:200px;min-height:100vh;width:calc(100% - 200px);max-width:1280px}.card-row:hover{background:rgba(255,255,255,0.02)!important}
         .mobile-cards{display:none!important}
         .desktop-table{display:block!important}
         .card-grid{display:none!important}

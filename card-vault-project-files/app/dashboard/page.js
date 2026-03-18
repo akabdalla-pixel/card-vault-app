@@ -438,7 +438,7 @@ export default function DashboardPage() {
         a.press:active{transform:scale(0.94)!important;opacity:0.85!important}
         .press{transition:transform 0.1s ease,opacity 0.1s ease!important}
         .press:active{transform:scale(0.93)!important;opacity:0.8!important}
-        .sidebar-el{display:flex;flex-direction:column}.mobile-only{display:none!important}.mob-topbar{display:none}.main-wrap{margin-left:200px;min-height:100vh;width:calc(100% - 200px)}
+        .sidebar-el{display:flex;flex-direction:column}.mobile-only{display:none!important}.mob-topbar{display:none}.main-wrap{margin-left:200px;min-height:100vh;width:calc(100% - 200px);max-width:1280px}
         .stat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
         .stat-grid2{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:14px}
         .body-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:22px}
