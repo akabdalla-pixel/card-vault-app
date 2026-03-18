@@ -170,7 +170,7 @@ function PortfolioHero({ currentValue, gainLoss, portfolioReturn }) {
   const gainPos = gainLoss >= 0
   const glColor = gainPos ? '#22c55e' : '#ef4444'
   return (
-    <div style={{ background:'#0e0c1a', border:'1px solid rgba(var(--accent-rgb),0.28)', boxShadow:'0 4px 24px rgba(var(--accent-rgb),0.1), 0 2px 8px rgba(0,0,0,0.4)', borderRadius:16, padding:'28px 32px', marginBottom:22, position:'relative', overflow:'hidden' }}>
+    <div style={{ background:'var(--surface-tint)', border:'1px solid rgba(var(--accent-rgb),0.28)', boxShadow:'0 4px 24px rgba(var(--accent-rgb),0.1), 0 2px 8px rgba(0,0,0,0.4)', borderRadius:16, padding:'28px 32px', marginBottom:22, position:'relative', overflow:'hidden' }}>
       <div style={{ position:'absolute', top:0, left:0, right:0, height:2, background:'linear-gradient(90deg,var(--accent),var(--accent-light),transparent)' }} />
       <div style={{ display:'flex', alignItems:'stretch', gap:0 }}>
         {/* Total Portfolio Value */}
@@ -261,11 +261,11 @@ function TopMovers({ cards }) {
   )
   return (
     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 22 }}>
-      <div style={{ background: '#0e0c1a', border: '1px solid rgba(var(--accent-rgb),0.28)', boxShadow: '0 4px 20px rgba(var(--accent-rgb),0.08), 0 2px 8px rgba(0,0,0,0.4)', borderRadius: 16, padding: '16px 18px' }}>
+      <div style={{ background: 'var(--surface-tint)', border: '1px solid rgba(var(--accent-rgb),0.28)', boxShadow: '0 4px 20px rgba(var(--accent-rgb),0.08), 0 2px 8px rgba(0,0,0,0.4)', borderRadius: 16, padding: '16px 18px' }}>
         <div style={{ fontFamily: 'var(--font-geist-sans)', fontSize: 12, fontWeight: 700, color: 'var(--accent-light)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 10 }}>🚀 Top Gainers</div>
         {gainers.length ? gainers.map(c=><MoverRow key={c.id} card={c} isGainer={true}/>) : <div style={{ color:'#333',fontSize:12 }}>No gainers yet</div>}
       </div>
-      <div style={{ background: '#0e0c1a', border: '1px solid rgba(var(--accent-rgb),0.28)', boxShadow: '0 4px 20px rgba(var(--accent-rgb),0.08), 0 2px 8px rgba(0,0,0,0.4)', borderRadius: 16, padding: '16px 18px' }}>
+      <div style={{ background: 'var(--surface-tint)', border: '1px solid rgba(var(--accent-rgb),0.28)', boxShadow: '0 4px 20px rgba(var(--accent-rgb),0.08), 0 2px 8px rgba(0,0,0,0.4)', borderRadius: 16, padding: '16px 18px' }}>
         <div style={{ fontFamily: 'var(--font-geist-sans)', fontSize: 12, fontWeight: 700, color: '#6d4a9e', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 10 }}>📉 Top Losers</div>
         {losers.length ? losers.map(c=><MoverRow key={c.id} card={c} isGainer={false}/>) : <div style={{ color:'#333',fontSize:12 }}>No losers yet</div>}
       </div>
@@ -276,7 +276,7 @@ function TopMovers({ cards }) {
 function StatCard({ label, value, sub, positive, style = {} }) {
   const accent = positive === true ? '#22c55e' : positive === false ? '#ef4444' : 'var(--accent)'
   return (
-    <div style={{ background: '#0e0c1a', border: '1px solid rgba(var(--accent-rgb),0.28)', boxShadow: '0 4px 20px rgba(var(--accent-rgb),0.08), 0 2px 8px rgba(0,0,0,0.4)', borderRadius: 12, padding: '14px 16px', position: 'relative', overflow: 'hidden', ...style }}>
+    <div style={{ background: 'var(--surface-tint)', border: '1px solid rgba(var(--accent-rgb),0.28)', boxShadow: '0 4px 20px rgba(var(--accent-rgb),0.08), 0 2px 8px rgba(0,0,0,0.4)', borderRadius: 12, padding: '14px 16px', position: 'relative', overflow: 'hidden', ...style }}>
       <div style={{ position:'absolute', top:0, left:0, right:0, height:2, background:`linear-gradient(90deg,${accent},transparent)` }} />
       <div style={{ fontSize: 9, fontWeight: 700, color: '#555', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 8, fontFamily:'var(--font-geist-sans)' }}>{label}</div>
       <div style={{ fontFamily: 'var(--font-geist-mono)', fontSize: 18, fontWeight: 800, color: positive===true?'#22c55e':positive===false?'#ef4444':'#f0f0f0', letterSpacing: '-0.5px', lineHeight: 1 }}>{value}</div>
@@ -466,7 +466,7 @@ export default function DashboardPage() {
           </div>
 
           {/* ── Mobile: Portfolio Hero ── */}
-          <div className="mob-chart" style={{ background:'#0e0c1a', border:'1px solid rgba(var(--accent-rgb),0.28)', borderRadius:16, padding:'24px 20px', marginBottom:14, position:'relative', overflow:'hidden' }}>
+          <div className="mob-chart" style={{ background:'var(--surface-tint)', border:'1px solid rgba(var(--accent-rgb),0.28)', borderRadius:16, padding:'24px 20px', marginBottom:14, position:'relative', overflow:'hidden' }}>
             <div style={{ position:'absolute', top:0, left:0, right:0, height:2, background:'linear-gradient(90deg,var(--accent),var(--accent-light),transparent)' }} />
             <div style={{ display:'flex', alignItems:'stretch', gap:0 }}>
               <div style={{ flex:1, paddingRight:20 }}>
@@ -536,7 +536,7 @@ export default function DashboardPage() {
             const glPct = buy > 0 ? (gl / buy) * 100 : 0
             return (
               <Link href={`/collection?search=${encodeURIComponent(spotlight.player)}`} style={{ textDecoration:'none', display:'block', marginTop:20 }}>
-              <div style={{ animation:'scaleIn 0.3s ease', background:'#0e0c1a', border:'1px solid rgba(var(--accent-rgb),0.28)', boxShadow:'0 4px 24px rgba(var(--accent-rgb),0.1), 0 2px 8px rgba(0,0,0,0.4)', borderRadius:14, padding:'18px 22px', position:'relative', overflow:'hidden', cursor:'pointer', transition:'border-color 0.15s, box-shadow 0.15s' }}
+              <div style={{ animation:'scaleIn 0.3s ease', background:'var(--surface-tint)', border:'1px solid rgba(var(--accent-rgb),0.28)', boxShadow:'0 4px 24px rgba(var(--accent-rgb),0.1), 0 2px 8px rgba(0,0,0,0.4)', borderRadius:14, padding:'18px 22px', position:'relative', overflow:'hidden', cursor:'pointer', transition:'border-color 0.15s, box-shadow 0.15s' }}
                 onMouseEnter={e=>{ e.currentTarget.style.borderColor='rgba(var(--accent-rgb),0.5)'; e.currentTarget.style.boxShadow='0 6px 32px rgba(var(--accent-rgb),0.18), 0 2px 8px rgba(0,0,0,0.4)' }}
                 onMouseLeave={e=>{ e.currentTarget.style.borderColor='rgba(var(--accent-rgb),0.28)'; e.currentTarget.style.boxShadow='0 4px 24px rgba(var(--accent-rgb),0.1), 0 2px 8px rgba(0,0,0,0.4)' }}>
                 {/* top accent */}

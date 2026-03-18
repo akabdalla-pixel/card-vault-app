@@ -2,8 +2,8 @@
 :root {
   --bg:#0a0a0a; --surface:#111; --border:#1e1e1e; --text:#fff;
   --gain:#22c55e; --loss:#ef4444;
-  /* accent — overridden client-side by ThemeProvider from localStorage */
-  --accent:#9333ea; --accent-light:#a855f7; --accent-rgb:147,51,234;
+  /* accent + surface tint — overridden client-side by ThemeProvider from localStorage */
+  --accent:#9333ea; --accent-light:#a855f7; --accent-rgb:147,51,234; --surface-tint:#0E0C1A;
 }
 *{ -webkit-tap-highlight-color:transparent; font-family:var(--font-geist-sans),-apple-system,sans-serif !important }
 .mono{ font-family:var(--font-geist-mono),monospace !important }
