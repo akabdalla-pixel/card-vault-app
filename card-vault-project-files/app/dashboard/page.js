@@ -20,7 +20,7 @@ function ToastContainer() {
     }
     return () => { _toastFn = null }
   }, [])
-  const colors = { success: '#4ade80', error: '#9333ea', info: '#888' }
+  const colors = { success: '#22c55e', error: '#ef4444', info: '#888' }
   const icons = { success: '✓', error: '✕', info: 'ℹ' }
   if (!toasts.length) return null
   return (
@@ -192,7 +192,7 @@ function SparklineChart({ cards, snapshots }) {
   const isUp = totalVal >= totalCost
   const lineColor = isUp ? '#22c55e' : '#ef4444'
   return (
-    <div style={{ background: '#13131f', border: '1px solid rgba(147,51,234,0.15)', boxShadow: '0 4px 20px rgba(0,0,0,0.4)', borderRadius: 16, padding: '18px 20px', marginBottom: 22 }}>
+    <div style={{ background: '#0e0c1a', border: '1px solid rgba(147,51,234,0.28)', boxShadow: '0 4px 24px rgba(147,51,234,0.1), 0 2px 8px rgba(0,0,0,0.4)', borderRadius: 16, padding: '18px 20px', marginBottom: 22 }}>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 }}>
         <div>
           <div style={{ fontFamily: "'Outfit',sans-serif", fontSize: 13, fontWeight: 700, color: '#999' }}>Portfolio Value</div>
@@ -282,12 +282,12 @@ function TopMovers({ cards }) {
   )
   return (
     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 22 }}>
-      <div style={{ background: '#13131f', border: '1px solid rgba(147,51,234,0.15)', boxShadow: '0 4px 20px rgba(0,0,0,0.4)', borderRadius: 16, padding: '16px 18px' }}>
-        <div style={{ fontFamily: "'Outfit',sans-serif", fontSize: 12, fontWeight: 700, color: '#9333ea', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 10 }}>🚀 Top Gainers</div>
+      <div style={{ background: '#0e0c1a', border: '1px solid rgba(147,51,234,0.28)', boxShadow: '0 4px 20px rgba(147,51,234,0.08), 0 2px 8px rgba(0,0,0,0.4)', borderRadius: 16, padding: '16px 18px' }}>
+        <div style={{ fontFamily: "'Outfit',sans-serif", fontSize: 12, fontWeight: 700, color: '#a855f7', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 10 }}>🚀 Top Gainers</div>
         {gainers.length ? gainers.map(c=><MoverRow key={c.id} card={c} isGainer={true}/>) : <div style={{ color:'#333',fontSize:12 }}>No gainers yet</div>}
       </div>
-      <div style={{ background: '#13131f', border: '1px solid rgba(147,51,234,0.15)', boxShadow: '0 4px 20px rgba(0,0,0,0.4)', borderRadius: 16, padding: '16px 18px' }}>
-        <div style={{ fontFamily: "'Outfit',sans-serif", fontSize: 12, fontWeight: 700, color: '#616161', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 10 }}>📉 Top Losers</div>
+      <div style={{ background: '#0e0c1a', border: '1px solid rgba(147,51,234,0.28)', boxShadow: '0 4px 20px rgba(147,51,234,0.08), 0 2px 8px rgba(0,0,0,0.4)', borderRadius: 16, padding: '16px 18px' }}>
+        <div style={{ fontFamily: "'Outfit',sans-serif", fontSize: 12, fontWeight: 700, color: '#6d4a9e', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 10 }}>📉 Top Losers</div>
         {losers.length ? losers.map(c=><MoverRow key={c.id} card={c} isGainer={false}/>) : <div style={{ color:'#333',fontSize:12 }}>No losers yet</div>}
       </div>
     </div>
@@ -297,7 +297,7 @@ function TopMovers({ cards }) {
 function StatCard({ label, value, sub, positive, style = {} }) {
   const accent = positive === true ? '#22c55e' : positive === false ? '#ef4444' : '#9333ea'
   return (
-    <div style={{ background: '#13131f', border: '1px solid rgba(147,51,234,0.15)', boxShadow: '0 4px 20px rgba(0,0,0,0.4)', borderRadius: 12, padding: '14px 16px', position: 'relative', overflow: 'hidden', ...style }}>
+    <div style={{ background: '#0e0c1a', border: '1px solid rgba(147,51,234,0.28)', boxShadow: '0 4px 20px rgba(147,51,234,0.08), 0 2px 8px rgba(0,0,0,0.4)', borderRadius: 12, padding: '14px 16px', position: 'relative', overflow: 'hidden', ...style }}>
       <div style={{ position:'absolute', top:0, left:0, right:0, height:2, background:`linear-gradient(90deg,${accent},transparent)` }} />
       <div style={{ fontSize: 9, fontWeight: 700, color: '#555', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 8, fontFamily:"'Outfit',sans-serif" }}>{label}</div>
       <div style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: 18, fontWeight: 800, color: positive===true?'#22c55e':positive===false?'#ef4444':'#f0f0f0', letterSpacing: '-0.5px', lineHeight: 1 }}>{value}</div>
@@ -362,6 +362,7 @@ export default function DashboardPage() {
   const [showInstallModal, setShowInstallModal] = useState(false)
   const [activity, setActivity] = useState([])
   const [snapshots, setSnapshots] = useState([])
+  const [spotlightIdx, setSpotlightIdx] = useState(null)
   const router = useRouter()
 
   const loadData = useCallback(async () => {
@@ -395,6 +396,15 @@ export default function DashboardPage() {
     return () => { window.removeEventListener('beforeinstallprompt',onBeforeInstall); document.removeEventListener('visibilitychange',onVisible) }
   }, [loadData])
 
+  useEffect(() => {
+    const active = cards.filter(c => !c.sold)
+    if (active.length > 0) {
+      setSpotlightIdx(Math.floor(Math.random() * active.length))
+    } else {
+      setSpotlightIdx(null)
+    }
+  }, [cards])
+
   async function handleInstall() {
     if (!installPrompt) return
     installPrompt.prompt()
@@ -412,14 +422,10 @@ export default function DashboardPage() {
 
   const activeCards = cards.filter(c=>!c.sold)
   const soldCards = cards.filter(c=>c.sold)
-  // ── Card of the Day ──────────────────────────────────────────
-  const cardOfTheDay = (() => {
-    if (!activeCards.length) return null
-    // Use today's date as seed so it changes daily but is consistent within a day
-    const today = new Date()
-    const seed = today.getFullYear() * 10000 + (today.getMonth() + 1) * 100 + today.getDate()
-    return activeCards[seed % activeCards.length]
-  })()
+  // ── Spotlight ──────────────────────────────────────────────────
+  const spotlight = activeCards.length > 0 && spotlightIdx !== null
+    ? activeCards[spotlightIdx % activeCards.length]
+    : null
 
   const totalInvested = activeCards.reduce((s,c)=>s+(parseFloat(c.buy)||0)*(parseInt(c.qty)||1),0)
   const currentValue = activeCards.reduce((s,c)=>s+(parseFloat(c.val)||parseFloat(c.buy)||0)*(parseInt(c.qty)||1),0)
@@ -547,19 +553,18 @@ export default function DashboardPage() {
           </div>{/* end desk-stats */}
           {activeCards.length>1&&<div className="hide-mobile" style={{ marginTop:22 }}><TopMovers cards={activeCards} /></div>}
 
-          {/* ── Card of the Day ── */}
-          {cardOfTheDay && (() => {
-            const buy = (parseFloat(cardOfTheDay.buy)||0)*(parseInt(cardOfTheDay.qty)||1)
-            const val = (parseFloat(cardOfTheDay.val)||parseFloat(cardOfTheDay.buy)||0)*(parseInt(cardOfTheDay.qty)||1)
+          {/* ── Spotlight ── */}
+          {spotlight && (() => {
+            const buy = (parseFloat(spotlight.buy)||0)*(parseInt(spotlight.qty)||1)
+            const val = (parseFloat(spotlight.val)||parseFloat(spotlight.buy)||0)*(parseInt(spotlight.qty)||1)
             const gl = val - buy
             const glPos = gl >= 0
             const glPct = buy > 0 ? (gl / buy) * 100 : 0
-            const today = new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })
             return (
-              <Link href={`/collection?search=${encodeURIComponent(cardOfTheDay.player)}`} style={{ textDecoration:'none', display:'block', marginTop:20 }}>
-              <div style={{ animation:'scaleIn 0.3s ease', background:'#181818', border:'1px solid #2a2a2a', borderRadius:14, padding:'18px 22px', position:'relative', overflow:'hidden', cursor:'pointer', transition:'border-color 0.15s' }}
-                onMouseEnter={e=>e.currentTarget.style.borderColor='rgba(147,51,234,0.4)'}
-                onMouseLeave={e=>e.currentTarget.style.borderColor='#2a2a2a'}>
+              <Link href={`/collection?search=${encodeURIComponent(spotlight.player)}`} style={{ textDecoration:'none', display:'block', marginTop:20 }}>
+              <div style={{ animation:'scaleIn 0.3s ease', background:'#0e0c1a', border:'1px solid rgba(147,51,234,0.28)', boxShadow:'0 4px 24px rgba(147,51,234,0.1), 0 2px 8px rgba(0,0,0,0.4)', borderRadius:14, padding:'18px 22px', position:'relative', overflow:'hidden', cursor:'pointer', transition:'border-color 0.15s, box-shadow 0.15s' }}
+                onMouseEnter={e=>{ e.currentTarget.style.borderColor='rgba(147,51,234,0.5)'; e.currentTarget.style.boxShadow='0 6px 32px rgba(147,51,234,0.18), 0 2px 8px rgba(0,0,0,0.4)' }}
+                onMouseLeave={e=>{ e.currentTarget.style.borderColor='rgba(147,51,234,0.28)'; e.currentTarget.style.boxShadow='0 4px 24px rgba(147,51,234,0.1), 0 2px 8px rgba(0,0,0,0.4)' }}>
                 {/* top accent */}
                 <div style={{ position:'absolute', top:0, left:0, right:0, height:2, background:'linear-gradient(90deg,#9333ea,#a855f7,transparent)' }} />
                 {/* watermark emoji */}
@@ -568,12 +573,11 @@ export default function DashboardPage() {
                   <div style={{ flex:1, minWidth:0 }}>
                     <div style={{ display:'flex', alignItems:'center', gap:6, marginBottom:10 }}>
                       <div style={{ width:6, height:6, borderRadius:'50%', background:'#9333ea', boxShadow:'0 0 6px rgba(147,51,234,0.5)' }} />
-                      <div style={{ fontFamily:"'Outfit',sans-serif", fontSize:9, fontWeight:800, color:'#a855f7', textTransform:'uppercase', letterSpacing:'0.12em' }}>Card of the Day</div>
-                      <div style={{ fontSize:10, color:'#444', fontFamily:"'Outfit',sans-serif" }}>· {today}</div>
+                      <div style={{ fontFamily:"'Outfit',sans-serif", fontSize:9, fontWeight:800, color:'#a855f7', textTransform:'uppercase', letterSpacing:'0.12em' }}>✨ Spotlight</div>
                     </div>
-                    <div style={{ fontFamily:"'Outfit',sans-serif", fontSize:18, fontWeight:900, color:'#f5f5f5', letterSpacing:'-0.3px' }}>{cardOfTheDay.player}</div>
+                    <div style={{ fontFamily:"'Outfit',sans-serif", fontSize:18, fontWeight:900, color:'#f5f5f5', letterSpacing:'-0.3px' }}>{spotlight.player}</div>
                     <div style={{ fontSize:11, color:'#555', marginTop:3, fontFamily:"'Outfit',sans-serif" }}>
-                      {[cardOfTheDay.year, cardOfTheDay.sport, cardOfTheDay.brand, cardOfTheDay.grade ? `Grade ${cardOfTheDay.grade}` : cardOfTheDay.cond].filter(Boolean).join(' · ')}
+                      {[spotlight.year, spotlight.sport, spotlight.brand, spotlight.grade ? `Grade ${spotlight.grade}` : spotlight.cond].filter(Boolean).join(' · ')}
                     </div>
                     <div style={{ fontSize:11, color:'#a855f7', marginTop:8, fontFamily:"'Outfit',sans-serif", fontWeight:700 }}>View in Collection →</div>
                   </div>
