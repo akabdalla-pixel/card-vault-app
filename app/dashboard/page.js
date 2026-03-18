@@ -544,29 +544,34 @@ export default function DashboardPage() {
                 {/* watermark emoji */}
                 <div style={{ position:'absolute', right:18, top:'50%', transform:'translateY(-50%)', fontSize:48, opacity:0.06, pointerEvents:'none' }}>🃏</div>
                 {/* Header row */}
-                <div style={{ display:'flex', alignItems:'center', gap:6, marginBottom:8 }}>
+                <div style={{ display:'flex', alignItems:'center', gap:6, marginBottom:10 }}>
                   <div style={{ width:6, height:6, borderRadius:'50%', background:'#9333ea', boxShadow:'0 0 6px rgba(147,51,234,0.5)' }} />
                   <div style={{ fontFamily:"'Unbounded',sans-serif", fontSize:9, fontWeight:800, color:'#a855f7', textTransform:'uppercase', letterSpacing:'0.12em' }}>✨ Spotlight</div>
                   <div style={{ marginLeft:'auto', fontSize:10, color:'#a855f7', fontFamily:"'Unbounded',sans-serif", fontWeight:700 }}>View →</div>
                 </div>
-                {/* Player name + meta */}
-                <div style={{ fontFamily:"'Unbounded',sans-serif", fontSize:17, fontWeight:900, color:'#f5f5f5', letterSpacing:'-0.3px', marginBottom:3 }}>{spotlight.player}</div>
-                <div style={{ fontSize:10, color:'#555', fontFamily:"'Unbounded',sans-serif", marginBottom:16 }}>
-                  {[spotlight.year, spotlight.sport, spotlight.brand, spotlight.grade ? `Grade ${spotlight.grade}` : spotlight.cond].filter(Boolean).join(' · ')}
-                </div>
-                {/* Stats bar */}
-                <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr 1fr', gap:0, background:'rgba(255,255,255,0.03)', borderRadius:10, border:'1px solid rgba(255,255,255,0.06)', overflow:'hidden' }}>
-                  <div style={{ padding:'10px 14px', borderRight:'1px solid rgba(255,255,255,0.06)' }}>
-                    <div style={{ fontSize:8, color:'#444', fontWeight:700, textTransform:'uppercase', letterSpacing:'0.1em', marginBottom:6, fontFamily:"'Unbounded',sans-serif" }}>Buy</div>
-                    <div style={{ fontFamily:"'Unbounded',sans-serif", fontSize:16, fontWeight:700, color:'#888' }}>{fmt(buy)}</div>
+                {/* Name + stats on same row */}
+                <div style={{ display:'flex', alignItems:'center', gap:16 }}>
+                  {/* Left: name + meta */}
+                  <div style={{ flex:1, minWidth:0 }}>
+                    <div style={{ fontFamily:"'Unbounded',sans-serif", fontSize:17, fontWeight:900, color:'#f5f5f5', letterSpacing:'-0.3px', marginBottom:4 }}>{spotlight.player}</div>
+                    <div style={{ fontSize:10, color:'#555', fontFamily:"'Unbounded',sans-serif" }}>
+                      {[spotlight.year, spotlight.sport, spotlight.brand, spotlight.grade ? `Grade ${spotlight.grade}` : spotlight.cond].filter(Boolean).join(' · ')}
+                    </div>
                   </div>
-                  <div style={{ padding:'10px 14px', borderRight:'1px solid rgba(255,255,255,0.06)' }}>
-                    <div style={{ fontSize:8, color:'#444', fontWeight:700, textTransform:'uppercase', letterSpacing:'0.1em', marginBottom:6, fontFamily:"'Unbounded',sans-serif" }}>Value</div>
-                    <div style={{ fontFamily:"'Unbounded',sans-serif", fontSize:16, fontWeight:800, color:'#f0f0f0' }}>{fmt(val)}</div>
-                  </div>
-                  <div style={{ padding:'10px 14px' }}>
-                    <div style={{ fontSize:8, color:'#444', fontWeight:700, textTransform:'uppercase', letterSpacing:'0.1em', marginBottom:6, fontFamily:"'Unbounded',sans-serif" }}>G/L</div>
-                    <div style={{ fontFamily:"'Unbounded',sans-serif", fontSize:16, fontWeight:800, color: glPos?'#22c55e':'#ef4444' }}>{glPos?'+':''}{glPct.toFixed(1)}%</div>
+                  {/* Right: stats */}
+                  <div style={{ display:'flex', gap:0, flexShrink:0, background:'rgba(255,255,255,0.03)', borderRadius:10, border:'1px solid rgba(255,255,255,0.06)', overflow:'hidden' }}>
+                    <div style={{ padding:'10px 16px', borderRight:'1px solid rgba(255,255,255,0.06)' }}>
+                      <div style={{ fontSize:8, color:'#444', fontWeight:700, textTransform:'uppercase', letterSpacing:'0.1em', marginBottom:5, fontFamily:"'Unbounded',sans-serif" }}>Buy</div>
+                      <div style={{ fontFamily:"'Unbounded',sans-serif", fontSize:15, fontWeight:700, color:'#888' }}>{fmt(buy)}</div>
+                    </div>
+                    <div style={{ padding:'10px 16px', borderRight:'1px solid rgba(255,255,255,0.06)' }}>
+                      <div style={{ fontSize:8, color:'#444', fontWeight:700, textTransform:'uppercase', letterSpacing:'0.1em', marginBottom:5, fontFamily:"'Unbounded',sans-serif" }}>Value</div>
+                      <div style={{ fontFamily:"'Unbounded',sans-serif", fontSize:15, fontWeight:800, color:'#f0f0f0' }}>{fmt(val)}</div>
+                    </div>
+                    <div style={{ padding:'10px 16px' }}>
+                      <div style={{ fontSize:8, color:'#444', fontWeight:700, textTransform:'uppercase', letterSpacing:'0.1em', marginBottom:5, fontFamily:"'Unbounded',sans-serif" }}>G/L</div>
+                      <div style={{ fontFamily:"'Unbounded',sans-serif", fontSize:15, fontWeight:800, color: glPos?'#22c55e':'#ef4444' }}>{glPos?'+':''}{glPct.toFixed(1)}%</div>
+                    </div>
                   </div>
                 </div>
               </div>
