@@ -44,12 +44,12 @@ export async function GET(req) {
     const cert_data = data.PSACert
     const certPageUrl = `https://www.psacard.com/cert/${cert}/psa`
 
-    // Log raw cert data to identify correct field names
+    // Log raw cert data to help identify correct field names
     console.log('PSA raw cert_data keys:', Object.keys(cert_data))
     console.log('PSA CardGrade:', cert_data.CardGrade)
     console.log('PSA GradeDescription:', cert_data.GradeDescription)
 
-    // Extract auto grade - try multiple possible field names
+    // Extract auto grade - PSA may use different field names
     const autoGradeRaw =
       cert_data.AutoGrade ||
       cert_data.AutoGradeCode ||
@@ -57,7 +57,7 @@ export async function GET(req) {
       cert_data.AuthGrade ||
       null
 
-    // Also try parsing from CardGrade (e.g. "10/A10")
+    // Also try parsing from CardGrade (e.g. "10/A10" or "A10")
     let autoGradeFromCardGrade = null
     if (cert_data.CardGrade) {
       const autoMatch = cert_data.CardGrade.match(/A(\d+(?:\.\d+)?)/i)
@@ -71,7 +71,13 @@ export async function GET(req) {
       if (autoMatch) autoGradeFromDesc = autoMatch[1]
     }
 
-    const resolvedAutoGrade = autoGradeRaw || autoGradeFromCardGrade || autoGradeFromDesc
+    // Normalize to "AUTO10" format
+    const rawAutoVal = autoGradeRaw || autoGradeFromCardGrade || autoGradeFromDesc
+    let resolvedAutoGrade = null
+    if (rawAutoVal) {
+      const numPart = String(rawAutoVal).replace(/^AUTO?/i, '').trim()
+      resolvedAutoGrade = numPart ? `AUTO${numPart}` : null
+    }
 
     const result = {
       valid: true,
@@ -96,6 +102,7 @@ export async function GET(req) {
       raw: cert_data,
     }
 
+    // Save to database cache
     try {
       await prisma.pSACache.upsert({
         where: { cert },
