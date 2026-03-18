@@ -860,6 +860,7 @@ function CollectionPage() {
         .mob-filters{display:none!important}
         .desk-filters{display:flex!important}
         .hide-mob{display:block!important}
+        .hide-mob-flex{display:flex!important}
         .press-btn{transition:transform 0.1s ease,opacity 0.1s ease;cursor:pointer}
         .press-btn:active{transform:scale(0.93)!important;opacity:0.85}
         @keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
@@ -875,6 +876,7 @@ function CollectionPage() {
           .mob-stats{display:grid!important}.desk-stats{display:none!important}
           .mob-filters{display:flex!important}.desk-filters{display:none!important}
           .hide-mob{display:none!important}
+          .hide-mob-flex{display:none!important}
         }
       `}</style>
       <div style={{ display:'flex', minHeight:'100vh', background:'#0a0a0a' }}>
@@ -968,7 +970,7 @@ function CollectionPage() {
               ...uniqueSports.map(s => ({ val: s, label: s, emoji: TCG_LIST.includes(s) ? '🎴' : '🏅' }))
             ]
             return (
-              <div className="hide-mob" style={{ display:'flex', gap:6, marginBottom:14, overflowX:'auto', flexWrap:'nowrap', paddingBottom:4, WebkitOverflowScrolling:'touch', scrollbarWidth:'none' }}>
+              <div className="hide-mob-flex" style={{ gap:6, marginBottom:14, overflowX:'auto', flexWrap:'nowrap', paddingBottom:4, WebkitOverflowScrolling:'touch', scrollbarWidth:'none' }}>
                 {tabs.map(t => (
                   <button key={t.val} onClick={() => setSportTab(t.val)} style={{ display:'flex', alignItems:'center', gap:6, padding:'8px 16px', borderRadius:100, border: sportTab === t.val ? '1px solid #9333ea' : '1px solid #1e1e1e', background: sportTab === t.val ? '#9333ea' : '#111', color: sportTab === t.val ? '#fff' : '#555', fontSize:12, fontWeight: sportTab === t.val ? 900 : 600, textTransform:'uppercase', letterSpacing:'0.05em', cursor:'pointer', whiteSpace:'nowrap', flexShrink:0, transition:'all 0.15s' }}>
                     <span>{t.emoji}</span>{t.label}
