@@ -523,6 +523,7 @@ export default function DashboardPage() {
           </div>
           <div className="hide-mobile" style={{ display:'flex',alignItems:'flex-end',justifyContent:'space-between',flexWrap:'wrap',gap:12,marginBottom:24 }}>
             <div>
+              <p style={{ fontSize:13,fontWeight:700,color:'#a855f7',margin:'0 0 6px',letterSpacing:'0.02em' }}>Hello, {user?.username ? user.username[0].toUpperCase() + user.username.slice(1) : ''} 👋</p>
               <h1 style={{ fontSize:36,fontWeight:900,color:'#fff',letterSpacing:'-1.5px',margin:0,textTransform:'uppercase',lineHeight:1 }}>DASHBOARD</h1>
               <p style={{ fontSize:12,color:'#555',marginTop:6,fontWeight:500 }}>{activeCards.length===0?'Add your first card to get started':`Tracking ${activeCards.length} active card${activeCards.length!==1?'s':''}`}</p>
             </div>

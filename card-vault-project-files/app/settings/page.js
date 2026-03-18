@@ -134,6 +134,11 @@ export default function SettingsPage() {
   }
   const router = useRouter()
 
+  // Change name
+  const [nameVal, setNameVal] = useState('')
+  const [nameLoading, setNameLoading] = useState(false)
+  const [nameError, setNameError] = useState('')
+
   // Change password
   const [pwForm, setPwForm] = useState({ current: '', next: '', confirm: '' })
   const [showPw, setShowPw] = useState({ current: false, next: false, confirm: false })
@@ -166,6 +171,26 @@ export default function SettingsPage() {
   async function handleLogout() {
     await fetch('/api/auth/logout', { method: 'POST' })
     router.push('/login')
+  }
+
+  async function handleChangeName() {
+    setNameError('')
+    const trimmed = nameVal.trim()
+    if (!trimmed) { setNameError('Name cannot be empty'); return }
+    setNameLoading(true)
+    try {
+      const res = await fetch('/api/auth/update-profile', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name: trimmed })
+      })
+      const data = await res.json()
+      if (!res.ok) { setNameError(data.error || 'Failed to update name'); return }
+      setUser(u => ({ ...u, username: data.username }))
+      setNameVal('')
+      showToast('Name updated!', 'success')
+    } catch { setNameError('Something went wrong') }
+    finally { setNameLoading(false) }
   }
 
   async function handleChangePassword(e) {
@@ -348,6 +373,29 @@ export default function SettingsPage() {
                 </div>
               </Section>
             )}
+
+            {/* ── Change Name ── */}
+            <Section title="Change Name" subtitle="Update your display name" icon="✏️">
+              <div style={{ display:'flex', flexDirection:'column', gap:12 }}>
+                <div style={{ fontSize:12, color:'#555', fontFamily:"'Outfit',sans-serif", lineHeight:1.5 }}>
+                  Current name: <span style={{ color:'#a855f7', fontWeight:700 }}>{user?.username ? user.username[0].toUpperCase() + user.username.slice(1) : ''}</span>
+                </div>
+                {nameError && <div style={{ padding:'10px 14px', borderRadius:10, background:'rgba(147,51,234,0.08)', border:'1px solid rgba(147,51,234,0.2)', color:'#9333ea', fontSize:13, fontFamily:"'Outfit',sans-serif" }}>{nameError}</div>}
+                <div>
+                  <div style={{ fontSize:10, fontWeight:700, color:'#444', textTransform:'uppercase', letterSpacing:'0.08em', marginBottom:6, fontFamily:"'Outfit',sans-serif" }}>New Name</div>
+                  <input
+                    type="text"
+                    value={nameVal}
+                    onChange={e => setNameVal(e.target.value)}
+                    placeholder="Enter new name"
+                    style={{ width:'100%', padding:'10px 14px', borderRadius:10, background:'#202020', border:'1px solid #2a2a2a', color:'#f0f0f0', fontSize:14, outline:'none', fontFamily:"'Outfit',sans-serif", boxSizing:'border-box' }}
+                  />
+                </div>
+                <button type="button" onClick={handleChangeName} disabled={nameLoading || !nameVal.trim()} style={{ display:'flex', alignItems:'center', justifyContent:'center', gap:8, padding:'11px 20px', borderRadius:10, background:'rgba(147,51,234,0.1)', border:'1px solid rgba(147,51,234,0.3)', color:'#9333ea', fontFamily:"'Outfit',sans-serif", fontSize:14, fontWeight:700, cursor:'pointer', opacity: !nameVal.trim() ? 0.4 : 1 }}>
+                  {nameLoading ? 'Saving...' : <><IconCheck />Save Name</>}
+                </button>
+              </div>
+            </Section>
 
             {/* ── Change Password ── */}
             <Section title="Change Password" subtitle="Update your login password" icon="🔒">

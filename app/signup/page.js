@@ -16,7 +16,7 @@ export default function SignupPage() {
     setError('')
     if (form.password !== form.confirm) { setError('Passwords do not match'); return }
     if (form.password.length < 8) { setError('Password must be at least 8 characters'); return }
-    if (!form.username.trim()) { setError('Username is required'); return }
+    if (!form.username.trim()) { setError('Name is required'); return }
     if (!form.email.trim()) { setError('Email is required'); return }
     setLoading(true)
     try {
@@ -56,8 +56,8 @@ export default function SignupPage() {
 
             <div style={{ display:'flex', flexDirection:'column', gap:14 }}>
               <div>
-                <label style={{ display:'block', fontSize:10, fontWeight:700, color:'#555', textTransform:'uppercase', letterSpacing:'0.08em', marginBottom:6, fontFamily:"'Outfit',sans-serif" }}>Username</label>
-                <input type="text" value={form.username} onChange={e => set('username', e.target.value)} required placeholder="yourname" className="su-input" />
+                <label style={{ display:'block', fontSize:10, fontWeight:700, color:'#555', textTransform:'uppercase', letterSpacing:'0.08em', marginBottom:6, fontFamily:"'Outfit',sans-serif" }}>Name</label>
+                <input type="text" value={form.username} onChange={e => set('username', e.target.value)} required placeholder="Your name" className="su-input" />
               </div>
               <div>
                 <label style={{ display:'block', fontSize:10, fontWeight:700, color:'#555', textTransform:'uppercase', letterSpacing:'0.08em', marginBottom:6, fontFamily:"'Outfit',sans-serif" }}>Email</label>
