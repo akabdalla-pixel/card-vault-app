@@ -3,6 +3,7 @@ import { useState, useEffect, useCallback, useRef, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import CardModal, { EMPTY_CARD } from '@/app/components/CardModal'
+import { togglePrivacy, isPrivacyOn } from '@/app/components/ThemeProvider'
 
 const NAV = [
   { label: 'Dashboard', href: '/dashboard' },
@@ -31,6 +32,8 @@ function IconCalc() { return <svg width="14" height="14" viewBox="0 0 24 24" fil
 function IconExternalLink() { return <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg> }
 function IconGrid() { return <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg> }
 function IconList() { return <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg> }
+function IconEye() { return <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg> }
+function IconEyeOff() { return <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg> }
 
 function IconSold() { return <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg> }
 function IconMarket() { return <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg> }
@@ -569,7 +572,11 @@ function CollectionPage() {
   const [bulkDeleting, setBulkDeleting] = useState(false)
   const [filterSheetOpen, setFilterSheetOpen] = useState(false)
   const [breakEvenCard, setBreakEvenCard] = useState(null)
+  const [privacy, setPrivacy] = useState(false)
   const router = useRouter()
+
+  useEffect(() => { setPrivacy(isPrivacyOn()) }, [])
+  function handlePrivacy() { setPrivacy(togglePrivacy()) }
 
   const load = useCallback(async () => {
     try {
@@ -719,6 +726,7 @@ function CollectionPage() {
               <button onClick={handleShareCollection} style={{ display:'flex', alignItems:'center', gap:4, padding:'8px 12px', background: shareCopied?'rgba(34,197,94,0.1)':'rgba(var(--accent-rgb),0.08)', border: shareCopied?'1px solid rgba(34,197,94,0.3)':'1px solid rgba(var(--accent-rgb),0.25)', borderRadius:8, color: shareCopied?'#22c55e':'var(--accent)', fontSize:12, fontWeight:700, cursor:'pointer' }}>
                 {shareCopied ? '✓' : '🔗'}
               </button>
+              <button onClick={handlePrivacy} title={privacy ? 'Show values' : 'Hide values'} style={{ width:34, height:34, borderRadius:8, background: privacy ? 'rgba(var(--accent-rgb),0.15)' : '#111', border: privacy ? '1px solid rgba(var(--accent-rgb),0.4)' : '1px solid #1e1e1e', color: privacy ? 'var(--accent)' : '#555', display:'flex', alignItems:'center', justifyContent:'center', cursor:'pointer', flexShrink:0 }}>{privacy ? <IconEyeOff /> : <IconEye />}</button>
               <button onClick={() => setModal('add')} className="press" style={{ display:'flex', alignItems:'center', gap:6, padding:'8px 16px', background:'var(--accent)', border:'none', borderRadius:8, color:'#fff', fontSize:12, fontWeight:900, cursor:'pointer', letterSpacing:'0.05em', textTransform:'uppercase' }}>+ Add</button>
             </div>
           </div>
@@ -735,6 +743,7 @@ function CollectionPage() {
                 <button onClick={handleShareCollection} style={{ display:'flex', alignItems:'center', gap:6, padding:'9px 16px', background: shareCopied?'rgba(34,197,94,0.1)':'rgba(var(--accent-rgb),0.08)', border: shareCopied?'1px solid rgba(34,197,94,0.3)':'1px solid rgba(var(--accent-rgb),0.25)', borderRadius:8, color: shareCopied?'#22c55e':'var(--accent)', fontSize:12, fontWeight:700, cursor:'pointer', letterSpacing:'0.03em', textTransform:'uppercase' }}>
                   {shareCopied ? '✓ Copied' : '🔗 Share'}
                 </button>
+                <button onClick={handlePrivacy} title={privacy ? 'Show values' : 'Hide values'} style={{ width:38, height:38, borderRadius:10, background: privacy ? 'rgba(var(--accent-rgb),0.15)' : '#111', border: privacy ? '1px solid rgba(var(--accent-rgb),0.4)' : '1px solid #1e1e1e', color: privacy ? 'var(--accent)' : '#555', display:'flex', alignItems:'center', justifyContent:'center', cursor:'pointer' }}>{privacy ? <IconEyeOff /> : <IconEye />}</button>
                 <button onClick={() => setModal('add')} style={{ display:'flex', alignItems:'center', gap:6, padding:'9px 20px', background:'var(--accent)', border:'none', borderRadius:8, color:'#fff', fontSize:12, fontWeight:900, cursor:'pointer', letterSpacing:'0.08em', textTransform:'uppercase' }}>+ Add Card</button>
               </div>
             </div>
@@ -744,14 +753,14 @@ function CollectionPage() {
                   { label:'Cards', value: statActive.length, sub:'active', accent:'var(--accent)', valColor:'#fff', big:true },
                   { label:'Invested', value: fmt(totalInvested), sub:'cost basis', accent:'#333', valColor:'#fff', big:false },
                   { label:'Portfolio Value', value: fmt(totalValue), sub:'current', accent:'#333', valColor:'#fff', big:false },
-                  { label:'Gain / Loss', value: (totalValue-totalInvested>=0?'+':'')+fmt(totalValue-totalInvested), sub:(totalValue-totalInvested>=0?'+':'')+((totalInvested>0?(totalValue-totalInvested)/totalInvested*100:0).toFixed(1))+'%', accent: totalValue>=totalInvested?'#22c55e':'#ef4444', valColor: totalValue>=totalInvested?'#22c55e':'#ef4444', big:false },
+                  { label:'Gain / Loss', value: (totalValue-totalInvested>=0?'+':'')+fmt(totalValue-totalInvested), sub:(totalValue-totalInvested>=0?'+':'')+((totalInvested>0?(totalValue-totalInvested)/totalInvested*100:0).toFixed(1))+'%', accent: totalValue>=totalInvested?'#22c55e':'#ef4444', valColor: totalValue>=totalInvested?'#22c55e':'#ef4444', big:false, blurSub:true },
                   { label:'Realized', value: (realizedPL>=0?'+':'')+fmt(realizedPL), sub:'all time', accent:'#333', valColor: realizedPL>=0?'#22c55e':realizedPL<0?'#ef4444':'#fff', big:false },
                 ].map((s,i) => (
                   <div key={i} style={{ background:'#111', border:'1px solid #1a1a1a', borderRadius:12, padding:'16px', position:'relative', overflow:'hidden' }}>
                     <div style={{ position:'absolute', top:0, left:0, right:0, height:2, background:s.accent }} />
                     <div style={{ fontSize:9, fontWeight:700, color:'#555', textTransform:'uppercase', letterSpacing:'0.12em', marginBottom:10 }}>{s.label}</div>
-                    <div style={{ fontFamily:'var(--font-geist-sans)', fontSize:s.big?28:18, fontWeight:900, color:s.valColor, letterSpacing:'-0.5px', lineHeight:1 }}>{s.value}</div>
-                    <div style={{ fontSize:11, color:'#444', marginTop:5 }}>{s.sub}</div>
+                    <div style={{ fontFamily:'var(--font-geist-sans)', fontSize:s.big?28:18, fontWeight:900, color:s.valColor, letterSpacing:'-0.5px', lineHeight:1 }}><span className="blur-val">{s.value}</span></div>
+                    <div style={{ fontSize:11, color:'#444', marginTop:5 }}>{s.blurSub ? <span className="blur-val">{s.sub}</span> : s.sub}</div>
                   </div>
                 ))}
               </div>
@@ -777,7 +786,7 @@ function CollectionPage() {
                 <div key={i} style={{ background:'#111', border:'1px solid #1a1a1a', borderRadius:10, padding:'12px 14px', position:'relative', overflow:'hidden' }}>
                   <div style={{ position:'absolute', top:0, left:0, right:0, height:2, background:s.accent }} />
                   <div style={{ fontSize:9, fontWeight:700, color:'#444', textTransform:'uppercase', letterSpacing:'0.1em', marginBottom:6 }}>{s.label}</div>
-                  <div style={{ fontFamily:'var(--font-geist-sans)', fontSize:16, fontWeight:900, color:s.color, letterSpacing:'-0.5px' }}>{s.value}</div>
+                  <div style={{ fontFamily:'var(--font-geist-sans)', fontSize:16, fontWeight:900, color:s.color, letterSpacing:'-0.5px' }}><span className="blur-val">{s.value}</span></div>
                 </div>
               ))}
             </div>
@@ -1079,11 +1088,11 @@ function CollectionPage() {
                           <div style={{ display:'flex', justifyContent:'space-between', alignItems:'flex-end', paddingTop:6, borderTop:'1px solid #1a1a1a' }}>
                             <div>
                               <div style={{ fontSize:9, color:'#444', fontWeight:700, textTransform:'uppercase', letterSpacing:'0.1em', marginBottom:3 }}>VALUE</div>
-                              <div style={{ fontFamily:'var(--font-geist-sans)', fontSize:15, fontWeight:900, color:'#fff', letterSpacing:'-0.5px' }}>{fmt(val)}</div>
+                              <div style={{ fontFamily:'var(--font-geist-sans)', fontSize:15, fontWeight:900, color:'#fff', letterSpacing:'-0.5px' }}><span className="blur-val">{fmt(val)}</span></div>
                             </div>
                             <div style={{ textAlign:'right' }}>
                               <div style={{ fontSize:9, color:'#444', fontWeight:700, textTransform:'uppercase', letterSpacing:'0.1em', marginBottom:3 }}>G/L</div>
-                              <div style={{ fontFamily:'var(--font-geist-sans)', fontSize:13, fontWeight:800, color: glPos?'#22c55e':'#ef4444' }}>{glPos?'+':''}{glPct.toFixed(1)}%</div>
+                              <div style={{ fontFamily:'var(--font-geist-sans)', fontSize:13, fontWeight:800, color: glPos?'#22c55e':'#ef4444' }}><span className="blur-val">{glPos?'+':''}{glPct.toFixed(1)}%</span></div>
                             </div>
                           </div>
                         </div>
@@ -1123,7 +1132,7 @@ function CollectionPage() {
                               {card.grade && <span style={{ background:'rgba(var(--accent-rgb),0.15)', border:'1px solid rgba(var(--accent-rgb),0.3)', color:'var(--accent-light)', fontSize:9, fontWeight:900, padding:'3px 8px', borderRadius:5, letterSpacing:'0.08em' }}>{card.gradingCo?`${card.gradingCo} `:''}{card.grade}</span>}
                               {card.auto && <span style={{ background:'rgba(255,190,46,0.1)', border:'1px solid rgba(255,190,46,0.25)', color:'#ffbe2e', fontSize:9, fontWeight:900, padding:'3px 8px', borderRadius:5, letterSpacing:'0.08em' }}>AUTO{card.autoGrade ? ` ${card.autoGrade}` : ''}</span>}
                               {card.sold && <span style={{ background:'rgba(255,190,46,0.1)', border:'1px solid rgba(255,190,46,0.25)', color:'#ffbe2e', fontSize:9, fontWeight:900, padding:'3px 8px', borderRadius:5 }}>SOLD</span>}
-                              {buy > 0 && <span style={{ background: glPos ? 'rgba(34,197,94,0.1)' : 'rgba(239,68,68,0.1)', border: `1px solid ${glPos?'rgba(34,197,94,0.25)':'rgba(239,68,68,0.25)'}`, color: glPos ? '#22c55e' : '#ef4444', fontSize:9, fontWeight:900, padding:'3px 8px', borderRadius:5 }}>{glPos?'+':''}{glPct.toFixed(0)}%</span>}
+                              {buy > 0 && <span style={{ background: glPos ? 'rgba(34,197,94,0.1)' : 'rgba(239,68,68,0.1)', border: `1px solid ${glPos?'rgba(34,197,94,0.25)':'rgba(239,68,68,0.25)'}`, color: glPos ? '#22c55e' : '#ef4444', fontSize:9, fontWeight:900, padding:'3px 8px', borderRadius:5 }}><span className="blur-val">{glPos?'+':''}{glPct.toFixed(0)}%</span></span>}
                             </div>
                           </div>
                           {/* Player name */}
@@ -1133,11 +1142,11 @@ function CollectionPage() {
                           <div style={{ display:'flex', justifyContent:'space-between', alignItems:'flex-end', paddingTop:12, borderTop:'1px solid #1a1a1a' }}>
                             <div>
                               <div style={{ fontSize:9, fontWeight:700, color:'#444', textTransform:'uppercase', letterSpacing:'0.1em', marginBottom:4 }}>PAID</div>
-                              <div style={{ fontFamily:'var(--font-geist-sans)', fontSize:13, fontWeight:700, color:'#666' }}>{fmt(buy)}</div>
+                              <div style={{ fontFamily:'var(--font-geist-sans)', fontSize:13, fontWeight:700, color:'#666' }}><span className="blur-val">{fmt(buy)}</span></div>
                             </div>
                             <div style={{ textAlign:'right' }}>
                               <div style={{ fontSize:9, fontWeight:700, color:'#444', textTransform:'uppercase', letterSpacing:'0.1em', marginBottom:4 }}>VALUE</div>
-                              <div style={{ fontFamily:'var(--font-geist-sans)', fontSize:20, fontWeight:900, color:'#fff', letterSpacing:'-0.5px' }}>{fmt(displayVal)}</div>
+                              <div style={{ fontFamily:'var(--font-geist-sans)', fontSize:20, fontWeight:900, color:'#fff', letterSpacing:'-0.5px' }}><span className="blur-val">{fmt(displayVal)}</span></div>
                             </div>
                           </div>
                           {/* Action buttons */}
@@ -1192,11 +1201,11 @@ function CollectionPage() {
                         <div style={{ display:'flex', justifyContent:'space-between', alignItems:'flex-end', paddingTop:6, borderTop:'1px solid #1a1a1a' }}>
                           <div>
                             <div style={{ fontSize:8, color:'#444', fontWeight:700, textTransform:'uppercase', letterSpacing:'0.1em', marginBottom:2 }}>VALUE</div>
-                            <div style={{ fontFamily:'var(--font-geist-sans)', fontSize:14, fontWeight:900, color:'#fff' }}>{fmt(displayVal)}</div>
+                            <div style={{ fontFamily:'var(--font-geist-sans)', fontSize:14, fontWeight:900, color:'#fff' }}><span className="blur-val">{fmt(displayVal)}</span></div>
                           </div>
                           <div style={{ textAlign:'right' }}>
                             <div style={{ fontSize:8, color:'#444', fontWeight:700, textTransform:'uppercase', letterSpacing:'0.1em', marginBottom:2 }}>G/L</div>
-                            <div style={{ fontFamily:'var(--font-geist-sans)', fontSize:11, fontWeight:800, color: glPos?'#22c55e':'#ef4444' }}>{glPos?'+':''}{glPct.toFixed(1)}%</div>
+                            <div style={{ fontFamily:'var(--font-geist-sans)', fontSize:11, fontWeight:800, color: glPos?'#22c55e':'#ef4444' }}><span className="blur-val">{glPos?'+':''}{glPct.toFixed(1)}%</span></div>
                           </div>
                         </div>
                       </div>
@@ -1227,16 +1236,16 @@ function CollectionPage() {
                       <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 12, padding: '10px 12px', borderRadius: 10, background: '#181818' }}>
                         <div style={{ flex: 1 }}>
                           <div style={{ fontSize: 10, color: '#444', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 3 }}>Buy Price</div>
-                          <div style={{ fontFamily: 'var(--font-geist-sans)', fontSize: 14, color: '#666' }}>{fmt(buy)}</div>
+                          <div style={{ fontFamily: 'var(--font-geist-sans)', fontSize: 14, color: '#666' }}><span className="blur-val">{fmt(buy)}</span></div>
                         </div>
                         <div style={{ flex: 1 }}>
                           <div style={{ fontSize: 10, color: '#444', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 3 }}>{card.sold ? 'Sold For' : 'Value'}</div>
-                          <div style={{ fontFamily: 'var(--font-geist-sans)', fontSize: 14, fontWeight: 700, color: '#f0f2ff' }}>{fmt(displayVal)}</div>
+                          <div style={{ fontFamily: 'var(--font-geist-sans)', fontSize: 14, fontWeight: 700, color: '#f0f2ff' }}><span className="blur-val">{fmt(displayVal)}</span></div>
                         </div>
                         <div style={{ flex: 1 }}>
                           <div style={{ fontSize: 10, color: '#444', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 3 }}>G/L</div>
                           <div style={{ display: 'flex', alignItems: 'center', gap: 3, fontFamily: 'var(--font-geist-sans)', fontSize: 14, fontWeight: 700, color: glPos ? '#22c55e' : '#ef4444' }}>
-                            {glPos ? <IconUp /> : <IconDown />}{glPos?'+':''}{glPct.toFixed(1)}%
+                            {glPos ? <IconUp /> : <IconDown />}<span className="blur-val">{glPos?'+':''}{glPct.toFixed(1)}%</span>
                           </div>
                         </div>
                       </div>
