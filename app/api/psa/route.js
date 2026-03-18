@@ -1,8 +1,6 @@
 import { NextResponse } from 'next/server'
-import prisma from '@/lib/prisma'
 
 const PSA_TOKEN = process.env.PSA_TOKEN
-const CACHE_TTL_HOURS = 24
 
 export async function GET(req) {
   const { searchParams } = new URL(req.url)
@@ -10,17 +8,6 @@ export async function GET(req) {
 
   if (!cert) return NextResponse.json({ error: 'No cert number provided' }, { status: 400 })
   if (!PSA_TOKEN) return NextResponse.json({ error: 'PSA token not configured' }, { status: 500 })
-
-  // Check database cache first
-  try {
-    const cached = await prisma.pSACache.findUnique({ where: { cert } })
-    if (cached) {
-      const ageHours = (Date.now() - new Date(cached.updatedAt).getTime()) / (1000 * 60 * 60)
-      if (ageHours < CACHE_TTL_HOURS) {
-        return NextResponse.json(JSON.parse(cached.data))
-      }
-    }
-  } catch (e) {}
 
   try {
     const res = await fetch(`https://api.psacard.com/publicapi/cert/GetByCertNumber/${cert}`, {
@@ -42,48 +29,18 @@ export async function GET(req) {
     }
 
     const cert_data = data.PSACert
+
+    // PSA blocks server-side image fetching - provide the cert page URL for users to view images
     const certPageUrl = `https://www.psacard.com/cert/${cert}/psa`
+    // Try standard cloudfront URL pattern (works for some certs)
+    const frontImage = `https://d1htnxwo4o0jhw.cloudfront.net/cert/${cert}/front.jpg`
+    const backImage = `https://d1htnxwo4o0jhw.cloudfront.net/cert/${cert}/back.jpg`
 
-    // Log raw cert data to help identify correct field names
-    console.log('PSA raw cert_data keys:', Object.keys(cert_data))
-    console.log('PSA CardGrade:', cert_data.CardGrade)
-    console.log('PSA GradeDescription:', cert_data.GradeDescription)
-
-    // Extract auto grade - PSA may use different field names
-    const autoGradeRaw =
-      cert_data.AutoGrade ||
-      cert_data.AutoGradeCode ||
-      cert_data.AutographGrade ||
-      cert_data.AuthGrade ||
-      null
-
-    // Also try parsing from CardGrade (e.g. "10/A10" or "A10")
-    let autoGradeFromCardGrade = null
-    if (cert_data.CardGrade) {
-      const autoMatch = cert_data.CardGrade.match(/A(\d+(?:\.\d+)?)/i)
-      if (autoMatch) autoGradeFromCardGrade = autoMatch[1]
-    }
-
-    // Also try parsing from GradeDescription (e.g. "GEM MT 10 A10")
-    let autoGradeFromDesc = null
-    if (cert_data.GradeDescription) {
-      const autoMatch = cert_data.GradeDescription.match(/A(\d+(?:\.\d+)?)/i)
-      if (autoMatch) autoGradeFromDesc = autoMatch[1]
-    }
-
-    // Normalize to "AUTO10" format
-    const rawAutoVal = autoGradeRaw || autoGradeFromCardGrade || autoGradeFromDesc
-    let resolvedAutoGrade = null
-    if (rawAutoVal) {
-      const numPart = String(rawAutoVal).replace(/^AUTO?/i, '').trim()
-      resolvedAutoGrade = numPart ? `AUTO${numPart}` : null
-    }
-
-    const result = {
+    return NextResponse.json({
       valid: true,
       cert: cert_data.CertNumber,
       grade: cert_data.CardGrade ? cert_data.CardGrade.replace(/[^0-9.]/g, '').trim() : null,
-      autoGrade: resolvedAutoGrade,
+      autoGrade: cert_data.AutoGrade ? cert_data.AutoGrade.replace(/^AUTO\s*/i, '').trim() : null,
       gradeDescription: cert_data.GradeDescription || null,
       player: cert_data.Subject || null,
       year: cert_data.Year || null,
@@ -95,23 +52,14 @@ export async function GET(req) {
       labelType: cert_data.LabelType || null,
       isCancelled: cert_data.IsCancelled || false,
       reverse: cert_data.ReverseBarCode || null,
+      frontImage: frontImage,
+      backImage: backImage,
       certPageUrl: certPageUrl,
       totalPop: cert_data.TotalPopulation || 0,
       totalPopWithQualifier: cert_data.TotalPopulationWithQualifier || 0,
       popHigher: cert_data.PopulationHigher || 0,
       raw: cert_data,
-    }
-
-    // Save to database cache
-    try {
-      await prisma.pSACache.upsert({
-        where: { cert },
-        update: { data: JSON.stringify(result) },
-        create: { cert, data: JSON.stringify(result) },
-      })
-    } catch (e) {}
-
-    return NextResponse.json(result)
+    })
 
   } catch (e) {
     return NextResponse.json({ error: e.message }, { status: 500 })
