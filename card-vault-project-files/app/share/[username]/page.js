@@ -158,7 +158,6 @@ export default function SharedCollectionPage() {
               <div key={c.id} className="card-item" style={{ animation:`fadeUp 0.25s ease ${Math.min(i*0.02,0.3)}s both` }}>
                 <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', gap:12 }}>
                   <div style={{ flex:1, minWidth:0 }}>
-                    <div style={{ flex:1, minWidth:0 }}>
                     <div style={{ display:'flex', alignItems:'center', gap:6, marginBottom:4, flexWrap:'wrap' }}>
                       <span style={{ fontSize:16, flexShrink:0 }}>{SPORT_EMOJI[c.sport]||'🃏'}</span>
                       <div style={{ fontSize:14, fontWeight:800, color:'#fff', overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>{c.player}</div>
