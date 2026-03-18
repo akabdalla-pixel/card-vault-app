@@ -37,12 +37,27 @@ export async function GET(req) {
     const frontImage = `https://d1htnxwo4o0jhw.cloudfront.net/cert/${cert}/front.jpg`
     const backImage = `https://d1htnxwo4o0jhw.cloudfront.net/cert/${cert}/back.jpg`
 
+    // Detect auto cards — PSA encodes autos as "AUTOGEM MT 10" in CardGrade.
+    // AutoGrade is a separate field PSA rarely populates (only when the auto
+    // itself gets its own grade). We derive isAuto + autoGrade from CardGrade.
+    const cardGradeRaw = cert_data.CardGrade || ''
+    const isAuto = /^AUTO/i.test(cardGradeRaw) || !!cert_data.AutoGrade
+    // Extract numeric grade — works for both "AUTOGEM MT 10" and plain "GEM MT 10"
+    const gradeNumeric = cardGradeRaw.replace(/[^0-9.]/g, '').trim() || null
+    // Separate auto grade (PSA-assigned auto-only grade) — numeric only
+    const autoGradeNumeric = cert_data.AutoGrade
+      ? cert_data.AutoGrade.replace(/[^0-9.]/g, '').trim() || null
+      : null
+    // Grade description — strip leading AUTO prefix so it reads "GEM MT 10" not "AUTOGEM MT 10"
+    const gradeDesc = (cert_data.GradeDescription || '').replace(/^AUTO\s*/i, '').trim() || null
+
     const payload = {
       valid: true,
       cert: cert_data.CertNumber,
-      grade: cert_data.CardGrade ? cert_data.CardGrade.replace(/[^0-9.]/g, '').trim() : null,
-      autoGrade: cert_data.AutoGrade ? cert_data.AutoGrade.replace(/^AUTO\s*/i, '').trim() : null,
-      gradeDescription: cert_data.GradeDescription || null,
+      grade: gradeNumeric,
+      isAuto,
+      autoGrade: autoGradeNumeric,
+      gradeDescription: gradeDesc,
       player: cert_data.Subject || null,
       year: cert_data.Year || null,
       brand: cert_data.Brand || null,

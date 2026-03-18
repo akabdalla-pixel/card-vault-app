@@ -284,7 +284,7 @@ export default function CardModal({ card, onClose, onSave }) {
               {lbl('Auto Grade')}
               <input
                 list="auto-grade-opts"
-                placeholder="e.g. GEM MT 10 or 10"
+                placeholder="e.g. 10"
                 value={form.autoGrade || ''}
                 onChange={e => set('autoGrade', e.target.value)}
                 style={{
@@ -296,8 +296,7 @@ export default function CardModal({ card, onClose, onSave }) {
                 }}
               />
               <datalist id="auto-grade-opts">
-                {['GEM MT 10','MINT 9','NM-MT 8','NM 7','EX-MT 6','EX 5','VG-EX 4','VG 3','GOOD 2','FR 1',
-                  '10','9.5','9','8.5','8','7.5','7','6.5','6','5','4','3','2','1'].map(g => (
+                {['10','9.5','9','8.5','8','7.5','7','6.5','6','5','4','3','2','1'].map(g => (
                   <option key={g} value={g} />
                 ))}
               </datalist>

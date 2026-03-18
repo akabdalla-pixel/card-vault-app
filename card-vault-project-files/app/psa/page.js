@@ -265,8 +265,8 @@ export default function PSALookupPage() {
       name: result.set || '',
       grade: result.grade || '',
       gradingCo: 'PSA',
-      autoGrade: result.autoGrade || '',
-      auto: !!result.autoGrade,
+      autoGrade: result.autoGrade || result.grade || '',
+      auto: !!result.isAuto,
       qty: 1,
       buy: 0,
       val: 0,
@@ -358,9 +358,9 @@ export default function PSALookupPage() {
                                 <span style={{ fontFamily:'var(--font-geist-mono)', fontSize:11, fontWeight:800, color:gradeColor, letterSpacing:'0.06em' }}>{result.gradeDescription}</span>
                               </div>
                             )}
-                            {result.autoGrade && (
+                            {result.isAuto && (
                               <div style={{ display:'inline-flex', alignItems:'center', padding:'3px 9px', borderRadius:6, background:'rgba(255,190,46,0.1)', border:'1px solid rgba(255,190,46,0.3)' }}>
-                                <span style={{ fontFamily:'var(--font-geist-mono)', fontSize:11, fontWeight:800, color:'#ffbe2e', letterSpacing:'0.06em' }}>✍️ AUTO {result.autoGrade}</span>
+                                <span style={{ fontFamily:'var(--font-geist-mono)', fontSize:11, fontWeight:800, color:'#ffbe2e', letterSpacing:'0.06em' }}>✍️ AUTO {result.autoGrade || result.grade}</span>
                               </div>
                             )}
                           </div>
@@ -374,7 +374,7 @@ export default function PSALookupPage() {
                           { label:'Brand', value: result.brand || '—' },
                           { label:'Card #', value: result.cardNumber || '—' },
                           { label:'Set', value: result.set || '—' },
-                          ...(result.autoGrade ? [{ label:'Auto Grade', value: result.autoGrade }] : []),
+                          ...(result.isAuto ? [{ label:'Auto Grade', value: result.autoGrade || result.grade }] : []),
                           ...(result.variety ? [{ label:'Variety', value: result.variety }] : []),
                           ...(result.labelType ? [{ label:'Label', value: result.labelType }] : []),
                         ].map((f,i) => (
