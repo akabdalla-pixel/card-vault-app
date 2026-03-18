@@ -1121,7 +1121,7 @@ function CollectionPage() {
                             </div>
                             <div style={{ display:'flex', gap:5, flexWrap:'wrap', justifyContent:'flex-end' }}>
                               {card.grade && <span style={{ background:'rgba(147,51,234,0.15)', border:'1px solid rgba(147,51,234,0.3)', color:'#a855f7', fontSize:9, fontWeight:900, padding:'3px 8px', borderRadius:5, letterSpacing:'0.08em' }}>{card.gradingCo?`${card.gradingCo} `:''}{card.grade}</span>}
-                              {card.auto && <span style={{ background:'rgba(255,190,46,0.1)', border:'1px solid rgba(255,190,46,0.25)', color:'#ffbe2e', fontSize:9, fontWeight:900, padding:'3px 8px', borderRadius:5, letterSpacing:'0.08em' }}>AUTO</span>}
+                              {card.auto && <span style={{ background:'rgba(255,190,46,0.1)', border:'1px solid rgba(255,190,46,0.25)', color:'#ffbe2e', fontSize:9, fontWeight:900, padding:'3px 8px', borderRadius:5, letterSpacing:'0.08em' }}>AUTO{card.autoGrade ? ` ${card.autoGrade}` : ''}</span>}
                               {card.sold && <span style={{ background:'rgba(255,190,46,0.1)', border:'1px solid rgba(255,190,46,0.25)', color:'#ffbe2e', fontSize:9, fontWeight:900, padding:'3px 8px', borderRadius:5 }}>SOLD</span>}
                               {buy > 0 && <span style={{ background: glPos ? 'rgba(34,197,94,0.1)' : 'rgba(239,68,68,0.1)', border: `1px solid ${glPos?'rgba(34,197,94,0.25)':'rgba(239,68,68,0.25)'}`, color: glPos ? '#22c55e' : '#ef4444', fontSize:9, fontWeight:900, padding:'3px 8px', borderRadius:5 }}>{glPos?'+':''}{glPct.toFixed(0)}%</span>}
                             </div>
