@@ -444,7 +444,7 @@ export default function InsightsPage() {
 
           {/* Desktop header */}
           <div className="hide-mobile" style={{ marginBottom: 28 }}>
-            <h1 style={{ fontFamily: 'var(--font-geist-pixel-square)', fontSize: 40, fontWeight: 900, letterSpacing: '-2px', margin: 0, background: 'linear-gradient(135deg,#f5f5f5 40%,#a855f7)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>Insights</h1>
+            <h1 style={{ fontFamily: 'var(--font-geist-pixel-square)', fontSize: 40, fontWeight: 900, letterSpacing: '-2px', margin: 0, textTransform: 'uppercase', background: 'linear-gradient(135deg,#f5f5f5 40%,#a855f7)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>INSIGHTS</h1>
             <p style={{ fontSize: 13, color: '#555', marginTop: 4, fontWeight: 500 }}>A deep look at your collection — updates automatically with every new card</p>
           </div>
 
