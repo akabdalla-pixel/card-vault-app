@@ -29,6 +29,23 @@ export function getSavedTheme() {
   } catch { return THEMES[0] }
 }
 
+export function initPrivacy() {
+  try {
+    if (localStorage.getItem('topload-privacy') === '1')
+      document.body.classList.add('privacy-mode')
+  } catch {}
+}
+
+export function togglePrivacy() {
+  const on = document.body.classList.toggle('privacy-mode')
+  try { localStorage.setItem('topload-privacy', on ? '1' : '0') } catch {}
+  return on
+}
+
+export function isPrivacyOn() {
+  try { return localStorage.getItem('topload-privacy') === '1' } catch { return false }
+}
+
 export async function saveThemeToServer(themeName) {
   try {
     await fetch('/api/user/theme', {
@@ -43,6 +60,7 @@ export default function ThemeProvider({ children }) {
   useEffect(() => {
     // 1. Apply localStorage immediately — no flash, always takes priority
     applyTheme(getSavedTheme())
+    initPrivacy()
 
     // 2. Only check server if localStorage has no saved choice (new device / cleared browser)
     //    This prevents the server default ("Purple") from overwriting a real local preference

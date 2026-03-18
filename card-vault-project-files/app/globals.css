@@ -14,6 +14,9 @@ body{ background:#0a0a0a; color:#fff }
 ::-webkit-scrollbar-track{ background:transparent }
 button:not(:disabled):active{ transform:scale(0.95) !important; opacity:0.85 !important; transition:transform 0.08s ease,opacity 0.08s ease !important }
 input:focus,select:focus,textarea:focus{ outline:none !important; border-color:var(--accent) !important; box-shadow:0 0 0 2px rgba(var(--accent-rgb),0.15) !important }
+/* Privacy mode — blur all money values */
+body.privacy-mode .blur-val{filter:blur(7px);user-select:none;transition:filter 0.25s ease}
+body:not(.privacy-mode) .blur-val{filter:none;transition:filter 0.25s ease}
 @keyframes shimmer{ 0%{background-position:200% 0} 100%{background-position:-200% 0} }
 @keyframes fadeUp{ from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:translateY(0)} }
 @keyframes fadeIn{ from{opacity:0} to{opacity:1} }

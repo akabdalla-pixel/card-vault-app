@@ -2,6 +2,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
+import { togglePrivacy, isPrivacyOn } from '@/app/components/ThemeProvider'
 
 const LOGO = '/logo-transparent.png'
 
@@ -176,7 +177,7 @@ function PortfolioHero({ currentValue, gainLoss, portfolioReturn }) {
         {/* Total Portfolio Value */}
         <div style={{ flex:1, paddingRight:32 }}>
           <div style={{ fontSize:9, fontWeight:700, color:'#555', textTransform:'uppercase', letterSpacing:'0.14em', marginBottom:12 }}>Total Portfolio Value</div>
-          <div style={{ fontSize:30, fontWeight:800, color:'#f0f0f0', lineHeight:1, letterSpacing:'-1px', fontFamily:'var(--font-geist-mono)' }}>{fmt(currentValue)}</div>
+          <div style={{ fontSize:30, fontWeight:800, color:'#f0f0f0', lineHeight:1, letterSpacing:'-1px', fontFamily:'var(--font-geist-mono)' }}><span className="blur-val">{fmt(currentValue)}</span></div>
           <div style={{ fontSize:10, color:'#333', marginTop:10 }}>current value of active cards</div>
         </div>
         {/* Divider */}
@@ -187,7 +188,7 @@ function PortfolioHero({ currentValue, gainLoss, portfolioReturn }) {
             <div style={{ fontSize:9, fontWeight:700, color:'#555', textTransform:'uppercase', letterSpacing:'0.14em' }}>Total G/L</div>
             <div style={{ fontSize:8, fontWeight:700, color:glColor, background:`${glColor}18`, border:`1px solid ${glColor}30`, borderRadius:4, padding:'1px 6px', textTransform:'uppercase', letterSpacing:'0.1em' }}>Unrealized</div>
           </div>
-          <div style={{ fontSize:30, fontWeight:800, color:glColor, lineHeight:1, letterSpacing:'-1px', fontFamily:'var(--font-geist-mono)' }}>{gainPos?'+':''}{fmt(gainLoss)}</div>
+          <div style={{ fontSize:30, fontWeight:800, color:glColor, lineHeight:1, letterSpacing:'-1px', fontFamily:'var(--font-geist-mono)' }}>{gainPos?'+':''}<span className="blur-val">{fmt(gainLoss)}</span></div>
           <div style={{ display:'flex', alignItems:'center', gap:5, marginTop:10 }}>
             <span style={{ color:glColor, display:'flex', alignItems:'center' }}>{gainPos ? <IconTrendUp /> : <IconTrendDown />}</span>
             <span style={{ fontSize:11, fontWeight:700, color:glColor }}>{gainPos?'+':''}{portfolioReturn.toFixed(1)}%</span>
@@ -342,7 +343,11 @@ export default function DashboardPage() {
   const [activity, setActivity] = useState([])
   const [snapshots, setSnapshots] = useState([])
   const [spotlightIdx, setSpotlightIdx] = useState(null)
+  const [privacy, setPrivacy] = useState(false)
   const router = useRouter()
+
+  useEffect(() => { setPrivacy(isPrivacyOn()) }, [])
+  function handlePrivacy() { const on = togglePrivacy(); setPrivacy(on) }
 
   const loadData = useCallback(async () => {
     try {
@@ -471,7 +476,7 @@ export default function DashboardPage() {
             <div style={{ display:'flex', alignItems:'stretch', gap:0 }}>
               <div style={{ flex:1, paddingRight:20 }}>
                 <div style={{ fontSize:8, color:'#555', fontWeight:700, textTransform:'uppercase', letterSpacing:'0.12em', marginBottom:10 }}>Total Portfolio Value</div>
-                <div style={{ fontSize:22, fontWeight:800, color:'#f0f0f0', lineHeight:1, letterSpacing:'-0.5px' }}>{fmt(currentValue)}</div>
+                <div style={{ fontSize:22, fontWeight:800, color:'#f0f0f0', lineHeight:1, letterSpacing:'-0.5px' }}><span className="blur-val">{fmt(currentValue)}</span></div>
                 <div style={{ fontSize:9, color:'#333', marginTop:8 }}>current value of active cards</div>
               </div>
               <div style={{ width:1, background:'rgba(var(--accent-rgb),0.2)', flexShrink:0 }} />
@@ -480,7 +485,7 @@ export default function DashboardPage() {
                   <div style={{ fontSize:8, fontWeight:700, color:'#555', textTransform:'uppercase', letterSpacing:'0.12em' }}>Total G/L</div>
                   <div style={{ fontSize:7, fontWeight:700, color: gainPos?'#22c55e':'#ef4444', background: gainPos?'rgba(34,197,94,0.12)':'rgba(239,68,68,0.12)', border:`1px solid ${gainPos?'rgba(34,197,94,0.3)':'rgba(239,68,68,0.3)'}`, borderRadius:3, padding:'1px 5px', textTransform:'uppercase', letterSpacing:'0.08em' }}>Unrealized</div>
                 </div>
-                <div style={{ fontSize:22, fontWeight:800, color: gainPos?'#22c55e':'#ef4444', lineHeight:1, letterSpacing:'-0.5px' }}>{gainPos?'+':''}{fmt(gainLoss)}</div>
+                <div style={{ fontSize:22, fontWeight:800, color: gainPos?'#22c55e':'#ef4444', lineHeight:1, letterSpacing:'-0.5px' }}>{gainPos?'+':''}<span className="blur-val">{fmt(gainLoss)}</span></div>
                 <div style={{ display:'flex', alignItems:'center', gap:4, marginTop:8 }}>
                   <span style={{ color: gainPos?'#22c55e':'#ef4444', display:'flex' }}>{gainPos?<IconTrendUp />:<IconTrendDown />}</span>
                   <span style={{ fontSize:10, fontWeight:700, color: gainPos?'#22c55e':'#ef4444' }}>{gainPos?'+':''}{portfolioReturn.toFixed(1)}%</span>
@@ -493,7 +498,7 @@ export default function DashboardPage() {
           <div className="mob-stat-scroll" style={{ gap:10,overflowX:'auto',marginBottom:14,paddingBottom:4,WebkitOverflowScrolling:'touch' }}>
             {[
               { label:'Active Cards', value: activeCards.length },
-              { label:'Total Current Investment', value: fmt(totalInvested) },
+              { label:'Total Current Investment', value: <span className="blur-val">{fmt(totalInvested)}</span> },
               { label:'Return', value: `${retPos?'+':''}${portfolioReturn.toFixed(1)}%`, color: retPos?'#22c55e':'#ef4444' },
               { label:'Realized P&L', value: `${realizedPL>=0?'+':''}${fmt(realizedPL)}`, color: realizedPL>=0?'#22c55e':'#ef4444' },
             ].map((s,i) => (
@@ -509,8 +514,13 @@ export default function DashboardPage() {
               <h1 style={{ fontSize:36,fontWeight:900,color:'#fff',letterSpacing:'-1.5px',margin:0,textTransform:'uppercase',lineHeight:1,fontFamily:'var(--font-geist-pixel-square)' }}>DASHBOARD</h1>
               <p style={{ fontSize:12,color:'#555',marginTop:6,fontWeight:500 }}>{activeCards.length===0?'Add your first card to get started':`Tracking ${activeCards.length} active card${activeCards.length!==1?'s':''}`}</p>
             </div>
-            <div style={{ display:'flex',gap:8 }}>
-
+            <div style={{ display:'flex',gap:8,alignItems:'center' }}>
+              <button onClick={handlePrivacy} title={privacy ? 'Show values' : 'Hide values'} style={{ display:'flex',alignItems:'center',justifyContent:'center',width:38,height:38,borderRadius:10,background: privacy ? 'rgba(var(--accent-rgb),0.15)' : '#111',border: privacy ? '1px solid rgba(var(--accent-rgb),0.4)' : '1px solid #1e1e1e',color: privacy ? 'var(--accent)' : '#555',cursor:'pointer',flexShrink:0,transition:'all 0.15s' }}>
+                {privacy
+                  ? <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+                  : <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                }
+              </button>
               <Link href="/collection" style={{ display:'flex',alignItems:'center',gap:7,padding:'9px 14px',background:'rgba(var(--accent-rgb),0.08)',border:'1px solid rgba(var(--accent-rgb),0.25)',borderRadius:10,color:'var(--accent)',fontFamily:'var(--font-geist-sans)',fontSize:13,fontWeight:600,textDecoration:'none' }}>+ Add Card</Link>
             </div>
           </div>
@@ -518,11 +528,11 @@ export default function DashboardPage() {
           <div className="desk-stats">
           <div className="stat-grid" style={{gridTemplateColumns:'repeat(2,1fr)'}}>
             <StatCard style={{animation:"fadeUp 0.45s ease 0s both"}} label="Active Cards" value={activeCards.length} />
-            <StatCard style={{animation:"fadeUp 0.45s ease 0.06s both"}} label="Total Current Investment" value={fmt(totalInvested)} />
+            <StatCard style={{animation:"fadeUp 0.45s ease 0.06s both"}} label="Total Current Investment" value={<span className="blur-val">{fmt(totalInvested)}</span>} />
           </div>
           <div className="stat-grid2" style={{gridTemplateColumns:'repeat(2,1fr)'}}>
             <StatCard style={{animation:"fadeUp 0.45s ease 0.04s both"}} label="Portfolio Return" value={`${retPos?'+':''}${portfolioReturn.toFixed(1)}%`} sub={totalInvested>0?(retPos?'Above cost basis':'Below cost basis'):'No data'} positive={totalInvested>0?retPos:undefined} />
-            <StatCard style={{animation:"fadeUp 0.45s ease 0.10s both"}} label="Realized P&L" value={`${realizedPL>=0?'+':''}${fmt(realizedPL)}`} sub={`${soldCards.length} card${soldCards.length!==1?'s':''} sold`} positive={soldCards.length>0?realizedPL>=0:undefined} />
+            <StatCard style={{animation:"fadeUp 0.45s ease 0.10s both"}} label="Realized P&L" value={<span className="blur-val">{realizedPL>=0?'+':'-'}{fmt(Math.abs(realizedPL))}</span>} sub={`${soldCards.length} card${soldCards.length!==1?'s':''} sold`} positive={soldCards.length>0?realizedPL>=0:undefined} />
           </div>
           </div>{/* end desk-stats */}
           {activeCards.length>1&&<div className="hide-mobile" style={{ marginTop:22 }}><TopMovers cards={activeCards} /></div>}
@@ -560,11 +570,11 @@ export default function DashboardPage() {
                   <div style={{ display:'flex', gap:0, flexShrink:0, background:'rgba(255,255,255,0.03)', borderRadius:10, border:'1px solid rgba(255,255,255,0.06)', overflow:'hidden' }}>
                     <div style={{ padding:'10px 16px', borderRight:'1px solid rgba(255,255,255,0.06)' }}>
                       <div style={{ fontSize:8, color:'#444', fontWeight:700, textTransform:'uppercase', letterSpacing:'0.1em', marginBottom:5, fontFamily:'var(--font-geist-sans)' }}>Buy</div>
-                      <div style={{ fontFamily:'var(--font-geist-sans)', fontSize:15, fontWeight:700, color:'#888' }}>{fmt(buy)}</div>
+                      <div style={{ fontFamily:'var(--font-geist-sans)', fontSize:15, fontWeight:700, color:'#888' }}><span className="blur-val">{fmt(buy)}</span></div>
                     </div>
                     <div style={{ padding:'10px 16px', borderRight:'1px solid rgba(255,255,255,0.06)' }}>
                       <div style={{ fontSize:8, color:'#444', fontWeight:700, textTransform:'uppercase', letterSpacing:'0.1em', marginBottom:5, fontFamily:'var(--font-geist-sans)' }}>Value</div>
-                      <div style={{ fontFamily:'var(--font-geist-sans)', fontSize:15, fontWeight:800, color:'#f0f0f0' }}>{fmt(val)}</div>
+                      <div style={{ fontFamily:'var(--font-geist-sans)', fontSize:15, fontWeight:800, color:'#f0f0f0' }}><span className="blur-val">{fmt(val)}</span></div>
                     </div>
                     <div style={{ padding:'10px 16px' }}>
                       <div style={{ fontSize:8, color:'#444', fontWeight:700, textTransform:'uppercase', letterSpacing:'0.1em', marginBottom:5, fontFamily:'var(--font-geist-sans)' }}>G/L</div>
