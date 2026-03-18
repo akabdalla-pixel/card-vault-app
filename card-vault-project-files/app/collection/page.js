@@ -968,7 +968,7 @@ function CollectionPage() {
               ...uniqueSports.map(s => ({ val: s, label: s, emoji: TCG_LIST.includes(s) ? '🎴' : '🏅' }))
             ]
             return (
-              <div className="hide-mob" style={{ display:'flex', gap:6, marginBottom:14, overflowX:'auto', paddingBottom:2, WebkitOverflowScrolling:'touch' }}>
+              <div className="hide-mob" style={{ display:'flex', gap:6, marginBottom:14, overflowX:'auto', flexWrap:'nowrap', paddingBottom:4, WebkitOverflowScrolling:'touch', scrollbarWidth:'none' }}>
                 {tabs.map(t => (
                   <button key={t.val} onClick={() => setSportTab(t.val)} style={{ display:'flex', alignItems:'center', gap:6, padding:'8px 16px', borderRadius:100, border: sportTab === t.val ? '1px solid #9333ea' : '1px solid #1e1e1e', background: sportTab === t.val ? '#9333ea' : '#111', color: sportTab === t.val ? '#fff' : '#555', fontSize:12, fontWeight: sportTab === t.val ? 900 : 600, textTransform:'uppercase', letterSpacing:'0.05em', cursor:'pointer', whiteSpace:'nowrap', flexShrink:0, transition:'all 0.15s' }}>
                     <span>{t.emoji}</span>{t.label}
@@ -1047,6 +1047,21 @@ function CollectionPage() {
           </div>
           {/* ── Mobile: search row ── */}
           <div className="mob-filters" style={{ marginBottom: 10 }}>
+            {/* Mobile sport chips - horizontal scroll */}
+            {cards.length > 0 && (() => {
+              const uniqueSports = [...new Set(cards.map(c => c.sport).filter(Boolean))]
+              if (uniqueSports.length < 2) return null
+              const allTabs = [{ val: 'all', label: 'All' }, ...uniqueSports.map(s => ({ val: s, label: s }))]
+              return (
+                <div style={{ display:'flex', gap:6, overflowX:'auto', flexWrap:'nowrap', paddingBottom:6, marginBottom:8, WebkitOverflowScrolling:'touch', scrollbarWidth:'none' }}>
+                  {allTabs.map(t => (
+                    <button key={t.val} onClick={() => setSportTab(t.val)} style={{ padding:'5px 12px', borderRadius:20, border: sportTab===t.val ? '1px solid #9333ea' : '1px solid #1e1e1e', background: sportTab===t.val ? '#9333ea' : '#111', color: sportTab===t.val ? '#fff' : '#555', fontSize:11, fontWeight:700, cursor:'pointer', whiteSpace:'nowrap', flexShrink:0, transition:'all 0.15s' }}>
+                      {t.label}
+                    </button>
+                  ))}
+                </div>
+              )
+            })()}
             <div style={{ display:'flex', gap:6, alignItems:'center' }}>
               <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search..." style={{ flex:1, padding:'6px 10px', borderRadius:8, background:'#111', border:'1px solid #1e1e1e', color:'#f0f0f0', fontSize:12, outline:'none' }} />
               {/* View mode dropdown */}
