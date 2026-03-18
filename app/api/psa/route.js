@@ -2,12 +2,22 @@ import { NextResponse } from 'next/server'
 
 const PSA_TOKEN = process.env.PSA_TOKEN
 
+// Simple in-memory cache — survives for the lifetime of the serverless function instance
+const cache = new Map()
+const CACHE_TTL_MS = 10 * 60 * 1000 // 10 minutes
+
 export async function GET(req) {
   const { searchParams } = new URL(req.url)
   const cert = searchParams.get('cert')?.trim()
 
   if (!cert) return NextResponse.json({ error: 'No cert number provided' }, { status: 400 })
   if (!PSA_TOKEN) return NextResponse.json({ error: 'PSA token not configured' }, { status: 500 })
+
+  // Return cached result if available
+  const cached = cache.get(cert)
+  if (cached && Date.now() - cached.ts < CACHE_TTL_MS) {
+    return NextResponse.json(cached.data)
+  }
 
   try {
     const res = await fetch(`https://api.psacard.com/publicapi/cert/GetByCertNumber/${cert}`, {
@@ -65,7 +75,7 @@ export async function GET(req) {
 
     console.log('frontImage resolved:', frontImage)
 
-    return NextResponse.json({
+    const result = {
       valid: true,
       cert: cert_data.CertNumber,
       grade: cert_data.CardGrade ? cert_data.CardGrade.replace(/[^0-9.]/g, '').trim() : null,
@@ -88,7 +98,10 @@ export async function GET(req) {
       totalPopWithQualifier: cert_data.TotalPopulationWithQualifier || 0,
       popHigher: cert_data.PopulationHigher || 0,
       raw: cert_data,
-    })
+    }
+
+    cache.set(cert, { ts: Date.now(), data: result })
+    return NextResponse.json(result)
 
   } catch (e) {
     return NextResponse.json({ error: e.message }, { status: 500 })
