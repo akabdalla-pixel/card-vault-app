@@ -47,14 +47,17 @@ export async function GET(req) {
         })
         if (imgRes.ok) {
           const imgData = await imgRes.json()
-          frontImage = imgData.FrontImageURL || imgData.frontImageURL || imgData.front || null
-          backImage = imgData.BackImageURL || imgData.backImageURL || imgData.back || null
+          console.log('PSA imgData full:', JSON.stringify(imgData))
+          frontImage = imgData.FrontImageURL || imgData.frontImageURL || imgData.front_image_url || imgData.front || imgData.ImageFront || null
+          backImage = imgData.BackImageURL || imgData.backImageURL || imgData.back_image_url || imgData.back || imgData.ImageBack || null
+        } else {
+          console.log('PSA image endpoint status:', imgRes.status, await imgRes.text())
         }
-      } catch {}
+      } catch (e) {
+        console.log('PSA image endpoint error:', e.message)
+      }
     }
 
-    // Log what fields are available for debugging
-    console.log('PSA cert_data keys:', Object.keys(cert_data))
     console.log('frontImage resolved:', frontImage)
 
     return NextResponse.json({
