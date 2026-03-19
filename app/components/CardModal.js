@@ -51,10 +51,10 @@ export default function CardModal({ card, onClose, onSave }) {
   const [imagePreview, setImagePreview] = useState(card?.imageUrl || null)
   const [imageUploading, setImageUploading] = useState(false)
   const [pendingImageBase64, setPendingImageBase64] = useState(null) // upload after save if new card
+  const [dragOver, setDragOver] = useState(false)
   const imageInputRef = useRef(null)
 
-  function handleImageSelect(e) {
-    const file = e.target.files?.[0]
+  function processImageFile(file) {
     if (!file) return
     const reader = new FileReader()
     reader.onload = ev => {
@@ -67,7 +67,6 @@ export default function CardModal({ card, onClose, onSave }) {
         const ctx = canvas.getContext('2d')
         ctx.fillStyle = '#000'
         ctx.fillRect(0, 0, W, H)
-        // Contain: scale so full image fits inside canvas, centered
         const scale = Math.min(W / img.width, H / img.height)
         const sw = Math.round(img.width * scale)
         const sh = Math.round(img.height * scale)
@@ -79,7 +78,18 @@ export default function CardModal({ card, onClose, onSave }) {
       img.src = ev.target.result
     }
     reader.readAsDataURL(file)
+  }
+
+  function handleImageSelect(e) {
+    processImageFile(e.target.files?.[0])
     e.target.value = ''
+  }
+
+  function handleDrop(e) {
+    e.preventDefault()
+    setDragOver(false)
+    const file = e.dataTransfer.files?.[0]
+    if (file && file.type.startsWith('image/')) processImageFile(file)
   }
 
   async function uploadCardImage(cardId, b64) {
@@ -231,6 +241,71 @@ export default function CardModal({ card, onClose, onSave }) {
             {error}
           </div>
         )}
+
+        {/* ── CARD PHOTO HERO ──────────────────────────────────────── */}
+        <div style={{ padding: '0 18px 12px' }}>
+          <label
+            onDragOver={e => { e.preventDefault(); setDragOver(true) }}
+            onDragLeave={() => setDragOver(false)}
+            onDrop={handleDrop}
+            style={{
+              display: 'block', cursor: imageUploading ? 'not-allowed' : 'pointer',
+              borderRadius: 14,
+              border: dragOver ? '2px dashed var(--accent)' : imagePreview ? '2px solid #1e1e1e' : '2px dashed #2a2a2a',
+              background: dragOver ? 'rgba(var(--accent-rgb),0.06)' : imagePreview ? '#0a0a0a' : '#141414',
+              transition: 'border-color 0.15s, background 0.15s',
+              overflow: 'hidden',
+              position: 'relative',
+            }}
+          >
+            <input ref={imageInputRef} type="file" accept="image/*" style={{ display: 'none' }} onChange={handleImageSelect} disabled={imageUploading} />
+
+            {imagePreview ? (
+              /* ── Has image: big PSA-ratio preview ── */
+              <div style={{ position: 'relative' }}>
+                <div style={{ position: 'relative', width: '100%', paddingTop: '146.75%' }}>
+                  <img src={imagePreview} alt="card preview" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'contain' }} />
+                </div>
+                {/* overlay bar */}
+                <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, padding: '10px 14px', background: 'linear-gradient(transparent, rgba(0,0,0,0.85))', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <span style={{ fontFamily: 'var(--font-geist-sans)', fontSize: 11, fontWeight: 700, color: '#aaa' }}>
+                    {imageUploading ? '⏳ Uploading…' : '📷 Tap to change photo'}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={e => { e.preventDefault(); e.stopPropagation(); handleRemoveImage() }}
+                    style={{ background: 'rgba(239,68,68,0.15)', border: '1px solid rgba(239,68,68,0.3)', color: '#ef4444', fontSize: 11, fontWeight: 700, padding: '4px 10px', borderRadius: 7, cursor: 'pointer', fontFamily: 'var(--font-geist-sans)' }}
+                  >
+                    Remove
+                  </button>
+                </div>
+              </div>
+            ) : (
+              /* ── No image: big CTA ── */
+              <div style={{ padding: '28px 20px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8, textAlign: 'center' }}>
+                <div style={{ fontSize: 40, lineHeight: 1 }}>📸</div>
+                <div style={{ fontFamily: 'var(--font-geist-sans)', fontSize: 15, fontWeight: 800, color: '#e0e0e0', marginTop: 4 }}>
+                  Add a photo of your card
+                </div>
+                <div style={{ fontFamily: 'var(--font-geist-sans)', fontSize: 12, color: '#555', lineHeight: 1.5, maxWidth: 280 }}>
+                  PSA slabs, raw cards, or any image — drag & drop or tap to upload
+                </div>
+                <div style={{
+                  marginTop: 8, padding: '9px 22px', borderRadius: 10,
+                  background: 'linear-gradient(135deg, var(--accent), var(--accent-light))',
+                  color: '#fff', fontSize: 13, fontWeight: 800,
+                  fontFamily: 'var(--font-geist-sans)', letterSpacing: '-0.2px',
+                  pointerEvents: 'none',
+                }}>
+                  📷 Upload Photo
+                </div>
+                <div style={{ fontFamily: 'var(--font-geist-sans)', fontSize: 10, color: '#333', marginTop: 2 }}>
+                  Builds your personal card database
+                </div>
+              </div>
+            )}
+          </label>
+        </div>
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: 10, padding: '0 18px' }}>
 
@@ -481,35 +556,6 @@ export default function CardModal({ card, onClose, onSave }) {
             </>
           )}
 
-        </div>
-
-        {/* ── Card Photo ───────────────────────────────────────── */}
-        <div style={{ padding: '10px 18px 0' }}>
-          {divider('Card Photo')}
-          <div style={{ display:'flex', gap:14, alignItems:'flex-start', marginTop:10 }}>
-            {/* Preview */}
-            <div style={{ width:72, height:100, borderRadius:8, background:'#181818', border:'1px solid #252525', overflow:'hidden', flexShrink:0, display:'flex', alignItems:'center', justifyContent:'center' }}>
-              {imagePreview
-                ? <img src={imagePreview} alt="card" style={{ width:'100%', height:'100%', objectFit:'contain' }} />
-                : <span style={{ fontSize:22, opacity:0.25 }}>🃏</span>}
-            </div>
-            <div style={{ flex:1 }}>
-              <div style={{ fontSize:11, color:'#444', marginBottom:10, lineHeight:1.5 }}>
-                Upload a photo of your card. It'll show in list and grid views.
-              </div>
-              <div style={{ display:'flex', gap:8, flexWrap:'wrap' }}>
-                <label style={{ padding:'7px 14px', borderRadius:9, background:'rgba(var(--accent-rgb),0.1)', border:'1px solid rgba(var(--accent-rgb),0.25)', color:'var(--accent)', fontSize:12, fontWeight:800, cursor: imageUploading ? 'not-allowed' : 'pointer', opacity: imageUploading ? 0.5 : 1 }}>
-                  {imageUploading ? 'Uploading…' : imagePreview ? '📷 Change' : '📷 Add Photo'}
-                  <input ref={imageInputRef} type="file" accept="image/*" style={{ display:'none' }} onChange={handleImageSelect} disabled={imageUploading} />
-                </label>
-                {imagePreview && (
-                  <button type="button" onClick={handleRemoveImage} style={{ padding:'7px 14px', borderRadius:9, background:'transparent', border:'1px solid #2a2a2a', color:'#555', fontSize:12, fontWeight:700, cursor:'pointer' }}>
-                    Remove
-                  </button>
-                )}
-              </div>
-            </div>
-          </div>
         </div>
 
         {/* Save button */}
