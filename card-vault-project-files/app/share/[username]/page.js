@@ -78,12 +78,19 @@ export default function SharedCollectionPage() {
 
   const filteredValue = filtered.reduce((s,c) => s + (parseFloat(c.val)||0)*(parseInt(c.qty)||1), 0)
 
+  const gradeCol = g => {
+    const n = parseFloat(g)
+    if (n >= 9) return { c:'#22c55e', bg:'rgba(34,197,94,0.12)', b:'rgba(34,197,94,0.3)' }
+    if (n >= 6) return { c:'#ffbe2e', bg:'rgba(255,190,46,0.12)', b:'rgba(255,190,46,0.3)' }
+    return { c:'#ef4444', bg:'rgba(239,68,68,0.12)', b:'rgba(239,68,68,0.3)' }
+  }
+
   const Badges = ({ c }) => (
     <div style={{ display:'flex', alignItems:'center', gap:5, flexWrap:'wrap' }}>
-      {c.grade && <span style={{ background:'rgba(var(--accent-rgb),0.15)', border:'1px solid rgba(var(--accent-rgb),0.3)', color:'var(--accent-light)', fontSize:9, fontWeight:900, padding:'2px 7px', borderRadius:5, letterSpacing:'0.08em' }}>{c.gradingCo?`${c.gradingCo} `:''}{c.grade}</span>}
-      {c.auto && <span style={{ background:'rgba(255,190,46,0.1)', border:'1px solid rgba(255,190,46,0.25)', color:'#ffbe2e', fontSize:9, fontWeight:900, padding:'2px 7px', borderRadius:5 }}>AUTO{c.autoGrade ? ` ${c.autoGrade}` : ''}</span>}
-      {c.num && String(c.num).includes('/') && <span style={{ background:'rgba(148,163,184,0.1)', border:'1px solid rgba(148,163,184,0.25)', color:'#94a3b8', fontSize:9, fontWeight:900, padding:'2px 7px', borderRadius:5 }}>#{c.num}</span>}
-      {!c.grade && c.cond && <span style={{ background:'rgba(255,255,255,0.05)', border:'1px solid #2a2a2a', color:'#666', fontSize:9, fontWeight:700, padding:'2px 7px', borderRadius:5 }}>{c.cond}</span>}
+      {c.grade && (() => { const gc = gradeCol(c.grade); return <span style={{ background:gc.bg, border:`1px solid ${gc.b}`, color:gc.c, fontSize:9, fontWeight:900, padding:'2px 7px', borderRadius:5, letterSpacing:'0.08em' }}>{c.gradingCo?`${c.gradingCo} `:''}{c.grade}</span> })()}
+      {c.auto && (() => { const agc = c.autoGrade ? gradeCol(c.autoGrade) : { c:'#ffbe2e', bg:'rgba(255,190,46,0.12)', b:'rgba(255,190,46,0.3)' }; return <span style={{ background:agc.bg, border:`1px solid ${agc.b}`, color:agc.c, fontSize:9, fontWeight:900, padding:'2px 7px', borderRadius:5 }}>AUTO{c.autoGrade ? ` ${c.autoGrade}` : ''}</span> })()}
+      {c.num && String(c.num).includes('/') && <span style={{ background:'rgba(var(--accent-rgb),0.1)', border:'1px solid rgba(var(--accent-rgb),0.25)', color:'var(--accent-light)', fontSize:9, fontWeight:900, padding:'2px 7px', borderRadius:5 }}>#{c.num}</span>}
+      {!c.grade && c.cond && <span style={{ background:'rgba(var(--accent-rgb),0.05)', border:'1px solid rgba(var(--accent-rgb),0.15)', color:'var(--accent-light)', fontSize:9, fontWeight:700, padding:'2px 7px', borderRadius:5 }}>{c.cond}</span>}
       {(() => { const m = c.notes && c.notes.match(/PSA Cert #(\d+)/); return m ? <a href={`https://www.psacard.com/cert/${m[1]}/psa`} target="_blank" rel="noopener noreferrer" onClick={e => e.stopPropagation()} style={{ background:'rgba(59,130,246,0.1)', border:'1px solid rgba(59,130,246,0.25)', color:'#60a5fa', fontSize:9, fontWeight:900, padding:'2px 7px', borderRadius:5, textDecoration:'none' }}>PSA ↗</a> : null })()}
     </div>
   )

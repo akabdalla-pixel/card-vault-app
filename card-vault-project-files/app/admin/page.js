@@ -3,6 +3,13 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 
+const gradeCol = g => {
+  const n = parseFloat(g)
+  if (n >= 9) return { c:'#22c55e', bg:'rgba(34,197,94,0.12)', b:'rgba(34,197,94,0.3)' }
+  if (n >= 6) return { c:'#ffbe2e', bg:'rgba(255,190,46,0.12)', b:'rgba(255,190,46,0.3)' }
+  return { c:'#ef4444', bg:'rgba(239,68,68,0.12)', b:'rgba(239,68,68,0.3)' }
+}
+
 const fmt = n => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(n || 0)
 const fmtDate = d => new Date(d).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
 const fmtTime = d => {
@@ -383,8 +390,8 @@ export default function AdminPage() {
                             }
                             {/* Badges overlay */}
                             <div style={{ position:'absolute', top:6, right:6, display:'flex', flexDirection:'column', gap:3, alignItems:'flex-end' }}>
-                              {card.grade && <span style={{ background:'rgba(0,0,0,0.8)', border:'1px solid rgba(var(--accent-rgb),0.4)', color:'var(--accent-light)', fontSize:8, fontWeight:900, padding:'2px 6px', borderRadius:4 }}>{card.gradingCo?card.gradingCo+' ':''}{card.grade}</span>}
-                              {card.auto && <span style={{ background:'rgba(0,0,0,0.8)', border:'1px solid rgba(255,190,46,0.4)', color:'#ffbe2e', fontSize:8, fontWeight:900, padding:'2px 6px', borderRadius:4 }}>AUTO{card.autoGrade ? ` ${card.autoGrade}` : ''}</span>}
+                              {card.grade && (() => { const gc = gradeCol(card.grade); return <span style={{ background:'rgba(0,0,0,0.8)', border:`1px solid ${gc.b}`, color:gc.c, fontSize:8, fontWeight:900, padding:'2px 6px', borderRadius:4 }}>{card.gradingCo?card.gradingCo+' ':''}{card.grade}</span> })()}
+                              {card.auto && (() => { const agc = card.autoGrade ? gradeCol(card.autoGrade) : { c:'#ffbe2e', bg:'rgba(255,190,46,0.12)', b:'rgba(255,190,46,0.3)' }; return <span style={{ background:'rgba(0,0,0,0.8)', border:`1px solid ${agc.b}`, color:agc.c, fontSize:8, fontWeight:900, padding:'2px 6px', borderRadius:4 }}>AUTO{card.autoGrade ? ` ${card.autoGrade}` : ''}</span> })()}
                               {card.num && String(card.num).includes('/') && <span style={{ background:'rgba(0,0,0,0.8)', border:'1px solid rgba(148,163,184,0.4)', color:'#94a3b8', fontSize:8, fontWeight:900, padding:'2px 6px', borderRadius:4 }}>#{card.num}</span>}
                             </div>
                             {card.sold && <div style={{ position:'absolute', top:6, left:6, background:'rgba(255,190,46,0.9)', color:'#000', fontSize:8, fontWeight:900, padding:'2px 6px', borderRadius:4 }}>SOLD</div>}
@@ -438,8 +445,8 @@ export default function AdminPage() {
                           <div>
                             <div style={{ fontSize:12, fontWeight:700, color: card.sold?'#555':'#ccc', textTransform:'uppercase' }}>{card.player}</div>
                             <div style={{ display:'flex', gap:4, marginTop:2, flexWrap:'wrap' }}>
-                              {card.grade && <span style={{ fontSize:8, fontWeight:800, color:'var(--accent-light)', background:'rgba(var(--accent-rgb),0.1)', padding:'1px 5px', borderRadius:3 }}>{card.gradingCo?card.gradingCo+' ':''}{card.grade}</span>}
-                              {card.auto && <span style={{ fontSize:8, fontWeight:800, color:'#ffbe2e', background:'rgba(255,190,46,0.1)', padding:'1px 5px', borderRadius:3 }}>AUTO{card.autoGrade?` ${card.autoGrade}`:''}</span>}
+                              {card.grade && (() => { const gc = gradeCol(card.grade); return <span style={{ fontSize:8, fontWeight:800, color:gc.c, background:gc.bg, padding:'1px 5px', borderRadius:3 }}>{card.gradingCo?card.gradingCo+' ':''}{card.grade}</span> })()}
+                              {card.auto && (() => { const agc = card.autoGrade ? gradeCol(card.autoGrade) : { c:'#ffbe2e', bg:'rgba(255,190,46,0.12)', b:'rgba(255,190,46,0.3)' }; return <span style={{ fontSize:8, fontWeight:800, color:agc.c, background:agc.bg, padding:'1px 5px', borderRadius:3 }}>AUTO{card.autoGrade?` ${card.autoGrade}`:''}</span> })()}
                               {card.num && String(card.num).includes('/') && <span style={{ fontSize:8, fontWeight:800, color:'#94a3b8', background:'rgba(148,163,184,0.1)', padding:'1px 5px', borderRadius:3 }}>#{card.num}</span>}
                               {card.sold && <span style={{ fontSize:8, fontWeight:800, color:'#ffbe2e', background:'rgba(255,190,46,0.1)', padding:'1px 5px', borderRadius:3 }}>SOLD</span>}
                               {card.brand && <span style={{ fontSize:9, color:'#333' }}>{card.brand}</span>}
@@ -448,7 +455,7 @@ export default function AdminPage() {
                           <div style={{ fontSize:11, color:'#555', textAlign:'right' }}>{card.sport||'—'}</div>
                           <div style={{ fontFamily:'var(--font-geist-mono)', fontSize:11, color:'#555', textAlign:'right' }}>{card.year||'—'}</div>
                           <div style={{ textAlign:'right' }}>
-                            {card.grade ? <span style={{ fontSize:10, fontWeight:800, color:'var(--accent-light)', background:'rgba(var(--accent-rgb),0.1)', padding:'2px 6px', borderRadius:4 }}>{card.gradingCo?card.gradingCo+' ':''}{card.grade}</span> : <span style={{ fontSize:10, color:'#333' }}>Raw</span>}
+                            {card.grade ? (() => { const gc = gradeCol(card.grade); return <span style={{ fontSize:10, fontWeight:800, color:gc.c, background:gc.bg, padding:'2px 6px', borderRadius:4 }}>{card.gradingCo?card.gradingCo+' ':''}{card.grade}</span> })() : <span style={{ fontSize:10, color:'#333' }}>Raw</span>}
                           </div>
                           <div style={{ fontFamily:'var(--font-geist-mono)', fontSize:12, color:'#555', textAlign:'right' }}>{fmt(buy)}</div>
                           <div style={{ fontFamily:'var(--font-geist-mono)', fontSize:12, fontWeight:700, color:'#f0f0f0', textAlign:'right' }}>{fmt(val)}</div>
