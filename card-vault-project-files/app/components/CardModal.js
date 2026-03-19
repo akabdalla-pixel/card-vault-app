@@ -315,6 +315,23 @@ export default function CardModal({ card, onClose, onSave }) {
             {inp('player', isTCG ? 'e.g. Charizard' : 'e.g. LeBron James', 'text', { autoFocus: true })}
           </div>
 
+          {/* ── SERIAL NUMBER ──────────────────────────────────────── */}
+          <div>
+            {lbl('Serial # (e.g. 09/10)')}
+            <input
+              type="text"
+              placeholder="e.g. 09/10 or 45/99"
+              value={form.num || ''}
+              onChange={e => set('num', e.target.value)}
+              style={{
+                ...INP,
+                color: form.num && String(form.num).includes('/') ? '#94a3b8' : '#f0f0f0',
+                borderColor: form.num && String(form.num).includes('/') ? 'rgba(148,163,184,0.35)' : '#252525',
+                background: form.num && String(form.num).includes('/') ? 'rgba(148,163,184,0.06)' : '#191919',
+              }}
+            />
+          </div>
+
           {/* ── SPORT ─────────────────────────────────────────────── */}
           <div>
             {lbl('Sport / Game')}
@@ -450,23 +467,6 @@ export default function CardModal({ card, onClose, onSave }) {
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
             <div>{lbl('Buy Price ($)')}{inp('buy', '0.00', 'number')}</div>
             <div>{lbl('Current Value ($)')}{inp('val', '0.00', 'number')}</div>
-          </div>
-
-          {/* ── SERIAL NUMBER ──────────────────────────────────────── */}
-          <div>
-            {lbl('Serial # (e.g. 09/10)')}
-            <input
-              type="text"
-              placeholder="e.g. 09/10 or 45/99"
-              value={form.num || ''}
-              onChange={e => set('num', e.target.value)}
-              style={{
-                ...INP,
-                color: form.num && String(form.num).includes('/') ? '#94a3b8' : '#f0f0f0',
-                borderColor: form.num && String(form.num).includes('/') ? 'rgba(148,163,184,0.35)' : '#252525',
-                background: form.num && String(form.num).includes('/') ? 'rgba(148,163,184,0.06)' : '#191919',
-              }}
-            />
           </div>
 
           {/* ── CARD DETAILS (collapsible, auto-expands when pre-filled) ── */}
