@@ -573,6 +573,7 @@ function CollectionPage() {
   const [filterSheetOpen, setFilterSheetOpen] = useState(false)
   const [breakEvenCard, setBreakEvenCard] = useState(null)
   const [privacy, setPrivacy] = useState(false)
+  const [lightboxImg, setLightboxImg] = useState(null) // { url, player }
   const router = useRouter()
 
   useEffect(() => { setPrivacy(isPrivacyOn()) }, [])
@@ -685,6 +686,18 @@ function CollectionPage() {
 
   return (
     <>
+      {/* ── Image Lightbox ── */}
+      {lightboxImg && (
+        <div onClick={() => setLightboxImg(null)}
+          style={{ position:'fixed', inset:0, zIndex:9999, background:'rgba(0,0,0,0.92)', display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', padding:20, cursor:'zoom-out' }}>
+          <img src={lightboxImg.url} alt={lightboxImg.player}
+            style={{ maxWidth:'90vw', maxHeight:'82vh', objectFit:'contain', borderRadius:12, boxShadow:'0 32px 80px rgba(0,0,0,0.8)' }}
+            onClick={e => e.stopPropagation()} />
+          <div style={{ marginTop:14, fontSize:13, fontWeight:700, color:'#ccc', letterSpacing:'-0.2px' }}>{lightboxImg.player}</div>
+          <div style={{ marginTop:4, fontSize:11, color:'#555' }}>Click anywhere to close</div>
+        </div>
+      )}
+
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Geist:wght@100;200;300;400;500;600;700;800;900&family=Geist+Mono:wght@100;200;300;400;500;600;700;800;900&display=swap');
         *{font-family:var(--font-geist-sans),-apple-system,sans-serif!important}
@@ -1068,10 +1081,12 @@ function CollectionPage() {
                         <div style={{ height:3, background: card.sold ? '#ffbe2e' : barColor, opacity: buy===0 ? 0.3 : 0.9 }} />
                         {/* Card image or sport emoji header */}
                         {card.imageUrl
-                          ? <div style={{ position:'relative', width:'100%', paddingTop:'71.4%', background:'#0d0d0d', overflow:'hidden' }}>
-                              <img src={card.imageUrl} alt={card.player} style={{ position:'absolute', inset:0, width:'100%', height:'100%', objectFit:'cover' }} />
+                          ? <div style={{ position:'relative', width:'100%', paddingTop:'71.4%', background:'#0a0a0a', overflow:'hidden' }}>
+                              <img src={card.imageUrl} alt={card.player}
+                                onClick={e => { e.stopPropagation(); setLightboxImg({ url: card.imageUrl, player: card.player }) }}
+                                style={{ position:'absolute', inset:0, width:'100%', height:'100%', objectFit:'contain', cursor:'zoom-in' }} />
                               <div style={{ position:'absolute', top:8, left:8 }}>
-                                <input type="checkbox" checked={isSelected} onChange={() => toggleSelect(card.id)} style={{ accentColor:'var(--accent)', width:14, height:14, cursor:'pointer' }} />
+                                <input type="checkbox" checked={isSelected} onChange={() => toggleSelect(card.id)} style={{ accentColor:'var(--accent)', width:14, height:14, cursor:'pointer' }} onClick={e => e.stopPropagation()} />
                               </div>
                             </div>
                           : null}
@@ -1136,8 +1151,9 @@ function CollectionPage() {
                         <input type="checkbox" checked={isSelected} onChange={() => toggleSelect(card.id)} style={{ accentColor:'var(--accent)', width:14, height:14, cursor:'pointer', flexShrink:0 }} />
                         {/* Card thumbnail or sport emoji */}
                         {card.imageUrl
-                          ? <div style={{ width:38, height:53, borderRadius:6, overflow:'hidden', flexShrink:0, background:'#0d0d0d' }}>
-                              <img src={card.imageUrl} alt={card.player} style={{ width:'100%', height:'100%', objectFit:'cover' }} />
+                          ? <div onClick={e => { e.stopPropagation(); setLightboxImg({ url: card.imageUrl, player: card.player }) }}
+                              style={{ width:38, height:53, borderRadius:6, overflow:'hidden', flexShrink:0, background:'#0a0a0a', cursor:'zoom-in' }}>
+                              <img src={card.imageUrl} alt={card.player} style={{ width:'100%', height:'100%', objectFit:'contain' }} />
                             </div>
                           : <div style={{ width:34, height:34, borderRadius:8, background:'#1a1a1a', border:'1px solid #222', display:'flex', alignItems:'center', justifyContent:'center', fontSize:17, flexShrink:0 }}>{sportEmoji}</div>
                         }
