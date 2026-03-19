@@ -374,7 +374,7 @@ export default function AdminPage() {
                           onMouseEnter={e => e.currentTarget.style.borderColor='#333'}
                           onMouseLeave={e => e.currentTarget.style.borderColor='#1a1a1a'}>
                           {/* Card image */}
-                          <div style={{ position:'relative', width:'100%', paddingTop:'71.4%', background:'#0a0a0a', overflow:'hidden' }}>
+                          <div style={{ position:'relative', width:'100%', paddingTop:'146.75%', background:'#0a0a0a', overflow:'hidden' }}>
                             {card.imageUrl
                               ? <img src={card.imageUrl} alt={card.player}
                                   onClick={() => setLightboxImg({ url: card.imageUrl, player: card.player })}
@@ -428,7 +428,7 @@ export default function AdminPage() {
                         <div key={card.id} className="card-row" style={{ display:'grid', gridTemplateColumns:'48px 2fr 80px 60px 80px 80px 80px 70px 120px', padding:'10px 16px', borderTop: ci>0?'1px solid #111':'none', transition:'background 0.1s', alignItems:'center' }}>
                           {/* Thumbnail */}
                           <div onClick={() => card.imageUrl && setLightboxImg({ url: card.imageUrl, player: card.player })}
-                            style={{ width:34, height:48, borderRadius:5, overflow:'hidden', background:'#111', flexShrink:0, cursor: card.imageUrl ? 'zoom-in' : 'default' }}>
+                            style={{ width:34, height:50, borderRadius:5, overflow:'hidden', background:'#111', flexShrink:0, cursor: card.imageUrl ? 'zoom-in' : 'default' }}>
                             {card.imageUrl
                               ? <img src={card.imageUrl} alt="" style={{ width:'100%', height:'100%', objectFit:'contain' }} />
                               : <div style={{ width:'100%', height:'100%', display:'flex', alignItems:'center', justifyContent:'center', fontSize:16, opacity:0.2 }}>🃏</div>

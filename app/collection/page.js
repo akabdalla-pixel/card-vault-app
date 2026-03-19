@@ -1081,7 +1081,7 @@ function CollectionPage() {
                         <div style={{ height:3, background: card.sold ? '#ffbe2e' : barColor, opacity: buy===0 ? 0.3 : 0.9 }} />
                         {/* Card image or sport emoji header */}
                         {card.imageUrl
-                          ? <div style={{ position:'relative', width:'100%', paddingTop:'71.4%', background:'#0a0a0a', overflow:'hidden' }}>
+                          ? <div style={{ position:'relative', width:'100%', paddingTop:'146.75%', background:'#0a0a0a', overflow:'hidden' }}>
                               <img src={card.imageUrl} alt={card.player}
                                 onClick={e => { e.stopPropagation(); setLightboxImg({ url: card.imageUrl, player: card.player }) }}
                                 style={{ position:'absolute', inset:0, width:'100%', height:'100%', objectFit:'contain', cursor:'zoom-in' }} />
@@ -1152,7 +1152,7 @@ function CollectionPage() {
                         {/* Card thumbnail or sport emoji */}
                         {card.imageUrl
                           ? <div onClick={e => { e.stopPropagation(); setLightboxImg({ url: card.imageUrl, player: card.player }) }}
-                              style={{ width:38, height:53, borderRadius:6, overflow:'hidden', flexShrink:0, background:'#0a0a0a', cursor:'zoom-in' }}>
+                              style={{ width:38, height:56, borderRadius:6, overflow:'hidden', flexShrink:0, background:'#0a0a0a', cursor:'zoom-in' }}>
                               <img src={card.imageUrl} alt={card.player} style={{ width:'100%', height:'100%', objectFit:'contain' }} />
                             </div>
                           : <div style={{ width:34, height:34, borderRadius:8, background:'#1a1a1a', border:'1px solid #222', display:'flex', alignItems:'center', justifyContent:'center', fontSize:17, flexShrink:0 }}>{sportEmoji}</div>

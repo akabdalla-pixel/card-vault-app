@@ -60,14 +60,18 @@ export default function CardModal({ card, onClose, onSave }) {
     reader.onload = ev => {
       const img = new Image()
       img.onload = () => {
-        const W = 400, H = 560
+        // PSA slab canvas: 400×587 (3.75" × 5.5" ratio), contain with black background
+        const W = 400, H = 587
         const canvas = document.createElement('canvas')
         canvas.width = W; canvas.height = H
         const ctx = canvas.getContext('2d')
-        // Cover crop to card aspect ratio
-        const scale = Math.max(W / img.width, H / img.height)
-        const sw = img.width * scale, sh = img.height * scale
-        ctx.drawImage(img, (W - sw) / 2, (H - sh) / 2, sw, sh)
+        ctx.fillStyle = '#000'
+        ctx.fillRect(0, 0, W, H)
+        // Contain: scale so full image fits inside canvas, centered
+        const scale = Math.min(W / img.width, H / img.height)
+        const sw = Math.round(img.width * scale)
+        const sh = Math.round(img.height * scale)
+        ctx.drawImage(img, Math.round((W - sw) / 2), Math.round((H - sh) / 2), sw, sh)
         const b64 = canvas.toDataURL('image/jpeg', 0.88)
         setImagePreview(b64)
         setPendingImageBase64(b64)
@@ -486,7 +490,7 @@ export default function CardModal({ card, onClose, onSave }) {
             {/* Preview */}
             <div style={{ width:72, height:100, borderRadius:8, background:'#181818', border:'1px solid #252525', overflow:'hidden', flexShrink:0, display:'flex', alignItems:'center', justifyContent:'center' }}>
               {imagePreview
-                ? <img src={imagePreview} alt="card" style={{ width:'100%', height:'100%', objectFit:'cover' }} />
+                ? <img src={imagePreview} alt="card" style={{ width:'100%', height:'100%', objectFit:'contain' }} />
                 : <span style={{ fontSize:22, opacity:0.25 }}>🃏</span>}
             </div>
             <div style={{ flex:1 }}>
