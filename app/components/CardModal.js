@@ -401,18 +401,6 @@ export default function CardModal({ card, onClose, onSave }) {
             </div>
           </div>
 
-          {/* Raw condition — only when not graded */}
-          {!form.gradingCo && !form.grade && (
-            <div>
-              {lbl('Raw Condition')}
-              {sel('cond',
-                <>
-                  <option value="">Select condition...</option>
-                  {CONDS.map(c => <option key={c} value={c}>{c}</option>)}
-                </>
-              )}
-            </div>
-          )}
 
           {/* ── AUTOGRAPH ─────────────────────────────────────────── */}
           {divider('Autograph')}

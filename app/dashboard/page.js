@@ -220,7 +220,7 @@ function QuickValueRow({ card, onUpdate }) {
       onMouseLeave={e => e.currentTarget.style.background='transparent'}>
       <div style={{ flex: 1, minWidth: 0 }}>
         <div style={{ fontFamily: 'var(--font-geist-sans)', fontSize: 13, fontWeight: 700, color: '#ccc', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{card.player}</div>
-        <div style={{ fontSize: 11, color: '#444', marginTop: 1 }}>{[card.year,card.sport,card.grade?'PSA '+card.grade:card.cond].filter(Boolean).join(' · ')}</div>
+        <div style={{ fontSize: 11, color: '#444', marginTop: 1 }}>{[card.year,card.sport,card.grade?'PSA '+card.grade:null].filter(Boolean).join(' · ')}</div>
       </div>
       <div style={{ display: 'flex', alignItems: 'center', gap: 3, fontSize: 12, fontWeight: 600, color: glPos?'#22c55e':'#ef4444', marginRight: 16, minWidth: 60, justifyContent: 'flex-end' }}>
         {glPos?<IconTrendUp />:<IconTrendDown />}{glPos?'+':''}{glPct.toFixed(1)}%
@@ -571,7 +571,7 @@ export default function DashboardPage() {
                   <div style={{ flex:1, minWidth:0 }}>
                     <div style={{ fontFamily:'var(--font-geist-sans)', fontSize:17, fontWeight:900, color:'#f5f5f5', letterSpacing:'-0.3px', marginBottom:4 }}>{spotlight.player}</div>
                     <div style={{ fontSize:10, color:'#555', fontFamily:'var(--font-geist-sans)', marginBottom:12 }}>
-                      {[spotlight.year, spotlight.sport, spotlight.brand, spotlight.grade ? `Grade ${spotlight.grade}` : spotlight.cond].filter(Boolean).join(' · ')}
+                      {[spotlight.year, spotlight.sport, spotlight.brand, spotlight.grade ? `Grade ${spotlight.grade}` : null].filter(Boolean).join(' · ')}
                     </div>
                     {/* Stats */}
                     <div style={{ display:'flex', gap:0, background:'rgba(255,255,255,0.03)', borderRadius:10, border:'1px solid rgba(255,255,255,0.06)', overflow:'hidden' }}>

@@ -225,7 +225,7 @@ export default function SoldHistoryPage() {
                             {card.year && <div style={{ fontSize: 11, color: '#444' }}>{card.year}</div>}
                           </td>
                           <td style={{ padding: '12px 16px', textAlign: 'right', fontFamily: 'var(--font-geist-sans)', fontSize: 12, color: '#666' }}>{card.sport||'—'}</td>
-                          <td style={{ padding: '12px 16px', textAlign: 'right' }}>{card.grade ? <span style={{ padding: '2px 8px', borderRadius: 6, background: 'rgba(var(--accent-rgb),0.1)', color: plPos ? '#22c55e' : '#ef4444', fontSize: 11, fontWeight: 700 }}>Grade {card.grade}</span> : <span style={{ color: '#444', fontSize: 12 }}>{card.cond||'Raw'}</span>}</td>
+                          <td style={{ padding: '12px 16px', textAlign: 'right' }}>{card.grade ? <span style={{ padding: '2px 8px', borderRadius: 6, background: 'rgba(var(--accent-rgb),0.1)', color: plPos ? '#22c55e' : '#ef4444', fontSize: 11, fontWeight: 700 }}>Grade {card.grade}</span> : <span style={{ color: '#444', fontSize: 12 }}>—</span>}</td>
                           <td style={{ padding: '12px 16px', textAlign: 'right', fontFamily: 'var(--font-geist-sans)', fontSize: 13, color: '#666' }}>{fmt(buy)}</td>
                           <td style={{ padding: '12px 16px', textAlign: 'right', fontFamily: 'var(--font-geist-sans)', fontSize: 13, fontWeight: 700, color: '#f0f0f0' }}>{fmt(sold)}</td>
                           <td style={{ padding: '12px 16px', textAlign: 'right' }}>
