@@ -151,23 +151,35 @@ export async function PUT(req) {
 }
 
 export async function DELETE(req) {
-  const userId = await getUser()
-  if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-  const { id } = await req.json()
-  const existing = await prisma.card.findFirst({ where: { id, userId } })
-  if (!existing) return NextResponse.json({ error: 'Not found' }, { status: 404 })
   try {
-    await prisma.activity.create({
-      data: {
-        userId,
-        type: 'deleted',
-        player: existing.player,
-        sport: existing.sport||null,
-        detail: existing.val ? `Was valued at $${existing.val.toFixed(2)}` : null
-      }
-    })
-  } catch(e) {}
-  await prisma.card.delete({ where: { id } })
-  await saveSnapshot(userId)
-  return NextResponse.json({ ok: true })
+    const userId = await getUser()
+    if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    const { id } = await req.json()
+    if (!id) return NextResponse.json({ error: 'id is required' }, { status: 400 })
+    const existing = await prisma.card.findFirst({ where: { id, userId } })
+    if (!existing) return NextResponse.json({ error: 'Not found' }, { status: 404 })
+    try {
+      await prisma.activity.create({
+        data: {
+          userId,
+          type: 'deleted',
+          player: existing.player,
+          sport: existing.sport||null,
+          detail: existing.val ? `Was valued at $${existing.val.toFixed(2)}` : null
+        }
+      })
+    } catch(e) {}
+    if (existing.imageUrl) {
+      try {
+        const cloudinary = (await import('@/lib/cloudinary')).default
+        await cloudinary.uploader.destroy(`topload/cards/${id}`)
+      } catch(e) {}
+    }
+    await prisma.card.delete({ where: { id } })
+    await saveSnapshot(userId)
+    return NextResponse.json({ ok: true })
+  } catch(e) {
+    console.error('DELETE /api/cards error:', e)
+    return NextResponse.json({ error: e.message || 'Server error' }, { status: 500 })
+  }
 }
