@@ -321,6 +321,7 @@ export default function CardModal({ card, onClose, onSave }) {
             <input
               type="text"
               placeholder="e.g. 09/10 or 45/99"
+              autoComplete="off"
               value={form.num || ''}
               onChange={e => set('num', e.target.value)}
               style={{
