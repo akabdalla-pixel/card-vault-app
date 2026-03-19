@@ -5,6 +5,13 @@ import Link from 'next/link'
 import CardModal, { EMPTY_CARD } from '@/app/components/CardModal'
 import { togglePrivacy, isPrivacyOn } from '@/app/components/ThemeProvider'
 
+const gradeCol = g => {
+  const n = parseFloat(g)
+  if (n >= 9) return { c:'#22c55e', bg:'rgba(34,197,94,0.12)', b:'rgba(34,197,94,0.3)' }
+  if (n >= 6) return { c:'#ffbe2e', bg:'rgba(255,190,46,0.12)', b:'rgba(255,190,46,0.3)' }
+  return { c:'#ef4444', bg:'rgba(239,68,68,0.12)', b:'rgba(239,68,68,0.3)' }
+}
+
 const NAV = [
   { label: 'Dashboard', href: '/dashboard' },
   { label: 'Collection', href: '/collection' },
@@ -1097,8 +1104,8 @@ function CollectionPage() {
                               <div style={{ width:36, height:36, borderRadius:8, background:'#1a1a1a', border:'1px solid #222', display:'flex', alignItems:'center', justifyContent:'center', fontSize:18 }}>{sportEmoji}</div>
                             </div>
                             <div style={{ display:'flex', gap:5, flexWrap:'wrap', justifyContent:'flex-end' }}>
-                              {card.grade && <span style={{ background:'rgba(var(--accent-rgb),0.15)', border:'1px solid rgba(var(--accent-rgb),0.3)', color:'var(--accent-light)', fontSize:9, fontWeight:900, padding:'3px 8px', borderRadius:5, letterSpacing:'0.08em' }}>{card.gradingCo?`${card.gradingCo} `:''}{card.grade}</span>}
-                              {card.auto && <span style={{ background:'rgba(255,190,46,0.1)', border:'1px solid rgba(255,190,46,0.25)', color:'#ffbe2e', fontSize:9, fontWeight:900, padding:'3px 8px', borderRadius:5, letterSpacing:'0.08em' }}>AUTO{card.autoGrade ? ` ${card.autoGrade}` : ''}</span>}
+                              {card.grade && (() => { const gc = gradeCol(card.grade); return <span style={{ background:gc.bg, border:`1px solid ${gc.b}`, color:gc.c, fontSize:9, fontWeight:900, padding:'3px 8px', borderRadius:5, letterSpacing:'0.08em' }}>{card.gradingCo?`${card.gradingCo} `:''}{card.grade}</span> })()}
+                              {card.auto && (() => { const agc = card.autoGrade ? gradeCol(card.autoGrade) : { c:'#ffbe2e', bg:'rgba(255,190,46,0.12)', b:'rgba(255,190,46,0.3)' }; return <span style={{ background:agc.bg, border:`1px solid ${agc.b}`, color:agc.c, fontSize:9, fontWeight:900, padding:'3px 8px', borderRadius:5, letterSpacing:'0.08em' }}>AUTO{card.autoGrade ? ` ${card.autoGrade}` : ''}</span> })()}
                               {card.num && String(card.num).includes('/') && <span style={{ background:'rgba(148,163,184,0.1)', border:'1px solid rgba(148,163,184,0.25)', color:'#94a3b8', fontSize:9, fontWeight:900, padding:'3px 8px', borderRadius:5, letterSpacing:'0.06em' }}>#{card.num}</span>}
                               {card.sold && <span style={{ background:'rgba(255,190,46,0.1)', border:'1px solid rgba(255,190,46,0.25)', color:'#ffbe2e', fontSize:9, fontWeight:900, padding:'3px 8px', borderRadius:5 }}>SOLD</span>}
                               {(() => { const m = card.notes && card.notes.match(/PSA Cert #(\d+)/); return m ? <a href={`https://www.psacard.com/cert/${m[1]}/psa`} target="_blank" rel="noopener noreferrer" onClick={e => e.stopPropagation()} style={{ background:'rgba(59,130,246,0.1)', border:'1px solid rgba(59,130,246,0.25)', color:'#60a5fa', fontSize:9, fontWeight:900, padding:'3px 8px', borderRadius:5, letterSpacing:'0.06em', textDecoration:'none' }}>PSA ↗</a> : null })()}
@@ -1161,8 +1168,8 @@ function CollectionPage() {
                         <div style={{ flex:'1 1 0', minWidth:0 }}>
                           <div style={{ display:'flex', alignItems:'center', gap:5, marginBottom:2, flexWrap:'wrap' }}>
                             <span style={{ fontSize:14, fontWeight:800, color:'#fff', letterSpacing:'-0.2px', overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>{card.player}</span>
-                            {card.grade && <span style={{ background:'rgba(var(--accent-rgb),0.15)', border:'1px solid rgba(var(--accent-rgb),0.3)', color:'var(--accent-light)', fontSize:9, fontWeight:900, padding:'2px 7px', borderRadius:5, letterSpacing:'0.08em', flexShrink:0 }}>{card.gradingCo?`${card.gradingCo} `:''}{card.grade}</span>}
-                            {card.auto && <span style={{ background:'rgba(255,190,46,0.1)', border:'1px solid rgba(255,190,46,0.25)', color:'#ffbe2e', fontSize:9, fontWeight:900, padding:'2px 7px', borderRadius:5, flexShrink:0 }}>AUTO{card.autoGrade ? ` ${card.autoGrade}` : ''}</span>}
+                            {card.grade && (() => { const gc = gradeCol(card.grade); return <span style={{ background:gc.bg, border:`1px solid ${gc.b}`, color:gc.c, fontSize:9, fontWeight:900, padding:'2px 7px', borderRadius:5, letterSpacing:'0.08em', flexShrink:0 }}>{card.gradingCo?`${card.gradingCo} `:''}{card.grade}</span> })()}
+                            {card.auto && (() => { const agc = card.autoGrade ? gradeCol(card.autoGrade) : { c:'#ffbe2e', bg:'rgba(255,190,46,0.12)', b:'rgba(255,190,46,0.3)' }; return <span style={{ background:agc.bg, border:`1px solid ${agc.b}`, color:agc.c, fontSize:9, fontWeight:900, padding:'2px 7px', borderRadius:5, flexShrink:0 }}>AUTO{card.autoGrade ? ` ${card.autoGrade}` : ''}</span> })()}
                             {card.num && String(card.num).includes('/') && <span style={{ background:'rgba(148,163,184,0.1)', border:'1px solid rgba(148,163,184,0.25)', color:'#94a3b8', fontSize:9, fontWeight:900, padding:'2px 7px', borderRadius:5, letterSpacing:'0.06em', flexShrink:0 }}>#{card.num}</span>}
                             {card.sold && <span style={{ background:'rgba(255,190,46,0.1)', border:'1px solid rgba(255,190,46,0.25)', color:'#ffbe2e', fontSize:9, fontWeight:900, padding:'2px 7px', borderRadius:5, flexShrink:0 }}>SOLD</span>}
                             {(() => { const m = card.notes && card.notes.match(/PSA Cert #(\d+)/); return m ? <a href={`https://www.psacard.com/cert/${m[1]}/psa`} target="_blank" rel="noopener noreferrer" onClick={e => e.stopPropagation()} style={{ background:'rgba(59,130,246,0.1)', border:'1px solid rgba(59,130,246,0.25)', color:'#60a5fa', fontSize:9, fontWeight:900, padding:'2px 7px', borderRadius:5, letterSpacing:'0.06em', textDecoration:'none', flexShrink:0 }}>PSA ↗</a> : null })()}
