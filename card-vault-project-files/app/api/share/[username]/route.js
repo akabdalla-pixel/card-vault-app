@@ -19,7 +19,7 @@ export async function GET(req, context) {
             id: true, player: true, year: true, sport: true,
             brand: true, name: true, num: true, grade: true,
             gradingCo: true, auto: true, autoGrade: true, val: true, qty: true,
-            cond: true, notes: true, createdAt: true,
+            cond: true, notes: true, createdAt: true, imageUrl: true,
           },
           orderBy: { createdAt: 'desc' }
         }

@@ -9,12 +9,16 @@ const SPORT_EMOJI = { Basketball:'🏀', Football:'🏈', Baseball:'⚾', Soccer
 
 function IconFilter() { return <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg> }
 function IconSearch() { return <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg> }
+function IconGrid() { return <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg> }
+function IconList() { return <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg> }
 
 export default function SharedCollectionPage() {
   const { username } = useParams()
   const [data, setData] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
+  const [view, setView] = useState('grid')
+  const [lightboxImg, setLightboxImg] = useState(null)
 
   // Filters
   const [search, setSearch] = useState('')
@@ -74,18 +78,38 @@ export default function SharedCollectionPage() {
 
   const filteredValue = filtered.reduce((s,c) => s + (parseFloat(c.val)||0)*(parseInt(c.qty)||1), 0)
 
+  const Badges = ({ c }) => (
+    <div style={{ display:'flex', alignItems:'center', gap:5, flexWrap:'wrap' }}>
+      {c.grade && <span style={{ background:'rgba(var(--accent-rgb),0.15)', border:'1px solid rgba(var(--accent-rgb),0.3)', color:'var(--accent-light)', fontSize:9, fontWeight:900, padding:'2px 7px', borderRadius:5, letterSpacing:'0.08em' }}>{c.gradingCo?`${c.gradingCo} `:''}{c.grade}</span>}
+      {c.auto && <span style={{ background:'rgba(255,190,46,0.1)', border:'1px solid rgba(255,190,46,0.25)', color:'#ffbe2e', fontSize:9, fontWeight:900, padding:'2px 7px', borderRadius:5 }}>AUTO{c.autoGrade ? ` ${c.autoGrade}` : ''}</span>}
+      {c.num && String(c.num).includes('/') && <span style={{ background:'rgba(148,163,184,0.1)', border:'1px solid rgba(148,163,184,0.25)', color:'#94a3b8', fontSize:9, fontWeight:900, padding:'2px 7px', borderRadius:5 }}>#{c.num}</span>}
+      {!c.grade && c.cond && <span style={{ background:'rgba(255,255,255,0.05)', border:'1px solid #2a2a2a', color:'#666', fontSize:9, fontWeight:700, padding:'2px 7px', borderRadius:5 }}>{c.cond}</span>}
+      {(() => { const m = c.notes && c.notes.match(/PSA Cert #(\d+)/); return m ? <a href={`https://www.psacard.com/cert/${m[1]}/psa`} target="_blank" rel="noopener noreferrer" onClick={e => e.stopPropagation()} style={{ background:'rgba(59,130,246,0.1)', border:'1px solid rgba(59,130,246,0.25)', color:'#60a5fa', fontSize:9, fontWeight:900, padding:'2px 7px', borderRadius:5, textDecoration:'none' }}>PSA ↗</a> : null })()}
+    </div>
+  )
+
   return (
     <>
       <style>{`
-        
         *{box-sizing:border-box;margin:0;padding:0;font-family:var(--font-geist-sans),-apple-system,sans-serif}
         body{background:#0a0a0a}
         @keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
         @keyframes pulse{0%,100%{opacity:0.2}50%{opacity:0.5}}
-        .card-item{background:#111;border:1px solid #1a1a1a;border-radius:12px;padding:14px 16px;transition:border-color 0.15s}
-        .card-item:hover{border-color:rgba(var(--accent-rgb),0.3)}
+        .card-item{background:#111;border:1px solid #1a1a1a;border-radius:12px;transition:border-color 0.15s,transform 0.12s}
+        .card-item:hover{border-color:rgba(var(--accent-rgb),0.3);transform:translateY(-2px)}
+        .card-row{background:#111;border:1px solid #1a1a1a;border-radius:10px;transition:background 0.1s,border-color 0.1s}
+        .card-row:hover{background:#161616;border-color:#2a2a2a}
         input:focus,select:focus{outline:none;border-color:var(--accent)!important}
       `}</style>
+
+      {/* Lightbox */}
+      {lightboxImg && (
+        <div onClick={() => setLightboxImg(null)} style={{ position:'fixed', inset:0, zIndex:9999, background:'rgba(0,0,0,0.95)', display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', cursor:'zoom-out', padding:20 }}>
+          <img src={lightboxImg.url} alt={lightboxImg.player} style={{ maxWidth:'90vw', maxHeight:'82vh', objectFit:'contain', borderRadius:12, boxShadow:'0 32px 80px rgba(0,0,0,0.8)' }} />
+          <div style={{ marginTop:14, fontSize:13, fontWeight:700, color:'#aaa', letterSpacing:'0.05em', textTransform:'uppercase' }}>{lightboxImg.player}</div>
+          <div style={{ marginTop:6, fontSize:11, color:'#444' }}>Tap anywhere to close</div>
+        </div>
+      )}
 
       <div style={{ minHeight:'100vh', background:'#0a0a0a', color:'#fff', paddingBottom:40 }}>
 
@@ -99,7 +123,7 @@ export default function SharedCollectionPage() {
           </Link>
         </nav>
 
-        <div style={{ maxWidth:800, margin:'0 auto', padding:'24px 16px' }}>
+        <div style={{ maxWidth:900, margin:'0 auto', padding:'24px 16px' }}>
 
           {/* Header */}
           <div style={{ marginBottom:20, display:'flex', alignItems:'flex-start', justifyContent:'space-between', flexWrap:'wrap', gap:14 }}>
@@ -122,7 +146,7 @@ export default function SharedCollectionPage() {
             </div>
           </div>
 
-          {/* Search + Filter row */}
+          {/* Search + Filter + View toggle */}
           <div style={{ display:'flex', gap:8, marginBottom:12 }}>
             <div style={{ flex:1, position:'relative' }}>
               <div style={{ position:'absolute', left:12, top:'50%', transform:'translateY(-50%)', color:'#444', pointerEvents:'none' }}><IconSearch /></div>
@@ -132,6 +156,11 @@ export default function SharedCollectionPage() {
                 style={{ width:'100%', padding:'10px 14px 10px 36px', borderRadius:10, background:'#111', border:'1px solid #1e1e1e', color:'#f0f0f0', fontSize:13, transition:'border-color 0.15s' }}
               />
             </div>
+            {/* View toggle */}
+            <div style={{ display:'flex', borderRadius:10, border:'1px solid #1e1e1e', overflow:'hidden', flexShrink:0 }}>
+              <button onClick={() => setView('grid')} style={{ width:42, height:42, background: view==='grid'?'rgba(var(--accent-rgb),0.15)':'#111', border:'none', color: view==='grid'?'var(--accent)':'#555', cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'center' }}><IconGrid /></button>
+              <button onClick={() => setView('list')} style={{ width:42, height:42, background: view==='list'?'rgba(var(--accent-rgb),0.15)':'#111', border:'none', borderLeft:'1px solid #1e1e1e', color: view==='list'?'var(--accent)':'#555', cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'center' }}><IconList /></button>
+            </div>
             <button onClick={() => setFilterSheetOpen(true)} style={{ width:42, height:42, borderRadius:10, background: hasFilters?'var(--accent)':'#111', border: hasFilters?'none':'1px solid #1e1e1e', color: hasFilters?'#fff':'#555', cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0 }}>
               <IconFilter />
             </button>
@@ -139,7 +168,7 @@ export default function SharedCollectionPage() {
 
           {/* Sport chips */}
           {uniqueSports.length > 1 && (
-            <div style={{ display:'flex', gap:6, flexWrap:'wrap', marginBottom:16 }}>
+            <div style={{ display:'flex', gap:6, flexWrap:'wrap', marginBottom:12 }}>
               <button onClick={() => setSportTab('all')} style={{ padding:'5px 12px', borderRadius:20, fontSize:11, fontWeight:700, cursor:'pointer', border: sportTab==='all'?'1px solid rgba(var(--accent-rgb),0.4)':'1px solid #2a2a2a', background: sportTab==='all'?'rgba(var(--accent-rgb),0.12)':'#111', color: sportTab==='all'?'var(--accent-light)':'#555' }}>All</button>
               {uniqueSports.map(s => (
                 <button key={s} onClick={() => setSportTab(sportTab===s?'all':s)} style={{ padding:'5px 12px', borderRadius:20, fontSize:11, fontWeight:700, cursor:'pointer', border: sportTab===s?'1px solid rgba(var(--accent-rgb),0.4)':'1px solid #2a2a2a', background: sportTab===s?'rgba(var(--accent-rgb),0.12)':'#111', color: sportTab===s?'var(--accent-light)':'#555' }}>
@@ -156,38 +185,80 @@ export default function SharedCollectionPage() {
             ))}
           </div>
 
-          {/* Cards */}
-          <div style={{ display:'flex', flexDirection:'column', gap:8 }}>
-            {filtered.length === 0 && (
-              <div style={{ textAlign:'center', padding:'60px 24px', color:'#333', fontSize:14 }}>No cards match your filters</div>
-            )}
-            {filtered.map((c, i) => (
-              <div key={c.id} className="card-item" style={{ animation:`fadeUp 0.25s ease ${Math.min(i*0.02,0.3)}s both` }}>
-                <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', gap:12 }}>
-                  <div style={{ flex:1, minWidth:0 }}>
-                    <div style={{ display:'flex', alignItems:'center', gap:6, marginBottom:4, flexWrap:'wrap' }}>
-                      <span style={{ fontSize:16, flexShrink:0 }}>{SPORT_EMOJI[c.sport]||'🃏'}</span>
-                      <div style={{ fontSize:14, fontWeight:800, color:'#fff', overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>{c.player}</div>
-                    </div>
-                    <div style={{ display:'flex', alignItems:'center', gap:5, flexWrap:'wrap', marginBottom:4 }}>
-                      {c.grade && <span style={{ background:'rgba(var(--accent-rgb),0.15)', border:'1px solid rgba(var(--accent-rgb),0.3)', color:'var(--accent-light)', fontSize:9, fontWeight:900, padding:'2px 7px', borderRadius:5, letterSpacing:'0.08em' }}>{c.gradingCo?`${c.gradingCo} `:''}{c.grade}</span>}
-                      {c.auto && <span style={{ background:'rgba(255,190,46,0.1)', border:'1px solid rgba(255,190,46,0.25)', color:'#ffbe2e', fontSize:9, fontWeight:900, padding:'2px 7px', borderRadius:5 }}>AUTO{c.autoGrade ? ` ${c.autoGrade}` : ''}</span>}
-                      {c.num && String(c.num).includes('/') && <span style={{ background:'rgba(148,163,184,0.1)', border:'1px solid rgba(148,163,184,0.25)', color:'#94a3b8', fontSize:9, fontWeight:900, padding:'2px 7px', borderRadius:5, letterSpacing:'0.06em' }}>#{c.num}</span>}
-                      {!c.grade && c.cond && <span style={{ background:'rgba(255,255,255,0.05)', border:'1px solid #2a2a2a', color:'#666', fontSize:9, fontWeight:700, padding:'2px 7px', borderRadius:5 }}>{c.cond}</span>}
-                      {(() => { const m = c.notes && c.notes.match(/PSA Cert #(\d+)/); return m ? <a href={`https://www.psacard.com/cert/${m[1]}/psa`} target="_blank" rel="noopener noreferrer" style={{ background:'rgba(59,130,246,0.1)', border:'1px solid rgba(59,130,246,0.25)', color:'#60a5fa', fontSize:9, fontWeight:900, padding:'2px 7px', borderRadius:5, letterSpacing:'0.06em', textDecoration:'none' }}>PSA ↗</a> : null })()}
-                    </div>
-                    <div style={{ fontSize:11, color:'#555' }}>
-                      {[c.year, c.brand, c.name, c.sport].filter(Boolean).join(' · ')}
+          {filtered.length === 0 && (
+            <div style={{ textAlign:'center', padding:'60px 24px', color:'#333', fontSize:14 }}>No cards match your filters</div>
+          )}
+
+          {/* ── GRID VIEW ── */}
+          {view === 'grid' && (
+            <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fill, minmax(150px, 1fr))', gap:12 }}>
+              {filtered.map((c, i) => {
+                const sportEmoji = SPORT_EMOJI[c.sport] || '🃏'
+                return (
+                  <div key={c.id} className="card-item" style={{ animation:`fadeUp 0.25s ease ${Math.min(i*0.04,0.3)}s both`, overflow:'hidden' }}>
+                    {/* Card image or emoji header */}
+                    {c.imageUrl
+                      ? <div style={{ position:'relative', width:'100%', paddingTop:'146.75%', background:'#0a0a0a', overflow:'hidden' }}>
+                          <img
+                            src={c.imageUrl} alt={c.player}
+                            onClick={() => setLightboxImg({ url: c.imageUrl, player: c.player })}
+                            style={{ position:'absolute', inset:0, width:'100%', height:'100%', objectFit:'contain', cursor:'zoom-in' }}
+                          />
+                          {/* Badges overlay */}
+                          <div style={{ position:'absolute', top:6, right:6, display:'flex', flexDirection:'column', gap:3, alignItems:'flex-end' }}>
+                            {c.grade && <span style={{ background:'rgba(0,0,0,0.8)', border:'1px solid rgba(var(--accent-rgb),0.4)', color:'var(--accent-light)', fontSize:8, fontWeight:900, padding:'2px 5px', borderRadius:4 }}>{c.gradingCo?c.gradingCo+' ':''}{c.grade}</span>}
+                            {c.auto && <span style={{ background:'rgba(0,0,0,0.8)', border:'1px solid rgba(255,190,46,0.4)', color:'#ffbe2e', fontSize:8, fontWeight:900, padding:'2px 5px', borderRadius:4 }}>AUTO{c.autoGrade?` ${c.autoGrade}`:''}</span>}
+                            {c.num && String(c.num).includes('/') && <span style={{ background:'rgba(0,0,0,0.8)', border:'1px solid rgba(148,163,184,0.4)', color:'#94a3b8', fontSize:8, fontWeight:900, padding:'2px 5px', borderRadius:4 }}>#{c.num}</span>}
+                          </div>
+                        </div>
+                      : <div style={{ width:'100%', paddingTop:'146.75%', background:'#181818', position:'relative' }}>
+                          <div style={{ position:'absolute', inset:0, display:'flex', alignItems:'center', justifyContent:'center', fontSize:32, opacity:0.2 }}>{sportEmoji}</div>
+                        </div>
+                    }
+                    {/* Info */}
+                    <div style={{ padding:'10px 10px 12px' }}>
+                      <div style={{ fontSize:11, fontWeight:800, color:'#e0e0e0', textTransform:'uppercase', letterSpacing:'-0.2px', overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap', marginBottom:4 }}>{c.player}</div>
+                      <Badges c={c} />
+                      <div style={{ marginTop:6, fontFamily:'var(--font-geist-mono)', fontSize:13, fontWeight:900, color:'#fff' }}>{fmt(c.val)}</div>
+                      <div style={{ fontSize:10, color:'#444', marginTop:2, overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>{[c.year, c.brand].filter(Boolean).join(' · ')}</div>
                     </div>
                   </div>
-                  <div style={{ textAlign:'right', flexShrink:0 }}>
-                    <div style={{ fontFamily:'var(--font-geist-mono)', fontSize:15, fontWeight:900, color:'#fff' }}>{fmt(c.val)}</div>
-                    {c.qty > 1 && <div style={{ fontSize:10, color:'#444', marginTop:2 }}>×{c.qty}</div>}
+                )
+              })}
+            </div>
+          )}
+
+          {/* ── LIST VIEW ── */}
+          {view === 'list' && (
+            <div style={{ display:'flex', flexDirection:'column', gap:8 }}>
+              {filtered.map((c, i) => {
+                const sportEmoji = SPORT_EMOJI[c.sport] || '🃏'
+                return (
+                  <div key={c.id} className="card-row" style={{ display:'flex', alignItems:'center', gap:12, padding:'10px 14px', animation:`fadeUp 0.2s ease ${Math.min(i*0.02,0.3)}s both` }}>
+                    {/* Thumbnail */}
+                    {c.imageUrl
+                      ? <div onClick={() => setLightboxImg({ url: c.imageUrl, player: c.player })}
+                          style={{ width:38, height:56, borderRadius:6, overflow:'hidden', flexShrink:0, background:'#0a0a0a', cursor:'zoom-in' }}>
+                          <img src={c.imageUrl} alt={c.player} style={{ width:'100%', height:'100%', objectFit:'contain' }} />
+                        </div>
+                      : <div style={{ width:38, height:38, borderRadius:8, background:'#1a1a1a', border:'1px solid #222', display:'flex', alignItems:'center', justifyContent:'center', fontSize:17, flexShrink:0 }}>{sportEmoji}</div>
+                    }
+                    {/* Info */}
+                    <div style={{ flex:1, minWidth:0 }}>
+                      <div style={{ fontSize:13, fontWeight:800, color:'#fff', overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap', marginBottom:3 }}>{c.player}</div>
+                      <Badges c={c} />
+                      <div style={{ fontSize:10, color:'#555', marginTop:3 }}>{[c.year, c.brand, c.name, c.sport].filter(Boolean).join(' · ')}</div>
+                    </div>
+                    {/* Value */}
+                    <div style={{ textAlign:'right', flexShrink:0 }}>
+                      <div style={{ fontFamily:'var(--font-geist-mono)', fontSize:14, fontWeight:900, color:'#fff' }}>{fmt(c.val)}</div>
+                      {c.qty > 1 && <div style={{ fontSize:10, color:'#444', marginTop:2 }}>×{c.qty}</div>}
+                    </div>
                   </div>
-                </div>
-              </div>
-            ))}
-          </div>
+                )
+              })}
+            </div>
+          )}
 
           {/* Footer CTA */}
           <div style={{ marginTop:40, textAlign:'center', padding:'28px 20px', background:'#111', border:'1px solid #1a1a1a', borderRadius:16 }}>
@@ -209,8 +280,6 @@ export default function SharedCollectionPage() {
               <span style={{ fontSize:16, fontWeight:900, color:'#fff', textTransform:'uppercase', letterSpacing:'-0.3px' }}>Filters</span>
               <button onClick={() => { setFilterGraded(''); setFilterAuto(false); setPriceMin(''); setPriceMax(''); setSortBy('date_desc'); setSportTab('all') }} style={{ fontSize:11, color:'var(--accent)', fontWeight:700, background:'none', border:'none', cursor:'pointer' }}>Reset all</button>
             </div>
-
-            {/* Grade */}
             <div style={{ marginBottom:18 }}>
               <div style={{ fontSize:9, fontWeight:700, color:'#555', textTransform:'uppercase', letterSpacing:'0.1em', marginBottom:8 }}>Grade</div>
               <div style={{ display:'flex', gap:6 }}>
@@ -219,8 +288,6 @@ export default function SharedCollectionPage() {
                 ))}
               </div>
             </div>
-
-            {/* Sport */}
             {uniqueSports.length > 1 && (
               <div style={{ marginBottom:18 }}>
                 <div style={{ fontSize:9, fontWeight:700, color:'#555', textTransform:'uppercase', letterSpacing:'0.1em', marginBottom:8 }}>Sport</div>
@@ -232,14 +299,10 @@ export default function SharedCollectionPage() {
                 </div>
               </div>
             )}
-
-            {/* Auto */}
             <div style={{ marginBottom:18 }}>
               <div style={{ fontSize:9, fontWeight:700, color:'#555', textTransform:'uppercase', letterSpacing:'0.1em', marginBottom:8 }}>Autograph</div>
               <button onClick={() => setFilterAuto(v => !v)} style={{ padding:'8px 16px', borderRadius:8, border:`1px solid ${filterAuto?'rgba(255,190,46,0.4)':'#1e1e1e'}`, background: filterAuto?'rgba(255,190,46,0.1)':'#1a1a1a', color: filterAuto?'#ffbe2e':'#555', fontSize:12, fontWeight:700, cursor:'pointer' }}>✍️ Autos Only</button>
             </div>
-
-            {/* Sort */}
             <div style={{ marginBottom:18 }}>
               <div style={{ fontSize:9, fontWeight:700, color:'#555', textTransform:'uppercase', letterSpacing:'0.1em', marginBottom:8 }}>Sort By</div>
               <div style={{ display:'flex', gap:6, flexWrap:'wrap' }}>
@@ -248,8 +311,6 @@ export default function SharedCollectionPage() {
                 ))}
               </div>
             </div>
-
-            {/* Price */}
             <div style={{ marginBottom:20 }}>
               <div style={{ fontSize:9, fontWeight:700, color:'#555', textTransform:'uppercase', letterSpacing:'0.1em', marginBottom:8 }}>Value Range</div>
               <div style={{ display:'flex', alignItems:'center', gap:10 }}>
@@ -258,7 +319,6 @@ export default function SharedCollectionPage() {
                 <input type="number" placeholder="Max" value={priceMax} onChange={e => setPriceMax(e.target.value)} style={{ flex:1, padding:'10px 12px', borderRadius:8, background:'#1a1a1a', border:'1px solid #1e1e1e', color:'#f0f0f0', fontSize:14 }} />
               </div>
             </div>
-
             <button onClick={() => setFilterSheetOpen(false)} style={{ width:'100%', padding:'14px', borderRadius:12, background:'var(--accent)', border:'none', color:'#fff', fontSize:14, fontWeight:900, cursor:'pointer', textTransform:'uppercase', letterSpacing:'0.05em' }}>Apply Filters</button>
           </div>
         </div>
