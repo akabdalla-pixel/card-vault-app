@@ -557,28 +557,36 @@ export default function DashboardPage() {
                   <div style={{ fontFamily:'var(--font-geist-sans)', fontSize:9, fontWeight:800, color:'var(--accent-light)', textTransform:'uppercase', letterSpacing:'0.12em' }}>Spotlight</div>
                   <div style={{ marginLeft:'auto', fontSize:10, color:'var(--accent-light)', fontFamily:'var(--font-geist-sans)', fontWeight:700 }}>View →</div>
                 </div>
-                {/* Name + stats on same row */}
-                <div style={{ display:'flex', alignItems:'center', gap:16 }}>
-                  {/* Left: name + meta */}
+                {/* Image + info + stats */}
+                <div style={{ display:'flex', alignItems:'flex-start', gap:16 }}>
+                  {/* Card image */}
+                  {spotlight.imageUrl && (
+                    <div style={{ width:72, flexShrink:0, borderRadius:8, overflow:'hidden', background:'#0a0a0a', border:'1px solid rgba(255,255,255,0.06)' }}>
+                      <div style={{ position:'relative', width:'100%', paddingTop:'146.75%' }}>
+                        <img src={spotlight.imageUrl} alt={spotlight.player} style={{ position:'absolute', inset:0, width:'100%', height:'100%', objectFit:'contain' }} />
+                      </div>
+                    </div>
+                  )}
+                  {/* Right: name + meta + stats */}
                   <div style={{ flex:1, minWidth:0 }}>
                     <div style={{ fontFamily:'var(--font-geist-sans)', fontSize:17, fontWeight:900, color:'#f5f5f5', letterSpacing:'-0.3px', marginBottom:4 }}>{spotlight.player}</div>
-                    <div style={{ fontSize:10, color:'#555', fontFamily:'var(--font-geist-sans)' }}>
+                    <div style={{ fontSize:10, color:'#555', fontFamily:'var(--font-geist-sans)', marginBottom:12 }}>
                       {[spotlight.year, spotlight.sport, spotlight.brand, spotlight.grade ? `Grade ${spotlight.grade}` : spotlight.cond].filter(Boolean).join(' · ')}
                     </div>
-                  </div>
-                  {/* Right: stats */}
-                  <div style={{ display:'flex', gap:0, flexShrink:0, background:'rgba(255,255,255,0.03)', borderRadius:10, border:'1px solid rgba(255,255,255,0.06)', overflow:'hidden' }}>
-                    <div style={{ padding:'10px 16px', borderRight:'1px solid rgba(255,255,255,0.06)' }}>
-                      <div style={{ fontSize:8, color:'#444', fontWeight:700, textTransform:'uppercase', letterSpacing:'0.1em', marginBottom:5, fontFamily:'var(--font-geist-sans)' }}>Buy</div>
-                      <div style={{ fontFamily:'var(--font-geist-sans)', fontSize:15, fontWeight:700, color:'#888' }}><span className="blur-val">{fmt(buy)}</span></div>
-                    </div>
-                    <div style={{ padding:'10px 16px', borderRight:'1px solid rgba(255,255,255,0.06)' }}>
-                      <div style={{ fontSize:8, color:'#444', fontWeight:700, textTransform:'uppercase', letterSpacing:'0.1em', marginBottom:5, fontFamily:'var(--font-geist-sans)' }}>Value</div>
-                      <div style={{ fontFamily:'var(--font-geist-sans)', fontSize:15, fontWeight:800, color:'#f0f0f0' }}><span className="blur-val">{fmt(val)}</span></div>
-                    </div>
-                    <div style={{ padding:'10px 16px' }}>
-                      <div style={{ fontSize:8, color:'#444', fontWeight:700, textTransform:'uppercase', letterSpacing:'0.1em', marginBottom:5, fontFamily:'var(--font-geist-sans)' }}>G/L</div>
-                      <div style={{ fontFamily:'var(--font-geist-sans)', fontSize:15, fontWeight:800, color: glPos?'#22c55e':'#ef4444' }}>{glPos?'+':''}{glPct.toFixed(1)}%</div>
+                    {/* Stats */}
+                    <div style={{ display:'flex', gap:0, background:'rgba(255,255,255,0.03)', borderRadius:10, border:'1px solid rgba(255,255,255,0.06)', overflow:'hidden' }}>
+                      <div style={{ padding:'10px 14px', borderRight:'1px solid rgba(255,255,255,0.06)' }}>
+                        <div style={{ fontSize:8, color:'#444', fontWeight:700, textTransform:'uppercase', letterSpacing:'0.1em', marginBottom:5, fontFamily:'var(--font-geist-sans)' }}>Buy</div>
+                        <div style={{ fontFamily:'var(--font-geist-sans)', fontSize:14, fontWeight:700, color:'#888' }}><span className="blur-val">{fmt(buy)}</span></div>
+                      </div>
+                      <div style={{ padding:'10px 14px', borderRight:'1px solid rgba(255,255,255,0.06)' }}>
+                        <div style={{ fontSize:8, color:'#444', fontWeight:700, textTransform:'uppercase', letterSpacing:'0.1em', marginBottom:5, fontFamily:'var(--font-geist-sans)' }}>Value</div>
+                        <div style={{ fontFamily:'var(--font-geist-sans)', fontSize:14, fontWeight:800, color:'#f0f0f0' }}><span className="blur-val">{fmt(val)}</span></div>
+                      </div>
+                      <div style={{ padding:'10px 14px' }}>
+                        <div style={{ fontSize:8, color:'#444', fontWeight:700, textTransform:'uppercase', letterSpacing:'0.1em', marginBottom:5, fontFamily:'var(--font-geist-sans)' }}>G/L</div>
+                        <div style={{ fontFamily:'var(--font-geist-sans)', fontSize:14, fontWeight:800, color: glPos?'#22c55e':'#ef4444' }}>{glPos?'+':''}{glPct.toFixed(1)}%</div>
+                      </div>
                     </div>
                   </div>
                 </div>
