@@ -1,5 +1,5 @@
 'use client'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import CardModal, { EMPTY_CARD } from '@/app/components/CardModal'
@@ -82,8 +82,8 @@ export default function MarketPage() {
   const [user, setUser] = useState(null)
   const [loading, setLoading] = useState(true)
   const [query, setQuery] = useState('')
-  const [brand, setBrand] = useState('')
-  const [series, setSeries] = useState('')
+  const brandRef = useRef(null)
+  const seriesRef = useRef(null)
   const [results, setResults] = useState(null)
   const [searching, setSearching] = useState(false)
   const [error, setError] = useState('')
@@ -105,7 +105,7 @@ export default function MarketPage() {
     setSearching(true)
     setError('')
     setResults(null)
-    const fullQuery = [query.trim(), brand.trim(), series.trim()].filter(Boolean).join(' ')
+    const fullQuery = [query.trim(), brandRef.current?.value?.trim(), seriesRef.current?.value?.trim()].filter(Boolean).join(' ')
     try {
       const res = await fetch('/api/market', {
         method: 'POST',
@@ -187,7 +187,7 @@ export default function MarketPage() {
               <div style={{ flex:1, position:'relative' }}>
                 <input
                   value={query}
-                  onChange={e => { setQuery(e.target.value); if (!e.target.value.trim()) { setResults(null); setError(''); setBrand(''); setSeries('') } }}
+                  onChange={e => { setQuery(e.target.value); if (!e.target.value.trim()) { setResults(null); setError(''); if (brandRef.current) brandRef.current.value = ''; if (seriesRef.current) seriesRef.current.value = '' } }}
                   onKeyDown={e => e.key==='Enter' && handleSearch()}
                   placeholder="Player / card name — e.g. LeBron James"
                   style={{ width:'100%', padding:'11px 14px 11px 40px', borderRadius:10, background:'#1a1a1a', border:'1px solid #2a2a2a', color:'#f0f0f0', fontSize:14, boxSizing:'border-box', transition:'border-color 0.15s' }}
@@ -201,18 +201,16 @@ export default function MarketPage() {
             {/* Brand + Set row */}
             <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:10 }}>
               <input
-                value={brand}
-                onChange={e => setBrand(e.target.value)}
+                ref={brandRef}
                 onKeyDown={e => e.key==='Enter' && handleSearch()}
                 placeholder="Brand — e.g. Panini"
-                style={{ padding:'9px 14px', borderRadius:10, background:'#1a1a1a', border:`1px solid ${brand ? 'rgba(var(--accent-rgb),0.35)' : '#2a2a2a'}`, color: brand ? 'var(--accent-light)' : '#f0f0f0', fontSize:13, boxSizing:'border-box', transition:'border-color 0.15s, color 0.15s', outline:'none' }}
+                style={{ padding:'9px 14px', borderRadius:10, background:'#1a1a1a', border:'1px solid #2a2a2a', color:'#f0f0f0', fontSize:13, boxSizing:'border-box', outline:'none' }}
               />
               <input
-                value={series}
-                onChange={e => setSeries(e.target.value)}
+                ref={seriesRef}
                 onKeyDown={e => e.key==='Enter' && handleSearch()}
                 placeholder="Set / Series — e.g. National Treasure"
-                style={{ padding:'9px 14px', borderRadius:10, background:'#1a1a1a', border:`1px solid ${series ? 'rgba(var(--accent-rgb),0.35)' : '#2a2a2a'}`, color: series ? 'var(--accent-light)' : '#f0f0f0', fontSize:13, boxSizing:'border-box', transition:'border-color 0.15s, color 0.15s', outline:'none' }}
+                style={{ padding:'9px 14px', borderRadius:10, background:'#1a1a1a', border:'1px solid #2a2a2a', color:'#f0f0f0', fontSize:13, boxSizing:'border-box', outline:'none' }}
               />
             </div>
           </div>
@@ -256,7 +254,7 @@ export default function MarketPage() {
                 {results.count} Listings on eBay
                 {results.searchedAs && <span style={{ color:'#444', fontWeight:600, textTransform:'none', letterSpacing:0 }}> · simplified to "{results.searchedAs}"</span>}
               </div>
-              <a href={`https://www.ebay.com/sch/i.html?_nkw=${encodeURIComponent([query.trim(), brand.trim(), series.trim()].filter(Boolean).join(' '))}`} target="_blank" rel="noopener noreferrer" style={{ display:'flex', alignItems:'center', gap:4, fontSize:11, color:'var(--accent)', textDecoration:'none', fontWeight:700 }}>
+              <a href={`https://www.ebay.com/sch/i.html?_nkw=${encodeURIComponent([query.trim(), brandRef.current?.value?.trim(), seriesRef.current?.value?.trim()].filter(Boolean).join(' '))}`} target="_blank" rel="noopener noreferrer" style={{ display:'flex', alignItems:'center', gap:4, fontSize:11, color:'var(--accent)', textDecoration:'none', fontWeight:700 }}>
                 View on eBay <IconExternal />
               </a>
             </div>
