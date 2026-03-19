@@ -1,5 +1,5 @@
 'use client'
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 
 // ── Constants ──────────────────────────────────────────────────────────────────
 export const EMPTY_CARD = {
@@ -47,6 +47,62 @@ export default function CardModal({ card, onClose, onSave }) {
   const [error, setError] = useState('')
   const [showDetails, setShowDetails] = useState(isEdit || hasPrefilledDetails)
 
+  // Card image
+  const [imagePreview, setImagePreview] = useState(card?.imageUrl || null)
+  const [imageUploading, setImageUploading] = useState(false)
+  const [pendingImageBase64, setPendingImageBase64] = useState(null) // upload after save if new card
+  const imageInputRef = useRef(null)
+
+  function handleImageSelect(e) {
+    const file = e.target.files?.[0]
+    if (!file) return
+    const reader = new FileReader()
+    reader.onload = ev => {
+      const img = new Image()
+      img.onload = () => {
+        const W = 400, H = 560
+        const canvas = document.createElement('canvas')
+        canvas.width = W; canvas.height = H
+        const ctx = canvas.getContext('2d')
+        // Cover crop to card aspect ratio
+        const scale = Math.max(W / img.width, H / img.height)
+        const sw = img.width * scale, sh = img.height * scale
+        ctx.drawImage(img, (W - sw) / 2, (H - sh) / 2, sw, sh)
+        const b64 = canvas.toDataURL('image/jpeg', 0.88)
+        setImagePreview(b64)
+        setPendingImageBase64(b64)
+      }
+      img.src = ev.target.result
+    }
+    reader.readAsDataURL(file)
+    e.target.value = ''
+  }
+
+  async function uploadCardImage(cardId, b64) {
+    setImageUploading(true)
+    try {
+      const res = await fetch('/api/cards/image', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ cardId, image: b64 }),
+      })
+      return res.ok ? (await res.json()).imageUrl : null
+    } catch { return null }
+    finally { setImageUploading(false) }
+  }
+
+  async function handleRemoveImage() {
+    setImagePreview(null)
+    setPendingImageBase64(null)
+    if (form.id) {
+      await fetch('/api/cards/image', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ cardId: form.id, image: null }),
+      })
+    }
+  }
+
   const set = (k, v) => setForm(f => ({ ...f, [k]: v }))
   const isTCG = TCG_LIST.includes(form.sport)
   const isMoreSport = MORE_SPORTS.includes(form.sport) && !TOP_SPORTS.find(s => s.label === form.sport)
@@ -67,6 +123,12 @@ export default function CardModal({ card, onClose, onSave }) {
         setError(d.error || 'Failed to save')
         setSaving(false)
         return
+      }
+      // Upload pending image (new card needs ID from response first)
+      if (pendingImageBase64) {
+        const saved = await res.json().catch(() => null)
+        const cardId = saved?.id || form.id
+        if (cardId) await uploadCardImage(cardId, pendingImageBase64)
       }
       onSave()
     } catch {
@@ -415,6 +477,35 @@ export default function CardModal({ card, onClose, onSave }) {
             </>
           )}
 
+        </div>
+
+        {/* ── Card Photo ───────────────────────────────────────── */}
+        <div style={{ padding: '10px 18px 0' }}>
+          {divider('Card Photo')}
+          <div style={{ display:'flex', gap:14, alignItems:'flex-start', marginTop:10 }}>
+            {/* Preview */}
+            <div style={{ width:72, height:100, borderRadius:8, background:'#181818', border:'1px solid #252525', overflow:'hidden', flexShrink:0, display:'flex', alignItems:'center', justifyContent:'center' }}>
+              {imagePreview
+                ? <img src={imagePreview} alt="card" style={{ width:'100%', height:'100%', objectFit:'cover' }} />
+                : <span style={{ fontSize:22, opacity:0.25 }}>🃏</span>}
+            </div>
+            <div style={{ flex:1 }}>
+              <div style={{ fontSize:11, color:'#444', marginBottom:10, lineHeight:1.5 }}>
+                Upload a photo of your card. It'll show in list and grid views.
+              </div>
+              <div style={{ display:'flex', gap:8, flexWrap:'wrap' }}>
+                <label style={{ padding:'7px 14px', borderRadius:9, background:'rgba(var(--accent-rgb),0.1)', border:'1px solid rgba(var(--accent-rgb),0.25)', color:'var(--accent)', fontSize:12, fontWeight:800, cursor: imageUploading ? 'not-allowed' : 'pointer', opacity: imageUploading ? 0.5 : 1 }}>
+                  {imageUploading ? 'Uploading…' : imagePreview ? '📷 Change' : '📷 Add Photo'}
+                  <input ref={imageInputRef} type="file" accept="image/*" style={{ display:'none' }} onChange={handleImageSelect} disabled={imageUploading} />
+                </label>
+                {imagePreview && (
+                  <button type="button" onClick={handleRemoveImage} style={{ padding:'7px 14px', borderRadius:9, background:'transparent', border:'1px solid #2a2a2a', color:'#555', fontSize:12, fontWeight:700, cursor:'pointer' }}>
+                    Remove
+                  </button>
+                )}
+              </div>
+            </div>
+          </div>
         </div>
 
         {/* Save button */}
