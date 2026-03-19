@@ -108,6 +108,7 @@ export default function CardModal({ card, onClose, onSave }) {
   async function handleRemoveImage() {
     setImagePreview(null)
     setPendingImageBase64(null)
+    set('imageUrl', null)
     if (form.id) {
       await fetch('/api/cards/image', {
         method: 'POST',
