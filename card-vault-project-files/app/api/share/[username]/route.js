@@ -12,6 +12,7 @@ export async function GET(req, context) {
       where: { username: decodeURIComponent(username) },
       select: {
         username: true,
+        avatar: true,
         cards: {
           where: { sold: false },
           select: {
@@ -28,7 +29,7 @@ export async function GET(req, context) {
     if (!user) return NextResponse.json({ error: 'User not found' }, { status: 404 })
 
     const totalValue = user.cards.reduce((s, c) => s + (parseFloat(c.val) || 0) * (parseInt(c.qty) || 1), 0)
-    return NextResponse.json({ username: user.username, cards: user.cards, totalValue, cardCount: user.cards.length })
+    return NextResponse.json({ username: user.username, avatar: user.avatar || null, cards: user.cards, totalValue, cardCount: user.cards.length })
   } catch(e) {
     return NextResponse.json({ error: e.message }, { status: 500 })
   }

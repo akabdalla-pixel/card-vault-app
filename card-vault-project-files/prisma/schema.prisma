@@ -17,6 +17,7 @@ model User {
   activities Activity[]
   snapshots  PortfolioSnapshot[]
   theme      String              @default("Purple")
+  avatar     String?
   createdAt  DateTime            @default(now())
   updatedAt  DateTime            @updatedAt
 }
