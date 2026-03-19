@@ -60,15 +60,18 @@ export default function CardModal({ card, onClose, onSave }) {
     reader.onload = ev => {
       const img = new Image()
       img.onload = () => {
-        // Keep full image proportional (contain), max 800px on longest side
-        const maxDim = 800
-        const scale = Math.min(maxDim / img.width, maxDim / img.height, 1)
-        const W = Math.round(img.width * scale)
-        const H = Math.round(img.height * scale)
+        // PSA slab canvas: 400×587 (3.75" × 5.5" ratio), contain with black background
+        const W = 400, H = 587
         const canvas = document.createElement('canvas')
         canvas.width = W; canvas.height = H
         const ctx = canvas.getContext('2d')
-        ctx.drawImage(img, 0, 0, W, H)
+        ctx.fillStyle = '#000'
+        ctx.fillRect(0, 0, W, H)
+        // Contain: scale so full image fits inside canvas, centered
+        const scale = Math.min(W / img.width, H / img.height)
+        const sw = Math.round(img.width * scale)
+        const sh = Math.round(img.height * scale)
+        ctx.drawImage(img, Math.round((W - sw) / 2), Math.round((H - sh) / 2), sw, sh)
         const b64 = canvas.toDataURL('image/jpeg', 0.88)
         setImagePreview(b64)
         setPendingImageBase64(b64)

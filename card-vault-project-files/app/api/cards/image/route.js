@@ -30,8 +30,8 @@ export async function POST(req) {
     result = await cloudinary.uploader.upload(image, {
       public_id: `topload/cards/${cardId}`,
       overwrite: true,
-      // Keep card aspect ratio (2.5"×3.5" ≈ 5:7), output at good resolution
-      transformation: [{ width: 800, height: 800, crop: 'fit' }],
+      // PSA slab ratio (3.75"×5.5"), preserve full image, no cropping
+      transformation: [{ width: 400, height: 587, crop: 'fit' }],
       format: 'jpg',
     })
   } catch (err) {
