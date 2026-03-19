@@ -128,9 +128,14 @@ export default function AdminPage() {
               <div key={user.id}>
                 <div className="user-row" style={{ display:'grid', gridTemplateColumns:'1fr 1.5fr 60px 60px 80px 100px 100px 32px', gap:0, padding:'13px 16px', borderTop: ui>0?'1px solid #111':'none', cursor:'pointer', transition:'background 0.1s' }}
                   onClick={() => setExpanded(expanded===user.id ? null : user.id)}>
-                  <div>
-                    <div style={{ fontSize:13, fontWeight:800, color:'#f0f0f0' }}>@{user.username}</div>
-                    <div style={{ fontSize:10, color:'#444', marginTop:1 }}>{fmtTime(user.createdAt)}</div>
+                  <div style={{ display:'flex', alignItems:'center', gap:9 }}>
+                    <div style={{ width:30, height:30, borderRadius:'50%', background:'#1e1e1e', border:'1px solid #2a2a2a', overflow:'hidden', flexShrink:0, display:'flex', alignItems:'center', justifyContent:'center', fontSize:12, fontWeight:900, color:'#666' }}>
+                      {user.avatar ? <img src={user.avatar} alt="" style={{ width:'100%', height:'100%', objectFit:'cover' }} /> : user.username?.[0]?.toUpperCase()}
+                    </div>
+                    <div>
+                      <div style={{ fontSize:13, fontWeight:800, color:'#f0f0f0' }}>@{user.username}</div>
+                      <div style={{ fontSize:10, color:'#444', marginTop:1 }}>{fmtTime(user.createdAt)}</div>
+                    </div>
                   </div>
                   <div style={{ fontSize:12, color:'#666', textAlign:'left', alignSelf:'center', overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>{user.email}</div>
                   <div style={{ fontFamily:'var(--font-geist-mono)', fontSize:13, fontWeight:700, color:'#fff', textAlign:'right', alignSelf:'center' }}>{user.cardCount}</div>

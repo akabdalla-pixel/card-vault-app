@@ -12,7 +12,7 @@ export async function GET() {
   const users = await prisma.user.findMany({
     orderBy: { createdAt: 'desc' },
     select: {
-      id: true, username: true, email: true, createdAt: true,
+      id: true, username: true, email: true, avatar: true, createdAt: true,
       cards: {
         orderBy: { createdAt: 'desc' },
         select: { id:true, player:true, sport:true, year:true, brand:true, grade:true, gradingCo:true, buy:true, val:true, sold:true, soldPrice:true, auto:true, createdAt:true }
@@ -34,7 +34,7 @@ export async function GET() {
     const active = u.cards.filter(c => !c.sold)
     const portfolioValue = active.reduce((s,c) => s+(parseFloat(c.val)||parseFloat(c.buy)||0), 0)
     const invested = active.reduce((s,c) => s+(parseFloat(c.buy)||0), 0)
-    return { id:u.id, username:u.username, email:u.email, createdAt:u.createdAt, cardCount:u._count.cards, wishCount:u._count.wishes, portfolioValue, invested, soldCount:u.cards.filter(c=>c.sold).length, cards:u.cards }
+    return { id:u.id, username:u.username, email:u.email, avatar:u.avatar||null, createdAt:u.createdAt, cardCount:u._count.cards, wishCount:u._count.wishes, portfolioValue, invested, soldCount:u.cards.filter(c=>c.sold).length, cards:u.cards }
   })
 
   return NextResponse.json({
