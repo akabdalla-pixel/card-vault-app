@@ -5,6 +5,12 @@ import Link from 'next/link'
 import { togglePrivacy, isPrivacyOn } from '@/app/components/ThemeProvider'
 
 const LOGO = '/logo-transparent.png'
+const gradeCol = g => {
+  const n = parseFloat(g)
+  if (n >= 9) return { c:'#22c55e', bg:'rgba(34,197,94,0.12)', b:'rgba(34,197,94,0.3)' }
+  if (n >= 6) return { c:'#ffbe2e', bg:'rgba(255,190,46,0.12)', b:'rgba(255,190,46,0.3)' }
+  return { c:'#ef4444', bg:'rgba(239,68,68,0.12)', b:'rgba(239,68,68,0.3)' }
+}
 
 // ── Toast System ──────────────────────────────────────────────────────────────
 var _toastFn = null
@@ -560,19 +566,33 @@ export default function DashboardPage() {
                 {/* Image + info + stats */}
                 <div style={{ display:'flex', alignItems:'flex-start', gap:16 }}>
                   {/* Card image */}
-                  {spotlight.imageUrl && (
-                    <div style={{ width:72, flexShrink:0, borderRadius:8, overflow:'hidden', background:'#0a0a0a', border:'1px solid rgba(255,255,255,0.06)' }}>
-                      <div style={{ position:'relative', width:'100%', paddingTop:'146.75%' }}>
-                        <img src={spotlight.imageUrl} alt={spotlight.player} style={{ position:'absolute', inset:0, width:'100%', height:'100%', objectFit:'contain' }} />
-                      </div>
+                  <div style={{ width:80, flexShrink:0, borderRadius:8, overflow:'hidden', background:'#0a0a0a', border:'1px solid rgba(255,255,255,0.06)' }}>
+                    <div style={{ position:'relative', width:'100%', paddingTop:'146.75%' }}>
+                      {spotlight.imageUrl
+                        ? <img src={spotlight.imageUrl} alt={spotlight.player} style={{ position:'absolute', inset:0, width:'100%', height:'100%', objectFit:'contain' }} />
+                        : <div style={{ position:'absolute', inset:0, display:'flex', alignItems:'center', justifyContent:'center', fontSize:28 }}>
+                            {spotlight.sport==='Basketball'?'🏀':spotlight.sport==='Football'?'🏈':spotlight.sport==='Baseball'?'⚾':spotlight.sport==='Soccer'?'⚽':'🃏'}
+                          </div>
+                      }
                     </div>
-                  )}
-                  {/* Right: name + meta + stats */}
+                  </div>
+                  {/* Right: name + badges + meta + stats */}
                   <div style={{ flex:1, minWidth:0 }}>
-                    <div style={{ fontFamily:'var(--font-geist-sans)', fontSize:17, fontWeight:900, color:'#f5f5f5', letterSpacing:'-0.3px', marginBottom:4 }}>{spotlight.player}</div>
-                    <div style={{ fontSize:10, color:'#555', fontFamily:'var(--font-geist-sans)', marginBottom:12 }}>
-                      {[spotlight.year, spotlight.sport, spotlight.brand, spotlight.grade ? `Grade ${spotlight.grade}` : null].filter(Boolean).join(' · ')}
+                    <div style={{ fontFamily:'var(--font-geist-sans)', fontSize:17, fontWeight:900, color:'#f5f5f5', letterSpacing:'-0.3px', marginBottom:6 }}>{spotlight.player}</div>
+
+                    {/* Badges */}
+                    <div style={{ display:'flex', flexWrap:'wrap', gap:4, marginBottom:8 }}>
+                      {spotlight.grade && (() => { const gc = gradeCol(spotlight.grade); return <span style={{ background:gc.bg, border:`1px solid ${gc.b}`, color:gc.c, fontSize:9, fontWeight:900, padding:'2px 7px', borderRadius:5, letterSpacing:'0.08em' }}>{spotlight.gradingCo?`${spotlight.gradingCo} `:''}{spotlight.grade}</span> })()}
+                      {spotlight.auto && (() => { const agc = spotlight.autoGrade ? gradeCol(spotlight.autoGrade) : { c:'#ffbe2e', bg:'rgba(255,190,46,0.12)', b:'rgba(255,190,46,0.3)' }; return <span style={{ background:agc.bg, border:`1px solid ${agc.b}`, color:agc.c, fontSize:9, fontWeight:900, padding:'2px 7px', borderRadius:5 }}>AUTO{spotlight.autoGrade ? ` ${spotlight.autoGrade}` : ''}</span> })()}
+                      {spotlight.num && String(spotlight.num).includes('/') && <span style={{ background:'rgba(var(--accent-rgb),0.1)', border:'1px solid rgba(var(--accent-rgb),0.25)', color:'var(--accent-light)', fontSize:9, fontWeight:900, padding:'2px 7px', borderRadius:5 }}>#{spotlight.num}</span>}
+                      {(() => { const m = spotlight.notes && spotlight.notes.match(/PSA Cert #(\d+)/); return m ? <a href={`https://www.psacard.com/cert/${m[1]}/psa`} target="_blank" rel="noopener noreferrer" onClick={e=>e.stopPropagation()} style={{ background:'rgba(59,130,246,0.1)', border:'1px solid rgba(59,130,246,0.25)', color:'#60a5fa', fontSize:9, fontWeight:900, padding:'2px 7px', borderRadius:5, textDecoration:'none' }}>PSA ↗</a> : null })()}
                     </div>
+
+                    {/* Meta */}
+                    <div style={{ fontSize:10, color:'#555', fontFamily:'var(--font-geist-sans)', marginBottom:12 }}>
+                      {[spotlight.year, spotlight.sport, spotlight.brand].filter(Boolean).join(' · ')}
+                    </div>
+
                     {/* Stats */}
                     <div style={{ display:'flex', gap:0, background:'rgba(255,255,255,0.03)', borderRadius:10, border:'1px solid rgba(255,255,255,0.06)', overflow:'hidden' }}>
                       <div style={{ padding:'10px 14px', borderRight:'1px solid rgba(255,255,255,0.06)' }}>
