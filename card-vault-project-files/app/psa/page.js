@@ -270,7 +270,7 @@ export default function PSALookupPage() {
       qty: 1,
       buy: 0,
       val: 0,
-      num: result.cardNumber || '',
+      num: '',
       notes: `PSA Cert #${result.cert}${result.variety ? ' · ' + result.variety : ''}`,
     })
     setShowAddModal(true)

@@ -532,7 +532,7 @@ export default function CardModal({ card, onClose, onSave }) {
                   value={form.notes || ''}
                   onChange={e => set('notes', e.target.value)}
                   rows={2}
-                  placeholder="Any additional notes..."
+                  placeholder={`Any additional notes...\nTip: type "PSA Cert #XXXXXXXX" to auto-add the PSA badge`}
                   style={{
                     width: '100%', padding: '9px 12px', borderRadius: 9,
                     background: '#191919', border: '1px solid #252525',
@@ -540,6 +540,36 @@ export default function CardModal({ card, onClose, onSave }) {
                     resize: 'none', fontFamily: 'var(--font-geist-sans)', boxSizing: 'border-box',
                   }}
                 />
+                {/* Live PSA badge preview */}
+                {(() => {
+                  const m = (form.notes || '').match(/PSA Cert #(\d+)/)
+                  if (!m) return null
+                  const certNum = m[1]
+                  return (
+                    <div style={{ marginTop: 8, display: 'flex', alignItems: 'center', gap: 8 }}>
+                      <a
+                        href={`https://www.psacard.com/cert/${certNum}/psa`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        onClick={e => e.stopPropagation()}
+                        style={{
+                          display: 'inline-flex', alignItems: 'center', gap: 4,
+                          padding: '4px 10px', borderRadius: 6,
+                          background: 'rgba(59,130,246,0.12)',
+                          border: '1px solid rgba(59,130,246,0.35)',
+                          color: '#60a5fa', fontSize: 11, fontWeight: 700,
+                          fontFamily: 'var(--font-geist-sans)',
+                          textDecoration: 'none', cursor: 'pointer',
+                        }}
+                      >
+                        PSA ↗
+                      </a>
+                      <span style={{ fontFamily: 'var(--font-geist-sans)', fontSize: 11, color: '#444' }}>
+                        Badge will appear on this card's tile
+                      </span>
+                    </div>
+                  )
+                })()}
               </div>
             </>
           )}
