@@ -31,11 +31,20 @@ export async function GET(req) {
 
     const cert_data = data.PSACert
 
-    // PSA blocks server-side image fetching - provide the cert page URL for users to view images
+    // Log all fields so we can see what image URLs PSA returns
+    console.log('PSA cert_data keys:', Object.keys(cert_data))
+    console.log('PSA image fields:', {
+      FrontImageURL: cert_data.FrontImageURL,
+      FrontImageThumbnailURL: cert_data.FrontImageThumbnailURL,
+      ImageFront: cert_data.ImageFront,
+      BackImageURL: cert_data.BackImageURL,
+      BackImageThumbnailURL: cert_data.BackImageThumbnailURL,
+      ImageBack: cert_data.ImageBack,
+    })
+
     const certPageUrl = `https://www.psacard.com/cert/${cert}/psa`
-    // Try standard cloudfront URL pattern (works for some certs)
-    const frontImage = `https://d1htnxwo4o0jhw.cloudfront.net/cert/${cert}/front.jpg`
-    const backImage = `https://d1htnxwo4o0jhw.cloudfront.net/cert/${cert}/back.jpg`
+    const frontImage = `/api/psa/image?cert=${cert}&side=front`
+    const backImage = `/api/psa/image?cert=${cert}&side=back`
 
     // Detect auto cards — PSA encodes autos as "AUTOGEM MT 10" in CardGrade.
     // AutoGrade is a separate field PSA rarely populates (only when the auto
