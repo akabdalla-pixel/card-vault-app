@@ -1261,7 +1261,7 @@ function CollectionPage() {
                           <div style={{ minWidth: 0 }}>
                             <div style={{ fontFamily: 'var(--font-geist-sans)', fontSize: 15, fontWeight: 700, color: '#f0f0f0' }}>{card.player}</div>
                             <div style={{ fontSize: 12, color: '#555', marginTop: 2 }}>
-                              {[card.year, card.sport, card.brand, card.grade ? `${card.gradingCo||''} ${card.grade}`.trim() : card.cond, card.auto ? '✍️ Auto' : null, card.num ? card.num : null].filter(Boolean).join(' · ')}
+                              {[card.year, card.sport, card.brand, card.grade ? `${card.gradingCo||''} ${card.grade}`.trim() : null, card.auto ? '✍️ Auto' : null, card.num ? card.num : null].filter(Boolean).join(' · ')}
                             </div>
                           </div>
                         </div>
