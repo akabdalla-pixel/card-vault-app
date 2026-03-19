@@ -15,7 +15,7 @@ export async function GET() {
       id: true, username: true, email: true, avatar: true, createdAt: true,
       cards: {
         orderBy: { createdAt: 'desc' },
-        select: { id:true, player:true, sport:true, year:true, brand:true, grade:true, gradingCo:true, buy:true, val:true, sold:true, soldPrice:true, auto:true, createdAt:true }
+        select: { id:true, player:true, sport:true, year:true, brand:true, name:true, num:true, grade:true, gradingCo:true, autoGrade:true, buy:true, val:true, sold:true, soldPrice:true, auto:true, cond:true, notes:true, imageUrl:true, createdAt:true }
       },
       _count: { select: { cards: true, wishes: true } }
     }
