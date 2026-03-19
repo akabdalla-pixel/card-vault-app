@@ -1,5 +1,5 @@
 'use client'
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import { THEMES, applyTheme, saveThemeToServer } from '@/app/components/ThemeProvider'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
@@ -135,33 +135,76 @@ export default function SettingsPage() {
   }
   const router = useRouter()
 
-  // Avatar
+  // Avatar + crop modal
   const [avatarLoading, setAvatarLoading] = useState(false)
+  const [cropSrc, setCropSrc] = useState(null)
+  const [cropScale, setCropScale] = useState(1)
+  const [cropOffset, setCropOffset] = useState({ x: 0, y: 0 })
+  const [isDragging, setIsDragging] = useState(false)
+  const [dragStart, setDragStart] = useState({ x: 0, y: 0 })
+  const cropImgRef = useRef(null)
+  const CROP_SIZE = 280 // px — the visible crop circle diameter
 
-  async function handleAvatarUpload(e) {
+  function handleAvatarUpload(e) {
     const file = e.target.files?.[0]
     if (!file) return
+    const reader = new FileReader()
+    reader.onload = ev => {
+      setCropSrc(ev.target.result)
+      setCropScale(1)
+      setCropOffset({ x: 0, y: 0 })
+    }
+    reader.readAsDataURL(file)
+    e.target.value = ''
+  }
+
+  function getCropPointer(e) {
+    const src = e.touches ? e.touches[0] : e
+    return { x: src.clientX, y: src.clientY }
+  }
+
+  function onCropDragStart(e) {
+    e.preventDefault()
+    const p = getCropPointer(e)
+    setIsDragging(true)
+    setDragStart({ x: p.x - cropOffset.x, y: p.y - cropOffset.y })
+  }
+
+  function onCropDragMove(e) {
+    if (!isDragging) return
+    const p = getCropPointer(e)
+    setCropOffset({ x: p.x - dragStart.x, y: p.y - dragStart.y })
+  }
+
+  function onCropDragEnd() { setIsDragging(false) }
+
+  async function handleCropSave() {
+    const img = cropImgRef.current
+    if (!img) return
     setAvatarLoading(true)
     try {
-      const base64 = await new Promise((resolve, reject) => {
-        const img = new Image()
-        const reader = new FileReader()
-        reader.onload = ev => { img.src = ev.target.result }
-        img.onload = () => {
-          const SIZE = 128
-          const canvas = document.createElement('canvas')
-          canvas.width = SIZE; canvas.height = SIZE
-          const ctx = canvas.getContext('2d')
-          // Cover crop: scale so smallest dimension = SIZE
-          const scale = Math.max(SIZE / img.width, SIZE / img.height)
-          const w = img.width * scale, h = img.height * scale
-          ctx.drawImage(img, (SIZE - w) / 2, (SIZE - h) / 2, w, h)
-          resolve(canvas.toDataURL('image/jpeg', 0.85))
-        }
-        img.onerror = reject
-        reader.onerror = reject
-        reader.readAsDataURL(file)
-      })
+      const SIZE = 256
+      const canvas = document.createElement('canvas')
+      canvas.width = SIZE; canvas.height = SIZE
+      const ctx = canvas.getContext('2d')
+
+      // Base scale: make image cover the CROP_SIZE square
+      const baseScale = Math.max(CROP_SIZE / img.naturalWidth, CROP_SIZE / img.naturalHeight)
+      const dispW = img.naturalWidth * baseScale * cropScale
+      const dispH = img.naturalHeight * baseScale * cropScale
+      // Image top-left position in crop container
+      const imgLeft = (CROP_SIZE - dispW) / 2 + cropOffset.x
+      const imgTop  = (CROP_SIZE - dispH) / 2 + cropOffset.y
+
+      // Map container (0,0)→(CROP_SIZE,CROP_SIZE) to source image coords
+      const srcX = -imgLeft / (baseScale * cropScale)
+      const srcY = -imgTop  / (baseScale * cropScale)
+      const srcW = CROP_SIZE / (baseScale * cropScale)
+      const srcH = CROP_SIZE / (baseScale * cropScale)
+
+      ctx.drawImage(img, srcX, srcY, srcW, srcH, 0, 0, SIZE, SIZE)
+      const base64 = canvas.toDataURL('image/jpeg', 0.9)
+
       const res = await fetch('/api/user/avatar', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -170,13 +213,14 @@ export default function SettingsPage() {
       if (res.ok) {
         const data = await res.json()
         setUser(u => ({ ...u, avatar: data.avatar }))
+        setCropSrc(null)
         showToast('Profile picture updated!', 'success')
       } else {
         const err = await res.json().catch(() => ({}))
         showToast(err.detail || err.error || 'Failed to save picture', 'error')
       }
     } catch (err) { showToast(err?.message || 'Failed to process image', 'error') }
-    finally { setAvatarLoading(false); e.target.value = '' }
+    finally { setAvatarLoading(false) }
   }
 
   async function handleRemoveAvatar() {
@@ -356,6 +400,56 @@ export default function SettingsPage() {
 
   return (
     <>
+      {/* ── Crop Modal ── */}
+      {cropSrc && (
+        <div style={{ position:'fixed', inset:0, zIndex:9999, background:'rgba(0,0,0,0.85)', display:'flex', alignItems:'center', justifyContent:'center', padding:20 }}
+          onMouseMove={onCropDragMove} onMouseUp={onCropDragEnd} onTouchMove={onCropDragMove} onTouchEnd={onCropDragEnd}>
+          <div style={{ background:'#111', border:'1px solid #222', borderRadius:20, padding:24, width:'100%', maxWidth:360, display:'flex', flexDirection:'column', alignItems:'center', gap:20 }}>
+            <div style={{ fontSize:14, fontWeight:800, color:'#fff' }}>Drag to reposition</div>
+
+            {/* Circle crop area */}
+            <div style={{ position:'relative', width:CROP_SIZE, height:CROP_SIZE, borderRadius:'50%', overflow:'hidden', cursor: isDragging ? 'grabbing' : 'grab', flexShrink:0, border:'3px solid var(--accent)' }}
+              onMouseDown={onCropDragStart} onTouchStart={onCropDragStart}>
+              {/* The actual image */}
+              {(() => {
+                const img = cropImgRef.current
+                const nw = img?.naturalWidth || 1
+                const nh = img?.naturalHeight || 1
+                const base = Math.max(CROP_SIZE / nw, CROP_SIZE / nh)
+                const w = nw * base * cropScale
+                const h = nh * base * cropScale
+                const left = (CROP_SIZE - w) / 2 + cropOffset.x
+                const top  = (CROP_SIZE - h) / 2 + cropOffset.y
+                return (
+                  <img ref={cropImgRef} src={cropSrc} alt=""
+                    style={{ position:'absolute', left, top, width:w, height:h, maxWidth:'none', pointerEvents:'none', userSelect:'none' }}
+                    onLoad={() => setCropScale(s => s)} // trigger re-render once natural dimensions known
+                  />
+                )
+              })()}
+            </div>
+
+            {/* Zoom slider */}
+            <div style={{ width:'100%' }}>
+              <div style={{ fontSize:10, fontWeight:700, color:'#555', textTransform:'uppercase', letterSpacing:'0.1em', marginBottom:8, textAlign:'center' }}>Zoom</div>
+              <input type="range" min="1" max="3" step="0.01" value={cropScale}
+                onChange={e => setCropScale(parseFloat(e.target.value))}
+                style={{ width:'100%', accentColor:'var(--accent)' }} />
+            </div>
+
+            {/* Buttons */}
+            <div style={{ display:'flex', gap:10, width:'100%' }}>
+              <button onClick={() => setCropSrc(null)} style={{ flex:1, padding:'11px', borderRadius:10, background:'transparent', border:'1px solid #2a2a2a', color:'#555', fontSize:13, fontWeight:700, cursor:'pointer' }}>
+                Cancel
+              </button>
+              <button onClick={handleCropSave} disabled={avatarLoading} style={{ flex:2, padding:'11px', borderRadius:10, background:'var(--accent)', border:'none', color:'#fff', fontSize:13, fontWeight:800, cursor: avatarLoading ? 'not-allowed' : 'pointer', opacity: avatarLoading ? 0.6 : 1 }}>
+                {avatarLoading ? 'Saving…' : 'Save Photo'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       <style>{`
         @keyframes toastIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
         @keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
