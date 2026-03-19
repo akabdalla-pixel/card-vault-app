@@ -204,12 +204,6 @@ export default function SharedCollectionPage() {
                             onClick={() => setLightboxImg({ url: c.imageUrl, player: c.player })}
                             style={{ position:'absolute', inset:0, width:'100%', height:'100%', objectFit:'contain', cursor:'zoom-in' }}
                           />
-                          {/* Badges overlay */}
-                          <div style={{ position:'absolute', top:6, right:6, display:'flex', flexDirection:'column', gap:3, alignItems:'flex-end' }}>
-                            {c.grade && <span style={{ background:'rgba(0,0,0,0.8)', border:'1px solid rgba(var(--accent-rgb),0.4)', color:'var(--accent-light)', fontSize:8, fontWeight:900, padding:'2px 5px', borderRadius:4 }}>{c.gradingCo?c.gradingCo+' ':''}{c.grade}</span>}
-                            {c.auto && <span style={{ background:'rgba(0,0,0,0.8)', border:'1px solid rgba(255,190,46,0.4)', color:'#ffbe2e', fontSize:8, fontWeight:900, padding:'2px 5px', borderRadius:4 }}>AUTO{c.autoGrade?` ${c.autoGrade}`:''}</span>}
-                            {c.num && String(c.num).includes('/') && <span style={{ background:'rgba(0,0,0,0.8)', border:'1px solid rgba(148,163,184,0.4)', color:'#94a3b8', fontSize:8, fontWeight:900, padding:'2px 5px', borderRadius:4 }}>#{c.num}</span>}
-                          </div>
                         </div>
                       : <div style={{ width:'100%', paddingTop:'146.75%', background:'#181818', position:'relative' }}>
                           <div style={{ position:'absolute', inset:0, display:'flex', alignItems:'center', justifyContent:'center', fontSize:32, opacity:0.2 }}>{sportEmoji}</div>
