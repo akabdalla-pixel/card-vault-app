@@ -599,7 +599,7 @@ export default function DashboardPage() {
                     </div>
                   </div>
                   {/* Card image — right side */}
-                  <div style={{ width:80, flexShrink:0, borderRadius:8, overflow:'hidden', background:'#0a0a0a', border:'1px solid rgba(255,255,255,0.06)' }}>
+                  <div style={{ width:120, flexShrink:0, borderRadius:8, overflow:'hidden', background:'#0a0a0a', border:'1px solid rgba(255,255,255,0.06)' }}>
                     <div style={{ position:'relative', width:'100%', paddingTop:'146.75%' }}>
                       {spotlight.imageUrl
                         ? <img src={spotlight.imageUrl} alt={spotlight.player} style={{ position:'absolute', inset:0, width:'100%', height:'100%', objectFit:'contain' }} />
