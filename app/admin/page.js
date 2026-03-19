@@ -26,6 +26,11 @@ export default function AdminPage() {
   const [psaCache, setPsaCache] = useState(null)
   const [psaSearch, setPsaSearch] = useState('')
   const [psaLoading, setPsaLoading] = useState(false)
+  // Card Database
+  const [dbSearch, setDbSearch] = useState('')
+  const [dbSport, setDbSport] = useState('')
+  const [dbView, setDbView] = useState('grid') // 'grid' | 'table'
+  const [dbOwner, setDbOwner] = useState('')
   const router = useRouter()
 
   useEffect(() => {
@@ -289,6 +294,165 @@ export default function AdminPage() {
               }
             </div>
           </div>
+
+          {/* ── Card Database ── */}
+          {(() => {
+            // Flatten all cards across all users, attach owner username
+            const allCards = (data?.users || []).flatMap(u =>
+              u.cards.map(c => ({ ...c, ownerUsername: u.username, ownerAvatar: u.avatar }))
+            )
+            const sports = [...new Set(allCards.map(c => c.sport).filter(Boolean))].sort()
+            const owners = [...new Set(allCards.map(c => c.ownerUsername))].sort()
+            const withPhotos = allCards.filter(c => c.imageUrl).length
+
+            const filtered = allCards.filter(c => {
+              const q = dbSearch.toLowerCase()
+              const matchQ = !q || c.player?.toLowerCase().includes(q) || c.brand?.toLowerCase().includes(q) || c.name?.toLowerCase().includes(q) || c.ownerUsername?.toLowerCase().includes(q)
+              const matchSport = !dbSport || c.sport === dbSport
+              const matchOwner = !dbOwner || c.ownerUsername === dbOwner
+              return matchQ && matchSport && matchOwner
+            })
+
+            return (
+              <div style={{ marginTop:40 }}>
+                {/* Header */}
+                <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:12, flexWrap:'wrap', gap:10 }}>
+                  <div style={{ display:'flex', alignItems:'center', gap:10 }}>
+                    <h2 style={{ fontSize:14, fontWeight:900, color:'#fff', textTransform:'uppercase', letterSpacing:'0.05em', margin:0 }}>Card Database ({allCards.length})</h2>
+                    <div style={{ padding:'2px 8px', background:'rgba(34,197,94,0.1)', border:'1px solid rgba(34,197,94,0.25)', borderRadius:4, fontSize:9, fontWeight:800, color:'#22c55e', letterSpacing:'0.1em' }}>{withPhotos} WITH PHOTOS</div>
+                  </div>
+                  <div style={{ display:'flex', gap:8, flexWrap:'wrap' }}>
+                    {/* Search */}
+                    <input value={dbSearch} onChange={e => setDbSearch(e.target.value)} placeholder="Search cards..." style={{ padding:'7px 12px', borderRadius:8, background:'#111', border:'1px solid #1e1e1e', color:'#f0f0f0', fontSize:12, outline:'none', width:180 }} />
+                    {/* Sport filter */}
+                    <select value={dbSport} onChange={e => setDbSport(e.target.value)} style={{ padding:'7px 12px', borderRadius:8, background:'#111', border:'1px solid #1e1e1e', color: dbSport?'#f0f0f0':'#555', fontSize:12, outline:'none' }}>
+                      <option value="">All Sports</option>
+                      {sports.map(s => <option key={s} value={s}>{s}</option>)}
+                    </select>
+                    {/* Owner filter */}
+                    <select value={dbOwner} onChange={e => setDbOwner(e.target.value)} style={{ padding:'7px 12px', borderRadius:8, background:'#111', border:'1px solid #1e1e1e', color: dbOwner?'#f0f0f0':'#555', fontSize:12, outline:'none' }}>
+                      <option value="">All Users</option>
+                      {owners.map(o => <option key={o} value={o}>@{o}</option>)}
+                    </select>
+                    {/* View toggle */}
+                    <div style={{ display:'flex', borderRadius:8, overflow:'hidden', border:'1px solid #1e1e1e' }}>
+                      {['grid','table'].map(v => (
+                        <button key={v} onClick={() => setDbView(v)} style={{ padding:'7px 14px', background: dbView===v ? 'rgba(var(--accent-rgb),0.15)' : '#111', border:'none', color: dbView===v ? 'var(--accent)' : '#555', fontSize:12, fontWeight:700, cursor:'pointer' }}>
+                          {v === 'grid' ? '⊞ Grid' : '☰ Table'}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+
+                {filtered.length === 0 && (
+                  <div style={{ background:'#0d0d0d', border:'1px solid #1a1a1a', borderRadius:14, padding:'40px', textAlign:'center', fontSize:13, color:'#444' }}>No cards match</div>
+                )}
+
+                {/* Grid View */}
+                {dbView === 'grid' && filtered.length > 0 && (
+                  <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fill,minmax(180px,1fr))', gap:10 }}>
+                    {filtered.map(card => {
+                      const buy = parseFloat(card.buy)||0
+                      const val = card.sold ? (parseFloat(card.soldPrice)||0) : (parseFloat(card.val)||buy)
+                      const gl = val - buy
+                      const glPos = gl >= 0
+                      return (
+                        <div key={card.id} style={{ background:'#111', border:'1px solid #1a1a1a', borderRadius:12, overflow:'hidden', transition:'border-color 0.12s' }}
+                          onMouseEnter={e => e.currentTarget.style.borderColor='#333'}
+                          onMouseLeave={e => e.currentTarget.style.borderColor='#1a1a1a'}>
+                          {/* Card image */}
+                          <div style={{ position:'relative', width:'100%', paddingTop:'71.4%', background:'#0a0a0a', overflow:'hidden' }}>
+                            {card.imageUrl
+                              ? <img src={card.imageUrl} alt={card.player} style={{ position:'absolute', inset:0, width:'100%', height:'100%', objectFit:'cover' }} />
+                              : <div style={{ position:'absolute', inset:0, display:'flex', alignItems:'center', justifyContent:'center', fontSize:32, opacity:0.15 }}>🃏</div>
+                            }
+                            {/* Badges overlay */}
+                            <div style={{ position:'absolute', top:6, right:6, display:'flex', flexDirection:'column', gap:3, alignItems:'flex-end' }}>
+                              {card.grade && <span style={{ background:'rgba(0,0,0,0.8)', border:'1px solid rgba(var(--accent-rgb),0.4)', color:'var(--accent-light)', fontSize:8, fontWeight:900, padding:'2px 6px', borderRadius:4 }}>{card.gradingCo?card.gradingCo+' ':''}{card.grade}</span>}
+                              {card.auto && <span style={{ background:'rgba(0,0,0,0.8)', border:'1px solid rgba(255,190,46,0.4)', color:'#ffbe2e', fontSize:8, fontWeight:900, padding:'2px 6px', borderRadius:4 }}>AUTO{card.autoGrade ? ` ${card.autoGrade}` : ''}</span>}
+                              {card.num && String(card.num).includes('/') && <span style={{ background:'rgba(0,0,0,0.8)', border:'1px solid rgba(148,163,184,0.4)', color:'#94a3b8', fontSize:8, fontWeight:900, padding:'2px 6px', borderRadius:4 }}>#{card.num}</span>}
+                            </div>
+                            {card.sold && <div style={{ position:'absolute', top:6, left:6, background:'rgba(255,190,46,0.9)', color:'#000', fontSize:8, fontWeight:900, padding:'2px 6px', borderRadius:4 }}>SOLD</div>}
+                          </div>
+                          {/* Info */}
+                          <div style={{ padding:'10px 12px' }}>
+                            <div style={{ fontSize:12, fontWeight:800, color:'#fff', textTransform:'uppercase', letterSpacing:'-0.2px', overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap', marginBottom:2 }}>{card.player}</div>
+                            <div style={{ fontSize:10, color:'#555', marginBottom:8, overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>{[card.year, card.sport, card.brand].filter(Boolean).join(' · ')}</div>
+                            <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center' }}>
+                              <div style={{ fontFamily:'var(--font-geist-mono)', fontSize:13, fontWeight:900, color: glPos ? '#22c55e' : '#ef4444' }}>{fmt(val)}</div>
+                              <div style={{ display:'flex', alignItems:'center', gap:4 }}>
+                                {card.ownerAvatar
+                                  ? <img src={card.ownerAvatar} alt="" style={{ width:16, height:16, borderRadius:'50%', objectFit:'cover' }} />
+                                  : <div style={{ width:16, height:16, borderRadius:'50%', background:'var(--accent)', display:'flex', alignItems:'center', justifyContent:'center', fontSize:8, fontWeight:900, color:'#fff' }}>{card.ownerUsername?.[0]?.toUpperCase()}</div>
+                                }
+                                <span style={{ fontSize:10, color:'#444' }}>@{card.ownerUsername}</span>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      )
+                    })}
+                  </div>
+                )}
+
+                {/* Table View */}
+                {dbView === 'table' && filtered.length > 0 && (
+                  <div style={{ background:'#0d0d0d', border:'1px solid #1a1a1a', borderRadius:14, overflow:'hidden' }}>
+                    <div style={{ display:'grid', gridTemplateColumns:'48px 2fr 80px 60px 80px 80px 80px 70px 120px', padding:'10px 16px', background:'#000', borderBottom:'1px solid #111' }}>
+                      {['Img','Player','Sport','Year','Grade','Paid','Value','G/L','Owner'].map((h,i) => (
+                        <div key={i} style={{ fontSize:9, fontWeight:700, color:'#333', textTransform:'uppercase', letterSpacing:'0.1em', textAlign:i>1?'right':'left' }}>{h}</div>
+                      ))}
+                    </div>
+                    {filtered.map((card, ci) => {
+                      const buy = parseFloat(card.buy)||0
+                      const val = card.sold ? (parseFloat(card.soldPrice)||0) : (parseFloat(card.val)||buy)
+                      const gl = val - buy
+                      const glPos = gl >= 0
+                      const glPct = buy > 0 ? (gl/buy)*100 : 0
+                      return (
+                        <div key={card.id} className="card-row" style={{ display:'grid', gridTemplateColumns:'48px 2fr 80px 60px 80px 80px 80px 70px 120px', padding:'10px 16px', borderTop: ci>0?'1px solid #111':'none', transition:'background 0.1s', alignItems:'center' }}>
+                          {/* Thumbnail */}
+                          <div style={{ width:34, height:48, borderRadius:5, overflow:'hidden', background:'#111', flexShrink:0 }}>
+                            {card.imageUrl
+                              ? <img src={card.imageUrl} alt="" style={{ width:'100%', height:'100%', objectFit:'cover' }} />
+                              : <div style={{ width:'100%', height:'100%', display:'flex', alignItems:'center', justifyContent:'center', fontSize:16, opacity:0.2 }}>🃏</div>
+                            }
+                          </div>
+                          {/* Player + badges */}
+                          <div>
+                            <div style={{ fontSize:12, fontWeight:700, color: card.sold?'#555':'#ccc', textTransform:'uppercase' }}>{card.player}</div>
+                            <div style={{ display:'flex', gap:4, marginTop:2, flexWrap:'wrap' }}>
+                              {card.grade && <span style={{ fontSize:8, fontWeight:800, color:'var(--accent-light)', background:'rgba(var(--accent-rgb),0.1)', padding:'1px 5px', borderRadius:3 }}>{card.gradingCo?card.gradingCo+' ':''}{card.grade}</span>}
+                              {card.auto && <span style={{ fontSize:8, fontWeight:800, color:'#ffbe2e', background:'rgba(255,190,46,0.1)', padding:'1px 5px', borderRadius:3 }}>AUTO{card.autoGrade?` ${card.autoGrade}`:''}</span>}
+                              {card.num && String(card.num).includes('/') && <span style={{ fontSize:8, fontWeight:800, color:'#94a3b8', background:'rgba(148,163,184,0.1)', padding:'1px 5px', borderRadius:3 }}>#{card.num}</span>}
+                              {card.sold && <span style={{ fontSize:8, fontWeight:800, color:'#ffbe2e', background:'rgba(255,190,46,0.1)', padding:'1px 5px', borderRadius:3 }}>SOLD</span>}
+                              {card.brand && <span style={{ fontSize:9, color:'#333' }}>{card.brand}</span>}
+                            </div>
+                          </div>
+                          <div style={{ fontSize:11, color:'#555', textAlign:'right' }}>{card.sport||'—'}</div>
+                          <div style={{ fontFamily:'var(--font-geist-mono)', fontSize:11, color:'#555', textAlign:'right' }}>{card.year||'—'}</div>
+                          <div style={{ textAlign:'right' }}>
+                            {card.grade ? <span style={{ fontSize:10, fontWeight:800, color:'var(--accent-light)', background:'rgba(var(--accent-rgb),0.1)', padding:'2px 6px', borderRadius:4 }}>{card.gradingCo?card.gradingCo+' ':''}{card.grade}</span> : <span style={{ fontSize:10, color:'#333' }}>Raw</span>}
+                          </div>
+                          <div style={{ fontFamily:'var(--font-geist-mono)', fontSize:12, color:'#555', textAlign:'right' }}>{fmt(buy)}</div>
+                          <div style={{ fontFamily:'var(--font-geist-mono)', fontSize:12, fontWeight:700, color:'#f0f0f0', textAlign:'right' }}>{fmt(val)}</div>
+                          <div style={{ fontFamily:'var(--font-geist-mono)', fontSize:11, fontWeight:800, color:glPos?'#22c55e':'#ef4444', textAlign:'right' }}>{glPos?'+':''}{glPct.toFixed(0)}%</div>
+                          <div style={{ display:'flex', alignItems:'center', gap:5, justifyContent:'flex-end' }}>
+                            {card.ownerAvatar
+                              ? <img src={card.ownerAvatar} alt="" style={{ width:18, height:18, borderRadius:'50%', objectFit:'cover' }} />
+                              : <div style={{ width:18, height:18, borderRadius:'50%', background:'var(--accent)', display:'flex', alignItems:'center', justifyContent:'center', fontSize:9, fontWeight:900, color:'#fff' }}>{card.ownerUsername?.[0]?.toUpperCase()}</div>
+                            }
+                            <span style={{ fontSize:11, color:'#555' }}>@{card.ownerUsername}</span>
+                          </div>
+                        </div>
+                      )
+                    })}
+                  </div>
+                )}
+              </div>
+            )
+          })()}
 
         </div>
       </div>
