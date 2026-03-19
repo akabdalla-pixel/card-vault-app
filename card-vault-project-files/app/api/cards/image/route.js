@@ -31,7 +31,7 @@ export async function POST(req) {
       public_id: `topload/cards/${cardId}`,
       overwrite: true,
       // Keep card aspect ratio (2.5"×3.5" ≈ 5:7), output at good resolution
-      transformation: [{ width: 400, height: 560, crop: 'fill', gravity: 'center' }],
+      transformation: [{ width: 800, height: 800, crop: 'fit' }],
       format: 'jpg',
     })
   } catch (err) {

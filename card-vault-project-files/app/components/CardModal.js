@@ -60,14 +60,15 @@ export default function CardModal({ card, onClose, onSave }) {
     reader.onload = ev => {
       const img = new Image()
       img.onload = () => {
-        const W = 400, H = 560
+        // Keep full image proportional (contain), max 800px on longest side
+        const maxDim = 800
+        const scale = Math.min(maxDim / img.width, maxDim / img.height, 1)
+        const W = Math.round(img.width * scale)
+        const H = Math.round(img.height * scale)
         const canvas = document.createElement('canvas')
         canvas.width = W; canvas.height = H
         const ctx = canvas.getContext('2d')
-        // Cover crop to card aspect ratio
-        const scale = Math.max(W / img.width, H / img.height)
-        const sw = img.width * scale, sh = img.height * scale
-        ctx.drawImage(img, (W - sw) / 2, (H - sh) / 2, sw, sh)
+        ctx.drawImage(img, 0, 0, W, H)
         const b64 = canvas.toDataURL('image/jpeg', 0.88)
         setImagePreview(b64)
         setPendingImageBase64(b64)
@@ -486,7 +487,7 @@ export default function CardModal({ card, onClose, onSave }) {
             {/* Preview */}
             <div style={{ width:72, height:100, borderRadius:8, background:'#181818', border:'1px solid #252525', overflow:'hidden', flexShrink:0, display:'flex', alignItems:'center', justifyContent:'center' }}>
               {imagePreview
-                ? <img src={imagePreview} alt="card" style={{ width:'100%', height:'100%', objectFit:'cover' }} />
+                ? <img src={imagePreview} alt="card" style={{ width:'100%', height:'100%', objectFit:'contain' }} />
                 : <span style={{ fontSize:22, opacity:0.25 }}>🃏</span>}
             </div>
             <div style={{ flex:1 }}>
