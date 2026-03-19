@@ -70,6 +70,7 @@ Cards display these badges wherever shown (collection grid, list, share page, ad
 - Serial # badge: only shown when `card.num` contains `/` (e.g. `12/50`) — silver
 - PSA ↗ badge: shown when `card.notes` matches `/PSA Cert #(\d+)/` — links to psacard.com
 - Condition badge: fallback when no grade
+- Share page grid: NO badge overlays on top of images — badges shown in the info section below only
 
 ## Profile Picture / Avatar
 
@@ -84,10 +85,14 @@ Cards display these badges wherever shown (collection grid, list, share page, ad
 ## Share Page (`app/share/[username]/page.js`)
 
 - Public page — no auth required
-- Shows user avatar + @username header
-- Displays all non-sold cards with full badge row: grade, AUTO+autoGrade, serial#, PSA ↗, condition
-- `app/api/share/[username]/route.js` must select: `autoGrade`, `notes`, `avatar`
-- Card images shown in PSA slab ratio tiles with `objectFit: 'contain'`
+- Shows user avatar + @username header + collection value
+- Grid view default (same PSA slab tiles as collection page) + list view toggle
+- Lightbox on image click — same behaviour as collection page
+- Displays all non-sold cards with full badge row below image: grade, AUTO+autoGrade, serial#, PSA ↗, condition
+- NO badge overlays on top of card images in grid view
+- `app/api/share/[username]/route.js` selects: `autoGrade`, `notes`, `avatar`, `imageUrl`
+- Card images shown in PSA slab ratio tiles (`paddingTop: '146.75%'`) with `objectFit: 'contain'`
+- Search, sport filter chips, sort bar, and filter sheet all present
 
 ## Admin Panel (`app/admin/page.js`)
 
@@ -99,6 +104,19 @@ Cards display these badges wherever shown (collection grid, list, share page, ad
 - Both views: `objectFit: 'contain'`, click image → lightbox
 - API: `app/api/admin/users/route.js` returns full card fields including `imageUrl`, `autoGrade`, `notes`, `avatar`
 
+## Dashboard Spotlight
+
+- Spotlight card randomly selected from active (non-sold) cards on each load
+- Shows card photo on the left (72px wide, PSA slab ratio, `objectFit: 'contain'`)
+- Shows player name, metadata, and Buy / Value / G/L stats to the right
+- Falls back gracefully to text-only layout when no image is present
+- Clicking spotlight navigates to collection filtered by that player
+
+## Market Page
+
+- eBay search — results are cleared immediately when the search field is emptied
+- `onChange` on the search input calls `setResults(null)` and `setError('')` when value is blank
+
 ## Prisma Schema Notes
 
 - `User.avatar String?` — added for profile pictures
@@ -109,48 +127,143 @@ Cards display these badges wherever shown (collection grid, list, share page, ad
 
 | Route | Method | Purpose |
 |---|---|---|
+| `/api/cards` | GET | Returns all cards for current user (all fields incl. imageUrl) |
 | `/api/cards` | POST/PUT | Create or update a card |
 | `/api/cards/image` | POST | Upload card photo to Cloudinary |
 | `/api/user/avatar` | GET/POST | Get or upload user avatar |
 | `/api/auth/me` | GET | Returns current user incl. avatar |
-| `/api/share/[username]` | GET | Public collection data |
+| `/api/share/[username]` | GET | Public collection data incl. imageUrl |
 | `/api/admin/users` | GET | All users + all cards (admin only) |
 | `/api/psa` | GET | PSA cert lookup |
+| `/api/activity` | GET | Activity feed |
+| `/api/dashboard` | GET | Dashboard stats |
 
-## Features Built (Session Log)
+---
 
-### Card Photos
-- Upload via `CardModal` hero zone (drag & drop + file picker)
-- Stored in Cloudinary, URL saved to `Card.imageUrl`
-- Canvas: 400×587 PSA slab ratio, contain (no crop), black letterbox
-- Shown in: collection grid, collection list, admin grid, admin table, lightbox
+## Full Build History
 
-### Lightbox
-- Click any card image to expand full screen
-- `lightboxImg` state: `{ url, player }`
-- Fixed overlay, `zIndex: 9999`, click anywhere to close
-- Present on: `app/collection/page.js`, `app/admin/page.js`
+Everything that has been built or changed on this project, in order.
 
-### Profile Pictures
-- Upload + Facebook-style drag-to-reposition crop modal in Settings
-- Stored in Cloudinary, URL in `User.avatar`
-- Shown in sidebar, share page header, admin user rows
+### 1. Core App Foundation
+- Next.js App Router with Prisma + PostgreSQL (Supabase)
+- JWT authentication (`lib/auth.js`) — `getUser()` used on all protected routes
+- Inline JSX styling throughout — no Tailwind, no CSS modules
+- Privacy mode: toggle that blurs all `.blur-val` elements via `body.privacy-mode` class
 
-### PSA Cert Badge
-- Parsed from `card.notes` field: `/PSA Cert #(\d+)/`
-- Shown as clickable "PSA ↗" badge on collection tiles, list rows, share page
+### 2. Collection Page (`app/collection/page.js`)
+- Grid view and list view toggle
+- Search bar, sport filter chips, sort options
+- Add card via `CardModal`, edit card, delete card (with undo toast)
+- Sold toggle — marks card as sold with sold price + date
+- Stats bar: total cards, total value, total cost, G/L
+- Privacy toggle in sidebar to blur financial values
+- Bulk select + bulk delete
+- Export to CSV
 
-### AUTO Grade
-- `Card.autoGrade` field stores the auto grade value (e.g. "10")
-- Displayed as "AUTO 10" badge (gold) — not just "AUTO"
-- `autoGrade` must be selected in all API routes that return card data
+### 3. CardModal (`app/components/CardModal.js`)
+- Universal modal used for Add to Collection and Edit Card across all pages (PSA, Market, manual)
+- Fields: player, sport (top 4 buttons + dropdown for more), grading company, grade, raw condition, autograph toggle, auto grade, buy price, current value, year, set, brand, serial #, quantity, date acquired, notes, sold info
+- TCG mode: different labels and extra fields (rarity, edition, language) when sport is a TCG
+- Collapsible "card details" section (auto-expands when pre-filled e.g. from PSA)
+- Card photo hero zone at the very top of the modal (see Card Photo Upload section above)
 
-### Share Page Fixes
-- Avatar circle shown next to @username
-- Full badge row: grade, AUTO+autoGrade, serial#, PSA↗, condition
-- All fields (`autoGrade`, `notes`, `avatar`) returned by share API
+### 4. Dashboard (`app/dashboard/page.js`)
+- Portfolio value chart (line graph of snapshots over time)
+- Stats cards: total value, total cards, total cost, G/L %
+- Spotlight card: randomly selected card shown with photo + buy/value/G/L stats
+- Recent activity feed
+- Quick-add value update directly from dashboard card tiles
+- Snapshot saved to `PortfolioSnapshot` table on every card save
 
-### Admin Card Database
+### 5. PSA Lookup (`app/psa/page.js`)
+- Looks up a PSA cert number via `/api/psa`
+- Field mapping: `Subject` → player, `CardName` → set, `Variety` → card name (variety takes priority over set for the name field)
+- Saves cert number in `card.notes` as "PSA Cert #XXXXXXXX"
+- PSA ↗ badge generated from that notes field — no API call on badge click
+- Clicking "Add to Collection" opens `CardModal` pre-filled with PSA data
+
+### 6. Market Page (`app/market/page.js`)
+- eBay sold listings search via `/api/market`
+- Shows avg, high, low prices + individual listings with images
+- "Add to Collection" from any listing opens `CardModal` pre-filled
+- Results clear immediately when search field is emptied
+
+### 7. Card Photos
+- Upload flow: file picker or drag & drop → canvas resize (400×587, contain, black bg) → base64 → POST `/api/cards/image` → Cloudinary → URL saved to `Card.imageUrl`
+- New cards: image upload happens after card save (needs the new card's ID from the POST response)
+- Edit cards: existing `imageUrl` pre-loaded in modal; user can change or remove
+- Remove image: sends `{ cardId, image: null }` to `/api/cards/image` which sets `imageUrl: null` in DB
+- `lib/cloudinary.js`: `cloudinary.config(process.env.CLOUDINARY_URL)` — env var format: `cloudinary://API_KEY:API_SECRET@CLOUD_NAME`
+
+### 8. Image Display — Collection Page
+- Grid view: PSA slab ratio tiles (`paddingTop: '146.75%'`), `objectFit: 'contain'`, black background
+- List view: 38×56px thumbnails, `objectFit: 'contain'`
+- Lightbox: click any image → full-screen overlay (`position: fixed, inset: 0, zIndex: 9999`), click anywhere to close
+- Cards without photos show sport emoji placeholder
+
+### 9. Lightbox
+- State: `const [lightboxImg, setLightboxImg] = useState(null)` — stores `{ url, player }`
+- Rendered at the top of the return JSX, above all other content
+- Present on: `app/collection/page.js`, `app/admin/page.js`, `app/share/[username]/page.js`
+
+### 10. Profile Pictures / Avatars
+- Settings page (`app/settings/page.js`): upload section with Facebook-style crop modal
+- Crop modal: 280px circle preview, drag image to reposition, zoom slider
+- `handleCropSave`: draws a square canvas of exactly what's visible in the 280px circle
+- API route `app/api/user/avatar/route.js`: GET returns avatar URL, POST uploads to Cloudinary at `topload/avatars/{userId}`
+- `User.avatar String?` added to Prisma schema — run `npx prisma db push` after schema changes
+- `app/api/auth/me/route.js` returns `avatar` field so it's available on every page load
+- Avatar shown: sidebar (28px), share page header (56px), admin user rows (30px)
+
+### 11. PSA Cert Badge
+- Regex: `/PSA Cert #(\d+)/` on `card.notes`
+- Badge: "PSA ↗" in blue — links to `https://www.psacard.com/cert/{n}/psa`
+- Shown on: collection grid tile, collection list row, share page grid + list
+- No API call on click — direct link to PSA website
+
+### 12. AUTO Grade Badge
+- `Card.autoGrade` field (string) stores the auto grade value
+- Badge shows "AUTO 10" (gold) — NOT just "AUTO" — `autoGrade` appended if present
+- `autoGrade: true` must be included in every Prisma select that returns card data
+
+### 13. Serial Number Badge
+- Shown only when `card.num` contains `/` (e.g. "09/10", "12/50")
+- Displayed as `#{card.num}` in silver on collection tiles, list rows, share page
+
+### 14. Share Page — Full Rebuild
+- Grid view (default): PSA slab ratio tiles, card photos, badges below image (NOT overlaid on photo)
+- List view: thumbnails 38×56px + full badge row + value
+- View toggle: grid/list switcher in toolbar
+- Lightbox: click any photo → full-screen overlay
+- Header: avatar circle (56px) + @username + card count + collection value
+- Search, sport filter chips, sort bar (newest/value/A-Z), filter sheet (grade/sport/auto/price range)
+- Footer CTA: "Track your own collection on TopLoad" → /signup
+- API (`app/api/share/[username]/route.js`) selects `imageUrl`, `autoGrade`, `notes`, `avatar`
+
+### 15. Admin Panel — Card Database
+- New "Card Database" section below user management
 - Flattens all users' cards into one searchable database
-- Grid + table toggle, search, sport filter, owner filter
-- Each card shows: photo, player, sport, year, grade, buy price, value, G/L, owner avatar
+- Grid view: PSA slab tiles, badges top-right, owner avatar + @username bottom-right
+- Table view: 34×50px thumbnail, all columns (player, sport, year, grade, buy, value, G/L, owner)
+- Search by player/set/brand, filter by sport, filter by owner
+- Both views: `objectFit: 'contain'`, click image → lightbox
+- Admin user rows show 30px avatar circle
+
+### 16. Dashboard Spotlight — Photo
+- Spotlight section updated to show card photo (72px wide, PSA slab portrait ratio)
+- Photo sits to the left; player name, metadata, and stats sit to the right
+- Gracefully collapses to text-only if card has no photo
+
+### 17. Market — Clear on Empty Search
+- Typing then clearing the search field now instantly removes all results and errors
+- No stale results left on screen
+
+### 18. Share Page — No Badge Overlays on Photos
+- Removed the semi-transparent badge overlays that appeared on top of card photos in grid view
+- Badges still appear below the photo in the card info section
+- List view badges unchanged
+
+### 19. CLAUDE.md
+- This file — created to document all conventions, rules, and build history
+- Automatically read by Claude at the start of every session
+- Should be updated whenever new features are added or conventions change
