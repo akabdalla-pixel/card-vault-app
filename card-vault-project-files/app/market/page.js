@@ -82,6 +82,8 @@ export default function MarketPage() {
   const [user, setUser] = useState(null)
   const [loading, setLoading] = useState(true)
   const [query, setQuery] = useState('')
+  const [brand, setBrand] = useState('')
+  const [set, setSet] = useState('')
   const [results, setResults] = useState(null)
   const [searching, setSearching] = useState(false)
   const [error, setError] = useState('')
@@ -103,11 +105,12 @@ export default function MarketPage() {
     setSearching(true)
     setError('')
     setResults(null)
+    const fullQuery = [query.trim(), brand.trim(), set.trim()].filter(Boolean).join(' ')
     try {
       const res = await fetch('/api/market', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ query: query.trim(), source: 'ebay' })
+        body: JSON.stringify({ query: fullQuery, source: 'ebay' })
       })
       const data = await res.json()
       if (data.error || !data.results?.length) {
@@ -179,13 +182,14 @@ export default function MarketPage() {
 
           {/* Search */}
           <div style={{ background:'#111', border:'1px solid #1e1e1e', borderRadius:14, padding:'18px 20px', marginBottom:24 }}>
-            <div style={{ display:'flex', gap:10 }}>
+            {/* Main query row */}
+            <div style={{ display:'flex', gap:10, marginBottom:10 }}>
               <div style={{ flex:1, position:'relative' }}>
                 <input
                   value={query}
-                  onChange={e => { setQuery(e.target.value); if (!e.target.value.trim()) { setResults(null); setError('') } }}
+                  onChange={e => { setQuery(e.target.value); if (!e.target.value.trim()) { setResults(null); setError(''); setBrand(''); setSet('') } }}
                   onKeyDown={e => e.key==='Enter' && handleSearch()}
-                  placeholder="e.g. LeBron James Topps Chrome PSA 10"
+                  placeholder="Player / card name — e.g. LeBron James"
                   style={{ width:'100%', padding:'11px 14px 11px 40px', borderRadius:10, background:'#1a1a1a', border:'1px solid #2a2a2a', color:'#f0f0f0', fontSize:14, boxSizing:'border-box', transition:'border-color 0.15s' }}
                 />
                 <div style={{ position:'absolute', left:13, top:'50%', transform:'translateY(-50%)', color:'#444', pointerEvents:'none' }}><IconSearch /></div>
@@ -193,6 +197,23 @@ export default function MarketPage() {
               <button onClick={handleSearch} disabled={searching || !query.trim()} style={{ padding:'11px 24px', borderRadius:10, background: searching?'#1a1a1a':'var(--accent)', border:'none', color: searching?'#555':'#fff', fontSize:14, fontWeight:800, cursor: searching?'not-allowed':'pointer', whiteSpace:'nowrap', transition:'all 0.15s' }}>
                 {searching ? 'Searching...' : 'Search'}
               </button>
+            </div>
+            {/* Brand + Set row */}
+            <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:10 }}>
+              <input
+                value={brand}
+                onChange={e => setBrand(e.target.value)}
+                onKeyDown={e => e.key==='Enter' && handleSearch()}
+                placeholder="Brand — e.g. Panini"
+                style={{ padding:'9px 14px', borderRadius:10, background:'#1a1a1a', border:`1px solid ${brand ? 'rgba(var(--accent-rgb),0.35)' : '#2a2a2a'}`, color: brand ? 'var(--accent-light)' : '#f0f0f0', fontSize:13, boxSizing:'border-box', transition:'border-color 0.15s, color 0.15s', outline:'none' }}
+              />
+              <input
+                value={set}
+                onChange={e => setSet(e.target.value)}
+                onKeyDown={e => e.key==='Enter' && handleSearch()}
+                placeholder="Set / Series — e.g. National Treasure"
+                style={{ padding:'9px 14px', borderRadius:10, background:'#1a1a1a', border:`1px solid ${set ? 'rgba(var(--accent-rgb),0.35)' : '#2a2a2a'}`, color: set ? 'var(--accent-light)' : '#f0f0f0', fontSize:13, boxSizing:'border-box', transition:'border-color 0.15s, color 0.15s', outline:'none' }}
+              />
             </div>
           </div>
 
@@ -235,7 +256,7 @@ export default function MarketPage() {
                 {results.count} Listings on eBay
                 {results.searchedAs && <span style={{ color:'#444', fontWeight:600, textTransform:'none', letterSpacing:0 }}> · simplified to "{results.searchedAs}"</span>}
               </div>
-              <a href={`https://www.ebay.com/sch/i.html?_nkw=${encodeURIComponent(query)}`} target="_blank" rel="noopener noreferrer" style={{ display:'flex', alignItems:'center', gap:4, fontSize:11, color:'var(--accent)', textDecoration:'none', fontWeight:700 }}>
+              <a href={`https://www.ebay.com/sch/i.html?_nkw=${encodeURIComponent([query.trim(), brand.trim(), set.trim()].filter(Boolean).join(' '))}`} target="_blank" rel="noopener noreferrer" style={{ display:'flex', alignItems:'center', gap:4, fontSize:11, color:'var(--accent)', textDecoration:'none', fontWeight:700 }}>
                 View on eBay <IconExternal />
               </a>
             </div>
