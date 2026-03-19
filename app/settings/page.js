@@ -168,7 +168,8 @@ export default function SettingsPage() {
         body: JSON.stringify({ avatar: base64 }),
       })
       if (res.ok) {
-        setUser(u => ({ ...u, avatar: base64 }))
+        const data = await res.json()
+        setUser(u => ({ ...u, avatar: data.avatar }))
         showToast('Profile picture updated!', 'success')
       } else {
         showToast('Failed to save picture', 'error')
