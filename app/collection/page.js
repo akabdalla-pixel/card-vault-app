@@ -1066,10 +1066,19 @@ function CollectionPage() {
                         onMouseEnter={e => { e.currentTarget.style.borderColor = isSelected ? 'var(--accent)' : '#333'; e.currentTarget.style.transform='translateY(-2px)' }}
                         onMouseLeave={e => { e.currentTarget.style.borderColor = isSelected ? 'var(--accent)' : '#1a1a1a'; e.currentTarget.style.transform='translateY(0)' }}>
                         <div style={{ height:3, background: card.sold ? '#ffbe2e' : barColor, opacity: buy===0 ? 0.3 : 0.9 }} />
+                        {/* Card image or sport emoji header */}
+                        {card.imageUrl
+                          ? <div style={{ position:'relative', width:'100%', paddingTop:'71.4%', background:'#0d0d0d', overflow:'hidden' }}>
+                              <img src={card.imageUrl} alt={card.player} style={{ position:'absolute', inset:0, width:'100%', height:'100%', objectFit:'cover' }} />
+                              <div style={{ position:'absolute', top:8, left:8 }}>
+                                <input type="checkbox" checked={isSelected} onChange={() => toggleSelect(card.id)} style={{ accentColor:'var(--accent)', width:14, height:14, cursor:'pointer' }} />
+                              </div>
+                            </div>
+                          : null}
                         <div style={{ padding:'14px 16px' }}>
                           <div style={{ display:'flex', justifyContent:'space-between', alignItems:'flex-start', marginBottom:12 }}>
                             <div style={{ display:'flex', alignItems:'center', gap:8 }}>
-                              <input type="checkbox" checked={isSelected} onChange={() => toggleSelect(card.id)} style={{ accentColor:'var(--accent)', width:14, height:14, cursor:'pointer' }} />
+                              {!card.imageUrl && <input type="checkbox" checked={isSelected} onChange={() => toggleSelect(card.id)} style={{ accentColor:'var(--accent)', width:14, height:14, cursor:'pointer' }} />}
                               <div style={{ width:36, height:36, borderRadius:8, background:'#1a1a1a', border:'1px solid #222', display:'flex', alignItems:'center', justifyContent:'center', fontSize:18 }}>{sportEmoji}</div>
                             </div>
                             <div style={{ display:'flex', gap:5, flexWrap:'wrap', justifyContent:'flex-end' }}>
@@ -1125,8 +1134,13 @@ function CollectionPage() {
                         onMouseLeave={e => { if(!isSelected) { e.currentTarget.style.background='#111'; e.currentTarget.style.borderColor='#1a1a1a' }}}>
                         {/* Checkbox */}
                         <input type="checkbox" checked={isSelected} onChange={() => toggleSelect(card.id)} style={{ accentColor:'var(--accent)', width:14, height:14, cursor:'pointer', flexShrink:0 }} />
-                        {/* Sport emoji */}
-                        <div style={{ width:34, height:34, borderRadius:8, background:'#1a1a1a', border:'1px solid #222', display:'flex', alignItems:'center', justifyContent:'center', fontSize:17, flexShrink:0 }}>{sportEmoji}</div>
+                        {/* Card thumbnail or sport emoji */}
+                        {card.imageUrl
+                          ? <div style={{ width:38, height:53, borderRadius:6, overflow:'hidden', flexShrink:0, background:'#0d0d0d' }}>
+                              <img src={card.imageUrl} alt={card.player} style={{ width:'100%', height:'100%', objectFit:'cover' }} />
+                            </div>
+                          : <div style={{ width:34, height:34, borderRadius:8, background:'#1a1a1a', border:'1px solid #222', display:'flex', alignItems:'center', justifyContent:'center', fontSize:17, flexShrink:0 }}>{sportEmoji}</div>
+                        }
                         {/* Card info — takes remaining space */}
                         <div style={{ flex:'1 1 0', minWidth:0 }}>
                           <div style={{ display:'flex', alignItems:'center', gap:5, marginBottom:2, flexWrap:'wrap' }}>
