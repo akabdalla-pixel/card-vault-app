@@ -337,29 +337,6 @@ export default function PSALookupPage() {
                     </span>
                   </div>
                   <div className="psa-result-inner" style={{ display:'flex', gap:20, padding:'20px', flexWrap:'wrap' }}>
-
-                    {/* ── Card Image ── */}
-                    <div className="psa-img-wrap" style={{ width:160, flexShrink:0 }}>
-                      <div style={{ position:'relative', width:'100%', paddingTop:'146.75%', borderRadius:10, overflow:'hidden', background:'#0a0a0a', border:'1px solid #1e1e1e' }}>
-                        <img
-                          key={imgFront ? 'front' : 'back'}
-                          src={`/api/psa/image?cert=${result.cert}&side=${imgFront ? 'front' : 'back'}`}
-                          alt={imgFront ? 'Front' : 'Back'}
-                          onError={e => { e.target.style.display='none'; e.target.nextSibling.style.display='flex' }}
-                          style={{ position:'absolute', inset:0, width:'100%', height:'100%', objectFit:'contain' }}
-                        />
-                        <div style={{ position:'absolute', inset:0, display:'none', flexDirection:'column', alignItems:'center', justifyContent:'center', gap:6 }}>
-                          <div style={{ fontSize:28 }}>🃏</div>
-                          <div style={{ fontSize:10, color:'#444', fontWeight:600, textAlign:'center', padding:'0 8px' }}>No image available</div>
-                        </div>
-                      </div>
-                      {/* Front / Back toggle */}
-                      <div style={{ display:'flex', gap:4, marginTop:8 }}>
-                        <button onClick={() => setImgFront(true)} style={{ flex:1, padding:'6px', borderRadius:7, border:'none', cursor:'pointer', fontSize:11, fontWeight:700, background: imgFront ? 'var(--accent)' : '#1a1a1a', color: imgFront ? '#fff' : '#555' }}>Front</button>
-                        <button onClick={() => setImgFront(false)} style={{ flex:1, padding:'6px', borderRadius:7, border:'none', cursor:'pointer', fontSize:11, fontWeight:700, background: !imgFront ? 'var(--accent)' : '#1a1a1a', color: !imgFront ? '#fff' : '#555' }}>Back</button>
-                      </div>
-                    </div>
-
                     <div style={{ flex:1, minWidth:0 }}>
                       <div style={{ display:'flex', alignItems:'center', gap:14, marginBottom:16 }}>
                         <div style={{ width:62, height:62, borderRadius:12, background:`${gradeColor}18`, border:`2px solid ${gradeColor}`, display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', flexShrink:0, gap:1 }}>
