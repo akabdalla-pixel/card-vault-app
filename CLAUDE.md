@@ -267,3 +267,9 @@ Everything that has been built or changed on this project, in order.
 - This file — created to document all conventions, rules, and build history
 - Automatically read by Claude at the start of every session
 - Should be updated whenever new features are added or conventions change
+
+### 20. CardModal — Live PSA Badge Preview
+- When the notes field contains text matching `/PSA Cert #(\d+)/`, a live PSA ↗ badge preview appears below the notes textarea
+- Badge is a real clickable link to psacard.com/cert/{n}/psa so user can verify the cert immediately
+- Helper text reads "Badge will appear on this card's tile" — makes it clear the badge will show on the collection tile after save
+- Placeholder text in the notes field now hints: `Tip: type "PSA Cert #XXXXXXXX" to auto-add the PSA badge`
