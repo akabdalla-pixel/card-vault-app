@@ -103,10 +103,17 @@ export default function SharedCollectionPage() {
 
           {/* Header */}
           <div style={{ marginBottom:20, display:'flex', alignItems:'flex-start', justifyContent:'space-between', flexWrap:'wrap', gap:14 }}>
-            <div>
-              <div style={{ fontSize:9, fontWeight:800, color:'var(--accent-light)', textTransform:'uppercase', letterSpacing:'0.15em', marginBottom:5 }}>Public Collection</div>
-              <h1 style={{ fontSize:28, fontWeight:900, letterSpacing:'-0.8px', color:'#fff', margin:'0 0 3px' }}>@{data.username}</h1>
-              <p style={{ fontSize:12, color:'#555' }}>{data.cardCount} cards · TopLoad</p>
+            <div style={{ display:'flex', alignItems:'center', gap:14 }}>
+              <div style={{ width:56, height:56, borderRadius:'50%', background:'var(--accent)', overflow:'hidden', display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0, border:'2px solid #2a2a2a' }}>
+                {data.avatar
+                  ? <img src={data.avatar} alt="" style={{ width:'100%', height:'100%', objectFit:'cover' }} />
+                  : <span style={{ fontSize:22, fontWeight:900, color:'#fff' }}>{data.username?.[0]?.toUpperCase()}</span>}
+              </div>
+              <div>
+                <div style={{ fontSize:9, fontWeight:800, color:'var(--accent-light)', textTransform:'uppercase', letterSpacing:'0.15em', marginBottom:5 }}>Public Collection</div>
+                <h1 style={{ fontSize:28, fontWeight:900, letterSpacing:'-0.8px', color:'#fff', margin:'0 0 3px' }}>@{data.username}</h1>
+                <p style={{ fontSize:12, color:'#555' }}>{data.cardCount} cards · TopLoad</p>
+              </div>
             </div>
             <div style={{ background:'#111', border:'1px solid #1e1e1e', borderRadius:12, padding:'12px 18px', textAlign:'right' }}>
               <div style={{ fontSize:9, fontWeight:700, color:'#555', textTransform:'uppercase', letterSpacing:'0.1em', marginBottom:3 }}>{filtered.length < cards.length ? 'Filtered Value' : 'Collection Value'}</div>

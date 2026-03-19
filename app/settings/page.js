@@ -81,7 +81,7 @@ function Sidebar({ user, onLogout, cardCount = 0, active = "" }) {
         <Link href="/settings" style={{ display:'flex', alignItems:'center', gap:10, padding:'9px 12px', borderRadius:10, marginBottom:2, textDecoration:'none', color:'#555', fontSize:13, fontWeight:500 }}><IconSettings /><span>Settings</span></Link>
         <button onClick={onLogout} style={{ display:'flex', alignItems:'center', gap:10, padding:'9px 12px', borderRadius:10, width:'100%', background:'transparent', border:'none', cursor:'pointer', color:'#555', fontSize:13, fontWeight:500 }}><IconLogout /><span>Sign Out</span></button>
         {user && <div style={{ display:'flex', alignItems:'center', gap:8, padding:'8px 10px', marginTop:4, borderRadius:10, background:'#111' }}>
-          <div style={{ width:28, height:28, borderRadius:8, background:'var(--accent)', display:'flex', alignItems:'center', justifyContent:'center', fontSize:12, fontWeight:900, color:'#fff', flexShrink:0 }}>{user.username?.[0]?.toUpperCase()||'A'}</div>
+          <div style={{ width:28, height:28, borderRadius:8, background:'var(--accent)', overflow:'hidden', display:'flex', alignItems:'center', justifyContent:'center', fontSize:12, fontWeight:900, color:'#fff', flexShrink:0 }}>{user.avatar ? <img src={user.avatar} alt="" style={{ width:'100%', height:'100%', objectFit:'cover' }} /> : user.username?.[0]?.toUpperCase()||'A'}</div>
           <div style={{overflow:'hidden'}}><div style={{ fontSize:11, fontWeight:700, color:'#ccc', overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>@{user.username}</div><div style={{ fontSize:9, color:'#555', marginTop:1 }}>{user.email}</div></div>
         </div>}
       </div>
@@ -134,6 +134,58 @@ export default function SettingsPage() {
     })
   }
   const router = useRouter()
+
+  // Avatar
+  const [avatarLoading, setAvatarLoading] = useState(false)
+
+  async function handleAvatarUpload(e) {
+    const file = e.target.files?.[0]
+    if (!file) return
+    setAvatarLoading(true)
+    try {
+      const base64 = await new Promise((resolve, reject) => {
+        const img = new Image()
+        const reader = new FileReader()
+        reader.onload = ev => { img.src = ev.target.result }
+        img.onload = () => {
+          const SIZE = 128
+          const canvas = document.createElement('canvas')
+          canvas.width = SIZE; canvas.height = SIZE
+          const ctx = canvas.getContext('2d')
+          // Cover crop: scale so smallest dimension = SIZE
+          const scale = Math.max(SIZE / img.width, SIZE / img.height)
+          const w = img.width * scale, h = img.height * scale
+          ctx.drawImage(img, (SIZE - w) / 2, (SIZE - h) / 2, w, h)
+          resolve(canvas.toDataURL('image/jpeg', 0.85))
+        }
+        img.onerror = reject
+        reader.onerror = reject
+        reader.readAsDataURL(file)
+      })
+      const res = await fetch('/api/user/avatar', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ avatar: base64 }),
+      })
+      if (res.ok) {
+        setUser(u => ({ ...u, avatar: base64 }))
+        showToast('Profile picture updated!', 'success')
+      } else {
+        showToast('Failed to save picture', 'error')
+      }
+    } catch { showToast('Failed to process image', 'error') }
+    finally { setAvatarLoading(false); e.target.value = '' }
+  }
+
+  async function handleRemoveAvatar() {
+    setAvatarLoading(true)
+    try {
+      await fetch('/api/user/avatar', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ avatar: null }) })
+      setUser(u => ({ ...u, avatar: null }))
+      showToast('Profile picture removed', 'success')
+    } catch { showToast('Failed to remove picture', 'error') }
+    finally { setAvatarLoading(false) }
+  }
 
   // Change name
   const [nameVal, setNameVal] = useState('')
@@ -377,6 +429,35 @@ export default function SettingsPage() {
                   <a href={`/share/${user?.username}`} target="_blank" rel="noopener noreferrer" style={{ flex:1, padding:'10px', borderRadius:10, background:'#111', border:'1px solid #1e1e1e', color:'#888', fontSize:13, fontWeight:700, cursor:'pointer', textDecoration:'none', textAlign:'center' }}>
                     👁 Preview
                   </a>
+                </div>
+              </div>
+
+              {/* ── Profile Picture ── */}
+              <div className="settings-card" style={{ background:'#111', border:'1px solid #1e1e1e', borderRadius:14, padding:'20px', marginBottom:16 }}>
+                <div style={{ fontSize:9, fontWeight:800, color:'var(--accent-light)', textTransform:'uppercase', letterSpacing:'0.12em', marginBottom:14 }}>Profile Picture</div>
+                <div style={{ display:'flex', alignItems:'center', gap:16 }}>
+                  {/* Avatar preview */}
+                  <div style={{ width:72, height:72, borderRadius:'50%', background:'#1a1a1a', border:'2px solid #2a2a2a', overflow:'hidden', flexShrink:0, display:'flex', alignItems:'center', justifyContent:'center' }}>
+                    {user?.avatar
+                      ? <img src={user.avatar} alt="avatar" style={{ width:'100%', height:'100%', objectFit:'cover' }} />
+                      : <span style={{ fontSize:28, fontWeight:900, color:'var(--accent)' }}>{user?.username?.[0]?.toUpperCase() || '?'}</span>}
+                  </div>
+                  <div style={{ flex:1 }}>
+                    <div style={{ fontSize:12, color:'#555', marginBottom:10, lineHeight:1.5 }}>
+                      Shown in your sidebar and public share page. Square images work best.
+                    </div>
+                    <div style={{ display:'flex', gap:8, flexWrap:'wrap' }}>
+                      <label style={{ padding:'8px 16px', borderRadius:10, background:'rgba(var(--accent-rgb),0.1)', border:'1px solid rgba(var(--accent-rgb),0.25)', color:'var(--accent)', fontSize:13, fontWeight:800, cursor: avatarLoading ? 'not-allowed' : 'pointer', opacity: avatarLoading ? 0.5 : 1 }}>
+                        {avatarLoading ? 'Saving…' : '📷 Upload Photo'}
+                        <input type="file" accept="image/*" style={{ display:'none' }} onChange={handleAvatarUpload} disabled={avatarLoading} />
+                      </label>
+                      {user?.avatar && (
+                        <button onClick={handleRemoveAvatar} disabled={avatarLoading} style={{ padding:'8px 16px', borderRadius:10, background:'transparent', border:'1px solid #2a2a2a', color:'#555', fontSize:13, fontWeight:700, cursor: avatarLoading ? 'not-allowed' : 'pointer' }}>
+                          Remove
+                        </button>
+                      )}
+                    </div>
+                  </div>
                 </div>
               </div>
 
