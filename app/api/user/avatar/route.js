@@ -30,12 +30,18 @@ export async function POST(req) {
   }
 
   // Upload to Cloudinary — folder "topload/avatars", keyed by userId so re-uploads overwrite
-  const result = await cloudinary.uploader.upload(avatar, {
-    public_id: `topload/avatars/${userId}`,
-    overwrite: true,
-    transformation: [{ width: 128, height: 128, crop: 'fill', gravity: 'face' }],
-    format: 'jpg',
-  })
+  let result
+  try {
+    result = await cloudinary.uploader.upload(avatar, {
+      public_id: `topload/avatars/${userId}`,
+      overwrite: true,
+      transformation: [{ width: 128, height: 128, crop: 'fill', gravity: 'face' }],
+      format: 'jpg',
+    })
+  } catch (err) {
+    console.error('Cloudinary upload error:', err)
+    return NextResponse.json({ error: 'Cloudinary upload failed', detail: err?.message || String(err) }, { status: 500 })
+  }
 
   const url = result.secure_url
   await prisma.user.update({ where: { id: userId }, data: { avatar: url } })

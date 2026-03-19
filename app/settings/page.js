@@ -172,9 +172,10 @@ export default function SettingsPage() {
         setUser(u => ({ ...u, avatar: data.avatar }))
         showToast('Profile picture updated!', 'success')
       } else {
-        showToast('Failed to save picture', 'error')
+        const err = await res.json().catch(() => ({}))
+        showToast(err.detail || err.error || 'Failed to save picture', 'error')
       }
-    } catch { showToast('Failed to process image', 'error') }
+    } catch (err) { showToast(err?.message || 'Failed to process image', 'error') }
     finally { setAvatarLoading(false); e.target.value = '' }
   }
 
