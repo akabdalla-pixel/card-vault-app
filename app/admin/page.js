@@ -25,6 +25,31 @@ function SportEmoji({ sport }) {
   return map[sport] || '🃏'
 }
 
+// ── Section Header ────────────────────────────────────────────────────────────
+function SectionHeader({ title, badge, controls, open, onToggle, count }) {
+  return (
+    <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom: open ? 12 : 0, flexWrap:'wrap', gap:10 }}>
+      <button
+        onClick={onToggle}
+        style={{ display:'flex', alignItems:'center', gap:10, background:'none', border:'none', cursor:'pointer', padding:0 }}
+      >
+        <span style={{ fontSize:14, fontWeight:900, color:'#fff', textTransform:'uppercase', letterSpacing:'0.05em' }}>
+          {title}{count !== undefined ? ` (${count})` : ''}
+        </span>
+        {badge}
+        <span style={{
+          fontSize:11, color: open ? 'var(--accent)' : '#444',
+          transition:'transform 0.2s',
+          display:'inline-block',
+          transform: open ? 'rotate(90deg)' : 'rotate(0deg)',
+          lineHeight:1,
+        }}>▶</span>
+      </button>
+      {open && controls}
+    </div>
+  )
+}
+
 export default function AdminPage() {
   const [data, setData] = useState(null)
   const [loading, setLoading] = useState(true)
@@ -36,9 +61,14 @@ export default function AdminPage() {
   // Card Database
   const [dbSearch, setDbSearch] = useState('')
   const [dbSport, setDbSport] = useState('')
-  const [dbView, setDbView] = useState('grid') // 'grid' | 'table'
+  const [dbView, setDbView] = useState('grid')
+  const [dbSort, setDbSort] = useState('newest')
   const [lightboxImg, setLightboxImg] = useState(null)
   const [dbOwner, setDbOwner] = useState('')
+  // Section collapse state
+  const [sections, setSections] = useState({ users: true, psa: true, cards: true })
+  const toggleSection = k => setSections(s => ({ ...s, [k]: !s[k] }))
+
   const router = useRouter()
 
   useEffect(() => {
@@ -90,6 +120,7 @@ export default function AdminPage() {
         ::-webkit-scrollbar{ width:4px } ::-webkit-scrollbar-thumb{ background:#333; border-radius:4px }
         .user-row:hover{ background:rgba(255,255,255,0.02) }
         .card-row:hover{ background:rgba(255,255,255,0.015) }
+        .psa-row:hover{ background:rgba(255,255,255,0.015) }
       `}</style>
 
       <div style={{ minHeight:'100vh', background:'#0a0a0a', padding:'32px' }}>
@@ -111,17 +142,17 @@ export default function AdminPage() {
           </div>
 
           {/* Stats grid */}
-          <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fit,minmax(160px,1fr))', gap:10, marginBottom:28 }}>
+          <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fit,minmax(160px,1fr))', gap:10, marginBottom:32 }}>
             {[
-              { label:'Total Users',     value: stats.totalUsers,                           accent:'var(--accent)' },
-              { label:'Total Cards',     value: stats.totalCards,                           accent:'var(--accent)' },
-              { label:'Active Cards',    value: stats.totalActiveCards,                     accent:'#333' },
-              { label:'Sold Cards',      value: stats.totalSoldCards,                       accent:'#ffbe2e' },
-              { label:'Portfolio Value', value: fmt(stats.totalPortfolioValue),             accent:'#22c55e' },
-              { label:'Total Invested',  value: fmt(stats.totalInvested),                   accent:'#333' },
-              { label:'Cards This Week', value: stats.cardsThisWeek,                        accent:'var(--accent-light)' },
-              { label:'Most Active',     value: '@'+stats.mostActiveUser,                   accent:'var(--accent)', small:true },
-              { label:'PSA Lookups',     value: psaCache?.total ?? '—',                     accent:'var(--accent)' },
+              { label:'Total Users',     value: stats.totalUsers,                 accent:'var(--accent)' },
+              { label:'Total Cards',     value: stats.totalCards,                 accent:'var(--accent)' },
+              { label:'Active Cards',    value: stats.totalActiveCards,           accent:'#333' },
+              { label:'Sold Cards',      value: stats.totalSoldCards,             accent:'#ffbe2e' },
+              { label:'Portfolio Value', value: fmt(stats.totalPortfolioValue),   accent:'#22c55e' },
+              { label:'Total Invested',  value: fmt(stats.totalInvested),         accent:'#333' },
+              { label:'Cards This Week', value: stats.cardsThisWeek,              accent:'var(--accent-light)' },
+              { label:'Most Active',     value: '@'+stats.mostActiveUser,         accent:'var(--accent)', small:true },
+              { label:'PSA Lookups',     value: psaCache?.total ?? '—',           accent:'var(--accent)' },
             ].map((s,i) => (
               <div key={i} style={{ background:'#111', border:'1px solid #1a1a1a', borderRadius:12, padding:'14px 16px', position:'relative', overflow:'hidden' }}>
                 <div style={{ position:'absolute', top:0, left:0, right:0, height:2, background:s.accent }} />
@@ -131,192 +162,235 @@ export default function AdminPage() {
             ))}
           </div>
 
-          {/* Users section */}
-          <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:12 }}>
-            <h2 style={{ fontSize:14, fontWeight:900, color:'#fff', textTransform:'uppercase', letterSpacing:'0.05em', margin:0 }}>Users ({users.length})</h2>
-            <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search users..." style={{ padding:'7px 12px', borderRadius:8, background:'#111', border:'1px solid #1e1e1e', color:'#f0f0f0', fontSize:12, outline:'none', width:200 }} />
-          </div>
+          {/* ── Users section ───────────────────────────────────────────────── */}
+          <div style={{ marginBottom:36 }}>
+            <SectionHeader
+              title="Users"
+              count={users.length}
+              open={sections.users}
+              onToggle={() => toggleSection('users')}
+              controls={
+                <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search users..."
+                  style={{ padding:'7px 12px', borderRadius:8, background:'#111', border:'1px solid #1e1e1e', color:'#f0f0f0', fontSize:12, outline:'none', width:200 }} />
+              }
+            />
 
-          <div style={{ background:'#0d0d0d', border:'1px solid #1a1a1a', borderRadius:14, overflow:'hidden' }}>
-            <div style={{ display:'grid', gridTemplateColumns:'1fr 1.5fr 60px 60px 80px 100px 100px 32px', gap:0, padding:'10px 16px', background:'#000', borderBottom:'1px solid #111' }}>
-              {['User','Email','Cards','Sold','Wishes','Value','Joined',''].map((h,i) => (
-                <div key={i} style={{ fontSize:9, fontWeight:700, color:'#333', textTransform:'uppercase', letterSpacing:'0.1em', textAlign: i>1?'right':'left' }}>{h}</div>
-              ))}
-            </div>
-
-            {filteredUsers.length === 0 && (
-              <div style={{ padding:'32px', textAlign:'center', fontSize:13, color:'#444' }}>No users found</div>
-            )}
-
-            {filteredUsers.map((user, ui) => (
-              <div key={user.id}>
-                <div className="user-row" style={{ display:'grid', gridTemplateColumns:'1fr 1.5fr 60px 60px 80px 100px 100px 32px', gap:0, padding:'13px 16px', borderTop: ui>0?'1px solid #111':'none', cursor:'pointer', transition:'background 0.1s' }}
-                  onClick={() => setExpanded(expanded===user.id ? null : user.id)}>
-                  <div style={{ display:'flex', alignItems:'center', gap:9 }}>
-                    <div style={{ width:30, height:30, borderRadius:'50%', background:'#1e1e1e', border:'1px solid #2a2a2a', overflow:'hidden', flexShrink:0, display:'flex', alignItems:'center', justifyContent:'center', fontSize:12, fontWeight:900, color:'#666' }}>
-                      {user.avatar ? <img src={user.avatar} alt="" style={{ width:'100%', height:'100%', objectFit:'cover' }} /> : user.username?.[0]?.toUpperCase()}
-                    </div>
-                    <div>
-                      <div style={{ fontSize:13, fontWeight:800, color:'#f0f0f0' }}>@{user.username}</div>
-                      <div style={{ fontSize:10, color:'#444', marginTop:1 }}>{fmtTime(user.createdAt)}</div>
-                    </div>
-                  </div>
-                  <div style={{ fontSize:12, color:'#666', textAlign:'left', alignSelf:'center', overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>{user.email}</div>
-                  <div style={{ fontFamily:'var(--font-geist-mono)', fontSize:13, fontWeight:700, color:'#fff', textAlign:'right', alignSelf:'center' }}>{user.cardCount}</div>
-                  <div style={{ fontFamily:'var(--font-geist-mono)', fontSize:13, color:'#555', textAlign:'right', alignSelf:'center' }}>{user.soldCount}</div>
-                  <div style={{ fontFamily:'var(--font-geist-mono)', fontSize:13, color:'#555', textAlign:'right', alignSelf:'center' }}>{user.wishCount}</div>
-                  <div style={{ fontFamily:'var(--font-geist-mono)', fontSize:13, fontWeight:700, color:'#22c55e', textAlign:'right', alignSelf:'center' }}>{fmt(user.portfolioValue)}</div>
-                  <div style={{ fontSize:11, color:'#444', textAlign:'right', alignSelf:'center' }}>{fmtDate(user.createdAt)}</div>
-                  <div style={{ textAlign:'right', alignSelf:'center', fontSize:12, color: expanded===user.id?'var(--accent)':'#333', transition:'transform 0.15s', transform: expanded===user.id?'rotate(90deg)':'rotate(0deg)' }}>▶</div>
+            {sections.users && (
+              <div style={{ background:'#0d0d0d', border:'1px solid #1a1a1a', borderRadius:14, overflow:'hidden' }}>
+                <div style={{ display:'grid', gridTemplateColumns:'1fr 1.5fr 60px 60px 80px 100px 100px 32px', gap:0, padding:'10px 16px', background:'#000', borderBottom:'1px solid #111' }}>
+                  {['User','Email','Cards','Sold','Wishes','Value','Joined',''].map((h,i) => (
+                    <div key={i} style={{ fontSize:9, fontWeight:700, color:'#333', textTransform:'uppercase', letterSpacing:'0.1em', textAlign:i>1?'right':'left' }}>{h}</div>
+                  ))}
                 </div>
 
-                {expanded === user.id && (
-                  <div style={{ background:'#080808', borderTop:'1px solid #111', borderBottom:'1px solid #111' }}>
-                    <div style={{ display:'flex', gap:20, padding:'10px 16px 10px 32px', borderBottom:'1px solid #111' }}>
-                      {[
-                        { label:'Portfolio', value: fmt(user.portfolioValue), color:'#22c55e' },
-                        { label:'Invested', value: fmt(user.invested), color:'#fff' },
-                        { label:'G/L', value: (user.portfolioValue-user.invested>=0?'+':'')+fmt(user.portfolioValue-user.invested), color: user.portfolioValue>=user.invested?'#22c55e':'#ef4444' },
-                        { label:'Active', value: user.cardCount - user.soldCount, color:'#fff' },
-                        { label:'Sold', value: user.soldCount, color:'#ffbe2e' },
-                      ].map((s,i) => (
-                        <div key={i}>
-                          <div style={{ fontSize:8, fontWeight:700, color:'#444', textTransform:'uppercase', letterSpacing:'0.1em', marginBottom:2 }}>{s.label}</div>
-                          <div style={{ fontFamily:'var(--font-geist-mono)', fontSize:13, fontWeight:800, color:s.color }}>{s.value}</div>
+                {filteredUsers.length === 0 && (
+                  <div style={{ padding:'32px', textAlign:'center', fontSize:13, color:'#444' }}>No users found</div>
+                )}
+
+                {filteredUsers.map((user, ui) => (
+                  <div key={user.id}>
+                    <div className="user-row" style={{ display:'grid', gridTemplateColumns:'1fr 1.5fr 60px 60px 80px 100px 100px 32px', gap:0, padding:'13px 16px', borderTop: ui>0?'1px solid #111':'none', cursor:'pointer', transition:'background 0.1s' }}
+                      onClick={() => setExpanded(expanded===user.id ? null : user.id)}>
+                      <div style={{ display:'flex', alignItems:'center', gap:9 }}>
+                        <div style={{ width:30, height:30, borderRadius:'50%', background:'#1e1e1e', border:'1px solid #2a2a2a', overflow:'hidden', flexShrink:0, display:'flex', alignItems:'center', justifyContent:'center', fontSize:12, fontWeight:900, color:'#666' }}>
+                          {user.avatar ? <img src={user.avatar} alt="" style={{ width:'100%', height:'100%', objectFit:'cover' }} /> : user.username?.[0]?.toUpperCase()}
                         </div>
-                      ))}
+                        <div>
+                          <div style={{ fontSize:13, fontWeight:800, color:'#f0f0f0' }}>@{user.username}</div>
+                          <div style={{ fontSize:10, color:'#444', marginTop:1 }}>{fmtTime(user.createdAt)}</div>
+                        </div>
+                      </div>
+                      <div style={{ fontSize:12, color:'#666', textAlign:'left', alignSelf:'center', overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>{user.email}</div>
+                      <div style={{ fontFamily:'var(--font-geist-mono)', fontSize:13, fontWeight:700, color:'#fff', textAlign:'right', alignSelf:'center' }}>{user.cardCount}</div>
+                      <div style={{ fontFamily:'var(--font-geist-mono)', fontSize:13, color:'#555', textAlign:'right', alignSelf:'center' }}>{user.soldCount}</div>
+                      <div style={{ fontFamily:'var(--font-geist-mono)', fontSize:13, color:'#555', textAlign:'right', alignSelf:'center' }}>{user.wishCount}</div>
+                      <div style={{ fontFamily:'var(--font-geist-mono)', fontSize:13, fontWeight:700, color:'#22c55e', textAlign:'right', alignSelf:'center' }}>{fmt(user.portfolioValue)}</div>
+                      <div style={{ fontSize:11, color:'#444', textAlign:'right', alignSelf:'center' }}>{fmtDate(user.createdAt)}</div>
+                      <div style={{ textAlign:'right', alignSelf:'center', fontSize:12, color: expanded===user.id?'var(--accent)':'#333', transition:'transform 0.2s', transform: expanded===user.id?'rotate(90deg)':'rotate(0deg)', display:'inline-block' }}>▶</div>
                     </div>
 
-                    {user.cards.length > 0 ? (
-                      <>
-                        <div style={{ display:'grid', gridTemplateColumns:'1.5fr 80px 60px 80px 80px 80px 70px', padding:'8px 16px 8px 32px', background:'#050505' }}>
-                          {['Player','Sport','Year','Grade','Paid','Value','G/L'].map((h,i) => (
-                            <div key={i} style={{ fontSize:8, fontWeight:700, color:'#2a2a2a', textTransform:'uppercase', letterSpacing:'0.1em', textAlign:i>1?'right':'left' }}>{h}</div>
+                    {expanded === user.id && (
+                      <div style={{ background:'#080808', borderTop:'1px solid #111', borderBottom:'1px solid #111' }}>
+                        <div style={{ display:'flex', gap:20, padding:'10px 16px 10px 32px', borderBottom:'1px solid #111' }}>
+                          {[
+                            { label:'Portfolio', value: fmt(user.portfolioValue), color:'#22c55e' },
+                            { label:'Invested',  value: fmt(user.invested),       color:'#fff' },
+                            { label:'G/L',       value: (user.portfolioValue-user.invested>=0?'+':'')+fmt(user.portfolioValue-user.invested), color: user.portfolioValue>=user.invested?'#22c55e':'#ef4444' },
+                            { label:'Active',    value: user.cardCount - user.soldCount, color:'#fff' },
+                            { label:'Sold',      value: user.soldCount,           color:'#ffbe2e' },
+                          ].map((s,i) => (
+                            <div key={i}>
+                              <div style={{ fontSize:8, fontWeight:700, color:'#444', textTransform:'uppercase', letterSpacing:'0.1em', marginBottom:2 }}>{s.label}</div>
+                              <div style={{ fontFamily:'var(--font-geist-mono)', fontSize:13, fontWeight:800, color:s.color }}>{s.value}</div>
+                            </div>
                           ))}
                         </div>
-                        {user.cards.map((card, ci) => {
-                          const buy = parseFloat(card.buy)||0
-                          const val = card.sold ? (parseFloat(card.soldPrice)||0) : (parseFloat(card.val)||buy)
-                          const gl = val - buy
-                          const glPos = gl >= 0
-                          const glPct = buy > 0 ? (gl/buy)*100 : 0
-                          return (
-                            <div key={card.id} className="card-row" style={{ display:'grid', gridTemplateColumns:'1.5fr 80px 60px 80px 80px 80px 70px', padding:'9px 16px 9px 32px', borderTop:'1px solid #0d0d0d', transition:'background 0.1s' }}>
-                              <div>
-                                <div style={{ fontSize:12, fontWeight:700, color: card.sold?'#555':'#ccc', textTransform:'uppercase', letterSpacing:'-0.2px' }}>{card.player}</div>
-                                <div style={{ display:'flex', gap:4, marginTop:2 }}>
-                                  {card.sold && <span style={{ fontSize:8, fontWeight:800, color:'#ffbe2e', background:'rgba(255,190,46,0.1)', padding:'1px 5px', borderRadius:3 }}>SOLD</span>}
-                                  {card.auto && <span style={{ fontSize:8, fontWeight:800, color:'var(--accent-light)', background:'rgba(var(--accent-rgb),0.1)', padding:'1px 5px', borderRadius:3 }}>AUTO</span>}
-                                  {card.brand && <span style={{ fontSize:9, color:'#333' }}>{card.brand}</span>}
-                                </div>
-                              </div>
-                              <div style={{ fontSize:11, color:'#555', alignSelf:'center' }}>{card.sport ? <SportEmoji sport={card.sport} /> : '—'} {card.sport||'—'}</div>
-                              <div style={{ fontFamily:'var(--font-geist-mono)', fontSize:11, color:'#555', textAlign:'right', alignSelf:'center' }}>{card.year||'—'}</div>
-                              <div style={{ textAlign:'right', alignSelf:'center' }}>
-                                {card.grade
-                                  ? <span style={{ fontSize:10, fontWeight:800, color:'var(--accent-light)', background:'rgba(var(--accent-rgb),0.1)', padding:'2px 6px', borderRadius:4 }}>{card.gradingCo?card.gradingCo+' ':''}{card.grade}</span>
-                                  : <span style={{ fontSize:10, color:'#333' }}>Raw</span>
-                                }
-                              </div>
-                              <div style={{ fontFamily:'var(--font-geist-mono)', fontSize:12, color:'#555', textAlign:'right', alignSelf:'center' }}>{fmt(buy)}</div>
-                              <div style={{ fontFamily:'var(--font-geist-mono)', fontSize:12, fontWeight:700, color:'#f0f0f0', textAlign:'right', alignSelf:'center' }}>{fmt(val)}</div>
-                              <div style={{ fontFamily:'var(--font-geist-mono)', fontSize:11, fontWeight:800, color:glPos?'#22c55e':'#ef4444', textAlign:'right', alignSelf:'center' }}>{glPos?'+':''}{glPct.toFixed(0)}%</div>
+
+                        {user.cards.length > 0 ? (
+                          <>
+                            <div style={{ display:'grid', gridTemplateColumns:'1.5fr 80px 60px 80px 80px 80px 70px', padding:'8px 16px 8px 32px', background:'#050505' }}>
+                              {['Player','Sport','Year','Grade','Paid','Value','G/L'].map((h,i) => (
+                                <div key={i} style={{ fontSize:8, fontWeight:700, color:'#2a2a2a', textTransform:'uppercase', letterSpacing:'0.1em', textAlign:i>1?'right':'left' }}>{h}</div>
+                              ))}
                             </div>
-                          )
-                        })}
-                      </>
-                    ) : (
-                      <div style={{ padding:'20px 32px', fontSize:12, color:'#333' }}>No cards yet</div>
+                            {[...user.cards].sort((a,b) => new Date(b.createdAt) - new Date(a.createdAt)).map((card, ci) => {
+                              const buy = parseFloat(card.buy)||0
+                              const val = card.sold ? (parseFloat(card.soldPrice)||0) : (parseFloat(card.val)||buy)
+                              const gl = val - buy
+                              const glPos = gl >= 0
+                              const glPct = buy > 0 ? (gl/buy)*100 : 0
+                              return (
+                                <div key={card.id} className="card-row" style={{ display:'grid', gridTemplateColumns:'1.5fr 80px 60px 80px 80px 80px 70px', padding:'9px 16px 9px 32px', borderTop:'1px solid #0d0d0d', transition:'background 0.1s' }}>
+                                  <div>
+                                    <div style={{ fontSize:12, fontWeight:700, color: card.sold?'#555':'#ccc', textTransform:'uppercase', letterSpacing:'-0.2px' }}>{card.player}</div>
+                                    <div style={{ display:'flex', gap:4, marginTop:2, alignItems:'center' }}>
+                                      {card.sold && <span style={{ fontSize:8, fontWeight:800, color:'#ffbe2e', background:'rgba(255,190,46,0.1)', padding:'1px 5px', borderRadius:3 }}>SOLD</span>}
+                                      {card.auto && <span style={{ fontSize:8, fontWeight:800, color:'var(--accent-light)', background:'rgba(var(--accent-rgb),0.1)', padding:'1px 5px', borderRadius:3 }}>AUTO</span>}
+                                      {card.brand && <span style={{ fontSize:9, color:'#333' }}>{card.brand}</span>}
+                                      <span style={{ fontSize:9, color:'#2a2a2a' }}>{fmtTime(card.createdAt)}</span>
+                                    </div>
+                                  </div>
+                                  <div style={{ fontSize:11, color:'#555', alignSelf:'center' }}>{card.sport ? <SportEmoji sport={card.sport} /> : '—'} {card.sport||'—'}</div>
+                                  <div style={{ fontFamily:'var(--font-geist-mono)', fontSize:11, color:'#555', textAlign:'right', alignSelf:'center' }}>{card.year||'—'}</div>
+                                  <div style={{ textAlign:'right', alignSelf:'center' }}>
+                                    {card.grade
+                                      ? (() => { const gc = gradeCol(card.grade); return <span style={{ fontSize:10, fontWeight:800, color:gc.c, background:gc.bg, padding:'2px 6px', borderRadius:4 }}>{card.gradingCo?card.gradingCo+' ':''}{card.grade}</span> })()
+                                      : <span style={{ fontSize:10, color:'#333' }}>Raw</span>
+                                    }
+                                  </div>
+                                  <div style={{ fontFamily:'var(--font-geist-mono)', fontSize:12, color:'#555', textAlign:'right', alignSelf:'center' }}>{fmt(buy)}</div>
+                                  <div style={{ fontFamily:'var(--font-geist-mono)', fontSize:12, fontWeight:700, color:'#f0f0f0', textAlign:'right', alignSelf:'center' }}>{fmt(val)}</div>
+                                  <div style={{ fontFamily:'var(--font-geist-mono)', fontSize:11, fontWeight:800, color:glPos?'#22c55e':'#ef4444', textAlign:'right', alignSelf:'center' }}>{glPos?'+':''}{glPct.toFixed(0)}%</div>
+                                </div>
+                              )
+                            })}
+                          </>
+                        ) : (
+                          <div style={{ padding:'20px 32px', fontSize:12, color:'#333' }}>No cards yet</div>
+                        )}
+                      </div>
                     )}
                   </div>
-                )}
-              </div>
-            ))}
-          </div>
-
-          {/* PSA Cache Section */}
-          <div style={{ marginTop:40 }}>
-            <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:12 }}>
-              <div style={{ display:'flex', alignItems:'center', gap:10 }}>
-                <h2 style={{ fontSize:14, fontWeight:900, color:'#fff', textTransform:'uppercase', letterSpacing:'0.05em', margin:0 }}>PSA Lookup Cache ({psaCache?.total ?? 0})</h2>
-                <div style={{ padding:'2px 8px', background:'rgba(var(--accent-rgb),0.1)', border:'1px solid rgba(var(--accent-rgb),0.25)', borderRadius:4, fontSize:9, fontWeight:800, color:'var(--accent-light)', letterSpacing:'0.1em' }}>24H CACHE</div>
-              </div>
-              <div style={{ display:'flex', gap:8 }}>
-                <input value={psaSearch} onChange={e => setPsaSearch(e.target.value)} placeholder="Search certs..." style={{ padding:'7px 12px', borderRadius:8, background:'#111', border:'1px solid #1e1e1e', color:'#f0f0f0', fontSize:12, outline:'none', width:200 }} />
-                <button onClick={() => { setPsaLoading(true); fetch('/api/admin/psa-cache').then(r=>r.json()).then(d=>setPsaCache(d)).finally(()=>setPsaLoading(false)) }}
-                  style={{ padding:'7px 14px', borderRadius:8, background:'#111', border:'1px solid #1e1e1e', color:'#555', fontSize:12, fontWeight:700, cursor:'pointer' }}>
-                  {psaLoading ? '...' : '↻ Refresh'}
-                </button>
-              </div>
-            </div>
-
-            <div style={{ background:'#0d0d0d', border:'1px solid #1a1a1a', borderRadius:14, overflow:'hidden' }}>
-              <div style={{ display:'grid', gridTemplateColumns:'60px 1.5fr 60px 80px 60px 80px 80px 80px 100px', gap:0, padding:'10px 16px', background:'#000', borderBottom:'1px solid #111' }}>
-                {['Img','Player','Cert','Grade','Sport','Year','Brand','Pop','Updated'].map((h,i) => (
-                  <div key={i} style={{ fontSize:9, fontWeight:700, color:'#333', textTransform:'uppercase', letterSpacing:'0.1em', textAlign:i>1?'right':'left' }}>{h}</div>
                 ))}
               </div>
-
-              {psaLoading && !psaCache && (
-                <div style={{ padding:'32px', textAlign:'center', fontSize:13, color:'#444' }}>Loading...</div>
-              )}
-
-              {psaCache?.entries?.length === 0 && (
-                <div style={{ padding:'32px', textAlign:'center', fontSize:13, color:'#444' }}>No PSA lookups yet</div>
-              )}
-
-              {(psaCache?.entries || [])
-                .filter(e => !psaSearch || e.player.toLowerCase().includes(psaSearch.toLowerCase()) || e.cert.includes(psaSearch) || e.sport.toLowerCase().includes(psaSearch.toLowerCase()))
-                .map((entry, i) => {
-                  const ageHours = (Date.now() - new Date(entry.updatedAt).getTime()) / (1000 * 60 * 60)
-                  const isFresh = ageHours < 24
-                  return (
-                    <div key={entry.cert} className="card-row" style={{ display:'grid', gridTemplateColumns:'60px 1.5fr 60px 80px 60px 80px 80px 80px 100px', gap:0, padding:'10px 16px', borderTop: i>0?'1px solid #111':'none', alignItems:'center', transition:'background 0.1s' }}>
-                      <div>
-                        {entry.frontImage
-                          ? <img src={entry.frontImage} alt="" style={{ width:36, height:50, objectFit:'cover', borderRadius:4, border:'1px solid #222' }} onError={e => e.target.style.display='none'} />
-                          : <div style={{ width:36, height:50, background:'#111', borderRadius:4, border:'1px solid #1a1a1a', display:'flex', alignItems:'center', justifyContent:'center', fontSize:10, color:'#333' }}>—</div>
-                        }
-                      </div>
-                      <div>
-                        <div style={{ fontSize:12, fontWeight:800, color: entry.isCancelled?'#ef4444':'#e0e0e0', letterSpacing:'-0.2px' }}>{entry.player}</div>
-                        <div style={{ fontSize:10, color:'#444', marginTop:1 }}>{entry.set !== '—' ? entry.set : ''}</div>
-                        {entry.isCancelled && <span style={{ fontSize:8, fontWeight:800, color:'#ef4444', background:'rgba(239,68,68,0.1)', padding:'1px 5px', borderRadius:3 }}>CANCELLED</span>}
-                      </div>
-                      <div style={{ textAlign:'right' }}>
-                        {entry.certPageUrl
-                          ? <a href={entry.certPageUrl} target="_blank" rel="noreferrer" style={{ fontFamily:'var(--font-geist-mono)', fontSize:10, color:'var(--accent-light)', textDecoration:'none' }}>{entry.cert}</a>
-                          : <span style={{ fontFamily:'var(--font-geist-mono)', fontSize:10, color:'#555' }}>{entry.cert}</span>
-                        }
-                      </div>
-                      <div style={{ textAlign:'right' }}>
-                        {entry.grade !== '—'
-                          ? <span style={{ fontSize:10, fontWeight:800, color:'var(--accent-light)', background:'rgba(var(--accent-rgb),0.1)', padding:'2px 6px', borderRadius:4 }}>PSA {entry.grade}</span>
-                          : <span style={{ fontSize:10, color:'#333' }}>—</span>
-                        }
-                      </div>
-                      <div style={{ fontFamily:'var(--font-geist-mono)', fontSize:11, color:'#555', textAlign:'right' }}>{entry.sport}</div>
-                      <div style={{ fontFamily:'var(--font-geist-mono)', fontSize:11, color:'#555', textAlign:'right' }}>{entry.year}</div>
-                      <div style={{ fontSize:11, color:'#555', textAlign:'right', overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>{entry.brand}</div>
-                      <div style={{ fontFamily:'var(--font-geist-mono)', fontSize:11, color:'#fff', textAlign:'right', fontWeight:700 }}>{entry.totalPop}</div>
-                      <div style={{ textAlign:'right' }}>
-                        <div style={{ fontSize:10, color:'#444' }}>{fmtTime(entry.updatedAt)}</div>
-                        <div style={{ marginTop:2 }}>
-                          <span style={{ fontSize:8, fontWeight:800, padding:'1px 5px', borderRadius:3, background: isFresh?'rgba(34,197,94,0.1)':'rgba(255,190,46,0.1)', color: isFresh?'#22c55e':'#ffbe2e' }}>
-                            {isFresh ? 'FRESH' : 'STALE'}
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-                  )
-                })
-              }
-            </div>
+            )}
           </div>
 
-          {/* ── Card Database ── */}
+          {/* ── PSA Cache Section ────────────────────────────────────────────── */}
+          <div style={{ marginBottom:36 }}>
+            <SectionHeader
+              title="PSA Lookup Cache"
+              count={psaCache?.total ?? 0}
+              open={sections.psa}
+              onToggle={() => toggleSection('psa')}
+              badge={
+                <div style={{ padding:'2px 8px', background:'rgba(var(--accent-rgb),0.1)', border:'1px solid rgba(var(--accent-rgb),0.25)', borderRadius:4, fontSize:9, fontWeight:800, color:'var(--accent-light)', letterSpacing:'0.1em' }}>24H CACHE</div>
+              }
+              controls={
+                <div style={{ display:'flex', gap:8 }}>
+                  <input value={psaSearch} onChange={e => setPsaSearch(e.target.value)} placeholder="Search certs..."
+                    style={{ padding:'7px 12px', borderRadius:8, background:'#111', border:'1px solid #1e1e1e', color:'#f0f0f0', fontSize:12, outline:'none', width:200 }} />
+                  <button onClick={() => { setPsaLoading(true); fetch('/api/admin/psa-cache').then(r=>r.json()).then(d=>setPsaCache(d)).finally(()=>setPsaLoading(false)) }}
+                    style={{ padding:'7px 14px', borderRadius:8, background:'#111', border:'1px solid #1e1e1e', color:'#555', fontSize:12, fontWeight:700, cursor:'pointer' }}>
+                    {psaLoading ? '...' : '↻ Refresh'}
+                  </button>
+                </div>
+              }
+            />
+
+            {sections.psa && (
+              <div style={{ background:'#0d0d0d', border:'1px solid #1a1a1a', borderRadius:14, overflow:'hidden' }}>
+                {psaLoading && !psaCache && (
+                  <div style={{ padding:'32px', textAlign:'center', fontSize:13, color:'#444' }}>Loading...</div>
+                )}
+                {psaCache?.entries?.length === 0 && (
+                  <div style={{ padding:'32px', textAlign:'center', fontSize:13, color:'#444' }}>No PSA lookups yet</div>
+                )}
+
+                {(psaCache?.entries || [])
+                  .filter(e => !psaSearch || e.player.toLowerCase().includes(psaSearch.toLowerCase()) || e.cert.includes(psaSearch) || (e.sport||'').toLowerCase().includes(psaSearch.toLowerCase()))
+                  .map((entry, i) => {
+                    const ageHours = (Date.now() - new Date(entry.updatedAt).getTime()) / (1000 * 60 * 60)
+                    const isFresh = ageHours < 24
+                    const gc = entry.grade && entry.grade !== '—' ? gradeCol(entry.grade) : null
+
+                    return (
+                      <div key={entry.cert} className="psa-row"
+                        style={{ display:'flex', alignItems:'center', gap:14, padding:'12px 16px', borderTop: i>0?'1px solid #111':'none', transition:'background 0.1s' }}>
+
+                        {/* Image */}
+                        <div style={{ flexShrink:0 }}>
+                          {entry.frontImage
+                            ? <img src={entry.frontImage} alt="" style={{ width:38, height:54, objectFit:'contain', borderRadius:5, border:'1px solid #222', background:'#111', display:'block' }} onError={e => { e.target.style.display='none' }} />
+                            : <div style={{ width:38, height:54, background:'#111', borderRadius:5, border:'1px solid #1a1a1a', display:'flex', alignItems:'center', justifyContent:'center', fontSize:14, opacity:0.2 }}>🃏</div>
+                          }
+                        </div>
+
+                        {/* Main info */}
+                        <div style={{ flex:1, minWidth:0 }}>
+                          <div style={{ display:'flex', alignItems:'center', gap:7, flexWrap:'wrap' }}>
+                            <span style={{ fontSize:13, fontWeight:800, color: entry.isCancelled ? '#ef4444' : '#e0e0e0', letterSpacing:'-0.2px' }}>{entry.player}</span>
+                            {entry.isCancelled && <span style={{ fontSize:8, fontWeight:800, color:'#ef4444', background:'rgba(239,68,68,0.1)', padding:'1px 6px', borderRadius:3 }}>CANCELLED</span>}
+                            {gc && (
+                              <span style={{ fontSize:10, fontWeight:900, color:gc.c, background:gc.bg, border:`1px solid ${gc.b}`, padding:'2px 7px', borderRadius:5 }}>
+                                PSA {entry.grade}
+                              </span>
+                            )}
+                            {entry.auto && (
+                              <span style={{ fontSize:10, fontWeight:800, color:'#ffbe2e', background:'rgba(255,190,46,0.1)', border:'1px solid rgba(255,190,46,0.3)', padding:'2px 7px', borderRadius:5 }}>
+                                AUTO{entry.autoGrade ? ` ${entry.autoGrade}` : ''}
+                              </span>
+                            )}
+                          </div>
+                          <div style={{ fontSize:11, color:'#555', marginTop:3, overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>
+                            {[entry.set !== '—' ? entry.set : null, entry.year !== '—' ? entry.year : null, entry.brand !== '—' ? entry.brand : null].filter(Boolean).join(' · ')}
+                          </div>
+                          <div style={{ display:'flex', gap:10, marginTop:4, alignItems:'center', flexWrap:'wrap' }}>
+                            {entry.certPageUrl
+                              ? <a href={entry.certPageUrl} target="_blank" rel="noreferrer"
+                                  style={{ fontFamily:'var(--font-geist-mono)', fontSize:10, color:'var(--accent-light)', textDecoration:'none' }}>
+                                  #{entry.cert} ↗
+                                </a>
+                              : <span style={{ fontFamily:'var(--font-geist-mono)', fontSize:10, color:'#444' }}>#{entry.cert}</span>
+                            }
+                            {entry.sport && entry.sport !== '—' && (
+                              <span style={{ fontSize:10, color:'#444' }}>{entry.sport}</span>
+                            )}
+                          </div>
+                        </div>
+
+                        {/* Pop + freshness */}
+                        <div style={{ flexShrink:0, textAlign:'right', minWidth:70 }}>
+                          {entry.totalPop !== undefined && entry.totalPop !== '—' && (
+                            <div style={{ marginBottom:4 }}>
+                              <div style={{ fontSize:9, fontWeight:700, color:'#333', textTransform:'uppercase', letterSpacing:'0.1em', marginBottom:2 }}>Pop</div>
+                              <div style={{ fontFamily:'var(--font-geist-mono)', fontSize:13, fontWeight:900, color:'#fff' }}>{entry.totalPop}</div>
+                            </div>
+                          )}
+                          <span style={{ fontSize:8, fontWeight:800, padding:'2px 6px', borderRadius:4,
+                            background: isFresh ? 'rgba(34,197,94,0.1)' : 'rgba(255,190,46,0.1)',
+                            color: isFresh ? '#22c55e' : '#ffbe2e',
+                            border: `1px solid ${isFresh ? 'rgba(34,197,94,0.3)' : 'rgba(255,190,46,0.3)'}`,
+                          }}>
+                            {isFresh ? '✓ FRESH' : '⚠ STALE'}
+                          </span>
+                        </div>
+
+                        {/* Time */}
+                        <div style={{ flexShrink:0, textAlign:'right', minWidth:60 }}>
+                          <div style={{ fontSize:11, color:'#444' }}>{fmtTime(entry.updatedAt)}</div>
+                        </div>
+
+                      </div>
+                    )
+                  })
+                }
+              </div>
+            )}
+          </div>
+
+          {/* ── Card Database ────────────────────────────────────────────────── */}
           {(() => {
-            // Flatten all cards across all users, attach owner username
             const allCards = (data?.users || []).flatMap(u =>
               u.cards.map(c => ({ ...c, ownerUsername: u.username, ownerAvatar: u.avatar }))
             )
@@ -330,147 +404,167 @@ export default function AdminPage() {
               const matchSport = !dbSport || c.sport === dbSport
               const matchOwner = !dbOwner || c.ownerUsername === dbOwner
               return matchQ && matchSport && matchOwner
+            }).sort((a, b) => {
+              if (dbSort === 'newest') return new Date(b.createdAt) - new Date(a.createdAt)
+              if (dbSort === 'oldest') return new Date(a.createdAt) - new Date(b.createdAt)
+              if (dbSort === 'value')  return (parseFloat(b.val)||0) - (parseFloat(a.val)||0)
+              if (dbSort === 'player') return a.player.localeCompare(b.player)
+              return 0
             })
 
             return (
-              <div style={{ marginTop:40 }}>
-                {/* Header */}
-                <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:12, flexWrap:'wrap', gap:10 }}>
-                  <div style={{ display:'flex', alignItems:'center', gap:10 }}>
-                    <h2 style={{ fontSize:14, fontWeight:900, color:'#fff', textTransform:'uppercase', letterSpacing:'0.05em', margin:0 }}>Card Database ({allCards.length})</h2>
+              <div style={{ marginBottom:36 }}>
+                <SectionHeader
+                  title="Card Database"
+                  count={allCards.length}
+                  open={sections.cards}
+                  onToggle={() => toggleSection('cards')}
+                  badge={
                     <div style={{ padding:'2px 8px', background:'rgba(34,197,94,0.1)', border:'1px solid rgba(34,197,94,0.25)', borderRadius:4, fontSize:9, fontWeight:800, color:'#22c55e', letterSpacing:'0.1em' }}>{withPhotos} WITH PHOTOS</div>
-                  </div>
-                  <div style={{ display:'flex', gap:8, flexWrap:'wrap' }}>
-                    {/* Search */}
-                    <input value={dbSearch} onChange={e => setDbSearch(e.target.value)} placeholder="Search cards..." style={{ padding:'7px 12px', borderRadius:8, background:'#111', border:'1px solid #1e1e1e', color:'#f0f0f0', fontSize:12, outline:'none', width:180 }} />
-                    {/* Sport filter */}
-                    <select value={dbSport} onChange={e => setDbSport(e.target.value)} style={{ padding:'7px 12px', borderRadius:8, background:'#111', border:'1px solid #1e1e1e', color: dbSport?'#f0f0f0':'#555', fontSize:12, outline:'none' }}>
-                      <option value="">All Sports</option>
-                      {sports.map(s => <option key={s} value={s}>{s}</option>)}
-                    </select>
-                    {/* Owner filter */}
-                    <select value={dbOwner} onChange={e => setDbOwner(e.target.value)} style={{ padding:'7px 12px', borderRadius:8, background:'#111', border:'1px solid #1e1e1e', color: dbOwner?'#f0f0f0':'#555', fontSize:12, outline:'none' }}>
-                      <option value="">All Users</option>
-                      {owners.map(o => <option key={o} value={o}>@{o}</option>)}
-                    </select>
-                    {/* View toggle */}
-                    <div style={{ display:'flex', borderRadius:8, overflow:'hidden', border:'1px solid #1e1e1e' }}>
-                      {['grid','table'].map(v => (
-                        <button key={v} onClick={() => setDbView(v)} style={{ padding:'7px 14px', background: dbView===v ? 'rgba(var(--accent-rgb),0.15)' : '#111', border:'none', color: dbView===v ? 'var(--accent)' : '#555', fontSize:12, fontWeight:700, cursor:'pointer' }}>
-                          {v === 'grid' ? '⊞ Grid' : '☰ Table'}
-                        </button>
-                      ))}
+                  }
+                  controls={
+                    <div style={{ display:'flex', gap:8, flexWrap:'wrap' }}>
+                      <input value={dbSearch} onChange={e => setDbSearch(e.target.value)} placeholder="Search cards..."
+                        style={{ padding:'7px 12px', borderRadius:8, background:'#111', border:'1px solid #1e1e1e', color:'#f0f0f0', fontSize:12, outline:'none', width:160 }} />
+                      <select value={dbSport} onChange={e => setDbSport(e.target.value)}
+                        style={{ padding:'7px 12px', borderRadius:8, background:'#111', border:'1px solid #1e1e1e', color: dbSport?'#f0f0f0':'#555', fontSize:12, outline:'none' }}>
+                        <option value="">All Sports</option>
+                        {sports.map(s => <option key={s} value={s}>{s}</option>)}
+                      </select>
+                      <select value={dbOwner} onChange={e => setDbOwner(e.target.value)}
+                        style={{ padding:'7px 12px', borderRadius:8, background:'#111', border:'1px solid #1e1e1e', color: dbOwner?'#f0f0f0':'#555', fontSize:12, outline:'none' }}>
+                        <option value="">All Users</option>
+                        {owners.map(o => <option key={o} value={o}>@{o}</option>)}
+                      </select>
+                      {/* Sort */}
+                      <select value={dbSort} onChange={e => setDbSort(e.target.value)}
+                        style={{ padding:'7px 12px', borderRadius:8, background:'#111', border:'1px solid #1e1e1e', color:'#f0f0f0', fontSize:12, outline:'none' }}>
+                        <option value="newest">📅 Newest</option>
+                        <option value="oldest">📅 Oldest</option>
+                        <option value="value">💰 Value ↓</option>
+                        <option value="player">🔤 Player A–Z</option>
+                      </select>
+                      {/* View toggle */}
+                      <div style={{ display:'flex', borderRadius:8, overflow:'hidden', border:'1px solid #1e1e1e' }}>
+                        {['grid','table'].map(v => (
+                          <button key={v} onClick={() => setDbView(v)}
+                            style={{ padding:'7px 14px', background: dbView===v ? 'rgba(var(--accent-rgb),0.15)' : '#111', border:'none', color: dbView===v ? 'var(--accent)' : '#555', fontSize:12, fontWeight:700, cursor:'pointer' }}>
+                            {v === 'grid' ? '⊞ Grid' : '☰ Table'}
+                          </button>
+                        ))}
+                      </div>
                     </div>
-                  </div>
-                </div>
+                  }
+                />
 
-                {filtered.length === 0 && (
-                  <div style={{ background:'#0d0d0d', border:'1px solid #1a1a1a', borderRadius:14, padding:'40px', textAlign:'center', fontSize:13, color:'#444' }}>No cards match</div>
-                )}
+                {sections.cards && (
+                  <>
+                    {filtered.length === 0 && (
+                      <div style={{ background:'#0d0d0d', border:'1px solid #1a1a1a', borderRadius:14, padding:'40px', textAlign:'center', fontSize:13, color:'#444' }}>No cards match</div>
+                    )}
 
-                {/* Grid View */}
-                {dbView === 'grid' && filtered.length > 0 && (
-                  <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fill,minmax(180px,1fr))', gap:10 }}>
-                    {filtered.map(card => {
-                      const buy = parseFloat(card.buy)||0
-                      const val = card.sold ? (parseFloat(card.soldPrice)||0) : (parseFloat(card.val)||buy)
-                      const gl = val - buy
-                      const glPos = gl >= 0
-                      return (
-                        <div key={card.id} style={{ background:'#111', border:'1px solid #1a1a1a', borderRadius:12, overflow:'hidden', transition:'border-color 0.12s' }}
-                          onMouseEnter={e => e.currentTarget.style.borderColor='#333'}
-                          onMouseLeave={e => e.currentTarget.style.borderColor='#1a1a1a'}>
-                          {/* Card image */}
-                          <div style={{ position:'relative', width:'100%', paddingTop:'146.75%', background:'#0a0a0a', overflow:'hidden' }}>
-                            {card.imageUrl
-                              ? <img src={card.imageUrl} alt={card.player}
-                                  onClick={() => setLightboxImg({ url: card.imageUrl, player: card.player })}
-                                  style={{ position:'absolute', inset:0, width:'100%', height:'100%', objectFit:'contain', cursor:'zoom-in' }} />
-                              : <div style={{ position:'absolute', inset:0, display:'flex', alignItems:'center', justifyContent:'center', fontSize:32, opacity:0.15 }}>🃏</div>
-                            }
-                            {/* Badges overlay */}
-                            <div style={{ position:'absolute', top:6, right:6, display:'flex', flexDirection:'column', gap:3, alignItems:'flex-end' }}>
-                              {card.grade && (() => { const gc = gradeCol(card.grade); return <span style={{ background:'rgba(0,0,0,0.8)', border:`1px solid ${gc.b}`, color:gc.c, fontSize:8, fontWeight:900, padding:'2px 6px', borderRadius:4 }}>{card.gradingCo?card.gradingCo+' ':''}{card.grade}</span> })()}
-                              {card.auto && (() => { const agc = card.autoGrade ? gradeCol(card.autoGrade) : { c:'#ffbe2e', bg:'rgba(255,190,46,0.12)', b:'rgba(255,190,46,0.3)' }; return <span style={{ background:'rgba(0,0,0,0.8)', border:`1px solid ${agc.b}`, color:agc.c, fontSize:8, fontWeight:900, padding:'2px 6px', borderRadius:4 }}>AUTO{card.autoGrade ? ` ${card.autoGrade}` : ''}</span> })()}
-                              {card.num && String(card.num).includes('/') && <span style={{ background:'rgba(0,0,0,0.8)', border:'1px solid rgba(148,163,184,0.4)', color:'#94a3b8', fontSize:8, fontWeight:900, padding:'2px 6px', borderRadius:4 }}>#{card.num}</span>}
-                            </div>
-                            {card.sold && <div style={{ position:'absolute', top:6, left:6, background:'rgba(255,190,46,0.9)', color:'#000', fontSize:8, fontWeight:900, padding:'2px 6px', borderRadius:4 }}>SOLD</div>}
-                          </div>
-                          {/* Info */}
-                          <div style={{ padding:'10px 12px' }}>
-                            <div style={{ fontSize:12, fontWeight:800, color:'#fff', textTransform:'uppercase', letterSpacing:'-0.2px', overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap', marginBottom:2 }}>{card.player}</div>
-                            <div style={{ fontSize:10, color:'#555', marginBottom:8, overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>{[card.year, card.sport, card.brand].filter(Boolean).join(' · ')}</div>
-                            <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center' }}>
-                              <div style={{ fontFamily:'var(--font-geist-mono)', fontSize:13, fontWeight:900, color: glPos ? '#22c55e' : '#ef4444' }}>{fmt(val)}</div>
-                              <div style={{ display:'flex', alignItems:'center', gap:4 }}>
-                                {card.ownerAvatar
-                                  ? <img src={card.ownerAvatar} alt="" style={{ width:16, height:16, borderRadius:'50%', objectFit:'cover' }} />
-                                  : <div style={{ width:16, height:16, borderRadius:'50%', background:'var(--accent)', display:'flex', alignItems:'center', justifyContent:'center', fontSize:8, fontWeight:900, color:'#fff' }}>{card.ownerUsername?.[0]?.toUpperCase()}</div>
+                    {/* Grid View */}
+                    {dbView === 'grid' && filtered.length > 0 && (
+                      <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fill,minmax(180px,1fr))', gap:10 }}>
+                        {filtered.map(card => {
+                          const buy = parseFloat(card.buy)||0
+                          const val = card.sold ? (parseFloat(card.soldPrice)||0) : (parseFloat(card.val)||buy)
+                          const gl = val - buy
+                          const glPos = gl >= 0
+                          return (
+                            <div key={card.id} style={{ background:'#111', border:'1px solid #1a1a1a', borderRadius:12, overflow:'hidden', transition:'border-color 0.12s' }}
+                              onMouseEnter={e => e.currentTarget.style.borderColor='#333'}
+                              onMouseLeave={e => e.currentTarget.style.borderColor='#1a1a1a'}>
+                              <div style={{ position:'relative', width:'100%', paddingTop:'146.75%', background:'#0a0a0a', overflow:'hidden' }}>
+                                {card.imageUrl
+                                  ? <img src={card.imageUrl} alt={card.player}
+                                      onClick={() => setLightboxImg({ url: card.imageUrl, player: card.player })}
+                                      style={{ position:'absolute', inset:0, width:'100%', height:'100%', objectFit:'contain', cursor:'zoom-in' }} />
+                                  : <div style={{ position:'absolute', inset:0, display:'flex', alignItems:'center', justifyContent:'center', fontSize:32, opacity:0.15 }}>🃏</div>
                                 }
-                                <span style={{ fontSize:10, color:'#444' }}>@{card.ownerUsername}</span>
+                                <div style={{ position:'absolute', top:6, right:6, display:'flex', flexDirection:'column', gap:3, alignItems:'flex-end' }}>
+                                  {card.grade && (() => { const gc = gradeCol(card.grade); return <span style={{ background:'rgba(0,0,0,0.8)', border:`1px solid ${gc.b}`, color:gc.c, fontSize:8, fontWeight:900, padding:'2px 6px', borderRadius:4 }}>{card.gradingCo?card.gradingCo+' ':''}{card.grade}</span> })()}
+                                  {card.auto && (() => { const agc = card.autoGrade ? gradeCol(card.autoGrade) : { c:'#ffbe2e', bg:'rgba(255,190,46,0.12)', b:'rgba(255,190,46,0.3)' }; return <span style={{ background:'rgba(0,0,0,0.8)', border:`1px solid ${agc.b}`, color:agc.c, fontSize:8, fontWeight:900, padding:'2px 6px', borderRadius:4 }}>AUTO{card.autoGrade ? ` ${card.autoGrade}` : ''}</span> })()}
+                                  {card.num && String(card.num).includes('/') && <span style={{ background:'rgba(0,0,0,0.8)', border:'1px solid rgba(148,163,184,0.4)', color:'#94a3b8', fontSize:8, fontWeight:900, padding:'2px 6px', borderRadius:4 }}>#{card.num}</span>}
+                                </div>
+                                {card.sold && <div style={{ position:'absolute', top:6, left:6, background:'rgba(255,190,46,0.9)', color:'#000', fontSize:8, fontWeight:900, padding:'2px 6px', borderRadius:4 }}>SOLD</div>}
+                              </div>
+                              <div style={{ padding:'10px 12px' }}>
+                                <div style={{ fontSize:12, fontWeight:800, color:'#fff', textTransform:'uppercase', letterSpacing:'-0.2px', overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap', marginBottom:2 }}>{card.player}</div>
+                                <div style={{ fontSize:10, color:'#444', marginBottom:4, overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>{[card.year, card.sport, card.brand].filter(Boolean).join(' · ')}</div>
+                                <div style={{ fontSize:9, color:'#2a2a2a', marginBottom:6 }}>{fmtTime(card.createdAt)}</div>
+                                <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center' }}>
+                                  <div style={{ fontFamily:'var(--font-geist-mono)', fontSize:13, fontWeight:900, color: glPos ? '#22c55e' : '#ef4444' }}>{fmt(val)}</div>
+                                  <div style={{ display:'flex', alignItems:'center', gap:4 }}>
+                                    {card.ownerAvatar
+                                      ? <img src={card.ownerAvatar} alt="" style={{ width:16, height:16, borderRadius:'50%', objectFit:'cover' }} />
+                                      : <div style={{ width:16, height:16, borderRadius:'50%', background:'var(--accent)', display:'flex', alignItems:'center', justifyContent:'center', fontSize:8, fontWeight:900, color:'#fff' }}>{card.ownerUsername?.[0]?.toUpperCase()}</div>
+                                    }
+                                    <span style={{ fontSize:10, color:'#444' }}>@{card.ownerUsername}</span>
+                                  </div>
+                                </div>
                               </div>
                             </div>
-                          </div>
-                        </div>
-                      )
-                    })}
-                  </div>
-                )}
+                          )
+                        })}
+                      </div>
+                    )}
 
-                {/* Table View */}
-                {dbView === 'table' && filtered.length > 0 && (
-                  <div style={{ background:'#0d0d0d', border:'1px solid #1a1a1a', borderRadius:14, overflow:'hidden' }}>
-                    <div style={{ display:'grid', gridTemplateColumns:'48px 2fr 80px 60px 80px 80px 80px 70px 120px', padding:'10px 16px', background:'#000', borderBottom:'1px solid #111' }}>
-                      {['Img','Player','Sport','Year','Grade','Paid','Value','G/L','Owner'].map((h,i) => (
-                        <div key={i} style={{ fontSize:9, fontWeight:700, color:'#333', textTransform:'uppercase', letterSpacing:'0.1em', textAlign:i>1?'right':'left' }}>{h}</div>
-                      ))}
-                    </div>
-                    {filtered.map((card, ci) => {
-                      const buy = parseFloat(card.buy)||0
-                      const val = card.sold ? (parseFloat(card.soldPrice)||0) : (parseFloat(card.val)||buy)
-                      const gl = val - buy
-                      const glPos = gl >= 0
-                      const glPct = buy > 0 ? (gl/buy)*100 : 0
-                      return (
-                        <div key={card.id} className="card-row" style={{ display:'grid', gridTemplateColumns:'48px 2fr 80px 60px 80px 80px 80px 70px 120px', padding:'10px 16px', borderTop: ci>0?'1px solid #111':'none', transition:'background 0.1s', alignItems:'center' }}>
-                          {/* Thumbnail */}
-                          <div onClick={() => card.imageUrl && setLightboxImg({ url: card.imageUrl, player: card.player })}
-                            style={{ width:34, height:50, borderRadius:5, overflow:'hidden', background:'#111', flexShrink:0, cursor: card.imageUrl ? 'zoom-in' : 'default' }}>
-                            {card.imageUrl
-                              ? <img src={card.imageUrl} alt="" style={{ width:'100%', height:'100%', objectFit:'contain' }} />
-                              : <div style={{ width:'100%', height:'100%', display:'flex', alignItems:'center', justifyContent:'center', fontSize:16, opacity:0.2 }}>🃏</div>
-                            }
-                          </div>
-                          {/* Player + badges */}
-                          <div>
-                            <div style={{ fontSize:12, fontWeight:700, color: card.sold?'#555':'#ccc', textTransform:'uppercase' }}>{card.player}</div>
-                            <div style={{ display:'flex', gap:4, marginTop:2, flexWrap:'wrap' }}>
-                              {card.grade && (() => { const gc = gradeCol(card.grade); return <span style={{ fontSize:8, fontWeight:800, color:gc.c, background:gc.bg, padding:'1px 5px', borderRadius:3 }}>{card.gradingCo?card.gradingCo+' ':''}{card.grade}</span> })()}
-                              {card.auto && (() => { const agc = card.autoGrade ? gradeCol(card.autoGrade) : { c:'#ffbe2e', bg:'rgba(255,190,46,0.12)', b:'rgba(255,190,46,0.3)' }; return <span style={{ fontSize:8, fontWeight:800, color:agc.c, background:agc.bg, padding:'1px 5px', borderRadius:3 }}>AUTO{card.autoGrade?` ${card.autoGrade}`:''}</span> })()}
-                              {card.num && String(card.num).includes('/') && <span style={{ fontSize:8, fontWeight:800, color:'#94a3b8', background:'rgba(148,163,184,0.1)', padding:'1px 5px', borderRadius:3 }}>#{card.num}</span>}
-                              {card.sold && <span style={{ fontSize:8, fontWeight:800, color:'#ffbe2e', background:'rgba(255,190,46,0.1)', padding:'1px 5px', borderRadius:3 }}>SOLD</span>}
-                              {card.brand && <span style={{ fontSize:9, color:'#333' }}>{card.brand}</span>}
-                            </div>
-                          </div>
-                          <div style={{ fontSize:11, color:'#555', textAlign:'right' }}>{card.sport||'—'}</div>
-                          <div style={{ fontFamily:'var(--font-geist-mono)', fontSize:11, color:'#555', textAlign:'right' }}>{card.year||'—'}</div>
-                          <div style={{ textAlign:'right' }}>
-                            {card.grade ? (() => { const gc = gradeCol(card.grade); return <span style={{ fontSize:10, fontWeight:800, color:gc.c, background:gc.bg, padding:'2px 6px', borderRadius:4 }}>{card.gradingCo?card.gradingCo+' ':''}{card.grade}</span> })() : <span style={{ fontSize:10, color:'#333' }}>Raw</span>}
-                          </div>
-                          <div style={{ fontFamily:'var(--font-geist-mono)', fontSize:12, color:'#555', textAlign:'right' }}>{fmt(buy)}</div>
-                          <div style={{ fontFamily:'var(--font-geist-mono)', fontSize:12, fontWeight:700, color:'#f0f0f0', textAlign:'right' }}>{fmt(val)}</div>
-                          <div style={{ fontFamily:'var(--font-geist-mono)', fontSize:11, fontWeight:800, color:glPos?'#22c55e':'#ef4444', textAlign:'right' }}>{glPos?'+':''}{glPct.toFixed(0)}%</div>
-                          <div style={{ display:'flex', alignItems:'center', gap:5, justifyContent:'flex-end' }}>
-                            {card.ownerAvatar
-                              ? <img src={card.ownerAvatar} alt="" style={{ width:18, height:18, borderRadius:'50%', objectFit:'cover' }} />
-                              : <div style={{ width:18, height:18, borderRadius:'50%', background:'var(--accent)', display:'flex', alignItems:'center', justifyContent:'center', fontSize:9, fontWeight:900, color:'#fff' }}>{card.ownerUsername?.[0]?.toUpperCase()}</div>
-                            }
-                            <span style={{ fontSize:11, color:'#555' }}>@{card.ownerUsername}</span>
-                          </div>
+                    {/* Table View */}
+                    {dbView === 'table' && filtered.length > 0 && (
+                      <div style={{ background:'#0d0d0d', border:'1px solid #1a1a1a', borderRadius:14, overflow:'hidden' }}>
+                        <div style={{ display:'grid', gridTemplateColumns:'48px 2fr 80px 60px 80px 80px 80px 70px 120px', padding:'10px 16px', background:'#000', borderBottom:'1px solid #111' }}>
+                          {['Img','Player','Sport','Year','Grade','Paid','Value','G/L','Owner'].map((h,i) => (
+                            <div key={i} style={{ fontSize:9, fontWeight:700, color:'#333', textTransform:'uppercase', letterSpacing:'0.1em', textAlign:i>1?'right':'left' }}>{h}</div>
+                          ))}
                         </div>
-                      )
-                    })}
-                  </div>
+                        {filtered.map((card, ci) => {
+                          const buy = parseFloat(card.buy)||0
+                          const val = card.sold ? (parseFloat(card.soldPrice)||0) : (parseFloat(card.val)||buy)
+                          const gl = val - buy
+                          const glPos = gl >= 0
+                          const glPct = buy > 0 ? (gl/buy)*100 : 0
+                          return (
+                            <div key={card.id} className="card-row" style={{ display:'grid', gridTemplateColumns:'48px 2fr 80px 60px 80px 80px 80px 70px 120px', padding:'10px 16px', borderTop: ci>0?'1px solid #111':'none', transition:'background 0.1s', alignItems:'center' }}>
+                              <div onClick={() => card.imageUrl && setLightboxImg({ url: card.imageUrl, player: card.player })}
+                                style={{ width:34, height:50, borderRadius:5, overflow:'hidden', background:'#111', flexShrink:0, cursor: card.imageUrl ? 'zoom-in' : 'default' }}>
+                                {card.imageUrl
+                                  ? <img src={card.imageUrl} alt="" style={{ width:'100%', height:'100%', objectFit:'contain' }} />
+                                  : <div style={{ width:'100%', height:'100%', display:'flex', alignItems:'center', justifyContent:'center', fontSize:16, opacity:0.2 }}>🃏</div>
+                                }
+                              </div>
+                              <div>
+                                <div style={{ fontSize:12, fontWeight:700, color: card.sold?'#555':'#ccc', textTransform:'uppercase' }}>{card.player}</div>
+                                <div style={{ display:'flex', gap:4, marginTop:2, flexWrap:'wrap', alignItems:'center' }}>
+                                  {card.grade && (() => { const gc = gradeCol(card.grade); return <span style={{ fontSize:8, fontWeight:800, color:gc.c, background:gc.bg, padding:'1px 5px', borderRadius:3 }}>{card.gradingCo?card.gradingCo+' ':''}{card.grade}</span> })()}
+                                  {card.auto && (() => { const agc = card.autoGrade ? gradeCol(card.autoGrade) : { c:'#ffbe2e', bg:'rgba(255,190,46,0.12)', b:'rgba(255,190,46,0.3)' }; return <span style={{ fontSize:8, fontWeight:800, color:agc.c, background:agc.bg, padding:'1px 5px', borderRadius:3 }}>AUTO{card.autoGrade?` ${card.autoGrade}`:''}</span> })()}
+                                  {card.num && String(card.num).includes('/') && <span style={{ fontSize:8, fontWeight:800, color:'#94a3b8', background:'rgba(148,163,184,0.1)', padding:'1px 5px', borderRadius:3 }}>#{card.num}</span>}
+                                  {card.sold && <span style={{ fontSize:8, fontWeight:800, color:'#ffbe2e', background:'rgba(255,190,46,0.1)', padding:'1px 5px', borderRadius:3 }}>SOLD</span>}
+                                  {card.brand && <span style={{ fontSize:9, color:'#333' }}>{card.brand}</span>}
+                                  <span style={{ fontSize:9, color:'#2a2a2a' }}>{fmtTime(card.createdAt)}</span>
+                                </div>
+                              </div>
+                              <div style={{ fontSize:11, color:'#555', textAlign:'right' }}>{card.sport||'—'}</div>
+                              <div style={{ fontFamily:'var(--font-geist-mono)', fontSize:11, color:'#555', textAlign:'right' }}>{card.year||'—'}</div>
+                              <div style={{ textAlign:'right' }}>
+                                {card.grade ? (() => { const gc = gradeCol(card.grade); return <span style={{ fontSize:10, fontWeight:800, color:gc.c, background:gc.bg, padding:'2px 6px', borderRadius:4 }}>{card.gradingCo?card.gradingCo+' ':''}{card.grade}</span> })() : <span style={{ fontSize:10, color:'#333' }}>Raw</span>}
+                              </div>
+                              <div style={{ fontFamily:'var(--font-geist-mono)', fontSize:12, color:'#555', textAlign:'right' }}>{fmt(buy)}</div>
+                              <div style={{ fontFamily:'var(--font-geist-mono)', fontSize:12, fontWeight:700, color:'#f0f0f0', textAlign:'right' }}>{fmt(val)}</div>
+                              <div style={{ fontFamily:'var(--font-geist-mono)', fontSize:11, fontWeight:800, color:glPos?'#22c55e':'#ef4444', textAlign:'right' }}>{glPos?'+':''}{glPct.toFixed(0)}%</div>
+                              <div style={{ display:'flex', alignItems:'center', gap:5, justifyContent:'flex-end' }}>
+                                {card.ownerAvatar
+                                  ? <img src={card.ownerAvatar} alt="" style={{ width:18, height:18, borderRadius:'50%', objectFit:'cover' }} />
+                                  : <div style={{ width:18, height:18, borderRadius:'50%', background:'var(--accent)', display:'flex', alignItems:'center', justifyContent:'center', fontSize:9, fontWeight:900, color:'#fff' }}>{card.ownerUsername?.[0]?.toUpperCase()}</div>
+                                }
+                                <span style={{ fontSize:11, color:'#555' }}>@{card.ownerUsername}</span>
+                              </div>
+                            </div>
+                          )
+                        })}
+                      </div>
+                    )}
+                  </>
                 )}
               </div>
             )
