@@ -167,6 +167,7 @@ export default function SharedCollectionPage() {
                       {c.auto && <span style={{ background:'rgba(255,190,46,0.1)', border:'1px solid rgba(255,190,46,0.25)', color:'#ffbe2e', fontSize:9, fontWeight:900, padding:'2px 7px', borderRadius:5 }}>AUTO{c.autoGrade ? ` ${c.autoGrade}` : ''}</span>}
                       {c.num && String(c.num).includes('/') && <span style={{ background:'rgba(148,163,184,0.1)', border:'1px solid rgba(148,163,184,0.25)', color:'#94a3b8', fontSize:9, fontWeight:900, padding:'2px 7px', borderRadius:5, letterSpacing:'0.06em' }}>#{c.num}</span>}
                       {!c.grade && c.cond && <span style={{ background:'rgba(255,255,255,0.05)', border:'1px solid #2a2a2a', color:'#666', fontSize:9, fontWeight:700, padding:'2px 7px', borderRadius:5 }}>{c.cond}</span>}
+                      {(() => { const m = c.notes && c.notes.match(/PSA Cert #(\d+)/); return m ? <a href={`https://www.psacard.com/cert/${m[1]}/psa`} target="_blank" rel="noopener noreferrer" style={{ background:'rgba(59,130,246,0.1)', border:'1px solid rgba(59,130,246,0.25)', color:'#60a5fa', fontSize:9, fontWeight:900, padding:'2px 7px', borderRadius:5, letterSpacing:'0.06em', textDecoration:'none' }}>PSA ↗</a> : null })()}
                     </div>
                     <div style={{ fontSize:11, color:'#555' }}>
                       {[c.year, c.brand, c.name, c.sport].filter(Boolean).join(' · ')}
