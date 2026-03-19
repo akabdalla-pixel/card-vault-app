@@ -92,18 +92,6 @@ export default function CardModal({ card, onClose, onSave }) {
     if (file && file.type.startsWith('image/')) processImageFile(file)
   }
 
-  async function uploadCardImage(cardId, b64) {
-    setImageUploading(true)
-    try {
-      const res = await fetch('/api/cards/image', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ cardId, image: b64 }),
-      })
-      return res.ok ? (await res.json()).imageUrl : null
-    } catch { return null }
-    finally { setImageUploading(false) }
-  }
 
   async function handleRemoveImage() {
     setImagePreview(null)
@@ -133,21 +121,35 @@ export default function CardModal({ card, onClose, onSave }) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(form),
       })
+      // Parse body once
+      const saved = await res.json().catch(() => null)
       if (!res.ok) {
-        const d = await res.json()
-        setError(d.error || 'Failed to save')
+        setError(saved?.error || 'Failed to save')
         setSaving(false)
         return
       }
       // Upload pending image (new card needs ID from response first)
       if (pendingImageBase64) {
-        const saved = await res.json().catch(() => null)
         const cardId = saved?.id || form.id
-        if (cardId) await uploadCardImage(cardId, pendingImageBase64)
+        if (cardId) {
+          setImageUploading(true)
+          const uploadRes = await fetch('/api/cards/image', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ cardId, image: pendingImageBase64 }),
+          })
+          setImageUploading(false)
+          if (!uploadRes.ok) {
+            const uploadErr = await uploadRes.json().catch(() => null)
+            setError(uploadErr?.error || 'Image upload failed')
+            setSaving(false)
+            return
+          }
+        }
       }
       onSave()
-    } catch {
-      setError('Something went wrong')
+    } catch (e) {
+      setError('Something went wrong: ' + (e?.message || ''))
       setSaving(false)
     }
   }
