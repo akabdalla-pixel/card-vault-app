@@ -30,6 +30,7 @@ export default function AdminPage() {
   const [dbSearch, setDbSearch] = useState('')
   const [dbSport, setDbSport] = useState('')
   const [dbView, setDbView] = useState('grid') // 'grid' | 'table'
+  const [lightboxImg, setLightboxImg] = useState(null)
   const [dbOwner, setDbOwner] = useState('')
   const router = useRouter()
 
@@ -65,6 +66,17 @@ export default function AdminPage() {
 
   return (
     <>
+      {lightboxImg && (
+        <div onClick={() => setLightboxImg(null)}
+          style={{ position:'fixed', inset:0, zIndex:9999, background:'rgba(0,0,0,0.92)', display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', padding:20, cursor:'zoom-out' }}>
+          <img src={lightboxImg.url} alt={lightboxImg.player}
+            style={{ maxWidth:'90vw', maxHeight:'82vh', objectFit:'contain', borderRadius:12, boxShadow:'0 32px 80px rgba(0,0,0,0.8)' }}
+            onClick={e => e.stopPropagation()} />
+          <div style={{ marginTop:14, fontSize:13, fontWeight:700, color:'#ccc' }}>{lightboxImg.player}</div>
+          <div style={{ marginTop:4, fontSize:11, color:'#555' }}>Click anywhere to close</div>
+        </div>
+      )}
+
       <style>{`
         *{ font-family:var(--font-geist-sans),-apple-system,sans-serif!important }
         *[style*="monospace"]{ font-family:var(--font-geist-mono),monospace!important }
@@ -364,7 +376,9 @@ export default function AdminPage() {
                           {/* Card image */}
                           <div style={{ position:'relative', width:'100%', paddingTop:'71.4%', background:'#0a0a0a', overflow:'hidden' }}>
                             {card.imageUrl
-                              ? <img src={card.imageUrl} alt={card.player} style={{ position:'absolute', inset:0, width:'100%', height:'100%', objectFit:'cover' }} />
+                              ? <img src={card.imageUrl} alt={card.player}
+                                  onClick={() => setLightboxImg({ url: card.imageUrl, player: card.player })}
+                                  style={{ position:'absolute', inset:0, width:'100%', height:'100%', objectFit:'contain', cursor:'zoom-in' }} />
                               : <div style={{ position:'absolute', inset:0, display:'flex', alignItems:'center', justifyContent:'center', fontSize:32, opacity:0.15 }}>🃏</div>
                             }
                             {/* Badges overlay */}
@@ -413,9 +427,10 @@ export default function AdminPage() {
                       return (
                         <div key={card.id} className="card-row" style={{ display:'grid', gridTemplateColumns:'48px 2fr 80px 60px 80px 80px 80px 70px 120px', padding:'10px 16px', borderTop: ci>0?'1px solid #111':'none', transition:'background 0.1s', alignItems:'center' }}>
                           {/* Thumbnail */}
-                          <div style={{ width:34, height:48, borderRadius:5, overflow:'hidden', background:'#111', flexShrink:0 }}>
+                          <div onClick={() => card.imageUrl && setLightboxImg({ url: card.imageUrl, player: card.player })}
+                            style={{ width:34, height:48, borderRadius:5, overflow:'hidden', background:'#111', flexShrink:0, cursor: card.imageUrl ? 'zoom-in' : 'default' }}>
                             {card.imageUrl
-                              ? <img src={card.imageUrl} alt="" style={{ width:'100%', height:'100%', objectFit:'cover' }} />
+                              ? <img src={card.imageUrl} alt="" style={{ width:'100%', height:'100%', objectFit:'contain' }} />
                               : <div style={{ width:'100%', height:'100%', display:'flex', alignItems:'center', justifyContent:'center', fontSize:16, opacity:0.2 }}>🃏</div>
                             }
                           </div>
