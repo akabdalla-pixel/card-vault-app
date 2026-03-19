@@ -183,7 +183,7 @@ export default function MarketPage() {
               <div style={{ flex:1, position:'relative' }}>
                 <input
                   value={query}
-                  onChange={e => setQuery(e.target.value)}
+                  onChange={e => { setQuery(e.target.value); if (!e.target.value.trim()) { setResults(null); setError('') } }}
                   onKeyDown={e => e.key==='Enter' && handleSearch()}
                   placeholder="e.g. LeBron James Topps Chrome PSA 10"
                   style={{ width:'100%', padding:'11px 14px 11px 40px', borderRadius:10, background:'#1a1a1a', border:'1px solid #2a2a2a', color:'#f0f0f0', fontSize:14, boxSizing:'border-box', transition:'border-color 0.15s' }}
