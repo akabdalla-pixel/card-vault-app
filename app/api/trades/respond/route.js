@@ -57,6 +57,7 @@ export async function POST(req) {
   const now = new Date()
 
   // Proposer's cards → mark original traded, create copy for receiver
+  const receiverNewCardIds = []
   for (const card of pCards) {
     await prisma.card.update({
       where: { id: card.id },
@@ -71,7 +72,7 @@ export async function POST(req) {
     })
 
     const { id, userId, createdAt, updatedAt, sold, soldPrice, soldDate, traded, tradedTo, tradedFrom, tradedAt, tradeId: _tid, originalUserId, ...cardData } = card
-    await prisma.card.create({
+    const newCard = await prisma.card.create({
       data: {
         ...cardData,
         userId: trade.receiverId,
@@ -81,9 +82,11 @@ export async function POST(req) {
         originalUserId: card.userId,
       },
     })
+    receiverNewCardIds.push({ newId: newCard.id, origVal: card.val || 0 })
   }
 
   // Receiver's cards → mark original traded, create copy for proposer
+  const proposerNewCardIds = []
   for (const card of rCards) {
     await prisma.card.update({
       where: { id: card.id },
@@ -98,7 +101,7 @@ export async function POST(req) {
     })
 
     const { id, userId, createdAt, updatedAt, sold, soldPrice, soldDate, traded, tradedTo, tradedFrom, tradedAt, tradeId: _tid, originalUserId, ...cardData } = card
-    await prisma.card.create({
+    const newCard = await prisma.card.create({
       data: {
         ...cardData,
         userId: trade.proposerId,
@@ -108,7 +111,42 @@ export async function POST(req) {
         originalUserId: card.userId,
       },
     })
+    proposerNewCardIds.push({ newId: newCard.id, origVal: card.val || 0 })
   }
+
+  // ── Cost basis update for received cards ──────────────────────────────
+  // Proposer receives rCards — cost basis = what they gave up (pCards value + proposerCash)
+  const proposerSentTotal = pCards.reduce((sum, c) => sum + (c.val || 0), 0) + (trade.proposerCash || 0)
+  const proposerRecvTotal = rCards.reduce((sum, c) => sum + (c.val || 0), 0)
+
+  for (const { newId, origVal } of proposerNewCardIds) {
+    const newBuy = proposerRecvTotal > 0
+      ? ((origVal / proposerRecvTotal) * proposerSentTotal)
+      : proposerNewCardIds.length > 0
+        ? proposerSentTotal / proposerNewCardIds.length
+        : 0
+    await prisma.card.update({
+      where: { id: newId },
+      data: { buy: parseFloat(newBuy.toFixed(2)) },
+    })
+  }
+
+  // Receiver receives pCards — cost basis = what they gave up (rCards value + receiverCash)
+  const receiverSentTotal = rCards.reduce((sum, c) => sum + (c.val || 0), 0) + (trade.receiverCash || 0)
+  const receiverRecvTotal = pCards.reduce((sum, c) => sum + (c.val || 0), 0)
+
+  for (const { newId, origVal } of receiverNewCardIds) {
+    const newBuy = receiverRecvTotal > 0
+      ? ((origVal / receiverRecvTotal) * receiverSentTotal)
+      : receiverNewCardIds.length > 0
+        ? receiverSentTotal / receiverNewCardIds.length
+        : 0
+    await prisma.card.update({
+      where: { id: newId },
+      data: { buy: parseFloat(newBuy.toFixed(2)) },
+    })
+  }
+  // ─────────────────────────────────────────────────────────────────────
 
   await prisma.trade.update({ where: { id: tradeId }, data: { status: 'accepted' } })
   return NextResponse.json({ ok: true, status: 'accepted' })
