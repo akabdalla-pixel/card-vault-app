@@ -20,6 +20,11 @@ model User {
   avatar     String?
   createdAt  DateTime            @default(now())
   updatedAt  DateTime            @updatedAt
+
+  friendshipsRequested Friendship[] @relation("FriendshipRequester")
+  friendshipsReceived  Friendship[] @relation("FriendshipRecipient")
+  tradesProposed       Trade[]      @relation("TradeProposer")
+  tradesReceived       Trade[]      @relation("TradeReceiver")
 }
 
 model Card {
@@ -47,11 +52,17 @@ model Card {
   auto         Boolean  @default(false)
   gradingCo    String?
   autoGrade    String?
-  imageUrl     String?
-  userId       String
-  user         User     @relation(fields: [userId], references: [id])
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  imageUrl       String?
+  traded         Boolean   @default(false)
+  tradedTo       String?
+  tradedFrom     String?
+  tradedAt       DateTime?
+  tradeId        String?
+  originalUserId String?
+  userId         String
+  user           User     @relation(fields: [userId], references: [id])
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
 }
 
 model Activity {
@@ -96,4 +107,35 @@ model Wish {
   user      User     @relation(fields: [userId], references: [id])
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model Friendship {
+  id          String   @id @default(cuid())
+  requesterId String
+  recipientId String
+  status      String   @default("pending")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  requester   User @relation("FriendshipRequester", fields: [requesterId], references: [id])
+  recipient   User @relation("FriendshipRecipient", fields: [recipientId], references: [id])
+
+  @@unique([requesterId, recipientId])
+}
+
+model Trade {
+  id              String   @id @default(cuid())
+  proposerId      String
+  receiverId      String
+  proposerCardIds String[]
+  receiverCardIds String[]
+  proposerCash    Float    @default(0)
+  receiverCash    Float    @default(0)
+  status          String   @default("pending")
+  message         String   @default("")
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  proposer        User @relation("TradeProposer", fields: [proposerId], references: [id])
+  receiver        User @relation("TradeReceiver", fields: [receiverId], references: [id])
 }
