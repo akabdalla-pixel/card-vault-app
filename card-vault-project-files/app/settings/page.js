@@ -1,5 +1,5 @@
 'use client'
-import { useState, useEffect, useCallback, useRef } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { THEMES, applyTheme, saveThemeToServer } from '@/app/components/ThemeProvider'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
@@ -26,7 +26,6 @@ function IconDownload()   { return <svg width="15" height="15" viewBox="0 0 24 2
 function IconTrash()      { return <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg> }
 function IconCheck()      { return <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg> }
 function IconLink()       { return <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg> }
-function IconCamera()     { return <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg> }
 
 const navIcons = { 'Dashboard': IconDashboard, 'Collection': IconCollection, 'Insights': IconInsights, 'Market': IconMarket, 'PSA Lookup': IconShield }
 const fmt = n => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 2 }).format(n || 0)
@@ -194,63 +193,6 @@ export default function SettingsPage() {
   const [tab,     setTab]     = useState('profile')
   const router = useRouter()
 
-  // ── Avatar / crop ──────────────────────────────────────────────────────────
-  const [avatarLoading, setAvatarLoading] = useState(false)
-  const [cropSrc,    setCropSrc]    = useState(null)
-  const [cropScale,  setCropScale]  = useState(1)
-  const [cropOffset, setCropOffset] = useState({ x:0, y:0 })
-  const [isDragging, setIsDragging] = useState(false)
-  const [dragStart,  setDragStart]  = useState({ x:0, y:0 })
-  const cropImgRef = useRef(null)
-  const CROP_SIZE  = 280
-
-  function handleAvatarUpload(e) {
-    const file = e.target.files?.[0]; if (!file) return
-    const reader = new FileReader()
-    reader.onload = ev => { setCropSrc(ev.target.result); setCropScale(1); setCropOffset({ x:0, y:0 }) }
-    reader.readAsDataURL(file)
-    e.target.value = ''
-  }
-  function getCropPointer(e) { const s = e.touches ? e.touches[0] : e; return { x: s.clientX, y: s.clientY } }
-  function onCropDragStart(e) { e.preventDefault(); const p = getCropPointer(e); setIsDragging(true); setDragStart({ x: p.x - cropOffset.x, y: p.y - cropOffset.y }) }
-  function onCropDragMove(e)  { if (!isDragging) return; const p = getCropPointer(e); setCropOffset({ x: p.x - dragStart.x, y: p.y - dragStart.y }) }
-  function onCropDragEnd()    { setIsDragging(false) }
-
-  async function handleCropSave() {
-    const img = cropImgRef.current; if (!img) return
-    setAvatarLoading(true)
-    try {
-      const SIZE = 256, canvas = document.createElement('canvas')
-      canvas.width = SIZE; canvas.height = SIZE
-      const ctx = canvas.getContext('2d')
-      const baseScale = Math.max(CROP_SIZE / img.naturalWidth, CROP_SIZE / img.naturalHeight)
-      const dispW = img.naturalWidth  * baseScale * cropScale
-      const dispH = img.naturalHeight * baseScale * cropScale
-      const imgLeft = (CROP_SIZE - dispW) / 2 + cropOffset.x
-      const imgTop  = (CROP_SIZE - dispH) / 2 + cropOffset.y
-      const srcX = -imgLeft / (baseScale * cropScale)
-      const srcY = -imgTop  / (baseScale * cropScale)
-      const srcW = CROP_SIZE / (baseScale * cropScale)
-      const srcH = CROP_SIZE / (baseScale * cropScale)
-      ctx.drawImage(img, srcX, srcY, srcW, srcH, 0, 0, SIZE, SIZE)
-      const base64 = canvas.toDataURL('image/jpeg', 0.9)
-      const res  = await fetch('/api/user/avatar', { method:'POST', headers:{ 'Content-Type':'application/json' }, body: JSON.stringify({ avatar: base64 }) })
-      if (res.ok) { const d = await res.json(); setUser(u => ({ ...u, avatar: d.avatar })); setCropSrc(null); showToast('Profile photo updated!') }
-      else { const e = await res.json().catch(() => ({})); showToast(e.detail || e.error || 'Failed to save photo', 'error') }
-    } catch (err) { showToast(err?.message || 'Something went wrong', 'error') }
-    finally { setAvatarLoading(false) }
-  }
-
-  async function handleRemoveAvatar() {
-    setAvatarLoading(true)
-    try {
-      await fetch('/api/user/avatar', { method:'POST', headers:{ 'Content-Type':'application/json' }, body: JSON.stringify({ avatar: null }) })
-      setUser(u => ({ ...u, avatar: null }))
-      showToast('Profile photo removed')
-    } catch { showToast('Failed to remove photo', 'error') }
-    finally { setAvatarLoading(false) }
-  }
-
   // ── Share ──────────────────────────────────────────────────────────────────
   const [shareCopied, setShareCopied] = useState(false)
   function handleShare() {
@@ -401,43 +343,6 @@ export default function SettingsPage() {
 
   return (
     <>
-      {/* ── Crop Modal ── */}
-      {cropSrc && (
-        <div style={{ position:'fixed', inset:0, zIndex:9999, background:'rgba(0,0,0,0.88)', display:'flex', alignItems:'center', justifyContent:'center', padding:20 }}
-          onMouseMove={onCropDragMove} onMouseUp={onCropDragEnd} onTouchMove={onCropDragMove} onTouchEnd={onCropDragEnd}>
-          <div style={{ background:'#111', border:'1px solid #222', borderRadius:20, padding:28, width:'100%', maxWidth:360, display:'flex', flexDirection:'column', alignItems:'center', gap:20 }}>
-            <div>
-              <div style={{ fontSize:15, fontWeight:800, color:'#fff', textAlign:'center' }}>Adjust your photo</div>
-              <div style={{ fontSize:12, color:'#444', textAlign:'center', marginTop:4 }}>Drag to reposition · zoom to fit</div>
-            </div>
-            <div style={{ position:'relative', width:CROP_SIZE, height:CROP_SIZE, borderRadius:'50%', overflow:'hidden', cursor: isDragging ? 'grabbing' : 'grab', flexShrink:0, border:'3px solid var(--accent)' }}
-              onMouseDown={onCropDragStart} onTouchStart={onCropDragStart}>
-              {(() => {
-                const img = cropImgRef.current
-                const nw  = img?.naturalWidth  || 1
-                const nh  = img?.naturalHeight || 1
-                const base = Math.max(CROP_SIZE / nw, CROP_SIZE / nh)
-                const w   = nw * base * cropScale
-                const h   = nh * base * cropScale
-                return <img ref={cropImgRef} src={cropSrc} alt="" onLoad={() => setCropScale(s => s)}
-                  style={{ position:'absolute', left:(CROP_SIZE-w)/2+cropOffset.x, top:(CROP_SIZE-h)/2+cropOffset.y, width:w, height:h, maxWidth:'none', pointerEvents:'none', userSelect:'none' }} />
-              })()}
-            </div>
-            <div style={{ width:'100%' }}>
-              <div style={{ display:'flex', justifyContent:'space-between', marginBottom:8 }}>
-                <span style={{ fontSize:10, fontWeight:700, color:'#444', textTransform:'uppercase', letterSpacing:'0.1em' }}>Zoom</span>
-                <span style={{ fontSize:10, color:'#555' }}>{Math.round(cropScale * 100)}%</span>
-              </div>
-              <input type="range" min="1" max="3" step="0.01" value={cropScale} onChange={e => setCropScale(parseFloat(e.target.value))} style={{ width:'100%', accentColor:'var(--accent)' }} />
-            </div>
-            <div style={{ display:'flex', gap:10, width:'100%' }}>
-              <GhostBtn onClick={() => setCropSrc(null)} style={{ flex:1 }}>Cancel</GhostBtn>
-              <PrimaryBtn onClick={handleCropSave} loading={avatarLoading} style={{ flex:2 }}>Save Photo</PrimaryBtn>
-            </div>
-          </div>
-        </div>
-      )}
-
       <style>{`
         @keyframes toastIn { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
         * { font-family:var(--font-geist-sans),-apple-system,sans-serif!important }
@@ -487,33 +392,18 @@ export default function SettingsPage() {
                 <Card>
                   <div style={{ padding:'24px 20px', display:'flex', alignItems:'center', gap:20 }}>
                     {/* Avatar */}
-                    <div style={{ position:'relative', flexShrink:0 }}>
+                    <div style={{ flexShrink:0 }}>
                       <div style={{ width:80, height:80, borderRadius:'50%', background:'#1a1a1a', border:'2px solid #2a2a2a', overflow:'hidden', display:'flex', alignItems:'center', justifyContent:'center' }}>
                         {user?.avatar
                           ? <img src={user.avatar} alt="" style={{ width:'100%', height:'100%', objectFit:'cover' }} />
                           : <span style={{ fontSize:32, fontWeight:900, color:'var(--accent)' }}>{user?.username?.[0]?.toUpperCase()||'?'}</span>
                         }
                       </div>
-                      <label style={{ position:'absolute', bottom:0, right:0, width:26, height:26, borderRadius:'50%', background:'var(--accent)', display:'flex', alignItems:'center', justifyContent:'center', cursor: avatarLoading ? 'not-allowed' : 'pointer', border:'2px solid #0a0a0a' }}>
-                        <IconCamera />
-                        <input type="file" accept="image/*" style={{ display:'none' }} onChange={handleAvatarUpload} disabled={avatarLoading} />
-                      </label>
                     </div>
                     {/* Info */}
                     <div style={{ flex:1, minWidth:0 }}>
                       <div style={{ fontSize:20, fontWeight:900, color:'#fff', letterSpacing:'-0.5px' }}>@{user?.username}</div>
                       <div style={{ fontSize:12, color:'#555', marginTop:2 }}>{user?.email}</div>
-                      <div style={{ display:'flex', gap:8, marginTop:12, flexWrap:'wrap' }}>
-                        {user?.avatar && (
-                          <GhostBtn onClick={handleRemoveAvatar} disabled={avatarLoading} style={{ fontSize:12, padding:'6px 12px' }}>
-                            Remove photo
-                          </GhostBtn>
-                        )}
-                        <label style={{ display:'flex', alignItems:'center', gap:6, padding:'6px 12px', borderRadius:8, background:'rgba(var(--accent-rgb),0.1)', border:'1px solid rgba(var(--accent-rgb),0.25)', color:'var(--accent)', fontSize:12, fontWeight:700, cursor: avatarLoading ? 'not-allowed' : 'pointer' }}>
-                          📷 {user?.avatar ? 'Change photo' : 'Upload photo'}
-                          <input type="file" accept="image/*" style={{ display:'none' }} onChange={handleAvatarUpload} disabled={avatarLoading} />
-                        </label>
-                      </div>
                     </div>
                   </div>
                 </Card>
