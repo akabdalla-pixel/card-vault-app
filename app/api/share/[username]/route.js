@@ -14,7 +14,7 @@ export async function GET(req, context) {
         username: true,
         avatar: true,
         cards: {
-          where: { sold: false },
+          where: { sold: false, traded: { not: true } },
           select: {
             id: true, player: true, year: true, sport: true,
             brand: true, name: true, num: true, grade: true,
