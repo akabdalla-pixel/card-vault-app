@@ -5,7 +5,7 @@ import { getUser } from '@/lib/auth'
 async function saveSnapshot(userId) {
   try {
     const cards = await prisma.card.findMany({
-      where: { userId, sold: false },
+      where: { userId, sold: false, traded: { not: true } },
       select: { val: true, buy: true, qty: true }
     })
     const value = cards.reduce((sum, c) => sum + ((c.val || c.buy || 0) * (c.qty || 1)), 0)
