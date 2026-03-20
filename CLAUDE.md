@@ -273,3 +273,21 @@ Everything that has been built or changed on this project, in order.
 - Badge is a real clickable link to psacard.com/cert/{n}/psa so user can verify the cert immediately
 - Helper text reads "Badge will appear on this card's tile" — makes it clear the badge will show on the collection tile after save
 - Placeholder text in the notes field now hints: `Tip: type "PSA Cert #XXXXXXXX" to auto-add the PSA badge`
+
+### 21. Friends & Trading System
+- `lib/auth.js` updated: `getUser(req)` now checks Bearer token first (mobile app), falls back to cookies (web)
+- Prisma schema: added `Friendship` model (id, requesterId, recipientId, status, unique constraint)
+- Prisma schema: added `Trade` model (id, proposerId, receiverId, proposerCardIds[], receiverCardIds[], cash amounts, status, message)
+- Prisma schema: added 6 trade fields to Card (traded, tradedTo, tradedFrom, tradedAt, tradeId, originalUserId)
+- User model: added relation fields for friendships and trades
+- Nav updated on ALL pages: Friends link added between Collection and Insights
+- 6 friends API routes: search, request, respond, list, remove, cards
+- 4 trades API routes: propose, respond, list, pending
+- Friends page (`app/friends/page.js`): 3 tabs (Friends, Trades, Requests)
+  - Friends tab: user search with add friend, friends list with Trade/Remove buttons
+  - Trades tab: trade history with accept/decline/cancel actions, card thumbnails, cash display
+  - Requests tab: incoming (accept/decline) and sent requests with badge counts
+  - Trade proposal modal: two-column card picker, cash inputs, message field
+- `tradedTo` and `tradedFrom` are STRING fields (usernames, not IDs) for direct display
+- Mobile app auth uses Bearer token in Authorization header; web app uses cookies
+- Trade accept swaps card ownership (userId) and marks cards as traded

@@ -36,9 +36,8 @@ export async function POST(req) {
     return NextResponse.json({ ok: true, status: 'declined' })
   }
 
-  // ACCEPT — swap card ownership
+  // ACCEPT — transfer cards (mark originals as traded, create copies for receiver)
 
-  // Re-verify all cards still available
   const pCards = trade.proposerCardIds.length
     ? await prisma.card.findMany({
         where: { id: { in: trade.proposerCardIds }, userId: trade.proposerId, sold: { not: true }, traded: { not: true } },
@@ -57,7 +56,7 @@ export async function POST(req) {
 
   const now = new Date()
 
-  // Proposer's cards go to receiver
+  // Proposer's cards → mark original traded, create copy for receiver
   for (const card of pCards) {
     await prisma.card.update({
       where: { id: card.id },
@@ -68,12 +67,23 @@ export async function POST(req) {
         tradedAt: now,
         tradeId: trade.id,
         originalUserId: card.userId,
+      },
+    })
+
+    const { id, userId, createdAt, updatedAt, sold, soldPrice, soldDate, traded, tradedTo, tradedFrom, tradedAt, tradeId: _tid, originalUserId, ...cardData } = card
+    await prisma.card.create({
+      data: {
+        ...cardData,
         userId: trade.receiverId,
+        tradedFrom: trade.proposer.username,
+        tradedAt: now,
+        tradeId: trade.id,
+        originalUserId: card.userId,
       },
     })
   }
 
-  // Receiver's cards go to proposer
+  // Receiver's cards → mark original traded, create copy for proposer
   for (const card of rCards) {
     await prisma.card.update({
       where: { id: card.id },
@@ -84,12 +94,22 @@ export async function POST(req) {
         tradedAt: now,
         tradeId: trade.id,
         originalUserId: card.userId,
+      },
+    })
+
+    const { id, userId, createdAt, updatedAt, sold, soldPrice, soldDate, traded, tradedTo, tradedFrom, tradedAt, tradeId: _tid, originalUserId, ...cardData } = card
+    await prisma.card.create({
+      data: {
+        ...cardData,
         userId: trade.proposerId,
+        tradedFrom: trade.receiver.username,
+        tradedAt: now,
+        tradeId: trade.id,
+        originalUserId: card.userId,
       },
     })
   }
 
   await prisma.trade.update({ where: { id: tradeId }, data: { status: 'accepted' } })
-
   return NextResponse.json({ ok: true, status: 'accepted' })
 }
