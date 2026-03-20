@@ -65,8 +65,14 @@ export default function AdminPage() {
   const [dbSort, setDbSort] = useState('newest')
   const [lightboxImg, setLightboxImg] = useState(null)
   const [dbOwner, setDbOwner] = useState('')
+  // Trade Log
+  const [tradeData, setTradeData] = useState(null)
+  const [tradeLoading, setTradeLoading] = useState(false)
+  const [tradeSearch, setTradeSearch] = useState('')
+  const [tradeStatus, setTradeStatus] = useState('')
+  const [expandedTrade, setExpandedTrade] = useState(null)
   // Section collapse state
-  const [sections, setSections] = useState({ users: true, psa: true, cards: true })
+  const [sections, setSections] = useState({ users: true, psa: true, cards: true, trades: true })
   const toggleSection = k => setSections(s => ({ ...s, [k]: !s[k] }))
 
   const router = useRouter()
@@ -88,6 +94,16 @@ export default function AdminPage() {
       .then(d => { if (d) setPsaCache(d) })
       .finally(() => setPsaLoading(false))
   }, [])
+
+  const loadTrades = () => {
+    setTradeLoading(true)
+    fetch('/api/admin/trades')
+      .then(r => r.ok ? r.json() : null)
+      .then(d => { if (d) setTradeData(d) })
+      .finally(() => setTradeLoading(false))
+  }
+
+  useEffect(() => { loadTrades() }, [])
 
   if (loading) return (
     <div style={{ minHeight:'100vh', background:'#0a0a0a', display:'flex', alignItems:'center', justifyContent:'center' }}>
@@ -153,6 +169,7 @@ export default function AdminPage() {
               { label:'Cards This Week', value: stats.cardsThisWeek,              accent:'var(--accent-light)' },
               { label:'Most Active',     value: '@'+stats.mostActiveUser,         accent:'var(--accent)', small:true },
               { label:'PSA Lookups',     value: psaCache?.total ?? '—',           accent:'var(--accent)' },
+              { label:'Total Trades',    value: tradeData?.stats?.total ?? '—',   accent:'var(--accent-light)' },
             ].map((s,i) => (
               <div key={i} style={{ background:'#111', border:'1px solid #1a1a1a', borderRadius:12, padding:'14px 16px', position:'relative', overflow:'hidden' }}>
                 <div style={{ position:'absolute', top:0, left:0, right:0, height:2, background:s.accent }} />
@@ -381,6 +398,239 @@ export default function AdminPage() {
                           <div style={{ fontSize:11, color:'#444' }}>{fmtTime(entry.updatedAt)}</div>
                         </div>
 
+                      </div>
+                    )
+                  })
+                }
+              </div>
+            )}
+          </div>
+
+          {/* ── Trade Log ─────────────────────────────────────────────────── */}
+          <div style={{ marginBottom:36 }}>
+            <SectionHeader
+              title="Trade Log"
+              count={tradeData?.stats?.total ?? 0}
+              open={sections.trades}
+              onToggle={() => toggleSection('trades')}
+              badge={
+                tradeData?.stats?.pending > 0
+                  ? <div style={{ padding:'2px 8px', background:'rgba(255,190,46,0.1)', border:'1px solid rgba(255,190,46,0.25)', borderRadius:4, fontSize:9, fontWeight:800, color:'#ffbe2e', letterSpacing:'0.1em' }}>{tradeData.stats.pending} PENDING</div>
+                  : null
+              }
+              controls={
+                <div style={{ display:'flex', gap:8 }}>
+                  <input value={tradeSearch} onChange={e => setTradeSearch(e.target.value)} placeholder="Search by user..."
+                    style={{ padding:'7px 12px', borderRadius:8, background:'#111', border:'1px solid #1e1e1e', color:'#f0f0f0', fontSize:12, outline:'none', width:160 }} />
+                  <select value={tradeStatus} onChange={e => setTradeStatus(e.target.value)}
+                    style={{ padding:'7px 12px', borderRadius:8, background:'#111', border:'1px solid #1e1e1e', color: tradeStatus?'#f0f0f0':'#555', fontSize:12, outline:'none' }}>
+                    <option value="">All Status</option>
+                    <option value="pending">Pending</option>
+                    <option value="accepted">Accepted</option>
+                    <option value="declined">Declined</option>
+                    <option value="cancelled">Cancelled</option>
+                  </select>
+                  <button onClick={loadTrades}
+                    style={{ padding:'7px 14px', borderRadius:8, background:'#111', border:'1px solid #1e1e1e', color:'#555', fontSize:12, fontWeight:700, cursor:'pointer' }}>
+                    {tradeLoading ? '...' : '↻ Refresh'}
+                  </button>
+                </div>
+              }
+            />
+
+            {sections.trades && (
+              <div style={{ background:'#0d0d0d', border:'1px solid #1a1a1a', borderRadius:14, overflow:'hidden' }}>
+                {tradeLoading && !tradeData && (
+                  <div style={{ padding:'32px', textAlign:'center', fontSize:13, color:'#444' }}>Loading trades...</div>
+                )}
+
+                {tradeData && tradeData.trades.length === 0 && (
+                  <div style={{ padding:'32px', textAlign:'center', fontSize:13, color:'#444' }}>No trades yet</div>
+                )}
+
+                {/* Trade stats mini bar */}
+                {tradeData?.stats && tradeData.stats.total > 0 && (
+                  <div style={{ display:'flex', gap:16, padding:'12px 16px', borderBottom:'1px solid #111', background:'#080808' }}>
+                    {[
+                      { label:'Total', value:tradeData.stats.total, color:'#fff' },
+                      { label:'Pending', value:tradeData.stats.pending, color:'#ffbe2e' },
+                      { label:'Accepted', value:tradeData.stats.accepted, color:'#22c55e' },
+                      { label:'Declined', value:tradeData.stats.declined, color:'#ef4444' },
+                      { label:'Cancelled', value:tradeData.stats.cancelled, color:'#666' },
+                    ].map((s,i) => (
+                      <div key={i}>
+                        <div style={{ fontSize:8, fontWeight:700, color:'#333', textTransform:'uppercase', letterSpacing:'0.1em', marginBottom:2 }}>{s.label}</div>
+                        <div style={{ fontFamily:'var(--font-geist-mono)', fontSize:14, fontWeight:900, color:s.color }}>{s.value}</div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                {(tradeData?.trades || [])
+                  .filter(t => {
+                    const q = tradeSearch.toLowerCase()
+                    const matchQ = !q || t.proposer?.username?.toLowerCase().includes(q) || t.receiver?.username?.toLowerCase().includes(q)
+                    const matchStatus = !tradeStatus || t.status === tradeStatus
+                    return matchQ && matchStatus
+                  })
+                  .map((trade, i) => {
+                    const statusColors = {
+                      pending: { c:'#ffbe2e', bg:'rgba(255,190,46,0.1)', b:'rgba(255,190,46,0.3)' },
+                      accepted: { c:'#22c55e', bg:'rgba(34,197,94,0.1)', b:'rgba(34,197,94,0.3)' },
+                      declined: { c:'#ef4444', bg:'rgba(239,68,68,0.1)', b:'rgba(239,68,68,0.3)' },
+                      cancelled: { c:'#666', bg:'rgba(102,102,102,0.1)', b:'rgba(102,102,102,0.3)' },
+                    }
+                    const sc = statusColors[trade.status] || statusColors.pending
+                    const isExpanded = expandedTrade === trade.id
+                    const totalPCards = trade.proposerCards.length
+                    const totalRCards = trade.receiverCards.length
+
+                    return (
+                      <div key={trade.id} style={{ borderTop: i > 0 ? '1px solid #111' : 'none' }}>
+                        {/* Trade row */}
+                        <div
+                          className="card-row"
+                          onClick={() => setExpandedTrade(isExpanded ? null : trade.id)}
+                          style={{ display:'flex', alignItems:'center', gap:14, padding:'14px 16px', cursor:'pointer', transition:'background 0.1s' }}
+                        >
+                          {/* Proposer avatar */}
+                          <div style={{ display:'flex', alignItems:'center', gap:8, flex:1, minWidth:0 }}>
+                            <div style={{ width:28, height:28, borderRadius:'50%', background:'#1e1e1e', border:'1px solid #2a2a2a', overflow:'hidden', flexShrink:0, display:'flex', alignItems:'center', justifyContent:'center', fontSize:10, fontWeight:900, color:'#666' }}>
+                              {trade.proposer?.avatar ? <img src={trade.proposer.avatar} alt="" style={{ width:'100%', height:'100%', objectFit:'cover' }} /> : trade.proposer?.username?.[0]?.toUpperCase() || '?'}
+                            </div>
+                            <div style={{ minWidth:0 }}>
+                              <div style={{ fontSize:12, fontWeight:700, color:'#e0e0e0' }}>@{trade.proposer?.username || 'unknown'}</div>
+                              <div style={{ fontSize:10, color:'#444' }}>{totalPCards} card{totalPCards !== 1 ? 's' : ''}{trade.proposerCash > 0 ? ` + ${fmt(trade.proposerCash)}` : ''}</div>
+                            </div>
+                          </div>
+
+                          {/* Arrow */}
+                          <div style={{ fontSize:16, color:'#333', flexShrink:0 }}>⇄</div>
+
+                          {/* Receiver avatar */}
+                          <div style={{ display:'flex', alignItems:'center', gap:8, flex:1, minWidth:0 }}>
+                            <div style={{ width:28, height:28, borderRadius:'50%', background:'#1e1e1e', border:'1px solid #2a2a2a', overflow:'hidden', flexShrink:0, display:'flex', alignItems:'center', justifyContent:'center', fontSize:10, fontWeight:900, color:'#666' }}>
+                              {trade.receiver?.avatar ? <img src={trade.receiver.avatar} alt="" style={{ width:'100%', height:'100%', objectFit:'cover' }} /> : trade.receiver?.username?.[0]?.toUpperCase() || '?'}
+                            </div>
+                            <div style={{ minWidth:0 }}>
+                              <div style={{ fontSize:12, fontWeight:700, color:'#e0e0e0' }}>@{trade.receiver?.username || 'unknown'}</div>
+                              <div style={{ fontSize:10, color:'#444' }}>{totalRCards} card{totalRCards !== 1 ? 's' : ''}{trade.receiverCash > 0 ? ` + ${fmt(trade.receiverCash)}` : ''}</div>
+                            </div>
+                          </div>
+
+                          {/* Status badge */}
+                          <span style={{ padding:'3px 10px', borderRadius:5, background:sc.bg, border:`1px solid ${sc.b}`, color:sc.c, fontSize:9, fontWeight:900, textTransform:'uppercase', letterSpacing:'0.06em', flexShrink:0 }}>
+                            {trade.status}
+                          </span>
+
+                          {/* Date */}
+                          <div style={{ fontSize:11, color:'#444', flexShrink:0, minWidth:60, textAlign:'right' }}>{fmtTime(trade.createdAt)}</div>
+
+                          {/* Expand arrow */}
+                          <div style={{ fontSize:12, color: isExpanded ? 'var(--accent)' : '#333', transition:'transform 0.2s', transform: isExpanded ? 'rotate(90deg)' : 'rotate(0deg)', flexShrink:0 }}>▶</div>
+                        </div>
+
+                        {/* Expanded detail */}
+                        {isExpanded && (
+                          <div style={{ background:'#080808', borderTop:'1px solid #111', padding:'16px 16px 16px 20px' }}>
+                            {/* Trade ID + dates */}
+                            <div style={{ display:'flex', gap:20, marginBottom:14, flexWrap:'wrap' }}>
+                              <div>
+                                <div style={{ fontSize:8, fontWeight:700, color:'#333', textTransform:'uppercase', letterSpacing:'0.1em', marginBottom:2 }}>Trade ID</div>
+                                <div style={{ fontFamily:'var(--font-geist-mono)', fontSize:10, color:'#555' }}>{trade.id}</div>
+                              </div>
+                              <div>
+                                <div style={{ fontSize:8, fontWeight:700, color:'#333', textTransform:'uppercase', letterSpacing:'0.1em', marginBottom:2 }}>Created</div>
+                                <div style={{ fontSize:11, color:'#555' }}>{fmtDate(trade.createdAt)}</div>
+                              </div>
+                              <div>
+                                <div style={{ fontSize:8, fontWeight:700, color:'#333', textTransform:'uppercase', letterSpacing:'0.1em', marginBottom:2 }}>Updated</div>
+                                <div style={{ fontSize:11, color:'#555' }}>{fmtDate(trade.updatedAt)}</div>
+                              </div>
+                              <div>
+                                <div style={{ fontSize:8, fontWeight:700, color:'#333', textTransform:'uppercase', letterSpacing:'0.1em', marginBottom:2 }}>Status</div>
+                                <span style={{ fontSize:10, fontWeight:800, color:sc.c }}>{trade.status.toUpperCase()}</span>
+                              </div>
+                            </div>
+
+                            {/* Message */}
+                            {trade.message && (
+                              <div style={{ padding:'10px 14px', background:'#0d0d0d', border:'1px solid #1a1a1a', borderRadius:8, marginBottom:14 }}>
+                                <div style={{ fontSize:8, fontWeight:700, color:'#333', textTransform:'uppercase', letterSpacing:'0.1em', marginBottom:4 }}>Message</div>
+                                <div style={{ fontSize:12, color:'#888', lineHeight:1.4, fontStyle:'italic' }}>"{trade.message}"</div>
+                              </div>
+                            )}
+
+                            {/* Two column cards */}
+                            <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:16 }}>
+                              {/* Proposer's cards */}
+                              <div>
+                                <div style={{ fontSize:9, fontWeight:800, color:'#555', textTransform:'uppercase', letterSpacing:'0.08em', marginBottom:8 }}>
+                                  @{trade.proposer?.username || 'unknown'} offered {trade.proposerCash > 0 ? `+ ${fmt(trade.proposerCash)} cash` : ''}
+                                </div>
+                                {trade.proposerCards.length === 0 ? (
+                                  <div style={{ fontSize:11, color:'#333', padding:'8px 0' }}>No cards offered</div>
+                                ) : (
+                                  <div style={{ display:'flex', flexDirection:'column', gap:6 }}>
+                                    {trade.proposerCards.map(card => (
+                                      <div key={card.id} style={{ display:'flex', alignItems:'center', gap:10, padding:'8px 10px', background:'#0d0d0d', border:'1px solid #1a1a1a', borderRadius:8, opacity: card.missing ? 0.4 : 1 }}>
+                                        <div style={{ width:30, height:44, borderRadius:4, overflow:'hidden', background:'#111', flexShrink:0 }}>
+                                          {card.imageUrl
+                                            ? <img src={card.imageUrl} alt="" style={{ width:'100%', height:'100%', objectFit:'contain' }} onClick={() => setLightboxImg({ url: card.imageUrl, player: card.player })} />
+                                            : <div style={{ width:'100%', height:'100%', display:'flex', alignItems:'center', justifyContent:'center', fontSize:12, opacity:0.2 }}>🃏</div>
+                                          }
+                                        </div>
+                                        <div style={{ flex:1, minWidth:0 }}>
+                                          <div style={{ fontSize:11, fontWeight:700, color:'#ccc', textTransform:'uppercase', overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>{card.player}</div>
+                                          <div style={{ display:'flex', gap:4, marginTop:2, flexWrap:'wrap', alignItems:'center' }}>
+                                            {card.sport && <span style={{ fontSize:9, color:'#444' }}>{card.sport}</span>}
+                                            {card.year && <span style={{ fontSize:9, color:'#333' }}>{card.year}</span>}
+                                            {card.grade && (() => { const gc = gradeCol(card.grade); return <span style={{ fontSize:8, fontWeight:800, color:gc.c, background:gc.bg, padding:'1px 5px', borderRadius:3 }}>{card.gradingCo ? card.gradingCo+' ' : ''}{card.grade}</span> })()}
+                                            {card.auto && <span style={{ fontSize:8, fontWeight:800, color:'#ffbe2e', background:'rgba(255,190,46,0.1)', padding:'1px 5px', borderRadius:3 }}>AUTO{card.autoGrade ? ` ${card.autoGrade}` : ''}</span>}
+                                          </div>
+                                        </div>
+                                        <div style={{ fontFamily:'var(--font-geist-mono)', fontSize:11, fontWeight:700, color:'#666', flexShrink:0 }}>{card.val ? fmt(parseFloat(card.val)||0) : '—'}</div>
+                                      </div>
+                                    ))}
+                                  </div>
+                                )}
+                              </div>
+
+                              {/* Receiver's cards */}
+                              <div>
+                                <div style={{ fontSize:9, fontWeight:800, color:'#555', textTransform:'uppercase', letterSpacing:'0.08em', marginBottom:8 }}>
+                                  @{trade.receiver?.username || 'unknown'} offered {trade.receiverCash > 0 ? `+ ${fmt(trade.receiverCash)} cash` : ''}
+                                </div>
+                                {trade.receiverCards.length === 0 ? (
+                                  <div style={{ fontSize:11, color:'#333', padding:'8px 0' }}>No cards offered</div>
+                                ) : (
+                                  <div style={{ display:'flex', flexDirection:'column', gap:6 }}>
+                                    {trade.receiverCards.map(card => (
+                                      <div key={card.id} style={{ display:'flex', alignItems:'center', gap:10, padding:'8px 10px', background:'#0d0d0d', border:'1px solid #1a1a1a', borderRadius:8, opacity: card.missing ? 0.4 : 1 }}>
+                                        <div style={{ width:30, height:44, borderRadius:4, overflow:'hidden', background:'#111', flexShrink:0 }}>
+                                          {card.imageUrl
+                                            ? <img src={card.imageUrl} alt="" style={{ width:'100%', height:'100%', objectFit:'contain' }} onClick={() => setLightboxImg({ url: card.imageUrl, player: card.player })} />
+                                            : <div style={{ width:'100%', height:'100%', display:'flex', alignItems:'center', justifyContent:'center', fontSize:12, opacity:0.2 }}>🃏</div>
+                                          }
+                                        </div>
+                                        <div style={{ flex:1, minWidth:0 }}>
+                                          <div style={{ fontSize:11, fontWeight:700, color:'#ccc', textTransform:'uppercase', overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>{card.player}</div>
+                                          <div style={{ display:'flex', gap:4, marginTop:2, flexWrap:'wrap', alignItems:'center' }}>
+                                            {card.sport && <span style={{ fontSize:9, color:'#444' }}>{card.sport}</span>}
+                                            {card.year && <span style={{ fontSize:9, color:'#333' }}>{card.year}</span>}
+                                            {card.grade && (() => { const gc = gradeCol(card.grade); return <span style={{ fontSize:8, fontWeight:800, color:gc.c, background:gc.bg, padding:'1px 5px', borderRadius:3 }}>{card.gradingCo ? card.gradingCo+' ' : ''}{card.grade}</span> })()}
+                                            {card.auto && <span style={{ fontSize:8, fontWeight:800, color:'#ffbe2e', background:'rgba(255,190,46,0.1)', padding:'1px 5px', borderRadius:3 }}>AUTO{card.autoGrade ? ` ${card.autoGrade}` : ''}</span>}
+                                          </div>
+                                        </div>
+                                        <div style={{ fontFamily:'var(--font-geist-mono)', fontSize:11, fontWeight:700, color:'#666', flexShrink:0 }}>{card.val ? fmt(parseFloat(card.val)||0) : '—'}</div>
+                                      </div>
+                                    ))}
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                          </div>
+                        )}
                       </div>
                     )
                   })
