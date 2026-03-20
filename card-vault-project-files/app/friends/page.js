@@ -230,9 +230,8 @@ function FriendsPage() {
 
   useEffect(() => {
     fetch('/api/auth/me').then(r => r.json()).then(d => {
-      if (!d?.id) { router.push('/login'); return }
-      setUser(d)
-      loadFriends()
+      if (!d?.user?.id) { router.push('/login'); return }
+      setUser(d.user)
       loadFriends()
       loadTrades()
     }).catch(() => router.push('/login'))
