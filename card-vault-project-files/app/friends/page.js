@@ -385,7 +385,7 @@ function FriendsPage() {
                   ) : (
                     <div style={{ display:'flex', flexDirection:'column', gap:10 }}>
                       {friends.map(f => (
-                        <div key={f.id} style={{ padding:'14px 16px', borderRadius:12, background:'#111', border:'1px solid #1a1a1a', display:'flex', alignItems:'center', justifyContent:'space-between' }}>
+                        <div key={f.friendshipId || f.userId} style={{ padding:'14px 16px', borderRadius:12, background:'#111', border:'1px solid #1a1a1a', display:'flex', alignItems:'center', justifyContent:'space-between' }}>
                           <div style={{ display:'flex', alignItems:'center', gap:10, flex:1 }}>
                             <div style={{ width:32, height:32, borderRadius:8, background:'var(--accent)', overflow:'hidden', display:'flex', alignItems:'center', justifyContent:'center', fontSize:12, fontWeight:900, color:'#fff', flexShrink:0 }}>{f.avatar ? <img src={f.avatar} alt="" style={{ width:'100%', height:'100%', objectFit:'cover' }} /> : f.username?.[0]?.toUpperCase()||'U'}</div>
                             <div style={{ minWidth:0 }}>
@@ -420,12 +420,13 @@ function FriendsPage() {
                         const isProposer = (trade.proposer?._id || trade.proposerId) === user.id
                         const isReceiver = (trade.receiver?._id || trade.receiverId) === user.id
                         const otherUser = isProposer ? trade.receiver : trade.proposer
+                        const otherName = otherUser?.username || 'Unknown'
                         return (
-                          <div key={trade.id} style={{ padding:'16px', borderRadius:12, background:'#111', border:'1px solid #1a1a1a', opacity: !isPending ? 0.6 : 1 }}>
+                          <div key={trade._id || trade.id} style={{ padding:'16px', borderRadius:12, background:'#111', border:'1px solid #1a1a1a', opacity: !isPending ? 0.6 : 1 }}>
                             <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:12 }}>
                               <div>
                                 <div style={{ fontSize:13, fontWeight:700, color:'#f0f0f0' }}>
-                                  {isProposer ? `You proposed to @${otherUser.username}` : `@${otherUser.username} proposed to you`}
+                                  {isProposer ? `You proposed to @${otherName}` : `@${otherName} proposed to you`}
                                 </div>
                                 <div style={{ fontSize:11, color:'#555', marginTop:4 }}>
                                   {trade.proposerCardIds?.length || 0} cards offered {trade.proposerCash > 0 ? `+ ${fmt(trade.proposerCash)}` : ''} for {trade.receiverCardIds?.length || 0} cards {trade.receiverCash > 0 ? `+ ${fmt(trade.receiverCash)}` : ''}
