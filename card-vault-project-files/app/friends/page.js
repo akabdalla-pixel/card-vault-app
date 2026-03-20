@@ -270,7 +270,6 @@ function FriendsPage() {
   const handleRespondRequest = async (friendshipId, action) => {
     await fetch('/api/friends/respond', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ friendshipId, action }) })
     loadFriends()
-    loadFriends()
   }
 
   const handleRemoveFriend = async (friendId) => {
@@ -471,14 +470,14 @@ function FriendsPage() {
                           <h3 style={{ fontSize:13, fontWeight:700, color:'#aaa', textTransform:'uppercase', letterSpacing:'0.05em', marginBottom:12 }}>Incoming ({incomingRequests.length})</h3>
                           <div style={{ display:'flex', flexDirection:'column', gap:10, marginBottom:24 }}>
                             {incomingRequests.map(req => (
-                              <div key={req.id} style={{ padding:'14px 16px', borderRadius:12, background:'#111', border:'1px solid #1a1a1a', display:'flex', alignItems:'center', justifyContent:'space-between' }}>
+                              <div key={req.friendshipId} style={{ padding:'14px 16px', borderRadius:12, background:'#111', border:'1px solid #1a1a1a', display:'flex', alignItems:'center', justifyContent:'space-between' }}>
                                 <div>
-                                  <div style={{ fontSize:13, fontWeight:600, color:'#f0f0f0' }}>@{req.fromUser.username}</div>
-                                  <div style={{ fontSize:11, color:'#555', marginTop:2 }}>{req.fromUser.email}</div>
+                                  <div style={{ fontSize:13, fontWeight:600, color:'#f0f0f0' }}>@{req.username}</div>
+                                  <div style={{ fontSize:11, color:'#555', marginTop:2 }}>Wants to be your friend</div>
                                 </div>
                                 <div style={{ display:'flex', gap:8 }}>
-                                  <button onClick={() => handleRespondRequest(req.id, 'accept')} style={{ padding:'6px 12px', borderRadius:8, background:'#22c55e', border:'none', color:'#000', fontFamily:'var(--font-geist-sans)', fontSize:12, fontWeight:700, cursor:'pointer', display:'flex', alignItems:'center', gap:4 }}><IconCheck style={{width:12, height:12}} /> Accept</button>
-                                  <button onClick={() => handleRespondRequest(req.id, 'decline')} style={{ padding:'6px 12px', borderRadius:8, background:'rgba(239,68,68,0.1)', border:'1px solid rgba(239,68,68,0.2)', color:'#ef4444', fontFamily:'var(--font-geist-sans)', fontSize:12, fontWeight:700, cursor:'pointer', display:'flex', alignItems:'center', gap:4 }}><IconX style={{width:12, height:12}} /> Decline</button>
+                                  <button onClick={() => handleRespondRequest(req.friendshipId, 'accept')} style={{ padding:'6px 12px', borderRadius:8, background:'#22c55e', border:'none', color:'#000', fontFamily:'var(--font-geist-sans)', fontSize:12, fontWeight:700, cursor:'pointer', display:'flex', alignItems:'center', gap:4 }}><IconCheck /> Accept</button>
+                                  <button onClick={() => handleRespondRequest(req.friendshipId, 'decline')} style={{ padding:'6px 12px', borderRadius:8, background:'rgba(239,68,68,0.1)', border:'1px solid rgba(239,68,68,0.2)', color:'#ef4444', fontFamily:'var(--font-geist-sans)', fontSize:12, fontWeight:700, cursor:'pointer', display:'flex', alignItems:'center', gap:4 }}><IconX /> Decline</button>
                                 </div>
                               </div>
                             ))}
@@ -491,9 +490,9 @@ function FriendsPage() {
                           <h3 style={{ fontSize:13, fontWeight:700, color:'#aaa', textTransform:'uppercase', letterSpacing:'0.05em', marginBottom:12 }}>Sent ({sentRequests.length})</h3>
                           <div style={{ display:'flex', flexDirection:'column', gap:10 }}>
                             {sentRequests.map(req => (
-                              <div key={req.id} style={{ padding:'14px 16px', borderRadius:12, background:'#111', border:'1px solid #1a1a1a', display:'flex', alignItems:'center', justifyContent:'space-between', opacity:0.7 }}>
+                              <div key={req.friendshipId} style={{ padding:'14px 16px', borderRadius:12, background:'#111', border:'1px solid #1a1a1a', display:'flex', alignItems:'center', justifyContent:'space-between', opacity:0.7 }}>
                                 <div>
-                                  <div style={{ fontSize:13, fontWeight:600, color:'#f0f0f0' }}>@{req.toUser.username}</div>
+                                  <div style={{ fontSize:13, fontWeight:600, color:'#f0f0f0' }}>@{req.username}</div>
                                   <div style={{ fontSize:11, color:'#555', marginTop:2 }}>Pending...</div>
                                 </div>
                                 <span style={{ fontSize:11, color:'#888', fontWeight:600 }}>Awaiting response</span>
