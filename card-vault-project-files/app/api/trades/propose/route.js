@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { getUser } from '@/lib/auth'
 import prisma from '@/lib/prisma'
+import { sendPushNotification } from '@/lib/expo-push'
 
 export async function POST(req) {
   const userId = await getUser(req)
@@ -62,6 +63,17 @@ export async function POST(req) {
       message: message || '',
     },
   })
+
+  // Send push notification to receiver
+  try {
+    const receiver = await prisma.user.findUnique({ where: { id: receiverId }, select: { pushToken: true } })
+    const proposer = await prisma.user.findUnique({ where: { id: userId }, select: { username: true } })
+    if (receiver?.pushToken) {
+      await sendPushNotification(receiver.pushToken, '🔄 New Trade Offer', `${proposer.username} wants to trade with you`, { screen: 'friends' })
+    }
+  } catch (e) {
+    // Push notification is best-effort, don't fail the trade
+  }
 
   return NextResponse.json({ ok: true, tradeId: trade.id })
 }

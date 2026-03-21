@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { getUser } from '@/lib/auth'
 import prisma from '@/lib/prisma'
+import { sendPushNotification } from '@/lib/expo-push'
 
 export async function POST(req) {
   const userId = await getUser(req)
@@ -33,6 +34,14 @@ export async function POST(req) {
 
   if (action === 'decline') {
     await prisma.trade.update({ where: { id: tradeId }, data: { status: 'declined' } })
+    // Notify proposer of decline
+    try {
+      const proposer = await prisma.user.findUnique({ where: { id: trade.proposerId }, select: { pushToken: true } })
+      const responder = await prisma.user.findUnique({ where: { id: userId }, select: { username: true } })
+      if (proposer?.pushToken) {
+        await sendPushNotification(proposer.pushToken, '❌ Trade Declined', `${responder.username} declined your trade`, { screen: 'friends' })
+      }
+    } catch (e) {}
     return NextResponse.json({ ok: true, status: 'declined' })
   }
 
@@ -149,5 +158,15 @@ export async function POST(req) {
   // ─────────────────────────────────────────────────────────────────────
 
   await prisma.trade.update({ where: { id: tradeId }, data: { status: 'accepted' } })
+
+  // Notify proposer of acceptance
+  try {
+    const proposer = await prisma.user.findUnique({ where: { id: trade.proposerId }, select: { pushToken: true } })
+    const responder = await prisma.user.findUnique({ where: { id: userId }, select: { username: true } })
+    if (proposer?.pushToken) {
+      await sendPushNotification(proposer.pushToken, '✅ Trade Accepted', `${responder.username} accepted your trade! 🎉`, { screen: 'friends' })
+    }
+  } catch (e) {}
+
   return NextResponse.json({ ok: true, status: 'accepted' })
 }
