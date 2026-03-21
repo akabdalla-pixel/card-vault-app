@@ -71,13 +71,14 @@ export default function AdminPage() {
   const [tradeSearch, setTradeSearch] = useState('')
   const [tradeStatus, setTradeStatus] = useState('')
   const [expandedTrade, setExpandedTrade] = useState(null)
+  const [deletingUser, setDeletingUser] = useState(null)
   // Section collapse state
   const [sections, setSections] = useState({ users: true, psa: true, cards: true, trades: true })
   const toggleSection = k => setSections(s => ({ ...s, [k]: !s[k] }))
 
   const router = useRouter()
 
-  useEffect(() => {
+  const loadUsers = () => {
     fetch('/api/admin/users')
       .then(r => {
         if (r.status === 403 || r.status === 401) { router.push('/dashboard'); return null }
@@ -85,7 +86,33 @@ export default function AdminPage() {
       })
       .then(d => { if (d) { setData(d); setLoading(false) } })
       .catch(() => router.push('/dashboard'))
-  }, [router])
+  }
+
+  useEffect(() => { loadUsers() }, [router])
+
+  const handleDeleteUser = async (userId, username) => {
+    if (!confirm(`DELETE @${username} and ALL their cards, trades, and data?\n\nThis cannot be undone.`)) return
+    if (!confirm(`Are you absolutely sure? Type of action: PERMANENT DELETE of @${username}`)) return
+    setDeletingUser(userId)
+    try {
+      const res = await fetch('/api/admin/users/delete', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ targetUserId: userId }),
+      })
+      const d = await res.json()
+      if (d.ok) {
+        setExpanded(null)
+        loadUsers()
+        loadTrades()
+      } else {
+        alert('Delete failed: ' + (d.error || 'Unknown error'))
+      }
+    } catch (e) {
+      alert('Delete failed: ' + e.message)
+    }
+    setDeletingUser(null)
+  }
 
   useEffect(() => {
     setPsaLoading(true)
@@ -285,6 +312,23 @@ export default function AdminPage() {
                         ) : (
                           <div style={{ padding:'20px 32px', fontSize:12, color:'#333' }}>No cards yet</div>
                         )}
+
+                        {/* Delete user button */}
+                        <div style={{ padding:'12px 16px 12px 32px', borderTop:'1px solid #111', display:'flex', justifyContent:'flex-end' }}>
+                          <button
+                            onClick={(e) => { e.stopPropagation(); handleDeleteUser(user.id, user.username) }}
+                            disabled={deletingUser === user.id}
+                            style={{
+                              padding:'7px 16px', borderRadius:8,
+                              background:'rgba(239,68,68,0.1)', border:'1px solid rgba(239,68,68,0.25)',
+                              color:'#ef4444', fontSize:11, fontWeight:700, cursor:'pointer',
+                              fontFamily:'var(--font-geist-sans)',
+                              opacity: deletingUser === user.id ? 0.5 : 1,
+                            }}
+                          >
+                            {deletingUser === user.id ? 'Deleting...' : `Delete @${user.username} & All Data`}
+                          </button>
+                        </div>
                       </div>
                     )}
                   </div>
